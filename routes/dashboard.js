@@ -2,12 +2,13 @@ const express = require("express");
 const router = express.Router();
 const connection = require("../database/db_connection");
 const verifyUser = require("../middleware/verifyUser");
-// const fs = require("fs");
 const axios = require("axios");
+// const fs = require("fs");
 // const path = require("path");
 
 router.post("/", verifyUser , async (req, res) => {
   const { userId } = req.body;
+  const { authtoken } = req.headers;
 
   const upcomingMatchesQuery = "SELECT seriesName, seriesDname, matchId,matchTypeId,matchTyprString, matchStartTimeMilliSeconds,matchStartDateTime,matchStatus,venue, all_matches.displayName,team1.teamId AS `team1Id`,team1.name AS 'team1Name', team1.displayName AS 'team1DisplayName',team1.teamFlagUrlLocal AS 'team1FlagURL', team2.teamId AS `team2Id`,team2.name AS 'team2Name', team2.displayName AS 'team2DisplayName',team2.teamFlagUrlLocal AS 'team2FlagURL' FROM all_matches JOIN teams AS team1 ON all_matches.team1_id = team1.teamId JOIN teams AS team2 ON all_matches.team2_id = team2.teamId JOIN match_type ON match_type.matchTypeId = gameType WHERE matchStatus = 1 ORDER BY matchStartTimeMilliSeconds DESC LIMIT 5;";
   const isNotificationQuery = "SELECT COUNT(*) > 0 AS isNotification FROM notifications JOIN notification_history ON notification_history.userId = notifications.userId WHERE notifications.userId = ? AND notifications.creationTime > notification_history.lastTimeCalled"
@@ -24,7 +25,10 @@ router.post("/", verifyUser , async (req, res) => {
     const upcomingMatches = await fetchData(upcomingMatchesQuery);
     const isNotification = await fetchData(isNotificationQuery, [userId]);
     if (upcomingMatches.length > 0) {
-      const { data } = await axios.get('http://192.168.1.32:3000/api/v1/prediction/getTrendingPredictors');
+      const { data } = await axios({
+        url: 'http://192.168.1.32:3000/api/v1/prediction/getTrendingPredictors',
+        headers: { authtoken }
+      });
       if (data.status) {
         res.status(200).json({
           status: true,

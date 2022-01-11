@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const connection = require("../database/db_connection");
+const verifyUser = require("../middleware/verifyUser");
 
-router.post("/get_predictions", async (req, res) => {
+router.post("/get_predictions", verifyUser, async (req, res) => {
   const { matchId, filter } = req.body;
 
   // creating query to fetch predictions
@@ -16,7 +17,7 @@ router.post("/get_predictions", async (req, res) => {
                                        : filter === "MOST_LIKED" ? "SELECT user_team.userId, phoneNumber, firstName,city, lastName, displayPicture, registerTime, user_team.userTeamId, SUM(userTeamLikes) AS totalLikes FROM user_team JOIN all_users ON all_users.userId = user_team.userId JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId GROUP BY user_team.userId ORDER BY totalLikes DESC;"
                                        : "SELECT user_team.userId, phoneNumber, firstName, lastName, displayPicture,city, registerTime, user_team.userTeamId, SUM(userTeamPoints) AS totalPoints FROM user_team JOIN all_users ON all_users.userId = user_team.userId JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId GROUP BY user_team.userId ORDER BY totalPoints DESC;";
   }
-  const fetchPredictors = (query, options) => (
+  const fetchData = (query, options) => (
     new Promise((resolve, reject) => {
       connection.query(query, options, (err, response) => {
         if (err) reject(err);
@@ -25,7 +26,7 @@ router.post("/get_predictions", async (req, res) => {
     })
   );
   try {
-    const result = await fetchPredictors(query, [matchId]);
+    const result = await fetchData(query, [matchId]);
     if (result.length > 0) {
       res.status(200).json({
         status: true,
@@ -44,7 +45,7 @@ router.post("/get_predictions", async (req, res) => {
   }
 });
 
-router.get("/getTrendingPredictors", async (req, res) => {
+router.get("/getTrendingPredictors", verifyUser, async (req, res) => {
   
   const recentMatchesQuery = "SELECT all_matches.matchId FROM all_matches WHERE (all_matches.matchStartTimeMilliSeconds < unix_timestamp(now()) * 1000 AND all_matches.matchStatus = 3) OR all_matches.matchId = 27947 ORDER By matchStartTimeMilliSeconds DESC LIMIT 5";
   const topPredictorsQuery = "SELECT all_users.firstName, all_users.lastName, all_users.displayPicture, user_team.userId, SUM(user_team_data.userTeamPoints) AS totalPoints FROM user_team JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId JOIN all_users ON all_users.userId = user_team.userId WHERE user_team.matchId IN (?) GROUP BY userId ORDER BY totalPoints DESC LIMIT 10"
@@ -78,7 +79,7 @@ router.get("/getTrendingPredictors", async (req, res) => {
 
 });
 
-router.post("/get_user_teams", async (req, res) => {
+router.post("/get_user_teams", verifyUser, async (req, res) => {
   const { userId, matchId } = req.body;
 
   // Query for fetch all players playerid
@@ -99,73 +100,83 @@ router.post("/get_user_teams", async (req, res) => {
     const players = await fetchData(playersQuery, [matchId, userId]);
     const teamDetails = await fetchData(teamDetailsQuery, [matchId]);
 
-    let allTeams = [];
-    players.forEach( async (team, index) => {
-      let singleTeam = {
-        teams: [{ teamTotalPlayers: 0 }, { teamTotalPlayers: 0 }],
-        teamsDetails: {
-          userTeamId: team["userTeamId"],
-          creditUsed: 0,
-          teamType: team.teamTypeString,
-          totalWicketKeeper: 0,
-          totalBatsman: 0,
-          totalBowlers: 0,
-          totalAllrounders: 0,
-          captain: {},
-          viceCaptain: {},
-        },
-      };
-
-      const ignoreKeys = ["captain","viceCaptain","teamTypeString","likes","userTeamId"]; // keys to be ignored
-
-      // extract single team from teamData and store it
-      for (let j = 0; j < 2; j++) {
-        singleTeam.teams[j] = {
-          ...singleTeam.teams[j],
-          teamId: teamDetails[0][`team${j+1}Id`],
-          teamName: teamDetails[0][`team${j+1}Name`],
-          teamDisplayName: teamDetails[0][`team${j+1}DisplayName`],
-          teamFlagURL: teamDetails[0][`team${j+1}FlagURL`]
-        }
-      };
-
-      let i = 0;
-      for (const key in team) {
-        if (!ignoreKeys.includes(key)) {
-          const player = await fetchData(playerDetailsQuery, [team[key], matchId]);
-
-          // storing captains and vicecaptain details
-          if (team[key] === team["captain"]) singleTeam.teamsDetails.captain = player[0];
-          else if (team[key] === team["viceCaptain"]) singleTeam.teamsDetails.viceCaptain =  player[0];
-
-          // calculating how many credits used
-          singleTeam.teamsDetails.creditUsed += player[0].credits;
-
-          // updating count of bowlers,batsman, wicketkeeper and allrounder
-          if (player[0].roleName === "BOWLER") singleTeam.teamsDetails.totalBowlers++;
-          else if (player[0].roleName === "BATSMAN") singleTeam.teamsDetails.totalBatsman++;
-          else if (player[0].roleName === "WICKET_KEEPER") singleTeam.teamsDetails.totalWicketKeeper++;
-          else if (player[0].roleName === "ALL_ROUNDER") singleTeam.teamsDetails.totalAllrounders++;
-
-          // updating count of teams total player
-          if (player[0].teamId === singleTeam.teams[0].teamId) singleTeam.teams[0].teamTotalPlayers++;
-          else if (player[0].teamId === singleTeam.teams[1].teamId) singleTeam.teams[1].teamTotalPlayers++;
-
-          i++;
-
-          if (i === 11) {
-            allTeams.push(singleTeam); // push single player in team allteams
-            if (players.length === index + 1) {
-              res.status(200).json({
-                status: true,
-                message: "success",
-                data: { userTeams: allTeams },
-              });
+    const fetchTeams = () => (
+      new Promise((resolve, reject) => {
+        let allTeams = [];
+        players.forEach( async (team, index) => {
+          try {
+            let singleTeam = {
+              teams: [{ teamTotalPlayers: 0 }, { teamTotalPlayers: 0 }],
+              teamsDetails: {
+                userTeamId: team["userTeamId"],
+                creditUsed: 0,
+                teamType: team.teamTypeString,
+                totalWicketKeeper: 0,
+                totalBatsman: 0,
+                totalBowlers: 0,
+                totalAllrounders: 0,
+                captain: {},
+                viceCaptain: {},
+              },
+            };
+      
+            const ignoreKeys = ["captain","viceCaptain","teamTypeString","likes","userTeamId"]; // keys to be ignored
+      
+            // extract single team from teamData and store it
+            for (let j = 0; j < 2; j++) {
+              singleTeam.teams[j] = {
+                ...singleTeam.teams[j],
+                teamId: teamDetails[0][`team${j+1}Id`],
+                teamName: teamDetails[0][`team${j+1}Name`],
+                teamDisplayName: teamDetails[0][`team${j+1}DisplayName`],
+                teamFlagURL: teamDetails[0][`team${j+1}FlagURL`]
+              }
+            };
+      
+            let i = 0;
+            for (const key in team) {
+              if (!ignoreKeys.includes(key)) {
+                const player = await fetchData(playerDetailsQuery, [team[key], matchId]);
+      
+                // storing captains and vicecaptain details
+                if (team[key] === team["captain"]) singleTeam.teamsDetails.captain = player[0];
+                else if (team[key] === team["viceCaptain"]) singleTeam.teamsDetails.viceCaptain =  player[0];
+      
+                // calculating how many credits used
+                singleTeam.teamsDetails.creditUsed += player[0].credits;
+      
+                // updating count of bowlers,batsman, wicketkeeper and allrounder
+                if (player[0].roleName === "BOWLER") singleTeam.teamsDetails.totalBowlers++;
+                else if (player[0].roleName === "BATSMAN") singleTeam.teamsDetails.totalBatsman++;
+                else if (player[0].roleName === "WICKET_KEEPER") singleTeam.teamsDetails.totalWicketKeeper++;
+                else if (player[0].roleName === "ALL_ROUNDER") singleTeam.teamsDetails.totalAllrounders++;
+      
+                // updating count of teams total player
+                if (player[0].teamId === singleTeam.teams[0].teamId) singleTeam.teams[0].teamTotalPlayers++;
+                else if (player[0].teamId === singleTeam.teams[1].teamId) singleTeam.teams[1].teamTotalPlayers++;
+      
+                i++;
+      
+                if (i === 11) {
+                  allTeams.push(singleTeam); // push single player in team allteams
+                  if (players.length === index + 1) {
+                    resolve(allTeams);
+                  }
+                }
+              }
             }
+          } catch (error) {
+            reject(error);
           }
-        }
-      }
-    })
+        })
+      })
+    );
+    const allTeams = await fetchTeams();
+    res.status(200).json({
+      status: true,
+      message: "success",
+      data: { userTeams: allTeams },
+    });
   } catch (error) {
     res.status(400).json({
       status: false,
@@ -175,7 +186,7 @@ router.post("/get_user_teams", async (req, res) => {
   }
 });
 
-router.post("/get_user_teams_predictor", async (req, res) => {
+router.post("/get_user_teams_predictor", verifyUser, async (req, res) => {
   const { userId } = req.body;
 
   // Query for fetch all players playerid
@@ -195,74 +206,163 @@ router.post("/get_user_teams_predictor", async (req, res) => {
   try {
     const players = await fetchData(playersQuery, [userId]);
 
-    let allTeams = [];
-    players.forEach(async (team, index) => {
-      let singleTeam = {
-        teams: [{ teamTotalPlayers: 0 }, { teamTotalPlayers: 0 }],
-        teamsDetails: {
-          userTeamId: team["userTeamId"],
-          creditUsed: 0,
-          teamType: team.teamTypeString,
-          totalWicketKeeper: 0,
-          totalBatsman: 0,
-          totalBowlers: 0,
-          totalAllrounders: 0,
-          captain: {},
-          viceCaptain: {},
-        },
-      };
-      const ignoreKeys = ["captain","viceCaptain","teamTypeString","likes","userTeamId", "matchId"]; // keys to be ignored
+    const fetchTeams = () => (
+      new Promise((resolve, reject) => {
+        let allTeams = [];
+        players.forEach(async (team, index) => {
+          try {
+            let singleTeam = {
+              teams: [{ teamTotalPlayers: 0 }, { teamTotalPlayers: 0 }],
+              teamsDetails: {
+                userTeamId: team["userTeamId"],
+                creditUsed: 0,
+                teamType: team.teamTypeString,
+                totalWicketKeeper: 0,
+                totalBatsman: 0,
+                totalBowlers: 0,
+                totalAllrounders: 0,
+                captain: {},
+                viceCaptain: {},
+              },
+            };
+            const ignoreKeys = ["captain","viceCaptain","teamTypeString","likes","userTeamId", "matchId"]; // keys to be ignored
+            
+            const teamDetails = await fetchData(teamDetailsQuery, [team.matchId]);
+            if (teamDetails.length !== 0) {
+              // extract single team from teamData and store it
+              for (let j = 0; j < 2; j++) {
+                singleTeam.teams[j] = {
+                  ...singleTeam.teams[j],
+                  teamId: teamDetails[0][`team${j+1}Id`],
+                  teamName: teamDetails[0][`team${j+1}Name`],
+                  teamDisplayName: teamDetails[0][`team${j+1}DisplayName`],
+                  teamFlagURL: teamDetails[0][`team${j+1}FlagURL`]
+                }
+              };
+      
+              let i = 0;
+              for (const key in team) {
+                if (!ignoreKeys.includes(key)) {
+                  const player = await fetchData(playerDetailsQuery, [team[key], team.matchId]);
+      
+                  // storing captains and vicecaptain details
+                  if (team[key] === team["captain"]) singleTeam.teamsDetails.captain = player[0];
+                  else if (team[key] === team["viceCaptain"]) singleTeam.teamsDetails.viceCaptain =  player[0];
+      
+                  // calculating how many credits used
+                  singleTeam.teamsDetails.creditUsed += player[0].credits;
+      
+                  // updating count of bowlers,batsman, wicketkeeper and allrounder
+                  if (player[0].roleName === "BOWLER") singleTeam.teamsDetails.totalBowlers++;
+                  else if (player[0].roleName === "BATSMAN") singleTeam.teamsDetails.totalBatsman++;
+                  else if (player[0].roleName === "WICKET_KEEPER") singleTeam.teamsDetails.totalWicketKeeper++;
+                  else if (player[0].roleName === "ALL_ROUNDER") singleTeam.teamsDetails.totalAllrounders++;
+      
+                  // updating count of teams total player
+                  if (player[0].teamId === singleTeam.teams[0].teamId) singleTeam.teams[0].teamTotalPlayers++;
+                  else if (player[0].teamId === singleTeam.teams[1].teamId) singleTeam.teams[1].teamTotalPlayers++;
+      
+                  i++;
+      
+                  if (i === 11) {
+                    allTeams.push(singleTeam); // push single player in team allteams
+                    if (players.length === index + 1) {
+                      resolve(allTeams);
+                    }
+                  }
+                }
+              }
 
-      const teamDetails = await fetchData(teamDetailsQuery, [team.matchId]);
-
-      // extract single team from teamData and store it
-      for (let j = 0; j < 2; j++) {
-        singleTeam.teams[j] = {
-          ...singleTeam.teams[j],
-          teamId: teamDetails[0][`team${j+1}Id`],
-          teamName: teamDetails[0][`team${j+1}Name`],
-          teamDisplayName: teamDetails[0][`team${j+1}DisplayName`],
-          teamFlagURL: teamDetails[0][`team${j+1}FlagURL`]
-        }
-      };
-
-      let i = 0;
-      for (const key in team) {
-        if (!ignoreKeys.includes(key)) {
-          const player = await fetchData(playerDetailsQuery, [team[key], team.matchId]);
-
-          // storing captains and vicecaptain details
-          if (team[key] === team["captain"]) singleTeam.teamsDetails.captain = player[0];
-          else if (team[key] === team["viceCaptain"]) singleTeam.teamsDetails.viceCaptain =  player[0];
-
-          // calculating how many credits used
-          singleTeam.teamsDetails.creditUsed += player[0].credits;
-
-          // updating count of bowlers,batsman, wicketkeeper and allrounder
-          if (player[0].roleName === "BOWLER") singleTeam.teamsDetails.totalBowlers++;
-          else if (player[0].roleName === "BATSMAN") singleTeam.teamsDetails.totalBatsman++;
-          else if (player[0].roleName === "WICKET_KEEPER") singleTeam.teamsDetails.totalWicketKeeper++;
-          else if (player[0].roleName === "ALL_ROUNDER") singleTeam.teamsDetails.totalAllrounders++;
-
-          // updating count of teams total player
-          if (player[0].teamId === singleTeam.teams[0].teamId) singleTeam.teams[0].teamTotalPlayers++;
-          else if (player[0].teamId === singleTeam.teams[1].teamId) singleTeam.teams[1].teamTotalPlayers++;
-
-          i++;
-
-          if (i === 11) {
-            allTeams.push(singleTeam); // push single player in team allteams
-            if (players.length === index + 1) {
-              res.status(200).json({
-                status: true,
-                message: "success",
-                data: { userTeams: allTeams },
-              });
+            } else {
+              throw { message: "team not exixts" };
             }
+          } catch (error) {
+            reject(error);
           }
-        }
-      }
+        });
+      })
+    );
+    const allTeams = await fetchTeams();
+    res.status(200).json({
+      status: true,
+      message: "success",
+      data: { userTeams: allTeams },
     });
+    // players.forEach(async (team, index) => {
+    //   try { 
+    //     let singleTeam = {
+    //       teams: [{ teamTotalPlayers: 0 }, { teamTotalPlayers: 0 }],
+    //       teamsDetails: {
+    //         userTeamId: team["userTeamId"],
+    //         creditUsed: 0,
+    //         teamType: team.teamTypeString,
+    //         totalWicketKeeper: 0,
+    //         totalBatsman: 0,
+    //         totalBowlers: 0,
+    //         totalAllrounders: 0,
+    //         captain: {},
+    //         viceCaptain: {},
+    //       },
+    //     };
+    //     const ignoreKeys = ["captain","viceCaptain","teamTypeString","likes","userTeamId", "matchId"]; // keys to be ignored
+
+    //     const teamDetails = await fetchData(teamDetailsQuery, [team.matchId]);
+
+    //     // extract single team from teamData and store it
+    //     for (let j = 0; j < 2; j++) {
+    //       singleTeam.teams[j] = {
+    //         ...singleTeam.teams[j],
+    //         teamId: teamDetails[0][`team${j+1}Id`],
+    //         teamName: teamDetails[0][`team${j+1}Name`],
+    //         teamDisplayName: teamDetails[0][`team${j+1}DisplayName`],
+    //         teamFlagURL: teamDetails[0][`team${j+1}FlagURL`]
+    //       }
+    //     };
+
+    //     let i = 0;
+    //     for (const key in team) {
+    //       if (!ignoreKeys.includes(key)) {
+    //         const player = await fetchData(playerDetailsQuery, [team[key], team.matchId]);
+
+    //         // storing captains and vicecaptain details
+    //         if (team[key] === team["captain"]) singleTeam.teamsDetails.captain = player[0];
+    //         else if (team[key] === team["viceCaptain"]) singleTeam.teamsDetails.viceCaptain =  player[0];
+
+    //         // calculating how many credits used
+    //         singleTeam.teamsDetails.creditUsed += player[0].credits;
+
+    //         // updating count of bowlers,batsman, wicketkeeper and allrounder
+    //         if (player[0].roleName === "BOWLER") singleTeam.teamsDetails.totalBowlers++;
+    //         else if (player[0].roleName === "BATSMAN") singleTeam.teamsDetails.totalBatsman++;
+    //         else if (player[0].roleName === "WICKET_KEEPER") singleTeam.teamsDetails.totalWicketKeeper++;
+    //         else if (player[0].roleName === "ALL_ROUNDER") singleTeam.teamsDetails.totalAllrounders++;
+
+    //         // updating count of teams total player
+    //         if (player[0].teamId === singleTeam.teams[0].teamId) singleTeam.teams[0].teamTotalPlayers++;
+    //         else if (player[0].teamId === singleTeam.teams[1].teamId) singleTeam.teams[1].teamTotalPlayers++;
+
+    //         i++;
+
+    //         if (i === 11) {
+    //           allTeams.push(singleTeam); // push single player in team allteams
+    //           if (players.length === index + 1) {
+    //             res.status(200).json({
+    //               status: true,
+    //               message: "success",
+    //               data: { userTeams: allTeams },
+    //             });
+    //           }
+    //         }
+    //       }
+    //     }
+    //   } catch (error) {
+    //     res.status(400).json({
+    //       status: false,
+    //       message: error.message,
+    //       data: {},
+    //     });
+    //   }
+    // });
   } catch (error) {
     res.status(400).json({
       status: false,
@@ -272,7 +372,7 @@ router.post("/get_user_teams_predictor", async (req, res) => {
   }
 });
 
-router.post("/get_user_teams_data", async (req, res) => {
+router.post("/get_user_teams_data", verifyUser, async (req, res) => {
   const { userId, teamId } = req.body;
 
   // queries to fetch data
@@ -353,7 +453,7 @@ router.post("/get_user_teams_data", async (req, res) => {
   }
 });
 
-router.post("/update_user_team_likes", (req, res) => {
+router.post("/update_user_team_likes", verifyUser, (req, res) => {
   let { userId, teamId } = req.body;
 
   const logUser = () =>
@@ -407,7 +507,7 @@ router.post("/update_user_team_likes", (req, res) => {
     });
 });
 
-router.post("/update_user_team_views", (req, res) => {
+router.post("/update_user_team_views", verifyUser, (req, res) => {
   let { userId, teamId } = req.body;
 
   const checkUserViewCountLog = () =>
@@ -481,7 +581,7 @@ router.post("/update_user_team_views", (req, res) => {
     });
 });
 
-router.post("/set_discussion", (req, res) => {
+router.post("/set_discussion", verifyUser, (req, res) => {
   const { matchId, userId, messengerId, message } = req.body;
 
   connection.query("INSERT INTO discussion SET ? ;", {matchId, userId, messengerId, message}, (err, response) => {
@@ -504,7 +604,7 @@ router.post("/set_discussion", (req, res) => {
   })
 });
 
-router.post("/get_discussion", (req, res) => {
+router.post("/get_discussion", verifyUser, (req, res) => {
   const { matchId, userId, } = req.body;
 
   connection.query("SELECT messengerId, displayPicture, firstName AS firstName, message,messageTime AS messageTime FROM discussion JOIN all_users ON messengerId = all_users.userId WHERE matchId = ? AND discussion.userId = ? ORDER BY messageTime DESC LIMIT 50;", [matchId, userId], (err, response) => {
@@ -529,7 +629,7 @@ router.post("/get_discussion", (req, res) => {
   })
 });
 
-router.post("/compare_teams", (req, res) => {
+router.post("/compare_teams", verifyUser, (req, res) => {
   const { matchId } = req.body;
 
   const allPlayersForMatch = "SELECT matchId,match_player_relation.playerId AS playerId,players.name AS playerName,players.displayName AS playerDisplayName,player_roles.roleId AS roleId,player_roles.roleName AS roleName,players.profilePictureURLLocal AS URL, teams.teamId AS teamId,teams.name AS teamName,teams.displayName AS teamDisplayName, teams.teamFlagUrlLocal AS flagURL FROM match_player_relation JOIN players ON players.playerId = match_player_relation.playerId JOIN player_roles ON players.role = player_roles.roleId JOIN teams ON teams.teamId = match_player_relation.teamId WHERE matchId = ?;"
