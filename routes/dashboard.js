@@ -6,7 +6,7 @@ const axios = require("axios");
 // const fs = require("fs");
 // const path = require("path");
 
-router.post("/", verifyUser , async (req, res) => {
+router.get("/", verifyUser , async (req, res) => {
   const { userId } = req.body;
   const { authtoken } = req.headers;
 
@@ -29,6 +29,8 @@ router.post("/", verifyUser , async (req, res) => {
         url: 'http://192.168.1.32:3000/api/v1/prediction/getTrendingPredictors',
         headers: { authtoken }
       });
+      // const start = Date.now();
+      // while (Date.now() - start < 5000) {}
       if (data.status) {
         res.status(200).json({
           status: true,
