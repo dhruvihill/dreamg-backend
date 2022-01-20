@@ -3,13 +3,17 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const connection = require("./database/db_connection");
 const path = require("path");
+const fetchAndStore = require("./cron/index");
 
 const app = express();
+
+// creates Cron job
+// fetchAndStore();
 
 // Connection to Database
 connection.connect((err) => {
   try {
-    if (err) throw err; 
+    if (err) throw err;
     else console.log("Connected Successfully");
   } catch (error) {
     console.log(error.message);
