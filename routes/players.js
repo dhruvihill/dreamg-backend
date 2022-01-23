@@ -96,8 +96,6 @@ router.post("/setteam", verifyUser, async (req, res) => {
 
   if (
     correctInput &&
-    !regx.test(captain) &&
-    !regx.test(viceCaptain) &&
     players.includes(captain) &&
     players.includes(viceCaptain)
   ) {

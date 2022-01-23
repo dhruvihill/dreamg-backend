@@ -14,7 +14,7 @@ const app = express();
 connection.connect((err) => {
   try {
     if (err) throw err;
-    else console.log("Connected Successfully");
+    // else console.log("Connected Successfully");
   } catch (error) {
     console.log(error.message);
   }
@@ -37,5 +37,7 @@ app.use("/api/v1/matches", require("./routes/matches"));
 
 // Listening App
 app.listen(process.env.PORT, () => {
-  console.log(`Listening on port ${process.env.PORT}`);
+  // console.log(`Listening on port ${process.env.PORT}`);
 });
+
+module.exports = app;
