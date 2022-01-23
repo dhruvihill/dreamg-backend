@@ -3,6 +3,15 @@ const connection = require("../database/db_connection");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const verifyUser = require("../middleware/verifyUser");
+const verifyProfile = require("../middleware/verifyProfile");
+
+const fetchData = (query, options = []) =>
+  new Promise((resolve, reject) => {
+    connection.query(query, options, (err, response) => {
+      if (err) reject(err);
+      else resolve(response);
+    });
+  });
 
 // Creating user
 router.post("/register", async (req, res) => {
@@ -19,14 +28,6 @@ router.post("/register", async (req, res) => {
       data: {},
     });
   } else {
-    // inserting data to database
-    const fetchData = (query, options) =>
-      new Promise((resolve, reject) => {
-        connection.query(query, options, (err, response) => {
-          if (err) reject(err);
-          else resolve(response);
-        });
-      });
     try {
       const result = await fetchData("INSERT INTO all_users SET ?", {
         phoneNumber,
@@ -67,14 +68,6 @@ router.post("/login", async (req, res) => {
       data: {},
     });
   } else {
-    // fetching query
-    const fetchData = (query, options) =>
-      new Promise((resolve, reject) => {
-        connection.query(query, options, (err, response) => {
-          if (err) reject(err);
-          else resolve(response);
-        });
-      });
     try {
       const userDetails = await fetchData(
         "SELECT userId,phoneNumber,firstName,lastName FROM all_users where phoneNumber = ?",
@@ -122,14 +115,6 @@ router.post("/check_user", async (req, res) => {
   } else {
     const responseQuery = "SELECT userId FROM all_users WHERE phoneNumber = ?";
 
-    const fetchData = (query, options) =>
-      new Promise((resolve, reject) => {
-        connection.query(query, options, (err, response) => {
-          if (err) reject(err);
-          else resolve(response);
-        });
-      });
-
     try {
       const response = await fetchData(responseQuery, [phoneNumber]);
       if (response.length > 0) {
@@ -165,14 +150,6 @@ router.post("/getuserprofile", verifyUser, async (req, res) => {
   FROM all_users WHERE all_users.userId = ?;`;
   const matchesQuery =
     "SELECT matchId, seriesName, seriesDname,matchTypeId,matchTyprString, matchStartTimeMilliSeconds,matchStartDateTime,venue, all_matches.displayName,team1.teamId AS `team1Id`,team1.name AS 'team1Name', team1.displayName AS 'team1DisplayName',team1.teamFlagUrlLocal AS 'team1FlagURL', team2.teamId AS `team2Id`,team2.name AS 'team2Name', team2.displayName AS 'team2DisplayName',team2.teamFlagUrlLocal AS 'team2FlagURL' FROM all_matches JOIN teams AS team1 ON all_matches.team1_id = team1.teamId JOIN teams AS team2 ON all_matches.team2_id = team2.teamId JOIN match_type ON match_type.matchTypeId = gameType WHERE matchId IN (SELECT DISTINCT user_team.matchId FROM user_team WHERE userId = ? ORDER BY number DESC) LIMIT 5;";
-
-  const fetchData = (query, options = []) =>
-    new Promise((resolve, reject) => {
-      connection.query(query, options, (err, response) => {
-        if (err) reject(err);
-        else resolve(response);
-      });
-    });
 
   try {
     const points = await fetchData(pointsQuery, [
@@ -214,56 +191,50 @@ router.post("/getuserprofile", verifyUser, async (req, res) => {
 });
 
 // Inserting firstname lastname in user
-router.post("/updateuserprofile", verifyUser, async (req, res) => {
-  const body = req.body;
-  const canNotChange = ["userId", "phoneNumber", "registerTime"];
-  let keys = [],
-    values = [];
-  for (const key in body) {
-    if (!canNotChange.includes(key)) {
-      keys.push(`${key} = ?`);
-      values.push(body[key]);
-    } else {
-      if (key !== "userId") delete body[key];
+router.post(
+  "/updateuserprofile",
+  verifyUser,
+  verifyProfile,
+  async (req, res) => {
+    const body = req.body;
+    let keys = [],
+      values = [];
+    for (const key in body) {
+      if (key !== "userId") {
+        keys.push(`${key} = ?`);
+        values.push(body[key]);
+      }
+    }
+
+    const updateUserQuery = `UPDATE all_users SET ${keys.join(
+      ","
+    )} WHERE userId = ?`;
+
+    try {
+      const updateUserResponse = await fetchData(updateUserQuery, [
+        ...values,
+        body.userId,
+      ]);
+      delete body.userId;
+      if (updateUserResponse.affectedRows > 0) {
+        res.status(200).json({
+          status: true,
+          message: "success",
+          data: {
+            ...body,
+          },
+        });
+      } else {
+        throw { message: "user does not exists" };
+      }
+    } catch (error) {
+      res.status(400).json({
+        status: false,
+        message: error.message,
+        data: {},
+      });
     }
   }
-
-  const updateUserQuery = `UPDATE all_users SET ${keys.join(
-    ","
-  )} WHERE userId = ?`;
-
-  const fetchData = (query, options = []) =>
-    new Promise((resolve, reject) => {
-      connection.query(query, options, (err, response) => {
-        if (err) reject(err);
-        else resolve(response);
-      });
-    });
-
-  try {
-    const updateUserResponse = await fetchData(updateUserQuery, [
-      ...values,
-      body.userId,
-    ]);
-    delete body.userId;
-    if (updateUserResponse.affectedRows > 0) {
-      res.status(200).json({
-        status: true,
-        message: "success",
-        data: {
-          ...body,
-        },
-      });
-    } else {
-      throw { message: "user does not exists" };
-    }
-  } catch (error) {
-    res.status(400).json({
-      status: false,
-      message: error.message,
-      data: {},
-    });
-  }
-});
+);
 
 module.exports = router;

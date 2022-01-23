@@ -15,7 +15,8 @@
     "express": "^4.17.2",
     "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
-    "mysql2": "^2.3.3"
+    "mysql2": "^2.3.3",
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
