@@ -28,7 +28,7 @@ router.get("/", verifyUser, async (req, res) => {
     const isNotification = await fetchData(isNotificationQuery, [userId]);
     if (upcomingMatches.length > 0) {
       const { data } = await axios({
-        url: "localhost:3000/api/v1/prediction/getTrendingPredictors",
+        url: "https://dreamg-backend.herokuapp.com/api/v1/prediction/getTrendingPredictors",
         headers: { authtoken },
       });
       // const start = Date.now();
