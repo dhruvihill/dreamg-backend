@@ -28,11 +28,6 @@ app.use(bodyParser.json());
 app.use("/public", express.static(path.join(__dirname, "public")));
 
 // Routes
-app.get("/", (req, res) => {
-  res.status(200).json({
-    name: "Dhruv",
-  });
-});
 app.use("/api/v1/auth", require("./routes/auth"));
 app.use("/api/v1/getdashboarddata", require("./routes/dashboard"));
 app.use("/api/v1/players", require("./routes/players"));
