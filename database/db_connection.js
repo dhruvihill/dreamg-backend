@@ -3,11 +3,10 @@ require("dotenv/config");
 
 // Creating Connection
 const connection = mysql.createConnection({
-  host:
-    process.env.HOST || "brbogw76w7fnqwls61xz-mysql.services.clever-cloud.com",
-  user: process.env.USER || "utrcdzbg6f5vhtg0",
-  password: process.env.PASSWORD || "TaB58BF8up543Ck7rYCr",
-  database: process.env.DATABASE || "brbogw76w7fnqwls61xz",
+  host: "brbogw76w7fnqwls61xz-mysql.services.clever-cloud.com",
+  user: "utrcdzbg6f5vhtg0",
+  password: "TaB58BF8up543Ck7rYCr",
+  database: "brbogw76w7fnqwls61xz",
 });
 
 module.exports = connection;

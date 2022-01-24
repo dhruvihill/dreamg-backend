@@ -35,7 +35,7 @@ router.post("/register", async (req, res) => {
       const jwtData = { user: { userId: result.insertId } };
       const token = await jwt.sign(
         jwtData,
-        process.env.SECRET_KEY || "FJSD357&*T4VH^&$%MZX#&HFWE()*78E#&$(*^)"
+        "FJSD357&*T4VH^&$%MZX#&HFWE()*78E#&$(*^)"
       );
       res.status(200).json({
         status: true,
@@ -84,7 +84,7 @@ router.post("/login", async (req, res) => {
         };
         const token = await jwt.sign(
           jwtData,
-          process.env.SECRET_KEY || "FJSD357&*T4VH^&$%MZX#&HFWE()*78E#&$(*^)"
+          "FJSD357&*T4VH^&$%MZX#&HFWE()*78E#&$(*^)"
         );
         userDetails[0].authToken = token;
         res.status(200).json({
