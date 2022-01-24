@@ -3,7 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const connection = require("./database/db_connection");
 const path = require("path");
-const fetchAndStore = require("./cron/index");
+// const fetchAndStore = require("./cron/index");
 
 const app = express();
 
@@ -14,7 +14,7 @@ const app = express();
 connection.connect((err) => {
   try {
     if (err) throw err;
-    // else console.log("Connected Successfully");
+    else console.log("Connected Successfully");
   } catch (error) {
     console.log(error.message);
   }
@@ -36,8 +36,8 @@ app.use("/api/v1/notification", require("./routes/notification"));
 app.use("/api/v1/matches", require("./routes/matches"));
 
 // Listening App
-app.listen(process.env.PORT, () => {
-  // console.log(`Listening on port ${process.env.PORT}`);
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`Listening on port ${process.env.PORT}`);
 });
 
 module.exports = app;
