@@ -34,6 +34,11 @@ app.use("/api/v1/players", require("./routes/players"));
 app.use("/api/v1/prediction", require("./routes/prediction"));
 app.use("/api/v1/notification", require("./routes/notification"));
 app.use("/api/v1/matches", require("./routes/matches"));
+app.get("*", (req, res) => {
+  res.status(404).json({
+    message: "page not found",
+  });
+});
 
 // Listening App
 app.listen(3000, () => {
