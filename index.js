@@ -36,8 +36,8 @@ app.use("/api/v1/notification", require("./routes/notification"));
 app.use("/api/v1/matches", require("./routes/matches"));
 
 // Listening App
-app.listen(3000, () => {
-  console.log(`Listening on port 3000`);
+app.listen(4000, () => {
+  console.log(`Listening on port 4000`);
 });
 
 module.exports = app;
