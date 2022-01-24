@@ -31,7 +31,10 @@ const makeRequest = (url, method, data) => {
     axios({
       url,
       method: method,
-      headers: { Cookie: "SSID=SSID9101099d-3d6c-455f-934a-24da0276d04d" },
+      headers: {
+        Cookie:
+          process.env.SSID || "SSID=SSID9101099d-3d6c-455f-934a-24da0276d04d",
+      },
       data,
     })
       .then((data) => {

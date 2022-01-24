@@ -35,7 +35,7 @@ router.post("/register", async (req, res) => {
       const jwtData = { user: { userId: result.insertId } };
       const token = await jwt.sign(
         jwtData,
-        "FJSD357&*T4VH^&$%MZX#&HFWE()*78E#&$(*^)"
+        process.env.SECRET_KEY || "FJSD357&*T4VH^&$%MZX#&HFWE()*78E#&$(*^)"
       );
       res.status(200).json({
         status: true,
@@ -84,7 +84,7 @@ router.post("/login", async (req, res) => {
         };
         const token = await jwt.sign(
           jwtData,
-          "FJSD357&*T4VH^&$%MZX#&HFWE()*78E#&$(*^)"
+          process.env.SECRET_KEY || "FJSD357&*T4VH^&$%MZX#&HFWE()*78E#&$(*^)"
         );
         userDetails[0].authToken = token;
         res.status(200).json({
@@ -174,14 +174,31 @@ router.post("/getuserprofile", verifyUser, async (req, res) => {
         points[0].head_to_head_totalPoints | 0;
 
       // fetching last 5 matches of user
-      const matches = await fetchData(matchesQuery, [userId]);
+      const recentPlayed = await fetchData(matchesQuery, [userId]);
+
+      // changing address in url
+      const serverAddress = `${req.protocol}://${req.headers.host}`;
+      points[0].displayPicture = points[0].displayPicture.replace(
+        "http://192.168.1.32:3000",
+        serverAddress
+      );
+      recentPlayed.forEach((macth) => {
+        macth.team1FlagURL = macth.team1FlagURL.replace(
+          "http://192.168.1.32:3000",
+          serverAddress
+        );
+        macth.team2FlagURL = macth.team2FlagURL.replace(
+          "http://192.168.1.32:3000",
+          serverAddress
+        );
+      });
 
       res.status(200).json({
         status: true,
         message: "success",
         data: {
           userDetails: points[0],
-          recentPlayed: matches,
+          recentPlayed,
         },
       });
     } else {

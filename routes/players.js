@@ -45,6 +45,12 @@ router.post("/getplayers", verifyUser, async (req, res) => {
               player.selectedBy = parseFloat(
                 playerDetails[0].selectedBy.toFixed(2)
               );
+              // changing url address
+              player.URL = player.URL.replace(
+                "http://192.168.1.32:3000",
+                `${req.protocol}://${req.headers.host}`
+              );
+
               if (index === allPlayers.length - 1) resolve();
             } catch (error) {
               reject(error);

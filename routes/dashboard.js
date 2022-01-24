@@ -27,13 +27,34 @@ router.get("/", verifyUser, async (req, res) => {
     const upcomingMatches = await fetchData(upcomingMatchesQuery);
     const isNotification = await fetchData(isNotificationQuery, [userId]);
     if (upcomingMatches.length > 0) {
+      // changing url to original server
+      upcomingMatches.forEach((match) => {
+        match.team1FlagURL = match.team1FlagURL.replace(
+          "http://192.168.1.32:3000",
+          `${req.protocol}://${req.headers.host}`
+        );
+        match.team2FlagURL = match.team2FlagURL.replace(
+          "http://192.168.1.32:3000",
+          `${req.protocol}://${req.headers.host}`
+        );
+      });
+
       const { data } = await axios({
-        url: "https://dreamg-backend.herokuapp.com/api/v1/prediction/getTrendingPredictors",
+        url: `${req.protocol}://${req.headers.host}/api/v1/prediction/getTrendingPredictors`,
         headers: { authtoken },
       });
+
       // const start = Date.now();
       // while (Date.now() - start < 5000) {}
       if (data.status) {
+        // changing server address
+        data.data.trendingPredictors.forEach((pre) => {
+          pre.displayPicture = pre.displayPicture.replace(
+            "http://192.168.1.32:3000",
+            `${req.protocol}://${req.headers.host}`
+          );
+        });
+
         res.status(200).json({
           status: true,
           message: "success",

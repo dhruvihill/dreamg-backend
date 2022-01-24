@@ -7,7 +7,7 @@ const verifyUser = async (req, res, next) => {
     if (authtoken) {
       const result = await jwt.verify(
         authtoken,
-        "FJSD357&*T4VH^&$%MZX#&HFWE()*78E#&$(*^)"
+        process.env.SECRET_KEY || "FJSD357&*T4VH^&$%MZX#&HFWE()*78E#&$(*^)"
       );
       req.body.userId = result.user.userId;
       next();
