@@ -86,7 +86,7 @@ router.get("/getTrendingPredictors", verifyUser, async (req, res) => {
 });
 
 router.post("/get_user_teams", verifyUser, async (req, res) => {
-  const { userId, matchId } = req.body;
+  const { createrId, matchId } = req.body;
 
   // Query for fetch all players playerid
   const playersQuery =
@@ -98,9 +98,132 @@ router.post("/get_user_teams", verifyUser, async (req, res) => {
 
   try {
     if (!/[^0-9]/g.test(matchId)) {
-      const players = await fetchData(playersQuery, [matchId, userId]);
+      const players = await fetchData(playersQuery, [matchId, createrId]);
       const teamDetails = await fetchData(teamDetailsQuery, [matchId]);
 
+      if (players.length > 0) {
+        const fetchTeams = () =>
+          new Promise((resolve, reject) => {
+            let allTeams = [];
+            players.forEach(async (team, index) => {
+              try {
+                let singleTeam = {
+                  teams: [{ teamTotalPlayers: 0 }, { teamTotalPlayers: 0 }],
+                  teamsDetails: {
+                    userTeamId: team["userTeamId"],
+                    creditUsed: 0,
+                    teamType: team.teamTypeString,
+                    totalWicketKeeper: 0,
+                    totalBatsman: 0,
+                    totalBowlers: 0,
+                    totalAllrounders: 0,
+                    captain: {},
+                    viceCaptain: {},
+                  },
+                };
+
+                const ignoreKeys = [
+                  "captain",
+                  "viceCaptain",
+                  "teamTypeString",
+                  "likes",
+                  "userTeamId",
+                ]; // keys to be ignored
+
+                // extract single team from teamData and store it
+                for (let j = 0; j < 2; j++) {
+                  singleTeam.teams[j] = {
+                    ...singleTeam.teams[j],
+                    teamId: teamDetails[0][`team${j + 1}Id`],
+                    teamName: teamDetails[0][`team${j + 1}Name`],
+                    teamDisplayName: teamDetails[0][`team${j + 1}DisplayName`],
+                    teamFlagURL: teamDetails[0][`team${j + 1}FlagURL`],
+                  };
+                }
+
+                let i = 0;
+                for (const key in team) {
+                  if (!ignoreKeys.includes(key)) {
+                    const player = await fetchData(playerDetailsQuery, [
+                      team[key],
+                      matchId,
+                    ]);
+
+                    // storing captains and vicecaptain details
+                    if (team[key] === team["captain"])
+                      singleTeam.teamsDetails.captain = player[0];
+                    else if (team[key] === team["viceCaptain"])
+                      singleTeam.teamsDetails.viceCaptain = player[0];
+
+                    // calculating how many credits used
+                    singleTeam.teamsDetails.creditUsed += player[0].credits;
+
+                    // updating count of bowlers,batsman, wicketkeeper and allrounder
+                    if (player[0].roleName === "BOWLER")
+                      singleTeam.teamsDetails.totalBowlers++;
+                    else if (player[0].roleName === "BATSMAN")
+                      singleTeam.teamsDetails.totalBatsman++;
+                    else if (player[0].roleName === "WICKET_KEEPER")
+                      singleTeam.teamsDetails.totalWicketKeeper++;
+                    else if (player[0].roleName === "ALL_ROUNDER")
+                      singleTeam.teamsDetails.totalAllrounders++;
+
+                    // updating count of teams total player
+                    if (player[0].teamId === singleTeam.teams[0].teamId)
+                      singleTeam.teams[0].teamTotalPlayers++;
+                    else if (player[0].teamId === singleTeam.teams[1].teamId)
+                      singleTeam.teams[1].teamTotalPlayers++;
+
+                    i++;
+
+                    if (i === 11) {
+                      allTeams.push(singleTeam); // push single player in team allteams
+                      if (players.length === index + 1) {
+                        resolve(allTeams);
+                      }
+                    }
+                  }
+                }
+              } catch (error) {
+                reject(error);
+              }
+            });
+          });
+        const allTeams = await fetchTeams();
+        res.status(200).json({
+          status: true,
+          message: "success",
+          data: { userTeams: allTeams },
+        });
+      } else {
+        throw { message: "user have no team created" };
+      }
+    } else {
+      throw { message: "invalid input" };
+    }
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.message,
+      data: {},
+    });
+  }
+});
+
+router.post("/get_user_teams_predictor", verifyUser, async (req, res) => {
+  const { createrId } = req.body;
+
+  // Query for fetch all players playerid
+  const playersQuery =
+    "SELECT user_team.matchId, user_team_data.userTeamId AS userTeamId, teamTypeString, captain, userTeamLikes AS likes, viceCaptain, player1, player2, player3, player4, player5, player6, player7, player8, player9, player10, player11 FROM user_team_data JOIN user_team ON user_team.userTeamId = user_team_data.userTeamId JOIN team_type ON userTeamType = teamType WHERE user_team.userId = ?;";
+  const teamDetailsQuery =
+    "SELECT team1_id AS team1Id, team1.name AS team1Name, team1.displayName AS team1DisplayName, team1.teamFlagURLLocal AS team1FlagURL, team2_id AS team2Id, team2.name AS team2Name, team2.displayName AS team2DisplayName, team2.teamFlagURLLocal AS team2FlagURL FROM all_matches JOIN teams AS team1 ON team1.teamId = team1_id JOIN teams AS team2 ON team2.teamId = team2_id WHERE matchId = ?;";
+  const playerDetailsQuery =
+    "SELECT match_player_relation.playerId AS playerId,players.name AS playerName,players.displayName AS playerDisplayName,player_roles.roleId AS roleId,player_roles.roleName AS roleName,players.profilePictureURLLocal AS URL, points, credits, teams.teamId AS teamId FROM match_player_relation JOIN players ON players.playerId = match_player_relation.playerId JOIN player_roles ON players.role = player_roles.roleId JOIN teams ON teams.teamId = match_player_relation.teamId WHERE match_player_relation.playerId = ? AND match_player_relation.matchId = ?;";
+
+  try {
+    const players = await fetchData(playersQuery, [createrId]);
+    if (players.length > 0) {
       const fetchTeams = () =>
         new Promise((resolve, reject) => {
           let allTeams = [];
@@ -120,68 +243,75 @@ router.post("/get_user_teams", verifyUser, async (req, res) => {
                   viceCaptain: {},
                 },
               };
-
               const ignoreKeys = [
                 "captain",
                 "viceCaptain",
                 "teamTypeString",
                 "likes",
                 "userTeamId",
+                "matchId",
               ]; // keys to be ignored
 
-              // extract single team from teamData and store it
-              for (let j = 0; j < 2; j++) {
-                singleTeam.teams[j] = {
-                  ...singleTeam.teams[j],
-                  teamId: teamDetails[0][`team${j + 1}Id`],
-                  teamName: teamDetails[0][`team${j + 1}Name`],
-                  teamDisplayName: teamDetails[0][`team${j + 1}DisplayName`],
-                  teamFlagURL: teamDetails[0][`team${j + 1}FlagURL`],
-                };
-              }
+              const teamDetails = await fetchData(teamDetailsQuery, [
+                team.matchId,
+              ]);
+              if (teamDetails.length !== 0) {
+                // extract single team from teamData and store it
+                for (let j = 0; j < 2; j++) {
+                  singleTeam.teams[j] = {
+                    ...singleTeam.teams[j],
+                    teamId: teamDetails[0][`team${j + 1}Id`],
+                    teamName: teamDetails[0][`team${j + 1}Name`],
+                    teamDisplayName: teamDetails[0][`team${j + 1}DisplayName`],
+                    teamFlagURL: teamDetails[0][`team${j + 1}FlagURL`],
+                  };
+                }
 
-              let i = 0;
-              for (const key in team) {
-                if (!ignoreKeys.includes(key)) {
-                  const player = await fetchData(playerDetailsQuery, [
-                    team[key],
-                    matchId,
-                  ]);
+                let i = 0;
+                for (const key in team) {
+                  if (!ignoreKeys.includes(key)) {
+                    const player = await fetchData(playerDetailsQuery, [
+                      team[key],
+                      team.matchId,
+                    ]);
 
-                  // storing captains and vicecaptain details
-                  if (team[key] === team["captain"])
-                    singleTeam.teamsDetails.captain = player[0];
-                  else if (team[key] === team["viceCaptain"])
-                    singleTeam.teamsDetails.viceCaptain = player[0];
+                    // storing captains and vicecaptain details
+                    if (team[key] === team["captain"])
+                      singleTeam.teamsDetails.captain = player[0];
+                    else if (team[key] === team["viceCaptain"])
+                      singleTeam.teamsDetails.viceCaptain = player[0];
 
-                  // calculating how many credits used
-                  singleTeam.teamsDetails.creditUsed += player[0].credits;
+                    // calculating how many credits used
+                    singleTeam.teamsDetails.creditUsed += player[0].credits;
 
-                  // updating count of bowlers,batsman, wicketkeeper and allrounder
-                  if (player[0].roleName === "BOWLER")
-                    singleTeam.teamsDetails.totalBowlers++;
-                  else if (player[0].roleName === "BATSMAN")
-                    singleTeam.teamsDetails.totalBatsman++;
-                  else if (player[0].roleName === "WICKET_KEEPER")
-                    singleTeam.teamsDetails.totalWicketKeeper++;
-                  else if (player[0].roleName === "ALL_ROUNDER")
-                    singleTeam.teamsDetails.totalAllrounders++;
+                    // updating count of bowlers,batsman, wicketkeeper and allrounder
+                    if (player[0].roleName === "BOWLER")
+                      singleTeam.teamsDetails.totalBowlers++;
+                    else if (player[0].roleName === "BATSMAN")
+                      singleTeam.teamsDetails.totalBatsman++;
+                    else if (player[0].roleName === "WICKET_KEEPER")
+                      singleTeam.teamsDetails.totalWicketKeeper++;
+                    else if (player[0].roleName === "ALL_ROUNDER")
+                      singleTeam.teamsDetails.totalAllrounders++;
 
-                  // updating count of teams total player
-                  if (player[0].teamId === singleTeam.teams[0].teamId)
-                    singleTeam.teams[0].teamTotalPlayers++;
-                  else if (player[0].teamId === singleTeam.teams[1].teamId)
-                    singleTeam.teams[1].teamTotalPlayers++;
+                    // updating count of teams total player
+                    if (player[0].teamId === singleTeam.teams[0].teamId)
+                      singleTeam.teams[0].teamTotalPlayers++;
+                    else if (player[0].teamId === singleTeam.teams[1].teamId)
+                      singleTeam.teams[1].teamTotalPlayers++;
 
-                  i++;
+                    i++;
 
-                  if (i === 11) {
-                    allTeams.push(singleTeam); // push single player in team allteams
-                    if (players.length === index + 1) {
-                      resolve(allTeams);
+                    if (i === 11) {
+                      allTeams.push(singleTeam); // push single player in team allteams
+                      if (players.length === index + 1) {
+                        resolve(allTeams);
+                      }
                     }
                   }
                 }
+              } else {
+                throw { message: "team not exixts" };
               }
             } catch (error) {
               reject(error);
@@ -195,206 +325,8 @@ router.post("/get_user_teams", verifyUser, async (req, res) => {
         data: { userTeams: allTeams },
       });
     } else {
-      throw { message: "invalid input" };
+      throw { message: "user have no team created" };
     }
-  } catch (error) {
-    res.status(400).json({
-      status: false,
-      message: error.message,
-      data: {},
-    });
-  }
-});
-
-router.post("/get_user_teams_predictor", verifyUser, async (req, res) => {
-  const { userId } = req.body;
-
-  // Query for fetch all players playerid
-  const playersQuery =
-    "SELECT user_team.matchId, user_team_data.userTeamId AS userTeamId, teamTypeString, captain, userTeamLikes AS likes, viceCaptain, player1, player2, player3, player4, player5, player6, player7, player8, player9, player10, player11 FROM user_team_data JOIN user_team ON user_team.userTeamId = user_team_data.userTeamId JOIN team_type ON userTeamType = teamType WHERE user_team.userId = ?;";
-  const teamDetailsQuery =
-    "SELECT team1_id AS team1Id, team1.name AS team1Name, team1.displayName AS team1DisplayName, team1.teamFlagURLLocal AS team1FlagURL, team2_id AS team2Id, team2.name AS team2Name, team2.displayName AS team2DisplayName, team2.teamFlagURLLocal AS team2FlagURL FROM all_matches JOIN teams AS team1 ON team1.teamId = team1_id JOIN teams AS team2 ON team2.teamId = team2_id WHERE matchId = ?;";
-  const playerDetailsQuery =
-    "SELECT match_player_relation.playerId AS playerId,players.name AS playerName,players.displayName AS playerDisplayName,player_roles.roleId AS roleId,player_roles.roleName AS roleName,players.profilePictureURLLocal AS URL, points, credits, teams.teamId AS teamId FROM match_player_relation JOIN players ON players.playerId = match_player_relation.playerId JOIN player_roles ON players.role = player_roles.roleId JOIN teams ON teams.teamId = match_player_relation.teamId WHERE match_player_relation.playerId = ? AND match_player_relation.matchId = ?;";
-
-  try {
-    const players = await fetchData(playersQuery, [userId]);
-
-    const fetchTeams = () =>
-      new Promise((resolve, reject) => {
-        let allTeams = [];
-        players.forEach(async (team, index) => {
-          try {
-            let singleTeam = {
-              teams: [{ teamTotalPlayers: 0 }, { teamTotalPlayers: 0 }],
-              teamsDetails: {
-                userTeamId: team["userTeamId"],
-                creditUsed: 0,
-                teamType: team.teamTypeString,
-                totalWicketKeeper: 0,
-                totalBatsman: 0,
-                totalBowlers: 0,
-                totalAllrounders: 0,
-                captain: {},
-                viceCaptain: {},
-              },
-            };
-            const ignoreKeys = [
-              "captain",
-              "viceCaptain",
-              "teamTypeString",
-              "likes",
-              "userTeamId",
-              "matchId",
-            ]; // keys to be ignored
-
-            const teamDetails = await fetchData(teamDetailsQuery, [
-              team.matchId,
-            ]);
-            if (teamDetails.length !== 0) {
-              // extract single team from teamData and store it
-              for (let j = 0; j < 2; j++) {
-                singleTeam.teams[j] = {
-                  ...singleTeam.teams[j],
-                  teamId: teamDetails[0][`team${j + 1}Id`],
-                  teamName: teamDetails[0][`team${j + 1}Name`],
-                  teamDisplayName: teamDetails[0][`team${j + 1}DisplayName`],
-                  teamFlagURL: teamDetails[0][`team${j + 1}FlagURL`],
-                };
-              }
-
-              let i = 0;
-              for (const key in team) {
-                if (!ignoreKeys.includes(key)) {
-                  const player = await fetchData(playerDetailsQuery, [
-                    team[key],
-                    team.matchId,
-                  ]);
-
-                  // storing captains and vicecaptain details
-                  if (team[key] === team["captain"])
-                    singleTeam.teamsDetails.captain = player[0];
-                  else if (team[key] === team["viceCaptain"])
-                    singleTeam.teamsDetails.viceCaptain = player[0];
-
-                  // calculating how many credits used
-                  singleTeam.teamsDetails.creditUsed += player[0].credits;
-
-                  // updating count of bowlers,batsman, wicketkeeper and allrounder
-                  if (player[0].roleName === "BOWLER")
-                    singleTeam.teamsDetails.totalBowlers++;
-                  else if (player[0].roleName === "BATSMAN")
-                    singleTeam.teamsDetails.totalBatsman++;
-                  else if (player[0].roleName === "WICKET_KEEPER")
-                    singleTeam.teamsDetails.totalWicketKeeper++;
-                  else if (player[0].roleName === "ALL_ROUNDER")
-                    singleTeam.teamsDetails.totalAllrounders++;
-
-                  // updating count of teams total player
-                  if (player[0].teamId === singleTeam.teams[0].teamId)
-                    singleTeam.teams[0].teamTotalPlayers++;
-                  else if (player[0].teamId === singleTeam.teams[1].teamId)
-                    singleTeam.teams[1].teamTotalPlayers++;
-
-                  i++;
-
-                  if (i === 11) {
-                    allTeams.push(singleTeam); // push single player in team allteams
-                    if (players.length === index + 1) {
-                      resolve(allTeams);
-                    }
-                  }
-                }
-              }
-            } else {
-              throw { message: "team not exixts" };
-            }
-          } catch (error) {
-            reject(error);
-          }
-        });
-      });
-    const allTeams = await fetchTeams();
-    res.status(200).json({
-      status: true,
-      message: "success",
-      data: { userTeams: allTeams },
-    });
-    // players.forEach(async (team, index) => {
-    //   try {
-    //     let singleTeam = {
-    //       teams: [{ teamTotalPlayers: 0 }, { teamTotalPlayers: 0 }],
-    //       teamsDetails: {
-    //         userTeamId: team["userTeamId"],
-    //         creditUsed: 0,
-    //         teamType: team.teamTypeString,
-    //         totalWicketKeeper: 0,
-    //         totalBatsman: 0,
-    //         totalBowlers: 0,
-    //         totalAllrounders: 0,
-    //         captain: {},
-    //         viceCaptain: {},
-    //       },
-    //     };
-    //     const ignoreKeys = ["captain","viceCaptain","teamTypeString","likes","userTeamId", "matchId"]; // keys to be ignored
-
-    //     const teamDetails = await fetchData(teamDetailsQuery, [team.matchId]);
-
-    //     // extract single team from teamData and store it
-    //     for (let j = 0; j < 2; j++) {
-    //       singleTeam.teams[j] = {
-    //         ...singleTeam.teams[j],
-    //         teamId: teamDetails[0][`team${j+1}Id`],
-    //         teamName: teamDetails[0][`team${j+1}Name`],
-    //         teamDisplayName: teamDetails[0][`team${j+1}DisplayName`],
-    //         teamFlagURL: teamDetails[0][`team${j+1}FlagURL`]
-    //       }
-    //     };
-
-    //     let i = 0;
-    //     for (const key in team) {
-    //       if (!ignoreKeys.includes(key)) {
-    //         const player = await fetchData(playerDetailsQuery, [team[key], team.matchId]);
-
-    //         // storing captains and vicecaptain details
-    //         if (team[key] === team["captain"]) singleTeam.teamsDetails.captain = player[0];
-    //         else if (team[key] === team["viceCaptain"]) singleTeam.teamsDetails.viceCaptain =  player[0];
-
-    //         // calculating how many credits used
-    //         singleTeam.teamsDetails.creditUsed += player[0].credits;
-
-    //         // updating count of bowlers,batsman, wicketkeeper and allrounder
-    //         if (player[0].roleName === "BOWLER") singleTeam.teamsDetails.totalBowlers++;
-    //         else if (player[0].roleName === "BATSMAN") singleTeam.teamsDetails.totalBatsman++;
-    //         else if (player[0].roleName === "WICKET_KEEPER") singleTeam.teamsDetails.totalWicketKeeper++;
-    //         else if (player[0].roleName === "ALL_ROUNDER") singleTeam.teamsDetails.totalAllrounders++;
-
-    //         // updating count of teams total player
-    //         if (player[0].teamId === singleTeam.teams[0].teamId) singleTeam.teams[0].teamTotalPlayers++;
-    //         else if (player[0].teamId === singleTeam.teams[1].teamId) singleTeam.teams[1].teamTotalPlayers++;
-
-    //         i++;
-
-    //         if (i === 11) {
-    //           allTeams.push(singleTeam); // push single player in team allteams
-    //           if (players.length === index + 1) {
-    //             res.status(200).json({
-    //               status: true,
-    //               message: "success",
-    //               data: { userTeams: allTeams },
-    //             });
-    //           }
-    //         }
-    //       }
-    //     }
-    //   } catch (error) {
-    //     res.status(400).json({
-    //       status: false,
-    //       message: error.message,
-    //       data: {},
-    //     });
-    //   }
-    // });
   } catch (error) {
     res.status(400).json({
       status: false,

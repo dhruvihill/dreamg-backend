@@ -33,7 +33,10 @@ router.post("/register", async (req, res) => {
         phoneNumber,
       });
       const jwtData = { user: { userId: result.insertId } };
-      const token = await jwt.sign(jwtData, process.env.SECRET_KEY);
+      const token = await jwt.sign(
+        jwtData,
+        "FJSD357&*T4VH^&$%MZX#&HFWE()*78E#&$(*^)"
+      );
       res.status(200).json({
         status: true,
         message: "success",
@@ -79,7 +82,10 @@ router.post("/login", async (req, res) => {
             userId: userDetails[0].userId,
           },
         };
-        const token = await jwt.sign(jwtData, process.env.SECRET_KEY);
+        const token = await jwt.sign(
+          jwtData,
+          "FJSD357&*T4VH^&$%MZX#&HFWE()*78E#&$(*^)"
+        );
         userDetails[0].authToken = token;
         res.status(200).json({
           status: true,
