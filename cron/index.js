@@ -1,9 +1,9 @@
 const axios = require("axios");
 const mysql = require("mysql");
 const connection = mysql.createConnection({
-  host: process.env.HOST,
-  user: process.env.USER,
-  password: process.env.PASSWORD,
+  host: "localhost",
+  user: "root",
+  password: "",
   database: "test2",
 });
 
@@ -31,7 +31,7 @@ const makeRequest = (url, method, data) => {
     axios({
       url,
       method: method,
-      headers: { Cookie: process.env.SSID },
+      headers: { Cookie: "SSID=SSID9101099d-3d6c-455f-934a-24da0276d04d" },
       data,
     })
       .then((data) => {
