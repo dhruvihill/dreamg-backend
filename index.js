@@ -38,8 +38,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // applying middleware for serving static filess
-app.use("/public", express.static(path.join(__dirname, "public")));
-console.log(path.join(__dirname, "public"));
+app.use("/public", express.static(path.join(process.cwd(), "public")));
+console.log(path.join(process.cwd(), "public"));
 
 // Routes
 app.use("/api/v1/auth", require("./routes/auth"));
