@@ -26,14 +26,7 @@ try {
   connection.on("error", (err) => {
     console.log("db error", err.message);
     setTimeout(() => {
-      connection.connect((err) => {
-        try {
-          if (err) throw err;
-          else console.log("Connected Successfully");
-        } catch (error) {
-          console.log(error.message);
-        }
-      });
+      handleConnection();
     }, 2000);
   });
 } catch (error) {
@@ -46,6 +39,7 @@ app.use(bodyParser.json());
 
 // applying middleware for serving static filess
 app.use("/public", express.static(path.join(__dirname, "public")));
+console.log(path.join(__dirname, "public"));
 
 // Routes
 app.use("/api/v1/auth", require("./routes/auth"));
