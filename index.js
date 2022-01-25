@@ -11,14 +11,27 @@ const app = express();
 // fetchAndStore();
 
 // Connection to Database
-connection.connect((err) => {
-  try {
-    if (err) throw err;
-    else console.log("Connected Successfully");
-  } catch (error) {
-    console.log(error.message);
-  }
-});
+try {
+  const handleConnection = () => {
+    connection.connect((err) => {
+      try {
+        if (err) throw err;
+        else console.log("Connected Successfully");
+      } catch (error) {
+        console.log(error.message);
+      }
+    });
+  };
+  handleConnection();
+  connection.on("error", (err) => {
+    console.log("db error", err.message);
+    setTimeout(() => {
+      handleConnection();
+    }, 2000);
+  });
+} catch (error) {
+  console.log(error.message);
+}
 
 // Parsing body
 app.use(bodyParser.urlencoded({ extended: true }));

@@ -3,13 +3,17 @@ require("dotenv/config");
 
 // Creating Connection
 
-//
-const connection = mysql.createConnection({
-  host: process.env.CLEVER_CLOUD_HOST,
-  user: process.env.CLEVER_CLOUD_USER,
-  password: process.env.CLEVER_CLOUD_PASSWORD,
-  database: process.env.CLEVER_CLOUD_DATABASE_NAME,
-});
+let connection;
+try {
+  connection = mysql.createConnection({
+    host: process.env.CLEVER_CLOUD_HOST,
+    user: process.env.CLEVER_CLOUD_USER,
+    password: process.env.CLEVER_CLOUD_PASSWORD,
+    database: process.env.CLEVER_CLOUD_DATABASE_NAME,
+  });
+} catch (error) {
+  console.log(error.message);
+}
 console.log(
   process.env.CLEVER_CLOUD_HOST,
   process.env.CLEVER_CLOUD_USER,
