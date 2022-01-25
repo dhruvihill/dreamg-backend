@@ -1,7 +1,8 @@
 require("dotenv/config");
 const express = require("express");
 const bodyParser = require("body-parser");
-const connection = require("./database/db_connection");
+const mysql = require("mysql");
+let connection = require("./database/db_connection");
 const path = require("path");
 // const fetchAndStore = require("./cron/index");
 
@@ -11,35 +12,32 @@ const app = express();
 // fetchAndStore();
 
 // Connection to Database
-try {
-  const handleConnection = () => {
-    connection.connect((err) => {
-      try {
-        if (err) throw err;
-        else console.log("Connected Successfully");
-      } catch (error) {
-        console.log(error.message);
-      }
+connection.connect((err) => {
+  try {
+    if (err) throw err;
+    else console.log("Connected Successfully");
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+connection.on("error", (err) => {
+  console.log("db error", err.message);
+  if (err.message === "read ECONNRESET") {
+    connection = mysql.createConnection({
+      host: process.env.CLEVER_CLOUD_HOST,
+      user: process.env.CLEVER_CLOUD_USER,
+      password: process.env.CLEVER_CLOUD_PASSWORD,
+      database: process.env.CLEVER_CLOUD_DATABASE_NAME,
     });
-  };
-  handleConnection();
-  connection.on("error", (err) => {
-    console.log("db error", err.message);
-    setTimeout(() => {
-      handleConnection();
-    }, 2000);
-  });
-} catch (error) {
-  console.log(error.message);
-}
+  }
+});
 
 // Parsing body
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // applying middleware for serving static filess
-app.use("/public", express.static(path.join(process.cwd(), "public")));
-console.log(path.join(process.cwd(), "public"));
+app.use("/public", express.static(path.join(process.cwd(), "/public")));
 
 // Routes
 app.use("/api/v1/auth", require("./routes/auth"));

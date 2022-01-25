@@ -6,4 +6,9 @@ error handling for invalid json data
 single initialize fetchdata function
 verification of update profile
 
+******
+solving all kind of error releted to database (database disconnect)
+connect database again after disconnect
+******
+
 PROCEDURES/CATCH/VIEWS
