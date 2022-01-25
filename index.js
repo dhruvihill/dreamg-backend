@@ -26,7 +26,14 @@ try {
   connection.on("error", (err) => {
     console.log("db error", err.message);
     setTimeout(() => {
-      handleConnection();
+      connection.connect((err) => {
+        try {
+          if (err) throw err;
+          else console.log("Connected Successfully");
+        } catch (error) {
+          console.log(error.message);
+        }
+      });
     }, 2000);
   });
 } catch (error) {
