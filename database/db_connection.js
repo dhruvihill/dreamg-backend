@@ -54,11 +54,9 @@ connectToDb = () => {
   // error handling to Database
   connection.on("error", (err) => {
     console.log("db error", err.code);
-    if (err.code === "ECONNRESET") {
-      setTimeout(() => {
-        initializeConnection();
-      }, 2000);
-    }
+    setTimeout(() => {
+      initializeConnection();
+    }, 2000);
   });
 };
 
