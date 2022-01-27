@@ -29,6 +29,7 @@ const initializeConnection = () => {
       user: process.env.CLEVER_CLOUD_USER,
       password: process.env.CLEVER_CLOUD_PASSWORD,
       database: process.env.CLEVER_CLOUD_DATABASE_NAME,
+      multipleStatements: true,
     });
     connectToDb();
   } catch (error) {
@@ -71,4 +72,19 @@ const fetchData = (query, options = []) =>
     });
   });
 
-module.exports = fetchData;
+const updateLikes = (userId, teamId) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "CALL get_likes_isUserLiked(?, ?, @likes, @isUserLiked, @isTeamExists, @isUserExists); SELECT @likes, @isUserLiked, @isTeamExists, @isUserExists;",
+      [teamId, userId],
+      (err, res) => {
+        if (err) reject(err);
+        else {
+          resolve(res[1][0]);
+        }
+      }
+    );
+  });
+};
+
+module.exports = { fetchData, updateLikes };

@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const verifyUser = require("../middleware/verifyUser");
-const fetchData = require("../database/db_connection");
+const { fetchData, updateLikes } = require("../database/db_connection");
+const { default: axios } = require("axios");
 
 router.post("/get_predictions", verifyUser, async (req, res) => {
   const { matchId, filter } = req.body;
@@ -467,93 +468,119 @@ router.post("/get_user_teams_data", verifyUser, async (req, res) => {
 router.post("/update_user_team_likes", verifyUser, async (req, res) => {
   let { userId, teamId } = req.body;
 
-  if (!/[^0-9]/g.test(teamId)) {
-    const logUser = () =>
-      new Promise(async (resolve, reject) => {
-        try {
-          const responseData = await fetchData("INSERT INTO all_likes SET ?", {
-            userTeamId: teamId,
-            userId,
-          });
-          if (responseData) resolve();
-        } catch (error) {
-          reject(error);
-        }
-        // connection.query(
-        //   "INSERT INTO all_likes SET ?",
-        //   { userTeamId: teamId, userId },
-        //   (err) => {
-        //     if (err) reject(err);
-        //     else {
-        //       resolve();
-        //     }
-        //   }
-        // );
-      });
-    logUser()
-      .then(async () => {
-        let query =
-          "UPDATE user_team_data SET userTeamLikes = userTeamLikes + 1 WHERE userTeamId = ?";
-        try {
-          const response = await fetchData(query, [teamId]);
-          if (response.affectedRows > 0) {
-            res.status(200).json({
-              status: true,
-              message: "success",
-              data: {},
-            });
-          } else {
-            throw { message: "team not exists" };
-          }
-        } catch (error) {
-          res.status(400).json({
-            status: false,
-            message: error.message,
-            data: {},
-          });
-        }
-        // connection.query(query, [teamId], (err, response) => {
-        //   try {
-        //     if (err) throw err;
-        //     else {
-        //       if (response.affectedRows > 0) {
-        //         res.status(200).json({
-        //           status: true,
-        //           message: "success",
-        //           data: {},
-        //         });
-        //       } else {
-        //         throw { message: "team not exists" };
-        //       }
-        //     }
-        //   } catch (error) {
-        //     res.status(400).json({
-        //       status: false,
-        //       message: error.message,
-        //       data: {},
-        //     });
-        //   }
-        // });
-      })
-      .catch((error) => {
-        res.status(400).json({
-          status: false,
-          message: error.message.includes("Duplicate entry")
-            ? "Duplicate Entry"
-            : error.message,
-          data: {},
+  try {
+    if (!/[^0-9]/g.test(teamId)) {
+      const response = await updateLikes(userId, teamId);
+      if (response["@isTeamExists"] && response["@isUserExists"]) {
+        res.status(200).json({
+          status: true,
+          message: "success",
+          data: {
+            totalLikes: response["@likes"],
+            isUserLiked: response["@isUserLiked"],
+          },
         });
-      });
-  } else {
+      } else {
+        throw { message: "invalid input" };
+      }
+    } else {
+      throw { message: "invalid input" };
+    }
+  } catch (error) {
     res.status(400).json({
       status: false,
-      message: "invalid input",
+      message: error.message,
       data: {},
     });
   }
+
+  // if (!/[^0-9]/g.test(teamId)) {
+  //   const logUser = () =>
+  //     new Promise(async (resolve, reject) => {
+  //       try {
+  //         const responseData = await fetchData("INSERT INTO all_likes SET ?", {
+  //           userTeamId: teamId,
+  //           userId,
+  //         });
+  //         if (responseData) resolve();
+  //       } catch (error) {
+  //         reject(error);
+  //       }
+  //       // connection.query(
+  //       //   "INSERT INTO all_likes SET ?",
+  //       //   { userTeamId: teamId, userId },
+  //       //   (err) => {
+  //       //     if (err) reject(err);
+  //       //     else {
+  //       //       resolve();
+  //       //     }
+  //       //   }
+  //       // );
+  //     });
+  //   logUser()
+  //     .then(async () => {
+  //       let query =
+  //         "UPDATE user_team_data SET userTeamLikes = userTeamLikes + 1 WHERE userTeamId = ?";
+  //       try {
+  //         const response = await fetchData(query, [teamId]);
+  //         if (response.affectedRows > 0) {
+  //           res.status(200).json({
+  //             status: true,
+  //             message: "success",
+  //             data: {},
+  //           });
+  //         } else {
+  //           throw { message: "team not exists" };
+  //         }
+  //       } catch (error) {
+  //         res.status(400).json({
+  //           status: false,
+  //           message: error.message,
+  //           data: {},
+  //         });
+  //       }
+  //       // connection.query(query, [teamId], (err, response) => {
+  //       //   try {
+  //       //     if (err) throw err;
+  //       //     else {
+  //       //       if (response.affectedRows > 0) {
+  //       //         res.status(200).json({
+  //       //           status: true,
+  //       //           message: "success",
+  //       //           data: {},
+  //       //         });
+  //       //       } else {
+  //       //         throw { message: "team not exists" };
+  //       //       }
+  //       //     }
+  //       //   } catch (error) {
+  //       //     res.status(400).json({
+  //       //       status: false,
+  //       //       message: error.message,
+  //       //       data: {},
+  //       //     });
+  //       //   }
+  //       // });
+  //     })
+  //     .catch((error) => {
+  //       res.status(400).json({
+  //         status: false,
+  //         message: error.message.includes("Duplicate entry")
+  //           ? "Duplicate Entry"
+  //           : error.message,
+  //         data: {},
+  //       });
+  //     });
+  // } else {
+  //   res.status(400).json({
+  //     status: false,
+  //     message: "invalid input",
+  //     data: {},
+  //   });
+  // }
 });
 
-router.post("/update_user_team_views", verifyUser, (req, res) => {
+router.post("/update_user_team_views", verifyUser, async (req, res) => {
   let { userId, teamId } = req.body;
 
   if (!/[^0-9]/g.test(teamId)) {
@@ -641,12 +668,13 @@ router.post("/set_discussion", verifyUser, async (req, res) => {
   // userId -> whos have made request means messenger who sends the message
   // createrId -> whose team is
   const { matchId, userId, message, createrId } = req.body;
-  if (
-    !/[^0-9]/g.test(matchId) &&
-    !/[^0-9]/g.test(createrId) &&
-    message.length <= 5000
-  ) {
-    try {
+  const { authtoken } = req.headers;
+  try {
+    if (
+      !/[^0-9]/g.test(matchId) &&
+      !/[^0-9]/g.test(createrId) &&
+      message.length <= 5000
+    ) {
       const response = await fetchData("INSERT INTO discussion SET ? ;", {
         matchId,
         userId: createrId,
@@ -654,10 +682,21 @@ router.post("/set_discussion", verifyUser, async (req, res) => {
         message,
       });
       if (response) {
+        const { data } = await axios({
+          method: "POST",
+          url: `${req.protocol}://${req.headers.host}/api/v1/prediction/get_discussion`,
+          headers: { authtoken },
+          data: {
+            matchId,
+            createrId,
+          },
+        });
         res.status(200).json({
           status: true,
           message: "success",
-          data: {},
+          data: {
+            message: [...data.data.messages],
+          },
         });
       }
       // connection.query(
@@ -682,17 +721,13 @@ router.post("/set_discussion", verifyUser, async (req, res) => {
       //     }
       //   }
       // );
-    } catch (error) {
-      res.status(400).json({
-        status: false,
-        message: error.message,
-        data: {},
-      });
+    } else {
+      throw { message: "invalid input" };
     }
-  } else {
+  } catch (error) {
     res.status(400).json({
       status: false,
-      message: "invalid input",
+      message: error.message,
       data: {},
     });
   }
@@ -701,8 +736,8 @@ router.post("/set_discussion", verifyUser, async (req, res) => {
 router.post("/get_discussion", verifyUser, async (req, res) => {
   const { matchId, createrId } = req.body;
 
-  if (!/[^0-9]/g.test(matchId) && !/[^0-9]/g.test(createrId)) {
-    try {
+  try {
+    if (!/[^0-9]/g.test(matchId) && !/[^0-9]/g.test(createrId)) {
       const response = await fetchData(
         "SELECT messengerId, displayPicture, firstName AS firstName, message,messageTime AS messageTime FROM discussion JOIN all_users ON messengerId = all_users.userId WHERE matchId = ? AND discussion.userId = ? ORDER BY messageTime DESC LIMIT 50;",
         [matchId, createrId]
@@ -714,41 +749,37 @@ router.post("/get_discussion", verifyUser, async (req, res) => {
           messages: response,
         },
       });
-    } catch (error) {
-      res.status(400).json({
-        status: false,
-        message: error.message,
-        data: {},
-      });
+      // connection.query(
+      //   "SELECT messengerId, displayPicture, firstName AS firstName, message,messageTime AS messageTime FROM discussion JOIN all_users ON messengerId = all_users.userId WHERE matchId = ? AND discussion.userId = ? ORDER BY messageTime DESC LIMIT 50;",
+      //   [matchId, createrId],
+      //   (err, response) => {
+      //     try {
+      //       if (err) throw err;
+      //       else {
+      //         res.status(200).json({
+      //           status: true,
+      //           message: "success",
+      //           data: {
+      //             messages: response,
+      //           },
+      //         });
+      //       }
+      //     } catch (error) {
+      //       res.status(400).json({
+      //         status: false,
+      //         message: error.message,
+      //         data: {},
+      //       });
+      //     }
+      //   }
+      // );
+    } else {
+      throw { message: "invalid input" };
     }
-    // connection.query(
-    //   "SELECT messengerId, displayPicture, firstName AS firstName, message,messageTime AS messageTime FROM discussion JOIN all_users ON messengerId = all_users.userId WHERE matchId = ? AND discussion.userId = ? ORDER BY messageTime DESC LIMIT 50;",
-    //   [matchId, createrId],
-    //   (err, response) => {
-    //     try {
-    //       if (err) throw err;
-    //       else {
-    //         res.status(200).json({
-    //           status: true,
-    //           message: "success",
-    //           data: {
-    //             messages: response,
-    //           },
-    //         });
-    //       }
-    //     } catch (error) {
-    //       res.status(400).json({
-    //         status: false,
-    //         message: error.message,
-    //         data: {},
-    //       });
-    //     }
-    //   }
-    // );
-  } else {
+  } catch (error) {
     res.status(400).json({
       status: false,
-      message: "invalid input",
+      message: error.message,
       data: {},
     });
   }

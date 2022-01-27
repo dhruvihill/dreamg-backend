@@ -3,7 +3,7 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const verifyUser = require("../middleware/verifyUser");
 const verifyProfile = require("../middleware/verifyProfile");
-const fetchData = require("../database/db_connection");
+const { fetchData } = require("../database/db_connection");
 
 // Creating user
 router.post("/register", async (req, res) => {

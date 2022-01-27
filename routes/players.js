@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const verifyUser = require("../middleware/verifyUser");
-const fetchData = require("../database/db_connection");
+const { fetchData } = require("../database/db_connection");
 
 router.post("/getplayers", verifyUser, async (req, res) => {
   const { matchId } = req.body;

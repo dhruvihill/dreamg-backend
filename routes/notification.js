@@ -1,7 +1,7 @@
 const express = require("express");
 const verifyUser = require("../middleware/verifyUser");
 const router = express.Router();
-const fetchData = require("../database/db_connection");
+const { fetchData } = require("../database/db_connection");
 
 router.post("/get_notifications", verifyUser, async (req, res) => {
   const { userId } = req.body;

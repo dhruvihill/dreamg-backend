@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const verifyUser = require("../middleware/verifyUser");
 const axios = require("axios");
-const fetchData = require("../database/db_connection");
+const { fetchData } = require("../database/db_connection");
 // const fs = require("fs");
 // const path = require("path");
 
