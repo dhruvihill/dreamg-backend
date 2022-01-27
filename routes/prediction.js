@@ -464,49 +464,76 @@ router.post("/get_user_teams_data", verifyUser, async (req, res) => {
   }
 });
 
-router.post("/update_user_team_likes", verifyUser, (req, res) => {
+router.post("/update_user_team_likes", verifyUser, async (req, res) => {
   let { userId, teamId } = req.body;
 
   if (!/[^0-9]/g.test(teamId)) {
     const logUser = () =>
-      new Promise((resolve, reject) => {
-        connection.query(
-          "INSERT INTO all_likes SET ?",
-          { userTeamId: teamId, userId },
-          (err) => {
-            if (err) reject(err);
-            else {
-              resolve();
-            }
-          }
-        );
+      new Promise(async (resolve, reject) => {
+        try {
+          const responseData = await fetchData("INSERT INTO all_likes SET ?", {
+            userTeamId: teamId,
+            userId,
+          });
+          if (responseData) resolve();
+        } catch (error) {
+          reject(error);
+        }
+        // connection.query(
+        //   "INSERT INTO all_likes SET ?",
+        //   { userTeamId: teamId, userId },
+        //   (err) => {
+        //     if (err) reject(err);
+        //     else {
+        //       resolve();
+        //     }
+        //   }
+        // );
       });
     logUser()
-      .then(() => {
+      .then(async () => {
         let query =
           "UPDATE user_team_data SET userTeamLikes = userTeamLikes + 1 WHERE userTeamId = ?";
-        connection.query(query, [teamId], (err, response) => {
-          try {
-            if (err) throw err;
-            else {
-              if (response.affectedRows > 0) {
-                res.status(200).json({
-                  status: true,
-                  message: "success",
-                  data: {},
-                });
-              } else {
-                throw { message: "team not exists" };
-              }
-            }
-          } catch (error) {
-            res.status(400).json({
-              status: false,
-              message: error.message,
+        try {
+          const response = await fetchData(query, [teamId]);
+          if (response.affectedRows > 0) {
+            res.status(200).json({
+              status: true,
+              message: "success",
               data: {},
             });
+          } else {
+            throw { message: "team not exists" };
           }
-        });
+        } catch (error) {
+          res.status(400).json({
+            status: false,
+            message: error.message,
+            data: {},
+          });
+        }
+        // connection.query(query, [teamId], (err, response) => {
+        //   try {
+        //     if (err) throw err;
+        //     else {
+        //       if (response.affectedRows > 0) {
+        //         res.status(200).json({
+        //           status: true,
+        //           message: "success",
+        //           data: {},
+        //         });
+        //       } else {
+        //         throw { message: "team not exists" };
+        //       }
+        //     }
+        //   } catch (error) {
+        //     res.status(400).json({
+        //       status: false,
+        //       message: error.message,
+        //       data: {},
+        //     });
+        //   }
+        // });
       })
       .catch((error) => {
         res.status(400).json({
@@ -531,29 +558,31 @@ router.post("/update_user_team_views", verifyUser, (req, res) => {
 
   if (!/[^0-9]/g.test(teamId)) {
     const checkUserViewCountLog = () =>
-      new Promise((resolve, reject) => {
-        connection.query(
-          "SELECT viewCount FROM all_views WHERE userTeamId = ? AND userId = ?",
-          [teamId, userId],
-          (err, response) => {
-            if (err) reject(err);
-            else {
-              resolve(response);
-            }
-          }
-        );
+      new Promise(async (resolve, reject) => {
+        try {
+          const response = await fetchData(
+            "SELECT viewCount FROM all_views WHERE userTeamId = ? AND userId = ?",
+            [teamId, userId]
+          );
+          if (response) resolve(response);
+        } catch (error) {
+          reject(error);
+        }
+        // connection.query(
+        //   "SELECT viewCount FROM all_views WHERE userTeamId = ? AND userId = ?",
+        //   [teamId, userId],
+        //   (err, response) => {
+        //     if (err) reject(err);
+        //     else {
+        //       resolve(response);
+        //     }
+        //   }
+        // );
       });
     checkUserViewCountLog()
       .then((response) => {
-        const updateOrInsert = (query, options) =>
-          new Promise((resolve, reject) => {
-            connection.query(query, options, (err, responseData) => {
-              if (err) reject(err);
-              else resolve();
-            });
-          });
         if (response.length > 0) {
-          updateOrInsert(
+          fetchData(
             "UPDATE all_views SET viewCount = viewCount + 1 WHERE userTeamId = ? AND userId = ?",
             [teamId, userId]
           )
@@ -572,7 +601,7 @@ router.post("/update_user_team_views", verifyUser, (req, res) => {
               });
             });
         } else {
-          updateOrInsert("INSERT INTO all_views SET ?", {
+          fetchData("INSERT INTO all_views SET ?", {
             userTeamId: teamId,
             userId,
           })
@@ -608,7 +637,7 @@ router.post("/update_user_team_views", verifyUser, (req, res) => {
   }
 });
 
-router.post("/set_discussion", verifyUser, (req, res) => {
+router.post("/set_discussion", verifyUser, async (req, res) => {
   // userId -> whos have made request means messenger who sends the message
   // createrId -> whose team is
   const { matchId, userId, message, createrId } = req.body;
@@ -617,28 +646,49 @@ router.post("/set_discussion", verifyUser, (req, res) => {
     !/[^0-9]/g.test(createrId) &&
     message.length <= 5000
   ) {
-    connection.query(
-      "INSERT INTO discussion SET ? ;",
-      { matchId, userId: createrId, messengerId: userId, message },
-      (err, response) => {
-        try {
-          if (err) throw err;
-          else {
-            res.status(200).json({
-              status: true,
-              message: "success",
-              data: {},
-            });
-          }
-        } catch (error) {
-          res.status(400).json({
-            status: false,
-            message: error.message,
-            data: {},
-          });
-        }
+    try {
+      const response = await fetchData("INSERT INTO discussion SET ? ;", {
+        matchId,
+        userId: createrId,
+        messengerId: userId,
+        message,
+      });
+      if (response) {
+        res.status(200).json({
+          status: true,
+          message: "success",
+          data: {},
+        });
       }
-    );
+      // connection.query(
+      //   "INSERT INTO discussion SET ? ;",
+      //   { matchId, userId: createrId, messengerId: userId, message },
+      //   (err, response) => {
+      //     try {
+      //       if (err) throw err;
+      //       else {
+      //         res.status(200).json({
+      //           status: true,
+      //           message: "success",
+      //           data: {},
+      //         });
+      //       }
+      //     } catch (error) {
+      //       res.status(400).json({
+      //         status: false,
+      //         message: error.message,
+      //         data: {},
+      //       });
+      //     }
+      //   }
+      // );
+    } catch (error) {
+      res.status(400).json({
+        status: false,
+        message: error.message,
+        data: {},
+      });
+    }
   } else {
     res.status(400).json({
       status: false,
@@ -648,34 +698,53 @@ router.post("/set_discussion", verifyUser, (req, res) => {
   }
 });
 
-router.post("/get_discussion", verifyUser, (req, res) => {
+router.post("/get_discussion", verifyUser, async (req, res) => {
   const { matchId, createrId } = req.body;
 
   if (!/[^0-9]/g.test(matchId) && !/[^0-9]/g.test(createrId)) {
-    connection.query(
-      "SELECT messengerId, displayPicture, firstName AS firstName, message,messageTime AS messageTime FROM discussion JOIN all_users ON messengerId = all_users.userId WHERE matchId = ? AND discussion.userId = ? ORDER BY messageTime DESC LIMIT 50;",
-      [matchId, createrId],
-      (err, response) => {
-        try {
-          if (err) throw err;
-          else {
-            res.status(200).json({
-              status: true,
-              message: "success",
-              data: {
-                messages: response,
-              },
-            });
-          }
-        } catch (error) {
-          res.status(400).json({
-            status: false,
-            message: error.message,
-            data: {},
-          });
-        }
-      }
-    );
+    try {
+      const response = await fetchData(
+        "SELECT messengerId, displayPicture, firstName AS firstName, message,messageTime AS messageTime FROM discussion JOIN all_users ON messengerId = all_users.userId WHERE matchId = ? AND discussion.userId = ? ORDER BY messageTime DESC LIMIT 50;",
+        [matchId, createrId]
+      );
+      res.status(200).json({
+        status: true,
+        message: "success",
+        data: {
+          messages: response,
+        },
+      });
+    } catch (error) {
+      res.status(400).json({
+        status: false,
+        message: error.message,
+        data: {},
+      });
+    }
+    // connection.query(
+    //   "SELECT messengerId, displayPicture, firstName AS firstName, message,messageTime AS messageTime FROM discussion JOIN all_users ON messengerId = all_users.userId WHERE matchId = ? AND discussion.userId = ? ORDER BY messageTime DESC LIMIT 50;",
+    //   [matchId, createrId],
+    //   (err, response) => {
+    //     try {
+    //       if (err) throw err;
+    //       else {
+    //         res.status(200).json({
+    //           status: true,
+    //           message: "success",
+    //           data: {
+    //             messages: response,
+    //           },
+    //         });
+    //       }
+    //     } catch (error) {
+    //       res.status(400).json({
+    //         status: false,
+    //         message: error.message,
+    //         data: {},
+    //       });
+    //     }
+    //   }
+    // );
   } else {
     res.status(400).json({
       status: false,
@@ -685,7 +754,7 @@ router.post("/get_discussion", verifyUser, (req, res) => {
   }
 });
 
-router.post("/compare_teams", verifyUser, (req, res) => {
+router.post("/compare_teams", verifyUser, async (req, res) => {
   const { matchId } = req.body;
 
   const allPlayersForMatch =
@@ -694,61 +763,98 @@ router.post("/compare_teams", verifyUser, (req, res) => {
     "SELECT matchId, matchStartTimeMilliSeconds AS matchStartTime, venue, seriesDname AS seriesDisplayName,team1_id AS team1Id,team1.displayName AS team1DisplayName, team1.name AS team1Name,team1.teamFlagUrlLocal AS team1FlagURL,team2_id AS team2Id,team2.displayName AS team2DisplayName, team2.name AS team2Name,team2.teamFlagUrlLocal AS team2FlagURL FROM `all_matches` JOIN teams AS team1 ON team1.teamId = team1_id JOIN teams AS team2 ON team2.teamId = team2_id WHERE matchId = ?;";
 
   if (!/[^0-9]/g.test(matchId)) {
-    connection.query(allPlayersForMatch, [matchId], (err, response) => {
-      try {
-        if (err) throw err;
-        else {
-          connection.query(matchDetails, [matchId], (error, responseData) => {
-            try {
-              if (error) throw error;
-              else {
-                // changing server address
-                response.forEach((element) => {
-                  element.URL = element.URL.replace(
-                    "http://192.168.1.32:3000",
-                    `${req.protocol}://${req.headers.host}`
-                  );
-                  element.flagURL = element.flagURL.replace(
-                    "http://192.168.1.32:3000",
-                    `${req.protocol}://${req.headers.host}`
-                  );
-                });
-                responseData[0].team1FlagURL =
-                  responseData[0].team1FlagURL.replace(
-                    "http://192.168.1.32:3000",
-                    `${req.protocol}://${req.headers.host}`
-                  );
-                responseData[0].team2FlagURL =
-                  responseData[0].team2FlagURL.replace(
-                    "http://192.168.1.32:3000",
-                    `${req.protocol}://${req.headers.host}`
-                  );
-                res.status(200).json({
-                  status: true,
-                  message: "success",
-                  data: {
-                    players: response,
-                    matchDetails: responseData[0],
-                  },
-                });
-              }
-            } catch (error) {
-              res.status(400).json({
-                status: false,
-                message: error.message,
-                data: {},
-              });
-            }
-          });
-        }
-      } catch (error) {
-        res.status(400).json({
-          status: false,
-          message: error.message,
-          data: {},
-        });
-      }
-    });
+    try {
+      const response = await fetchData(allPlayersForMatch, [matchId]);
+      const responseData = await fetchData(matchDetails, [matchId]);
+
+      response.forEach((element) => {
+        element.URL = element.URL.replace(
+          "http://192.168.1.32:3000",
+          `${req.protocol}://${req.headers.host}`
+        );
+        element.flagURL = element.flagURL.replace(
+          "http://192.168.1.32:3000",
+          `${req.protocol}://${req.headers.host}`
+        );
+      });
+      responseData[0].team1FlagURL = responseData[0].team1FlagURL.replace(
+        "http://192.168.1.32:3000",
+        `${req.protocol}://${req.headers.host}`
+      );
+      responseData[0].team2FlagURL = responseData[0].team2FlagURL.replace(
+        "http://192.168.1.32:3000",
+        `${req.protocol}://${req.headers.host}`
+      );
+      res.status(200).json({
+        status: true,
+        message: "success",
+        data: {
+          players: response,
+          matchDetails: responseData[0],
+        },
+      });
+    } catch (error) {
+      res.status(400).json({
+        status: false,
+        message: error.message,
+        data: {},
+      });
+    }
+    // connection.query(allPlayersForMatch, [matchId], (err, response) => {
+    //   try {
+    //     if (err) throw err;
+    //     else {
+    //       connection.query(matchDetails, [matchId], (error, responseData) => {
+    //         try {
+    //           if (error) throw error;
+    //           else {
+    //             // changing server address
+    //             response.forEach((element) => {
+    //               element.URL = element.URL.replace(
+    //                 "http://192.168.1.32:3000",
+    //                 `${req.protocol}://${req.headers.host}`
+    //               );
+    //               element.flagURL = element.flagURL.replace(
+    //                 "http://192.168.1.32:3000",
+    //                 `${req.protocol}://${req.headers.host}`
+    //               );
+    //             });
+    //             responseData[0].team1FlagURL =
+    //               responseData[0].team1FlagURL.replace(
+    //                 "http://192.168.1.32:3000",
+    //                 `${req.protocol}://${req.headers.host}`
+    //               );
+    //             responseData[0].team2FlagURL =
+    //               responseData[0].team2FlagURL.replace(
+    //                 "http://192.168.1.32:3000",
+    //                 `${req.protocol}://${req.headers.host}`
+    //               );
+    //             res.status(200).json({
+    //               status: true,
+    //               message: "success",
+    //               data: {
+    //                 players: response,
+    //                 matchDetails: responseData[0],
+    //               },
+    //             });
+    //           }
+    //         } catch (error) {
+    //           res.status(400).json({
+    //             status: false,
+    //             message: error.message,
+    //             data: {},
+    //           });
+    //         }
+    //       });
+    //     }
+    //   } catch (error) {
+    //     res.status(400).json({
+    //       status: false,
+    //       message: error.message,
+    //       data: {},
+    //     });
+    //   }
+    // });
   } else {
     res.status(400).json({
       status: false,
