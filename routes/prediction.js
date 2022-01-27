@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const verifyUser = require("../middleware/verifyUser");
 const { fetchData, updateLikes } = require("../database/db_connection");
-const { default: axios } = require("axios");
 
 router.post("/get_predictions", verifyUser, async (req, res) => {
   const { matchId, filter } = req.body;
@@ -668,7 +667,6 @@ router.post("/set_discussion", verifyUser, async (req, res) => {
   // userId -> whos have made request means messenger who sends the message
   // createrId -> whose team is
   const { matchId, userId, message, createrId } = req.body;
-  const { authtoken } = req.headers;
   try {
     if (
       !/[^0-9]/g.test(matchId) &&
@@ -682,20 +680,15 @@ router.post("/set_discussion", verifyUser, async (req, res) => {
         message,
       });
       if (response) {
-        const { data } = await axios({
-          method: "POST",
-          url: `${req.protocol}://${req.headers.host}/api/v1/prediction/get_discussion`,
-          headers: { authtoken },
-          data: {
-            matchId,
-            createrId,
-          },
-        });
+        const discussionObject = await fetchData(
+          "SELECT messengerId, displayPicture, firstName AS firstName, message,messageTime AS messageTime FROM discussion JOIN all_users ON messengerId = all_users.userId WHERE discussionId = ? ORDER BY messageTime",
+          [response.insertId]
+        );
         res.status(200).json({
           status: true,
           message: "success",
           data: {
-            message: [...data.data.messages],
+            messages: discussionObject[0],
           },
         });
       }

@@ -75,7 +75,7 @@ const fetchData = (query, options = []) =>
 const updateLikes = (userId, teamId) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "CALL get_likes_isUserLiked(?, ?, @likes, @isUserLiked, @isTeamExists, @isUserExists); SELECT @likes, @isUserLiked, @isTeamExists, @isUserExists;",
+      "CALL update_likes(?, ?, @likes, @isUserLiked, @isTeamExists, @isUserExists); SELECT @likes, @isUserLiked, @isTeamExists, @isUserExists;",
       [teamId, userId],
       (err, res) => {
         if (err) reject(err);
