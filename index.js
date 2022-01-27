@@ -1,54 +1,9 @@
 require("dotenv/config");
 const express = require("express");
 const bodyParser = require("body-parser");
-const mysql = require("mysql");
 const path = require("path");
-// const fetchAndStore = require("./cron/index");
 
 const app = express();
-let connection;
-const initializeConnection = () => {
-  try {
-    connection = mysql.createConnection({
-      host: process.env.CLEVER_CLOUD_HOST,
-      user: process.env.CLEVER_CLOUD_USER,
-      password: process.env.CLEVER_CLOUD_PASSWORD,
-      database: process.env.CLEVER_CLOUD_DATABASE_NAME,
-    });
-    connectToDb();
-  } catch (error) {
-    console.log(error.message);
-  }
-};
-connectToDb = () => {
-  connection.connect((err) => {
-    try {
-      if (err) throw err;
-      else console.log("Connected Successfully");
-    } catch (error) {
-      console.log(error.message);
-      if (error.message.includes("ECONNREFUSED")) {
-        // some email stuff goes here
-      }
-      setTimeout(() => {
-        initializeConnection();
-      }, 3000);
-    }
-  });
-};
-
-// initialize connection and connection to db
-initializeConnection();
-
-// error handling to Database
-connection.on("error", (err) => {
-  console.log("db error", err.code);
-  if (err.code === "ECONNRESET") {
-    setTimeout(() => {
-      initializeConnection();
-    }, 2000);
-  }
-});
 
 // creates Cron job
 // fetchAndStore();
@@ -58,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // applying middleware for serving static filess
-app.use("/public", express.static(path.join(process.cwd(), "/public")));
+app.use("/public", express.static(path.join(__dirname, "/public")));
 
 // Routes
 app.use("/api/v1/auth", require("./routes/auth"));

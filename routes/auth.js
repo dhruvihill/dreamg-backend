@@ -1,17 +1,9 @@
 const express = require("express");
-const connection = require("../database/db_connection");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const verifyUser = require("../middleware/verifyUser");
 const verifyProfile = require("../middleware/verifyProfile");
-
-const fetchData = (query, options = []) =>
-  new Promise((resolve, reject) => {
-    connection.query(query, options, (err, response) => {
-      if (err) reject(err);
-      else resolve(response);
-    });
-  });
+const fetchData = require("../database/db_connection");
 
 // Creating user
 router.post("/register", async (req, res) => {
@@ -21,7 +13,7 @@ router.post("/register", async (req, res) => {
   const regx = /[^0-9]/g;
 
   // return true if any other character rather than 0-9
-  if (regx.test(phoneNumber)) {
+  if (regx.test(phoneNumber) || phoneNumber.length !== 10) {
     res.status(400).json({
       status: false,
       message: "invalid input",
@@ -61,12 +53,17 @@ router.post("/login", async (req, res) => {
   const regx = /[^0-9]/g;
 
   // return true if any other character rather than 0-9
-  if (regx.test(phoneNumber)) {
+  if (regx.test(phoneNumber) || phoneNumber.length !== 10) {
     res.status(400).json({
       status: false,
       message: "invalid input",
       data: {},
     });
+    // res.status(400).json({
+    //   status: false,
+    //   message: "invalid input",
+    //   data: {},
+    // });
   } else {
     try {
       const userDetails = await fetchData(
@@ -106,7 +103,7 @@ router.post("/check_user", async (req, res) => {
   const regx = /[^0-9]/g;
 
   // return true if any other character rather than 0-9
-  if (regx.test(phoneNumber)) {
+  if (regx.test(phoneNumber) || phoneNumber.length !== 10) {
     res.status(400).json({
       status: false,
       message: "invalid input",
@@ -116,14 +113,12 @@ router.post("/check_user", async (req, res) => {
     const responseQuery = "SELECT userId FROM all_users WHERE phoneNumber = ?";
 
     try {
-      const response = await fetchData(responseQuery, [phoneNumber]);
-      if (response.length > 0) {
+      const responseData = await fetchData(responseQuery, [phoneNumber]);
+      if (responseData.length > 0) {
         res.status(200).json({
           status: true,
           message: "success",
-          data: {
-            userId: response[0].userId,
-          },
+          data: { userId: responseData[0].userId },
         });
       } else {
         throw { message: "user does not exists" };
@@ -131,7 +126,9 @@ router.post("/check_user", async (req, res) => {
     } catch (error) {
       res.status(400).json({
         status: false,
-        message: error.message,
+        message: error.message.includes("Duplicate entry")
+          ? "Duplicate entry"
+          : error.message,
         data: {},
       });
     }

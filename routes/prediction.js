@@ -1,15 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const connection = require("../database/db_connection");
 const verifyUser = require("../middleware/verifyUser");
-
-const fetchData = (query, options = []) =>
-  new Promise((resolve, reject) => {
-    connection.query(query, options, (err, response) => {
-      if (err) reject(err);
-      else resolve(response);
-    });
-  });
+const fetchData = require("../database/db_connection");
 
 router.post("/get_predictions", verifyUser, async (req, res) => {
   const { matchId, filter } = req.body;

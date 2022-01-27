@@ -1,18 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const connection = require("../database/db_connection");
 const verifyUser = require("../middleware/verifyUser");
 const axios = require("axios");
+const fetchData = require("../database/db_connection");
 // const fs = require("fs");
 // const path = require("path");
-
-const fetchData = (query, options = []) =>
-  new Promise((resolve, reject) => {
-    connection.query(query, options, (err, response) => {
-      if (err) reject(err);
-      else resolve(response);
-    });
-  });
 
 router.get("/", verifyUser, async (req, res) => {
   const { userId } = req.body;
