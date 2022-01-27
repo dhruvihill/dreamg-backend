@@ -366,7 +366,7 @@ router.post("/get_user_teams_data", verifyUser, async (req, res) => {
 
   // queries to fetch data
   const fetchPlayerIdQuery =
-    "SELECT (SELECT COALESCE((SELECT userId FROM all_likes WHERE userTeamId = ? AND userId = ?), 0)) AS isUserLiked, user_team.matchId, user_team_data.userTeamId AS userTeamId, teamTypeString, captain, userTeamLikes AS likes, viceCaptain, player1, player2, player3, player4, player5, player6, player7, player8, player9, player10, player11 FROM user_team JOIN user_team_data ON user_team.userTeamId = user_team_data.userTeamId JOIN team_type ON userTeamType = teamType WHERE user_team_data.userTeamId = ? LIMIT 1;";
+    "SELECT EXISTS(SELECT userId FROM all_likes WHERE userTeamId = ? AND userId = ?) AS isUserLiked, user_team.matchId, user_team_data.userTeamId AS userTeamId, teamTypeString, captain, userTeamLikes AS likes, viceCaptain, player1, player2, player3, player4, player5, player6, player7, player8, player9, player10, player11 FROM user_team JOIN user_team_data ON user_team.userTeamId = user_team_data.userTeamId JOIN team_type ON userTeamType = teamType WHERE user_team_data.userTeamId = ? LIMIT 1;";
   const teamQuery =
     "SELECT team1_id AS team1Id, team1.name AS team1Name, team1.displayName AS team1DisplayName, team1.teamFlagURLLocal AS team1FlagURL, team2_id AS team2Id, team2.name AS team2Name, team2.displayName AS team2DisplayName, team2.teamFlagURLLocal AS team2FlagURL FROM all_matches JOIN teams AS team1 ON team1.teamId = team1_id JOIN teams AS team2 ON team2.teamId = team2_id WHERE matchId = ?;";
   const playerQuery =
