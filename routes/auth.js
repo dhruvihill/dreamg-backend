@@ -137,7 +137,7 @@ router.post("/check_user", async (req, res) => {
 
 // fetching user data
 router.post("/getuserprofile", verifyUser, async (req, res) => {
-  const { userId } = req.body;
+  const { predictorId } = req.body;
 
   const pointsQuery = `SELECT all_users.userId, all_users.firstName, all_users.lastName, all_users.phoneNumber, all_users.displayPicture, email,dateOfBirth,gender,address,city,pinCode,state,country,
   (SELECT COUNT(DISTINCT matchId) FROM user_team WHERE userId = ?) AS totalMatches,
@@ -149,51 +149,55 @@ router.post("/getuserprofile", verifyUser, async (req, res) => {
     "SELECT matchId, seriesName, seriesDname,matchTypeId,matchTyprString, matchStartTimeMilliSeconds,matchStartDateTime,venue, all_matches.displayName,team1.teamId AS `team1Id`,team1.name AS 'team1Name', team1.displayName AS 'team1DisplayName',team1.teamFlagUrlLocal AS 'team1FlagURL', team2.teamId AS `team2Id`,team2.name AS 'team2Name', team2.displayName AS 'team2DisplayName',team2.teamFlagUrlLocal AS 'team2FlagURL' FROM all_matches JOIN teams AS team1 ON all_matches.team1_id = team1.teamId JOIN teams AS team2 ON all_matches.team2_id = team2.teamId JOIN match_type ON match_type.matchTypeId = gameType WHERE matchId IN (SELECT DISTINCT user_team.matchId FROM user_team WHERE userId = ? ORDER BY number DESC) LIMIT 5;";
 
   try {
-    const points = await fetchData(pointsQuery, [
-      userId,
-      userId,
-      userId,
-      userId,
-      userId,
-      userId,
-    ]);
-    if (points.length > 0) {
-      // changing response null to 0
-      points[0].mega_contest_totalPoints =
-        points[0].mega_contest_totalPoints | 0;
-      points[0].head_to_head_totalPoints =
-        points[0].head_to_head_totalPoints | 0;
+    if (!/[^0-9]/g.test(predictorId)) {
+      const points = await fetchData(pointsQuery, [
+        predictorId,
+        predictorId,
+        predictorId,
+        predictorId,
+        predictorId,
+        predictorId,
+      ]);
+      if (points.length > 0) {
+        // changing response null to 0
+        points[0].mega_contest_totalPoints =
+          points[0].mega_contest_totalPoints | 0;
+        points[0].head_to_head_totalPoints =
+          points[0].head_to_head_totalPoints | 0;
 
-      // fetching last 5 matches of user
-      const recentPlayed = await fetchData(matchesQuery, [userId]);
+        // fetching last 5 matches of user
+        const recentPlayed = await fetchData(matchesQuery, [predictorId]);
 
-      // changing address in url
-      const serverAddress = `${req.protocol}://${req.headers.host}`;
-      points[0].displayPicture = points[0].displayPicture.replace(
-        "http://192.168.1.32:3000",
-        serverAddress
-      );
-      recentPlayed.forEach((macth) => {
-        macth.team1FlagURL = macth.team1FlagURL.replace(
+        // changing address in url
+        const serverAddress = `${req.protocol}://${req.headers.host}`;
+        points[0].displayPicture = points[0].displayPicture.replace(
           "http://192.168.1.32:3000",
           serverAddress
         );
-        macth.team2FlagURL = macth.team2FlagURL.replace(
-          "http://192.168.1.32:3000",
-          serverAddress
-        );
-      });
+        recentPlayed.forEach((macth) => {
+          macth.team1FlagURL = macth.team1FlagURL.replace(
+            "http://192.168.1.32:3000",
+            serverAddress
+          );
+          macth.team2FlagURL = macth.team2FlagURL.replace(
+            "http://192.168.1.32:3000",
+            serverAddress
+          );
+        });
 
-      res.status(200).json({
-        status: true,
-        message: "success",
-        data: {
-          userDetails: points[0],
-          recentPlayed,
-        },
-      });
+        res.status(200).json({
+          status: true,
+          message: "success",
+          data: {
+            userDetails: points[0],
+            recentPlayed,
+          },
+        });
+      } else {
+        throw { message: "user does not exists" };
+      }
     } else {
-      throw { message: "user does not exists" };
+      throw { message: "invalid input" };
     }
   } catch (error) {
     res.status(200).json({

@@ -87,4 +87,15 @@ const updateLikes = (userId, teamId) => {
   });
 };
 
-module.exports = { fetchData, updateLikes };
+const getPlayers = (matchId) => {
+  return new Promise((resolve, reject) => {
+    connection.query("CALL get_players(?);", [matchId], (err, res) => {
+      if (err) reject(err);
+      else {
+        resolve(res);
+      }
+    });
+  });
+};
+
+module.exports = { fetchData, updateLikes, getPlayers };

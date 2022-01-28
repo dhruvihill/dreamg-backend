@@ -155,7 +155,10 @@ describe("get user profile", () => {
     const res = await request(app)
       .post("/api/v1/auth/getuserprofile")
       .set("Content-Type", "application/json")
-      .set("authToken", authToken);
+      .set("authToken", authToken)
+      .send({
+        predictorId: 9,
+      });
 
     const data = JSON.parse(res.text);
 

@@ -1,72 +1,99 @@
 const express = require("express");
 const router = express.Router();
 const verifyUser = require("../middleware/verifyUser");
-const { fetchData } = require("../database/db_connection");
+const { fetchData, getPlayers } = require("../database/db_connection");
 
 router.post("/getplayers", verifyUser, async (req, res) => {
   const { matchId } = req.body;
 
   const allPlayersQuery = `SELECT matchId,match_player_relation.playerId AS playerId,players.name AS playerName,players.displayName AS playerDisplayName,player_roles.roleId AS roleId,player_roles.roleName AS roleName,players.profilePictureURLLocal AS URL, points, credits, teams.teamId AS teamId,teams.name AS teamName,teams.displayName AS teamDisplayName FROM match_player_relation JOIN players ON players.playerId = match_player_relation.playerId JOIN player_roles ON players.role = player_roles.roleId JOIN teams ON teams.teamId = match_player_relation.teamId WHERE matchId = ?;`;
-  const playerDetailsQuery = `SELECT (SELECT COUNT(*) FROM user_team_data WHERE ? IN (captain) AND user_team_data.userTeamId IN (SELECT user_team.userTeamId AS userTeamId FROM user_team WHERE matchId = ?)) * 100 / (SELECT COUNT(userId) FROM user_team WHERE matchId = ?) AS captainBy, (SELECT COUNT(*) FROM user_team_data WHERE ? IN (viceCaptain) AND user_team_data.userTeamId IN (SELECT user_team.userTeamId AS userTeamId FROM user_team WHERE matchId = ?)) * 100 / (SELECT COUNT(userId) FROM user_team WHERE matchId = ?) AS viceCaptainBy, (SELECT COUNT(*) FROM user_team_data WHERE ? IN (player1,player2,player3,player4,player5,player6,player7,player8,player9,player10,player11) AND user_team_data.userTeamId IN (SELECT user_team.userTeamId AS userTeamId FROM user_team WHERE matchId = ?)) * 100 / (SELECT COUNT(userId) FROM user_team WHERE matchId = ?) AS selectedBy;`;
+  // const playerDetailsQuery = `SELECT (SELECT COUNT(*) FROM user_team_data WHERE ? IN (captain) AND user_team_data.userTeamId IN (SELECT user_team.userTeamId AS userTeamId FROM user_team WHERE matchId = ?)) * 100 / (SELECT COUNT(userId) FROM user_team WHERE matchId = ?) AS captainBy, (SELECT COUNT(*) FROM user_team_data WHERE ? IN (viceCaptain) AND user_team_data.userTeamId IN (SELECT user_team.userTeamId AS userTeamId FROM user_team WHERE matchId = ?)) * 100 / (SELECT COUNT(userId) FROM user_team WHERE matchId = ?) AS viceCaptainBy, (SELECT COUNT(*) FROM user_team_data WHERE ? IN (player1,player2,player3,player4,player5,player6,player7,player8,player9,player10,player11) AND user_team_data.userTeamId IN (SELECT user_team.userTeamId AS userTeamId FROM user_team WHERE matchId = ?)) * 100 / (SELECT COUNT(userId) FROM user_team WHERE matchId = ?) AS selectedBy;`;
 
   try {
-    const allPlayers = await fetchData(allPlayersQuery, [matchId]);
+    if (!/[^0-9]/g.test(matchId)) {
+      // const allPlayers = await fetchData(allPlayersQuery, [matchId]);
+      const data = await getPlayers(matchId);
 
-    if (allPlayers.length > 0) {
-      const calculateSelectedBy = () => {
-        return new Promise((resolve, reject) => {
-          allPlayers.forEach(async (player, index) => {
-            try {
-              const playerDetails = await fetchData(playerDetailsQuery, [
-                player.playerId,
-                matchId,
-                matchId,
-                player.playerId,
-                matchId,
-                matchId,
-                player.playerId,
-                matchId,
-                matchId,
-              ]);
-              player.captainBy = parseFloat(
-                playerDetails[0].captainBy.toFixed(2)
-              );
-              player.viceCaptainBy = parseFloat(
-                playerDetails[0].viceCaptainBy.toFixed(2)
-              );
-              player.selectedBy = parseFloat(
-                playerDetails[0].selectedBy.toFixed(2)
-              );
-              // changing url address
-              player.URL = player.URL.replace(
-                "http://192.168.1.32:3000",
-                `${req.protocol}://${req.headers.host}`
-              );
+      if (data[0][0].isMatchIdCorrect) {
+        data[1]?.forEach((player) => {
+          player.captainBy = parseFloat(player.captainBy.toFixed(2));
+          player.viceCaptainBy = parseFloat(player.viceCaptainBy.toFixed(2));
+          player.selectedBy = parseFloat(player.selectedBy.toFixed(2));
+          // changing url address
+          player.URL = player.URL.replace(
+            "http://192.168.1.32:3000",
+            `${req.protocol}://${req.headers.host}`
+          );
+        });
+        res.status(200).json({
+          status: true,
+          message: "success",
+          data: {
+            players: data[1],
+          },
+        });
+      } else {
+        throw { message: "invalid input" };
+      }
 
-              if (index === allPlayers.length - 1) resolve();
-            } catch (error) {
-              reject(error);
-            }
-          });
-        });
-      };
-      calculateSelectedBy()
-        .then(() => {
-          res.status(200).json({
-            status: true,
-            message: "success",
-            data: {
-              players: allPlayers,
-            },
-          });
-        })
-        .catch((error) => {
-          res.status(400).json({
-            status: false,
-            message: error.message,
-            data: {},
-          });
-        });
+      // if (allPlayers.length > 0) {
+      //   const calculateSelectedBy = () => {
+      //     return new Promise((resolve, reject) => {
+      //       allPlayers.forEach(async (player, index) => {
+      //         try {
+      //           const playerDetails = await fetchData(playerDetailsQuery, [
+      //             player.playerId,
+      //             matchId,
+      //             matchId,
+      //             player.playerId,
+      //             matchId,
+      //             matchId,
+      //             player.playerId,
+      //             matchId,
+      //             matchId,
+      //           ]);
+      //           player.captainBy = parseFloat(
+      //             playerDetails[0].captainBy.toFixed(2)
+      //           );
+      //           player.viceCaptainBy = parseFloat(
+      //             playerDetails[0].viceCaptainBy.toFixed(2)
+      //           );
+      //           player.selectedBy = parseFloat(
+      //             playerDetails[0].selectedBy.toFixed(2)
+      //           );
+      //           // changing url address
+      //           player.URL = player.URL.replace(
+      //             "http://192.168.1.32:3000",
+      //             `${req.protocol}://${req.headers.host}`
+      //           );
+
+      //           if (index === allPlayers.length - 1) resolve();
+      //         } catch (error) {
+      //           reject(error);
+      //         }
+      //       });
+      //     });
+      //   };
+      //   calculateSelectedBy()
+      //     .then(() => {
+      //       res.status(200).json({
+      //         status: true,
+      //         message: "success",
+      //         data: {
+      //           players: allPlayers,
+      //         },
+      //       });
+      //     })
+      //     .catch((error) => {
+      //       res.status(400).json({
+      //         status: false,
+      //         message: error.message,
+      //         data: {},
+      //       });
+      //     });
+      // } else {
+      //   throw { message: "invalid matchId" };
+      // }
     } else {
       throw { message: "invalid matchId" };
     }
