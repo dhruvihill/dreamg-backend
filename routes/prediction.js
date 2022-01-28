@@ -470,13 +470,13 @@ router.post("/update_user_team_likes", verifyUser, async (req, res) => {
   try {
     if (!/[^0-9]/g.test(teamId)) {
       const response = await updateLikes(userId, teamId);
-      if (response["@isTeamExists"] && response["@isUserExists"]) {
+      if (response["isTeamExists"] && response["isUserExists"]) {
         res.status(200).json({
           status: true,
           message: "success",
           data: {
-            totalLikes: response["@likes"],
-            isUserLiked: response["@isUserLiked"],
+            totalLikes: response["likes"],
+            isUserLiked: response["isUserLiked"],
           },
         });
       } else {

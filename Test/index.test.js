@@ -171,6 +171,268 @@ describe("get user profile", () => {
   });
 });
 
+describe("get dashboard data", () => {
+  it("dashboard data", async () => {
+    const res = await request(app)
+      .get("/api/v1/getdashboarddata")
+      .set("Content-Type", "application/json")
+      .set("authToken", authToken);
+
+    const data = JSON.parse(res.text);
+
+    expect(res.statusCode).toEqual(200);
+    expect(data.status).toEqual(true);
+    expect(data.message).toEqual("success");
+    expect(Array.isArray(data.data.matches)).toEqual(true);
+    expect(
+      data.data.matches.length > 0
+        ? typeof data.data.matches[0] === "object"
+        : true
+    ).toEqual(true);
+  });
+});
+
+describe("get matches", () => {
+  it("get matches with correct data", async () => {
+    const res = await request(app)
+      .post("/api/v1/matches/get_matches")
+      .set("Content-Type", "application/json")
+      .set("authToken", authToken)
+      .send({
+        matchType: "UPCOMING",
+      });
+
+    const data = JSON.parse(res.text);
+
+    const properties = [
+      "totalPredictors",
+      "isUserTeamCreated",
+      "seriesName",
+      "seriesDname",
+      "matchId",
+      "matchTypeId",
+      "matchTyprString",
+      "matchStartTimeMilliSeconds",
+      "matchStartDateTime",
+      "matchStatusString",
+      "venue",
+      "displayName",
+      "team1Id",
+      "team1Name",
+      "team1DisplayName",
+      "team1FlagURL",
+      "team2Id",
+      "team2Name",
+      "team2DisplayName",
+      "team2FlagURL",
+    ];
+
+    let objectVerified = true;
+
+    properties.forEach((p) => {
+      if (!data.data.matches[0].hasOwnProperty(p)) {
+        objectVerified = false;
+      }
+    });
+
+    expect(res.statusCode).toEqual(200);
+    expect(data.status).toEqual(true);
+    expect(objectVerified).toEqual(true);
+    expect(data.message).toEqual("success");
+    expect(Array.isArray(data.data.matches)).toEqual(true);
+    expect(
+      data.data.matches.length > 0
+        ? typeof data.data.matches[0] === "object"
+        : true
+    ).toEqual(true);
+  });
+  it("get matches with correct data", async () => {
+    const res = await request(app)
+      .post("/api/v1/matches/get_matches")
+      .set("Content-Type", "application/json")
+      .set("authToken", authToken)
+      .send({
+        matchType: "RECENT",
+      });
+
+    const data = JSON.parse(res.text);
+
+    const properties = [
+      "totalPredictors",
+      "isUserTeamCreated",
+      "seriesName",
+      "seriesDname",
+      "matchId",
+      "matchTypeId",
+      "matchTyprString",
+      "matchStartTimeMilliSeconds",
+      "matchStartDateTime",
+      "matchStatusString",
+      "venue",
+      "displayName",
+      "team1Id",
+      "team1Name",
+      "team1DisplayName",
+      "team1FlagURL",
+      "team2Id",
+      "team2Name",
+      "team2DisplayName",
+      "team2FlagURL",
+    ];
+
+    let objectVerified = true;
+
+    properties.forEach((p) => {
+      if (!data.data.matches[0].hasOwnProperty(p)) {
+        objectVerified = false;
+      }
+    });
+
+    expect(res.statusCode).toEqual(200);
+    expect(data.status).toEqual(true);
+    expect(objectVerified).toEqual(true);
+    expect(data.message).toEqual("success");
+    expect(Array.isArray(data.data.matches)).toEqual(true);
+    expect(
+      data.data.matches.length > 0
+        ? typeof data.data.matches[0] === "object"
+        : true
+    ).toEqual(true);
+  });
+  it("get matches with correct data", async () => {
+    const res = await request(app)
+      .post("/api/v1/matches/get_matches")
+      .set("Content-Type", "application/json")
+      .set("authToken", authToken)
+      .send({
+        matchType: "LIVE",
+      });
+
+    const data = JSON.parse(res.text);
+
+    const properties = [
+      "totalPredictors",
+      "isUserTeamCreated",
+      "seriesName",
+      "seriesDname",
+      "matchId",
+      "matchTypeId",
+      "matchTyprString",
+      "matchStartTimeMilliSeconds",
+      "matchStartDateTime",
+      "matchStatusString",
+      "venue",
+      "displayName",
+      "team1Id",
+      "team1Name",
+      "team1DisplayName",
+      "team1FlagURL",
+      "team2Id",
+      "team2Name",
+      "team2DisplayName",
+      "team2FlagURL",
+    ];
+
+    let objectVerified = true;
+
+    properties.forEach((p) => {
+      if (!data.data.matches[0].hasOwnProperty(p)) {
+        objectVerified = false;
+      }
+    });
+
+    expect(res.statusCode).toEqual(200);
+    expect(data.status).toEqual(true);
+    expect(objectVerified).toEqual(true);
+    expect(data.message).toEqual("success");
+    expect(Array.isArray(data.data.matches)).toEqual(true);
+    expect(
+      data.data.matches.length > 0
+        ? typeof data.data.matches[0] === "object"
+        : true
+    ).toEqual(true);
+  });
+});
+
+describe("get notification", () => {
+  it("get notification with correct data", async () => {
+    const res = await request(app)
+      .post("/api/v1/notification/get_notifications")
+      .set("Content-Type", "application/json")
+      .set("authToken", authToken);
+
+    const data = JSON.parse(res.text);
+
+    const properties = [
+      "notificationId",
+      "notificationType",
+      "notificationMessage",
+      "haveReaded",
+      "creationTime",
+    ];
+
+    let objectVerified = true;
+
+    properties.forEach((p) => {
+      if (!data.data.notifications[0].hasOwnProperty(p)) {
+        objectVerified = false;
+      }
+    });
+
+    expect(res.statusCode).toEqual(200);
+    expect(data.status).toEqual(true);
+    expect(objectVerified).toEqual(true);
+    expect(data.message).toEqual("success");
+    expect(Array.isArray(data.data.notifications)).toEqual(true);
+  });
+});
+
+describe("get players", () => {
+  it("get players with correct data", async () => {
+    const res = await request(app)
+      .post("/api/v1/players/getplayers")
+      .set("Content-Type", "application/json")
+      .set("authToken", authToken)
+      .send({
+        matchId: 27947,
+      });
+
+    const data = JSON.parse(res.text);
+
+    const properties = [
+      "matchId",
+      "playerId",
+      "playerName",
+      "playerDisplayName",
+      "roleName",
+      "URL",
+      "points",
+      "credits",
+      "teamName",
+      "teamDisplayName",
+      "selectedBy",
+      "captainBy",
+      "viceCaptainBy",
+      "teamId",
+      "roleId",
+    ];
+
+    let objectVerified = true;
+
+    properties.forEach((p) => {
+      if (!data.data.players[0].hasOwnProperty(p)) {
+        objectVerified = false;
+      }
+    });
+
+    expect(res.statusCode).toEqual(200);
+    expect(data.status).toEqual(true);
+    expect(objectVerified).toEqual(true);
+    expect(data.message).toEqual("success");
+    expect(Array.isArray(data.data.players)).toEqual(true);
+  });
+});
+
 //   expect(res.statusCode).toEqual(200);
 // });
 // it("update profile", async () => {
