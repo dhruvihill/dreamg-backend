@@ -8,7 +8,8 @@ verification of update profile
 
 ******
 solving all kind of error releted to database (database disconnect)
-connect database again after disconnect
+add foriegne key in matchplayerrelation AND user_team - user_team_data
+inserting data into database in following manner SERIES -> MATCH -> TEAM/PlAYER -> MATCHPLAYERRELATION
 ******
 
 PROCEDURES/CATCH/VIEWS

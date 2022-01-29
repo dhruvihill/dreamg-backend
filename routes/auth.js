@@ -144,29 +144,31 @@ router.post("/getuserprofile", verifyUser, async (req, res) => {
   (SELECT COUNT(DISTINCT userTeamId) FROM user_team WHERE userId = ?) AS totalTeams,
   (SELECT SUM(user_team_data.userTeamPoints) FROM all_users JOIN user_team ON user_team.userId = all_users.userId JOIN user_team_data ON user_team.userTeamId = user_team_data.userTeamId AND userTeamType = (SELECT teamType FROM team_type WHERE teamTypeString = "MEGA_CONTEST") WHERE all_users.userId = ?) AS mega_contest_totalPoints, 
   (SELECT SUM(user_team_data.userTeamPoints) FROM all_users JOIN user_team ON user_team.userId = all_users.userId JOIN user_team_data ON user_team.userTeamId = user_team_data.userTeamId AND userTeamType = (SELECT teamType FROM team_type WHERE teamTypeString = "HEAD_TO_HEAD") WHERE all_users.userId = ?) AS head_to_head_totalPoints 
-  FROM all_users WHERE all_users.userId = ?;`;
+  FROM all_users WHERE all_users.userId = ?`;
   const matchesQuery =
-    "SELECT matchId, seriesName, seriesDname,matchTypeId,matchTyprString, matchStartTimeMilliSeconds,matchStartDateTime,venue, all_matches.displayName,team1.teamId AS `team1Id`,team1.name AS 'team1Name', team1.displayName AS 'team1DisplayName',team1.teamFlagUrlLocal AS 'team1FlagURL', team2.teamId AS `team2Id`,team2.name AS 'team2Name', team2.displayName AS 'team2DisplayName',team2.teamFlagUrlLocal AS 'team2FlagURL' FROM all_matches JOIN teams AS team1 ON all_matches.team1_id = team1.teamId JOIN teams AS team2 ON all_matches.team2_id = team2.teamId JOIN match_type ON match_type.matchTypeId = gameType WHERE matchId IN (SELECT DISTINCT user_team.matchId FROM user_team WHERE userId = ? ORDER BY number DESC) LIMIT 5;";
+    "SELECT matchId, seriesName, seriesDname,matchTypeId,matchTyprString, matchStartTimeMilliSeconds,matchStartDateTime,venue, all_matches.displayName,team1.teamId AS `team1Id`,team1.name AS 'team1Name', team1.displayName AS 'team1DisplayName',team1.teamFlagUrlLocal AS 'team1FlagURL', team2.teamId AS `team2Id`,team2.name AS 'team2Name', team2.displayName AS 'team2DisplayName',team2.teamFlagUrlLocal AS 'team2FlagURL' FROM all_matches JOIN teams AS team1 ON all_matches.team1_id = team1.teamId JOIN teams AS team2 ON all_matches.team2_id = team2.teamId JOIN match_type ON match_type.matchTypeId = gameType WHERE matchId IN (SELECT DISTINCT user_team.matchId FROM user_team JOIN user_team_data ON user_team.userTeamId = user_team_data.userTeamId WHERE userId = 9 ORDER BY user_team_data.creationTime DESC) LIMIT 5";
 
   try {
     if (!/[^0-9]/g.test(predictorId)) {
-      const points = await fetchData(pointsQuery, [
-        predictorId,
-        predictorId,
-        predictorId,
-        predictorId,
-        predictorId,
-        predictorId,
-      ]);
+      const [points, recentPlayed] = await fetchData(
+        `${pointsQuery};${matchesQuery}`,
+        [
+          predictorId,
+          predictorId,
+          predictorId,
+          predictorId,
+          predictorId,
+          predictorId,
+          predictorId,
+        ]
+      );
+
       if (points.length > 0) {
         // changing response null to 0
         points[0].mega_contest_totalPoints =
           points[0].mega_contest_totalPoints | 0;
         points[0].head_to_head_totalPoints =
           points[0].head_to_head_totalPoints | 0;
-
-        // fetching last 5 matches of user
-        const recentPlayed = await fetchData(matchesQuery, [predictorId]);
 
         // changing address in url
         const serverAddress = `${req.protocol}://${req.headers.host}`;

@@ -434,197 +434,309 @@ describe("get players", () => {
     expect(data.message).toEqual("success");
     expect(Array.isArray(data.data.players)).toEqual(true);
   });
+  it("get players with invalid data", async () => {
+    const res = await request(app)
+      .post("/api/v1/players/getplayers")
+      .set("Content-Type", "application/json")
+      .set("authToken", authToken)
+      .send({
+        matchId: "2794d",
+      });
+
+    const data = JSON.parse(res.text);
+
+    expect(res.statusCode).toEqual(400);
+    expect(data.status).toEqual(false);
+    expect(data.message).toEqual("invalid input");
+    expect(data.data).toEqual({});
+  });
 });
 
-//   expect(res.statusCode).toEqual(200);
-// });
-// it("update profile", async () => {
-//   const res = await request(app)
-//     .post("/api/v1/auth/updateuserprofile")
-//     .send({
-//       firstName: "Dhruv",
-//       lastName: "Maradiya",
-//       email: "dhruv.maradiya@gmail.com",
-//       dateOfBirth: "2004/10/18",
-//       gender: "female",
-//       address: "s-2/502, shyam nagar society",
-//       city: "mumbai",
-//       pinCode: "842309",
-//       state: "maharashtra",
-//       country: "india",
-//     })
-//     .set("Content-Type", "application/json")
-//     .set("authToken", authToken);
+describe("set players", () => {
+  it("set players with correct data", async () => {
+    const res = await request(app)
+      .post("/api/v1/players/setteam")
+      .set("Content-Type", "application/json")
+      .set("authToken", authToken)
+      .send({
+        matchId: 27947,
+        players: [
+          4582, 4566, 4352, 4350, 4349, 4345, 4343, 4341, 4185, 4028, 3437,
+        ],
+        captain: 4566,
+        viceCaptain: 3437,
+        userTeamType: 1,
+      });
 
-//   expect(res.statusCode).toEqual(200);
-// });
-// it("check user", async () => {
-//   const res = await request(app).post("/api/v1/auth/check_user").send({
-//     phoneNumber: "9712491369",
-//   });
+    const data = JSON.parse(res.text);
 
-//   expect(res.statusCode).toEqual(200);
-// });
+    expect(res.statusCode).toEqual(400);
+    expect(data.status).toEqual(false);
+    expect(data.message).toEqual("Duplicate entry");
+    expect(data.data).toEqual({});
+  });
+  it("set players with wrong captain", async () => {
+    const res = await request(app)
+      .post("/api/v1/players/setteam")
+      .set("Content-Type", "application/json")
+      .set("authToken", authToken)
+      .send({
+        matchId: 27947,
+        players: [
+          4582, 4566, 4352, 4350, 4349, 4345, 4343, 4341, 4185, 4028, 3437,
+        ],
+        captain: 8988,
+        viceCaptain: 3437,
+        userTeamType: 1,
+      });
 
-// describe("matches", () => {
-//   it("get dashboard data", async () => {
-//     const res = await request(app)
-//       .get("/api/v1/getdashboarddata")
-//       .set("authToken", authToken);
+    const data = JSON.parse(res.text);
 
-//     expect(res.statusCode).toEqual(200);
-//   });
-//   it("get players", async () => {
-//     const res = await request(app)
-//       .post("/api/v1/players/getplayers")
-//       .send({
-//         matchId: 27947,
-//       })
-//       .set("authToken", authToken)
-//       .set("Content-Type", "application/json");
+    expect(res.statusCode).toEqual(400);
+    expect(data.status).toEqual(false);
+    expect(data.message).toEqual("invalid input");
+    expect(data.data).toEqual({});
+  });
+  it("set players with wrong viceCaptain", async () => {
+    const res = await request(app)
+      .post("/api/v1/players/setteam")
+      .set("Content-Type", "application/json")
+      .set("authToken", authToken)
+      .send({
+        matchId: 27947,
+        players: [
+          4582, 4566, 4352, 4350, 4349, 4345, 4343, 4341, 4185, 4028, 3437,
+        ],
+        captain: 4582,
+        viceCaptain: 34371,
+        userTeamType: 1,
+      });
 
-//     expect(res.statusCode).toEqual(200);
-//   });
-//   it("set team", async () => {
-//     const res = await request(app)
-//       .post("/api/v1/players/setteam")
-//       .send({
-//         matchId: 27947,
-//         players: [
-//           4582, 4566, 4352, 4350, 4349, 4345, 4343, 4341, 4185, 4028, 3437,
-//         ],
-//         captain: 4566,
-//         viceCaptain: 3437,
-//         userTeamType: 2,
-//       })
-//       .set(
-//         "authToken",
-//         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXJJZCI6MTd9LCJpYXQiOjE2NDI5NDQ5NTB9.Agm22_4s7ryFzhPUUagpVd7ul_Md0SovFywWoZG2yJ4"
-//       );
+    const data = JSON.parse(res.text);
 
-//     expect(res.statusCode).toEqual(400);
-//   });
-//   it("get matches", async () => {
-//     const res = await request(app)
-//       .post("/api/v1/matches/get_matches")
-//       .send({
-//         matchType: "UPCOMING",
-//       })
-//       .set("authToken", authToken);
+    expect(res.statusCode).toEqual(400);
+    expect(data.status).toEqual(false);
+    expect(data.message).toEqual("invalid input");
+    expect(data.data).toEqual({});
+  });
+  it("set players with wrong players", async () => {
+    const res = await request(app)
+      .post("/api/v1/players/setteam")
+      .set("Content-Type", "application/json")
+      .set("authToken", authToken)
+      .send({
+        matchId: 27947,
+        players: [
+          4582, 4566, 4352, 4350, 4349, 434555, 4343, 4341, 4185, 4028, 3437,
+        ],
+        captain: 4582,
+        viceCaptain: 3437,
+        userTeamType: 1,
+      });
 
-//     expect(res.statusCode).toEqual(200);
-//   });
-// });
+    const data = JSON.parse(res.text);
 
-// describe("notification", () => {
-//   it("get notification", async () => {
-//     const res = await request(app)
-//       .post("/api/v1/notification/get_notifications")
-//       .set("authToken", authToken);
+    expect(res.statusCode).toEqual(400);
+    expect(data.status).toEqual(false);
+    expect(data.message).toEqual("invalid input");
+    expect(data.data).toEqual({});
+  });
+  it("set players with duplicate players", async () => {
+    const res = await request(app)
+      .post("/api/v1/players/setteam")
+      .set("Content-Type", "application/json")
+      .set("authToken", authToken)
+      .send({
+        matchId: 27947,
+        players: [
+          4582, 4566, 4352, 4350, 4349, 4345, 4345, 4341, 4185, 4028, 3437,
+        ],
+        captain: 4582,
+        viceCaptain: 3437,
+        userTeamType: 1,
+      });
 
-//     expect(res.statusCode).toEqual(200);
-//   });
-// });
+    const data = JSON.parse(res.text);
 
-// describe("prediction", () => {
-//   it("get all prediction", async () => {
-//     const res = await request(app)
-//       .post("/api/v1/prediction/get_predictions")
-//       .send({
-//         filter: "MOST_POPULAR",
-//       })
-//       .set("authToken", authToken);
+    expect(res.statusCode).toEqual(400);
+    expect(data.status).toEqual(false);
+    expect(data.message).toEqual("invalid input");
+    expect(data.data).toEqual({});
+  });
+});
 
-//     expect(res.statusCode).toEqual(200);
-//   });
-//   it("get user teams by match", async () => {
-//     const res = await request(app)
-//       .post("/api/v1/prediction/get_user_teams")
-//       .send({
-//         matchId: 27947,
-//       })
-//       .set("authToken", authToken);
+describe("get prediction", () => {
+  it("get prediction without matchid", async () => {
+    const res = await request(app)
+      .post("/api/v1/prediction/get_predictions")
+      .set("Content-Type", "application/json")
+      .set("authToken", authToken)
+      .send({
+        filter: "MOST_POPULAR",
+      });
 
-//     expect(res.statusCode).toEqual(200);
-//   });
-//   it("get user teams all", async () => {
-//     const res = await request(app)
-//       .post("/api/v1/prediction/get_user_teams_predictor")
-//       .send({
-//         userId: 9,
-//       })
-//       .set("authToken", authToken);
+    const data = JSON.parse(res.text);
 
-//     expect(res.statusCode).toEqual(200);
-//   });
-//   it("get user teams data", async () => {
-//     const res = await request(app)
-//       .post("/api/v1/prediction/get_user_teams_data")
-//       .send({
-//         teamId: 26,
-//       })
-//       .set("authToken", authToken);
+    const properties = [
+      "userId",
+      "phoneNumber",
+      "firstName",
+      "lastName",
+      "displayPicture",
+      "city",
+      "registerTime",
+      "userTeamId",
+      "totalPoints",
+    ];
 
-//     expect(res.statusCode).toEqual(200);
-//   });
-//   it("update likes", async () => {
-//     const res = await request(app)
-//       .post("/api/v1/prediction/update_user_team_likes")
-//       .send({
-//         teamId: 27,
-//       })
-//       .set("authToken", authToken);
+    let objectVerified = true;
 
-//     expect(res.statusCode).toEqual(400);
-//   });
-//   it("update views", async () => {
-//     const res = await request(app)
-//       .post("/api/v1/prediction/update_user_team_views")
-//       .send({
-//         teamId: 27,
-//       })
-//       .set("authToken", authToken);
+    properties.forEach((p) => {
+      if (!data.data.users[0].hasOwnProperty(p)) {
+        objectVerified = false;
+      }
+    });
 
-//     expect(res.statusCode).toEqual(200);
-//   });
-//   it("set discussion", async () => {
-//     const res = await request(app)
-//       .post("/api/v1/prediction/set_discussion")
-//       .send({
-//         matchId: 27947,
-//         createrId: 9,
-//         message: "late",
-//       })
-//       .set("authToken", authToken);
+    expect(res.statusCode).toEqual(200);
+    expect(data.status).toEqual(true);
+    expect(objectVerified).toEqual(true);
+    expect(data.message).toEqual("success");
+    expect(Array.isArray(data.data.users)).toEqual(true);
+  });
+  it("get prediction with matchid", async () => {
+    const res = await request(app)
+      .post("/api/v1/prediction/get_predictions")
+      .set("Content-Type", "application/json")
+      .set("authToken", authToken)
+      .send({
+        filter: "MOST_POPULAR",
+        matchId: 27947,
+      });
 
-//     expect(res.statusCode).toEqual(200);
-//   });
-//   it("get discussion", async () => {
-//     const res = await request(app)
-//       .post("/api/v1/prediction/get_discussion")
-//       .send({
-//         matchId: 27947,
-//         createrId: 9,
-//       })
-//       .set("authToken", authToken);
+    const data = JSON.parse(res.text);
 
-//     expect(res.statusCode).toEqual(200);
-//   });
-//   it("get trending predictors", async () => {
-//     const res = await request(app)
-//       .get("/api/v1/prediction/getTrendingPredictors")
-//       .set("authToken", authToken);
+    const properties = [
+      "userId",
+      "phoneNumber",
+      "firstName",
+      "lastName",
+      "displayPicture",
+      "city",
+      "registerTime",
+      "displayName",
+      "totalPoints",
+    ];
 
-//     expect(res.statusCode).toEqual(200);
-//   });
-//   it("compare teams", async () => {
-//     const res = await request(app)
-//       .post("/api/v1/prediction/compare_teams")
-//       .send({
-//         matchId: 27947,
-//       })
-//       .set("authToken", authToken);
+    let objectVerified = true;
 
-//     expect(res.statusCode).toEqual(200);
-//   });
-// });
+    properties.forEach((p) => {
+      if (!data.data.users[0].hasOwnProperty(p)) {
+        objectVerified = false;
+      }
+    });
+
+    expect(res.statusCode).toEqual(200);
+    expect(data.status).toEqual(true);
+    expect(objectVerified).toEqual(true);
+    expect(data.message).toEqual("success");
+    expect(Array.isArray(data.data.users)).toEqual(true);
+  });
+  it("get prediction with invalid matchid", async () => {
+    const res = await request(app)
+      .post("/api/v1/prediction/get_predictions")
+      .set("Content-Type", "application/json")
+      .set("authToken", authToken)
+      .send({
+        filter: "MOST_POPULAR",
+        matchId: "27e47",
+      });
+
+    const data = JSON.parse(res.text);
+
+    expect(res.statusCode).toEqual(400);
+    expect(data.status).toEqual(false);
+    expect(data.data).toEqual({});
+    expect(data.message).toEqual("invalid input");
+  });
+});
+
+describe("get trending predictors", () => {
+  it("trending predictors", async () => {
+    const res = await request(app)
+      .get("/api/v1/prediction/getTrendingPredictors")
+      .set("Content-Type", "application/json")
+      .set("authToken", authToken);
+
+    const data = JSON.parse(res.text);
+
+    const properties = [
+      "userId",
+      "firstName",
+      "lastName",
+      "displayPicture",
+      "totalPoints",
+    ];
+
+    let objectVerified = true;
+
+    properties.forEach((p) => {
+      if (!data.data.trendingPredictors[0].hasOwnProperty(p)) {
+        objectVerified = false;
+      }
+    });
+
+    expect(res.statusCode).toEqual(200);
+    expect(data.status).toEqual(true);
+    expect(objectVerified).toEqual(true);
+    expect(data.message).toEqual("success");
+    expect(Array.isArray(data.data.trendingPredictors)).toEqual(true);
+  });
+});
+
+describe("get user team", () => {
+  it("getting team with correct data", async () => {
+    const res = await request(app)
+      .post("/api/v1/prediction/get_user_teams")
+      .set("Content-Type", "application/json")
+      .set("authToken", authToken)
+      .send({
+        matchId: 27947,
+        createrId: 10,
+      });
+
+    const data = JSON.parse(res.text);
+
+    const properties = ["teams", "teamsDetails"];
+
+    let objectVerified = true;
+
+    properties.forEach((p) => {
+      if (!data.data.userTeams[0].hasOwnProperty(p)) {
+        objectVerified = false;
+      }
+    });
+
+    expect(res.statusCode).toEqual(200);
+    expect(data.status).toEqual(true);
+    expect(objectVerified).toEqual(true);
+    expect(data.message).toEqual("success");
+    expect(Array.isArray(data.data.userTeams)).toEqual(true);
+  });
+  it("getting team with invalid data", async () => {
+    const res = await request(app)
+      .post("/api/v1/prediction/get_user_teams")
+      .set("Content-Type", "application/json")
+      .set("authToken", authToken)
+      .send({
+        matchId: 27947,
+        createrId: "1e0",
+      });
+
+    const data = JSON.parse(res.text);
+
+    expect(res.statusCode).toEqual(400);
+    expect(data.status).toEqual(false);
+    expect(data.message).toEqual("invalid input");
+    expect(data.data).toEqual({});
+  });
+});

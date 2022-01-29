@@ -9,25 +9,28 @@ router.post("/get_predictions", verifyUser, async (req, res) => {
   let validMatchId = true;
 
   // creating query to fetch predictions
-  let query;
-  if (matchId) {
-    validMatchId = true;
-    if (!/[^0-9]/g.test(matchId)) validMatchId = true;
-    query =
-      filter === "MOST_VIEWED"
-        ? "SELECT user_team.userId, phoneNumber, firstName, lastName, displayPicture,city, registerTime, all_matches.displayName, SUM(user_team_data.userTeamViews) AS totalViews FROM user_team JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId JOIN all_users ON user_team.userId = all_users.userId JOIN all_matches ON user_team.matchId = all_matches.matchId WHERE user_team.matchId = ? GROUP BY userId ORDER BY totalViews DESC LIMIT 20;"
-        : filter === "MOST_LIKED"
-        ? "SELECT user_team.userId, phoneNumber, firstName, lastName, displayPicture,city, registerTime, all_matches.displayName, SUM(user_team_data.userTeamLikes) AS totalLikes FROM user_team JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId JOIN all_users ON user_team.userId = all_users.userId JOIN all_matches ON user_team.matchId = all_matches.matchId WHERE user_team.matchId = ? GROUP BY userId ORDER BY totalLikes DESC LIMIT 20;"
-        : "SELECT user_team.userId, phoneNumber, firstName, lastName, displayPicture,city, registerTime, all_matches.displayName, SUM(user_team_data.userTeamPoints) AS totalPoints FROM user_team JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId JOIN all_users ON user_team.userId = all_users.userId JOIN all_matches ON user_team.matchId = all_matches.matchId WHERE user_team.matchId = ? GROUP BY userId ORDER BY totalPoints DESC LIMIT 20;";
-  } else {
-    query =
-      filter === "MOST_VIEWED"
-        ? "SELECT user_team.userId, phoneNumber, firstName, lastName, displayPicture,city, registerTime, user_team.userTeamId, SUM(userTeamViews) AS totalViews FROM user_team JOIN all_users ON all_users.userId = user_team.userId JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId GROUP BY user_team.userId ORDER BY totalViews DESC"
-        : filter === "MOST_LIKED"
-        ? "SELECT user_team.userId, phoneNumber, firstName,city, lastName, displayPicture, registerTime, user_team.userTeamId, SUM(userTeamLikes) AS totalLikes FROM user_team JOIN all_users ON all_users.userId = user_team.userId JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId GROUP BY user_team.userId ORDER BY totalLikes DESC;"
-        : "SELECT user_team.userId, phoneNumber, firstName, lastName, displayPicture,city, registerTime, user_team.userTeamId, SUM(userTeamPoints) AS totalPoints FROM user_team JOIN all_users ON all_users.userId = user_team.userId JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId GROUP BY user_team.userId ORDER BY totalPoints DESC;";
-  }
   try {
+    let query;
+    if (matchId) {
+      validMatchId = true;
+      if (!/[^0-9]/g.test(matchId)) validMatchId = true;
+      else {
+        throw { message: "invalid input" };
+      }
+      query =
+        filter === "MOST_VIEWED"
+          ? "SELECT user_team.userId, phoneNumber, firstName, lastName, displayPicture,city, registerTime, all_matches.displayName, SUM(user_team_data.userTeamViews) AS totalViews FROM user_team JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId JOIN all_users ON user_team.userId = all_users.userId JOIN all_matches ON user_team.matchId = all_matches.matchId WHERE user_team.matchId = ? GROUP BY userId ORDER BY totalViews DESC LIMIT 20;"
+          : filter === "MOST_LIKED"
+          ? "SELECT user_team.userId, phoneNumber, firstName, lastName, displayPicture,city, registerTime, all_matches.displayName, SUM(user_team_data.userTeamLikes) AS totalLikes FROM user_team JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId JOIN all_users ON user_team.userId = all_users.userId JOIN all_matches ON user_team.matchId = all_matches.matchId WHERE user_team.matchId = ? GROUP BY userId ORDER BY totalLikes DESC LIMIT 20;"
+          : "SELECT user_team.userId, phoneNumber, firstName, lastName, displayPicture,city, registerTime, all_matches.displayName, SUM(user_team_data.userTeamPoints) AS totalPoints FROM user_team JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId JOIN all_users ON user_team.userId = all_users.userId JOIN all_matches ON user_team.matchId = all_matches.matchId WHERE user_team.matchId = ? GROUP BY userId ORDER BY totalPoints DESC LIMIT 20;";
+    } else {
+      query =
+        filter === "MOST_VIEWED"
+          ? "SELECT user_team.userId, phoneNumber, firstName, lastName, displayPicture,city, registerTime, user_team.userTeamId, SUM(userTeamViews) AS totalViews FROM user_team JOIN all_users ON all_users.userId = user_team.userId JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId GROUP BY user_team.userId ORDER BY totalViews DESC"
+          : filter === "MOST_LIKED"
+          ? "SELECT user_team.userId, phoneNumber, firstName,city, lastName, displayPicture, registerTime, user_team.userTeamId, SUM(userTeamLikes) AS totalLikes FROM user_team JOIN all_users ON all_users.userId = user_team.userId JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId GROUP BY user_team.userId ORDER BY totalLikes DESC;"
+          : "SELECT user_team.userId, phoneNumber, firstName, lastName, displayPicture,city, registerTime, user_team.userTeamId, SUM(userTeamPoints) AS totalPoints FROM user_team JOIN all_users ON all_users.userId = user_team.userId JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId GROUP BY user_team.userId ORDER BY totalPoints DESC;";
+    }
     if (validMatchId) {
       const result = await fetchData(query, [matchId]);
 
@@ -105,7 +108,7 @@ router.post("/get_user_teams", verifyUser, async (req, res) => {
     "SELECT match_player_relation.playerId AS playerId,players.name AS playerName,players.displayName AS playerDisplayName,player_roles.roleId AS roleId,player_roles.roleName AS roleName,players.profilePictureURLLocal AS URL, points, credits, teams.teamId AS teamId FROM match_player_relation JOIN players ON players.playerId = match_player_relation.playerId JOIN player_roles ON players.role = player_roles.roleId JOIN teams ON teams.teamId = match_player_relation.teamId WHERE match_player_relation.playerId = ? AND match_player_relation.matchId = ?;";
 
   try {
-    if (!/[^0-9]/g.test(matchId)) {
+    if (!/[^0-9]/g.test(matchId) && !/[^0-9]/g.test(createrId)) {
       const players = await fetchData(playersQuery, [matchId, createrId]);
       const teamDetails = await fetchData(teamDetailsQuery, [matchId]);
 
