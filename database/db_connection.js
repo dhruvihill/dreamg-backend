@@ -72,30 +72,4 @@ const fetchData = (query, options = []) =>
     });
   });
 
-const updateLikes = (userId, teamId) => {
-  return new Promise((resolve, reject) => {
-    connection.query(
-      "CALL update_likes(?, ?);",
-      [teamId, userId],
-      (err, res) => {
-        if (err) reject(err);
-        else {
-          resolve(res[0][0]);
-        }
-      }
-    );
-  });
-};
-
-const getPlayers = (matchId) => {
-  return new Promise((resolve, reject) => {
-    connection.query("CALL get_players(?);", [matchId], (err, res) => {
-      if (err) reject(err);
-      else {
-        resolve(res);
-      }
-    });
-  });
-};
-
-module.exports = { fetchData, updateLikes, getPlayers };
+module.exports = { fetchData };

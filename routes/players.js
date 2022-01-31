@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const verifyUser = require("../middleware/verifyUser");
-const { fetchData, getPlayers } = require("../database/db_connection");
+const { fetchData } = require("../database/db_connection");
 
 router.post("/getplayers", verifyUser, async (req, res) => {
   const { matchId } = req.body;
@@ -12,29 +12,25 @@ router.post("/getplayers", verifyUser, async (req, res) => {
   try {
     if (!/[^0-9]/g.test(matchId)) {
       // const allPlayers = await fetchData(allPlayersQuery, [matchId]);
-      const data = await getPlayers(matchId);
+      const data = await fetchData("CALL get_players(?);", [matchId]);
 
-      if (data[0][0].isMatchIdCorrect) {
-        data[1]?.forEach((player) => {
-          player.captainBy = parseFloat(player.captainBy.toFixed(2));
-          player.viceCaptainBy = parseFloat(player.viceCaptainBy.toFixed(2));
-          player.selectedBy = parseFloat(player.selectedBy.toFixed(2));
-          // changing url address
-          player.URL = player.URL.replace(
-            "http://192.168.1.32:3000",
-            `${req.protocol}://${req.headers.host}`
-          );
-        });
-        res.status(200).json({
-          status: true,
-          message: "success",
-          data: {
-            players: data[1],
-          },
-        });
-      } else {
-        throw { message: "invalid input" };
-      }
+      data[0]?.forEach((player) => {
+        player.captainBy = parseFloat(player.captainBy.toFixed(2));
+        player.viceCaptainBy = parseFloat(player.viceCaptainBy.toFixed(2));
+        player.selectedBy = parseFloat(player.selectedBy.toFixed(2));
+        // changing url address
+        player.URL = player.URL.replace(
+          "http://192.168.1.32:3000",
+          `${req.protocol}://${req.headers.host}`
+        );
+      });
+      res.status(200).json({
+        status: true,
+        message: "success",
+        data: {
+          players: data[0],
+        },
+      });
 
       // if (allPlayers.length > 0) {
       //   const calculateSelectedBy = () => {
@@ -100,7 +96,7 @@ router.post("/getplayers", verifyUser, async (req, res) => {
   } catch (error) {
     res.status(400).json({
       status: false,
-      message: error.message,
+      message: error.sqlMessage ? error.sqlMessage : error.message,
       data: {},
     });
   }
@@ -110,111 +106,141 @@ router.post("/setteam", verifyUser, async (req, res) => {
   const { userTeamType, matchId, players, captain, viceCaptain, userId } =
     req.body;
 
-  const newSet = new Set(players);
-
-  const regx = /[^0-9]/g;
-
-  let correctInput = true;
-  [userTeamType, matchId, ...players, captain, viceCaptain].forEach((id) => {
-    if (regx.test(id)) {
-      correctInput = false;
-    }
-  });
-
-  if (
-    newSet.size === 11 &&
-    correctInput &&
-    players.includes(captain) &&
-    players.includes(viceCaptain)
-  ) {
-    let allowInsert = true;
-    try {
-      // check all the players exists in matchId
-      for (let index = 0; index < 11; index++) {
-        const playerExists = await fetchData(
-          "SELECT EXISTS(SELECT * FROM match_player_relation WHERE matchId = ? AND playerId = ?) AS playerExists;",
-          [matchId, players[index]]
-        );
-        if (!playerExists[0].playerExists) allowInsert = false;
+  try {
+    const regx = /[^0-9]/g;
+    let correctInput = true;
+    [userTeamType, matchId, ...players, captain, viceCaptain].forEach((id) => {
+      if (regx.test(id)) {
+        correctInput = false;
       }
-
-      if (allowInsert) {
-        const setPlayersQuery = "INSERT INTO user_team_data SET ?";
-        const setTeamQuery = "INSERT INTO user_team SET ?";
-        const options = {
-          captain,
-          viceCaptain,
-          player1: players[0],
-          player2: players[1],
-          player3: players[2],
-          player4: players[3],
-          player5: players[4],
-          player6: players[5],
-          player7: players[6],
-          player8: players[7],
-          player9: players[8],
-          player10: players[9],
-          player11: players[10],
-        };
-
-        try {
-          const setPlayers = await fetchData(setPlayersQuery, options);
-
-          if (setPlayers.insertId) {
-            try {
-              await fetchData(setTeamQuery, {
-                matchId,
-                userId,
-                userTeamId: setPlayers.insertId,
-                userTeamType,
-              });
-              res.status(200).json({
-                status: true,
-                message: "success",
-                data: {},
-              });
-            } catch (error) {
-              fetchData(
-                "DELETE FROM `user_team_data` WHERE `user_team_data`.`userTeamId` = ?",
-                [setPlayers.insertId]
-              ).catch((err) => {});
-              res.status(400).json({
-                status: false,
-                message: error.message.includes("Duplicate entry")
-                  ? "Duplicate entry"
-                  : error.message,
-                data: {},
-              });
-            }
-          } else {
-            throw { message: "team not inserted" };
-          }
-        } catch (error) {
-          res.status(400).json({
-            status: false,
-            message: error.message.includes("Duplicate entry")
-              ? "Duplicate entry"
-              : error.message,
-            data: {},
-          });
-        }
-      } else {
-        throw { message: "invalid input" };
+    });
+    if (players.length === 11 && correctInput) {
+      const data = await fetchData("CALL set_team(?, ?, ?, ?, ?, ?)", [
+        userTeamType,
+        matchId,
+        userId,
+        captain,
+        viceCaptain,
+        [...players],
+      ]);
+      if (data[0][0].message === "success") {
+        res.status(200).json({
+          status: true,
+          message: "success",
+          data: {},
+        });
       }
-    } catch (error) {
-      res.status(400).json({
-        status: false,
-        message: error.message,
-        data: {},
-      });
+    } else {
+      throw { message: "invalid input" };
     }
-  } else {
+  } catch (error) {
     res.status(400).json({
       status: false,
-      message: "invalid input",
+      message: error.sqlMessage ? error.sqlMessage : error.message,
       data: {},
     });
   }
+
+  // try {
+  //   const newSet = new Set(players);
+
+  //   const regx = /[^0-9]/g;
+
+  //   let correctInput = true;
+  //   [userTeamType, matchId, ...players, captain, viceCaptain].forEach((id) => {
+  //     if (regx.test(id)) {
+  //       correctInput = false;
+  //     }
+  //   });
+  //   let allowInsert = true;
+  //   if (
+  //     newSet.size === 11 &&
+  //     correctInput &&
+  //     players.includes(captain) &&
+  //     players.includes(viceCaptain)
+  //   ) {
+  //     // check all the players exists in matchId
+  //     for (let index = 0; index < 11; index++) {
+  //       const playerExists = await fetchData(
+  //         "SELECT EXISTS(SELECT * FROM match_player_relation WHERE matchId = ? AND playerId = ?) AS playerExists;",
+  //         [matchId, players[index]]
+  //       );
+  //       if (!playerExists[0].playerExists) allowInsert = false;
+  //     }
+
+  //     if (allowInsert) {
+  //       const setPlayersQuery = "INSERT INTO user_team_data SET ?";
+  //       const setTeamQuery = "INSERT INTO user_team SET ?";
+  //       const options = {
+  //         captain,
+  //         viceCaptain,
+  //         player1: players[0],
+  //         player2: players[1],
+  //         player3: players[2],
+  //         player4: players[3],
+  //         player5: players[4],
+  //         player6: players[5],
+  //         player7: players[6],
+  //         player8: players[7],
+  //         player9: players[8],
+  //         player10: players[9],
+  //         player11: players[10],
+  //       };
+
+  //       try {
+  //         const setPlayers = await fetchData(setPlayersQuery, options);
+
+  //         if (setPlayers.insertId) {
+  //           try {
+  //             await fetchData(setTeamQuery, {
+  //               matchId,
+  //               userId,
+  //               userTeamId: setPlayers.insertId,
+  //               userTeamType,
+  //             });
+  //             res.status(200).json({
+  //               status: true,
+  //               message: "success",
+  //               data: {},
+  //             });
+  //           } catch (error) {
+  //             fetchData(
+  //               "DELETE FROM `user_team_data` WHERE `user_team_data`.`userTeamId` = ?",
+  //               [setPlayers.insertId]
+  //             ).catch((err) => {});
+  //             res.status(400).json({
+  //               status: false,
+  //               message: error.message.includes("Duplicate entry")
+  //                 ? "Duplicate entry"
+  //                 : error.message,
+  //               data: {},
+  //             });
+  //           }
+  //         } else {
+  //           throw { message: "team not inserted" };
+  //         }
+  //       } catch (error) {
+  //         res.status(400).json({
+  //           status: false,
+  //           message: error.message.includes("Duplicate entry")
+  //             ? "Duplicate entry"
+  //             : error.message,
+  //           data: {},
+  //         });
+  //       }
+  //     } else {
+  //       throw { message: "invalid input" };
+  //     }
+  //   } else {
+  //     throw { message: "invalid input" };
+  //   }
+  // } catch (error) {
+  //   res.status(400).json({
+  //     status: false,
+  //     message: error.sqlMessage ? error.sqlMessage : error.message,
+  //     data: {},
+  //   });
+  // }
 });
 
 module.exports = router;

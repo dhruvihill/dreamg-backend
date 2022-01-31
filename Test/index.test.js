@@ -20,13 +20,13 @@ describe("Register user", () => {
   it("Register user invalid entry", async () => {
     const res = await request(app)
       .post("/api/v1/auth/register")
-      .send({ number: "997928598" })
+      .send({ number: "997927598" })
       .set("Content-Type", "application/json");
 
     const data = JSON.parse(res.text);
     expect(res.statusCode).toEqual(400);
     expect(data.status).toEqual(false);
-    expect(data.message).toEqual("invalid input");
+    expect(data.message).toEqual("invalid number");
     expect(data.data).toEqual({});
   });
   it("Register user invalid entry", async () => {
@@ -38,7 +38,7 @@ describe("Register user", () => {
     const data = JSON.parse(res.text);
     expect(res.statusCode).toEqual(400);
     expect(data.status).toEqual(false);
-    expect(data.message).toEqual("invalid input");
+    expect(data.message).toEqual("invalid number");
     expect(data.data).toEqual({});
   });
 });
@@ -494,7 +494,7 @@ describe("set players", () => {
 
     expect(res.statusCode).toEqual(400);
     expect(data.status).toEqual(false);
-    expect(data.message).toEqual("invalid input");
+    expect(data.message).toEqual("invalid captain or viceCaptain");
     expect(data.data).toEqual({});
   });
   it("set players with wrong viceCaptain", async () => {
@@ -516,7 +516,7 @@ describe("set players", () => {
 
     expect(res.statusCode).toEqual(400);
     expect(data.status).toEqual(false);
-    expect(data.message).toEqual("invalid input");
+    expect(data.message).toEqual("invalid captain or viceCaptain");
     expect(data.data).toEqual({});
   });
   it("set players with wrong players", async () => {
@@ -538,7 +538,7 @@ describe("set players", () => {
 
     expect(res.statusCode).toEqual(400);
     expect(data.status).toEqual(false);
-    expect(data.message).toEqual("invalid input");
+    expect(data.message).toEqual("invalid players");
     expect(data.data).toEqual({});
   });
   it("set players with duplicate players", async () => {
@@ -560,7 +560,7 @@ describe("set players", () => {
 
     expect(res.statusCode).toEqual(400);
     expect(data.status).toEqual(false);
-    expect(data.message).toEqual("invalid input");
+    expect(data.message).toEqual("invalid players");
     expect(data.data).toEqual({});
   });
 });
@@ -701,7 +701,7 @@ describe("get user team", () => {
       .set("authToken", authToken)
       .send({
         matchId: 27947,
-        createrId: 10,
+        createrId: 9,
       });
 
     const data = JSON.parse(res.text);

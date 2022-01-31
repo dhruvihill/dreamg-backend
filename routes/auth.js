@@ -10,39 +10,26 @@ router.post("/register", async (req, res) => {
   // getting data from body
   const { number: phoneNumber } = req.body;
 
-  const regx = /[^0-9]/g;
-
   // return true if any other character rather than 0-9
-  if (regx.test(phoneNumber) || phoneNumber.length !== 10) {
+
+  try {
+    const result = await fetchData("CALL register_user(?);", [phoneNumber]);
+    const jwtData = { user: { userId: result[0][0].userId } };
+    const token = await jwt.sign(jwtData, process.env.JWT_SECRET_KEY);
+    res.status(200).json({
+      status: true,
+      message: "success",
+      data: {
+        authToken: token,
+        userId: result[0][0].userId,
+      },
+    });
+  } catch (error) {
     res.status(400).json({
       status: false,
-      message: "invalid input",
+      message: error.sqlMessage ? error.sqlMessage : error.message,
       data: {},
     });
-  } else {
-    try {
-      const result = await fetchData("INSERT INTO all_users SET ?", {
-        phoneNumber,
-      });
-      const jwtData = { user: { userId: result.insertId } };
-      const token = await jwt.sign(jwtData, process.env.JWT_SECRET_KEY);
-      res.status(200).json({
-        status: true,
-        message: "success",
-        data: {
-          authToken: token,
-          userId: result.insertId,
-        },
-      });
-    } catch (error) {
-      res.status(400).json({
-        status: false,
-        message: error.message.includes("Duplicate entry")
-          ? "Duplicate entry"
-          : error.message,
-        data: {},
-      });
-    }
   }
 });
 
@@ -53,19 +40,15 @@ router.post("/login", async (req, res) => {
   const regx = /[^0-9]/g;
 
   // return true if any other character rather than 0-9
-  if (regx.test(phoneNumber) || phoneNumber.length !== 10) {
-    res.status(400).json({
-      status: false,
-      message: "invalid input",
-      data: {},
-    });
-    // res.status(400).json({
-    //   status: false,
-    //   message: "invalid input",
-    //   data: {},
-    // });
-  } else {
-    try {
+  try {
+    if (regx.test(phoneNumber) || phoneNumber.length !== 10) {
+      throw { message: "invalid input" };
+      // res.status(400).json({
+      //   status: false,
+      //   message: "invalid input",
+      //   data: {},
+      // });
+    } else {
       const userDetails = await fetchData(
         "SELECT userId,phoneNumber,firstName,lastName FROM all_users where phoneNumber = ?",
         [phoneNumber]
@@ -86,13 +69,13 @@ router.post("/login", async (req, res) => {
       } else {
         throw { message: "user does not exists" };
       }
-    } catch (error) {
-      res.status(400).json({
-        status: false,
-        message: error.message,
-        data: {},
-      });
     }
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.sqlMessage ? error.sqlMessage : error.message,
+      data: {},
+    });
   }
 });
 
@@ -103,16 +86,12 @@ router.post("/check_user", async (req, res) => {
   const regx = /[^0-9]/g;
 
   // return true if any other character rather than 0-9
-  if (regx.test(phoneNumber) || phoneNumber.length !== 10) {
-    res.status(400).json({
-      status: false,
-      message: "invalid input",
-      data: {},
-    });
-  } else {
-    const responseQuery = "SELECT userId FROM all_users WHERE phoneNumber = ?";
+  const responseQuery = "SELECT userId FROM all_users WHERE phoneNumber = ?";
 
-    try {
+  try {
+    if (regx.test(phoneNumber) || phoneNumber.length !== 10) {
+      throw { message: "invalid input" };
+    } else {
       const responseData = await fetchData(responseQuery, [phoneNumber]);
       if (responseData.length > 0) {
         res.status(200).json({
@@ -123,15 +102,17 @@ router.post("/check_user", async (req, res) => {
       } else {
         throw { message: "user does not exists" };
       }
-    } catch (error) {
-      res.status(400).json({
-        status: false,
-        message: error.message.includes("Duplicate entry")
-          ? "Duplicate entry"
-          : error.message,
-        data: {},
-      });
     }
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.message.includes("Duplicate entry")
+        ? "Duplicate entry"
+        : error.sqlMessage
+        ? error.sqlMessage
+        : error.message,
+      data: {},
+    });
   }
 });
 

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const verifyUser = require("../middleware/verifyUser");
-const { fetchData, updateLikes } = require("../database/db_connection");
+const { fetchData } = require("../database/db_connection");
 
 router.post("/get_predictions", verifyUser, async (req, res) => {
   const { matchId, filter } = req.body;
@@ -472,26 +472,26 @@ router.post("/update_user_team_likes", verifyUser, async (req, res) => {
 
   try {
     if (!/[^0-9]/g.test(teamId)) {
-      const response = await updateLikes(userId, teamId);
-      if (response["isTeamExists"] && response["isUserExists"]) {
-        res.status(200).json({
-          status: true,
-          message: "success",
-          data: {
-            totalLikes: response["likes"],
-            isUserLiked: response["isUserLiked"],
-          },
-        });
-      } else {
-        throw { message: "invalid input" };
-      }
+      const [[response]] = await fetchData("CALL update_likes(?, ?);", [
+        teamId,
+        userId,
+      ]);
+
+      res.status(200).json({
+        status: true,
+        message: "success",
+        data: {
+          totalLikes: response["likes"],
+          isUserLiked: response["isUserLiked"],
+        },
+      });
     } else {
       throw { message: "invalid input" };
     }
   } catch (error) {
     res.status(400).json({
       status: false,
-      message: error.message,
+      message: error.sqlMessage ? error.sqlMessage : error.message,
       data: {},
     });
   }
@@ -585,85 +585,113 @@ router.post("/update_user_team_likes", verifyUser, async (req, res) => {
 router.post("/update_user_team_views", verifyUser, async (req, res) => {
   let { userId, teamId } = req.body;
 
-  if (!/[^0-9]/g.test(teamId)) {
-    const checkUserViewCountLog = () =>
-      new Promise(async (resolve, reject) => {
-        try {
-          const response = await fetchData(
-            "SELECT viewCount FROM all_views WHERE userTeamId = ? AND userId = ?",
-            [teamId, userId]
-          );
-          if (response) resolve(response);
-        } catch (error) {
-          reject(error);
-        }
-        // connection.query(
-        //   "SELECT viewCount FROM all_views WHERE userTeamId = ? AND userId = ?",
-        //   [teamId, userId],
-        //   (err, response) => {
-        //     if (err) reject(err);
-        //     else {
-        //       resolve(response);
-        //     }
-        //   }
-        // );
-      });
-    checkUserViewCountLog()
-      .then((response) => {
-        if (response.length > 0) {
-          fetchData(
-            "UPDATE all_views SET viewCount = viewCount + 1 WHERE userTeamId = ? AND userId = ?",
-            [teamId, userId]
-          )
-            .then(() => {
-              res.status(200).json({
-                status: true,
-                message: "success",
-                data: {},
-              });
-            })
-            .catch((error) => {
-              res.status(400).json({
-                status: false,
-                message: error.message,
-                data: {},
-              });
-            });
-        } else {
-          fetchData("INSERT INTO all_views SET ?", {
-            userTeamId: teamId,
-            userId,
-          })
-            .then(() => {
-              res.status(200).json({
-                status: true,
-                message: "success",
-                data: {},
-              });
-            })
-            .catch((error) => {
-              res.status(400).json({
-                status: false,
-                message: error.message,
-                data: {},
-              });
-            });
-        }
-      })
-      .catch((error) => {
-        res.status(400).json({
-          status: false,
-          message: error.message,
+  try {
+    if (!/[^0-9]/g.test(teamId)) {
+      const [[{ message }]] = await fetchData("CALL update_views(?, ?)", [
+        teamId,
+        userId,
+      ]);
+      if (message === "success") {
+        res.status(200).json({
+          status: true,
+          message: "success",
           data: {},
         });
-      });
-  } else {
+      } else {
+        res.status(200).json({
+          status: true,
+          message: "success",
+          data: {},
+        });
+      }
+    }
+  } catch (error) {
     res.status(400).json({
       status: false,
-      message: "invalid input",
+      message: error.sqlMessage ? error.sqlMessage : error.messages,
       data: {},
     });
   }
+
+  // if (!/[^0-9]/g.test(teamId)) {
+  //   const checkUserViewCountLog = () =>
+  //     new Promise(async (resolve, reject) => {
+  //       try {
+  //         const response = await fetchData(
+  //           "SELECT viewCount FROM all_views WHERE userTeamId = ? AND userId = ?",
+  //           [teamId, userId]
+  //         );
+  //         if (response) resolve(response);
+  //       } catch (error) {
+  //         reject(error);
+  //       }
+  //       // connection.query(
+  //       //   "SELECT viewCount FROM all_views WHERE userTeamId = ? AND userId = ?",
+  //       //   [teamId, userId],
+  //       //   (err, response) => {
+  //       //     if (err) reject(err);
+  //       //     else {
+  //       //       resolve(response);
+  //       //     }
+  //       //   }
+  //       // );
+  //     });
+  //   checkUserViewCountLog()
+  //     .then((response) => {
+  //       if (response.length > 0) {
+  //         fetchData(
+  //           "UPDATE all_views SET viewCount = viewCount + 1 WHERE userTeamId = ? AND userId = ?",
+  //           [teamId, userId]
+  //         )
+  //           .then(() => {
+  //             res.status(200).json({
+  //               status: true,
+  //               message: "success",
+  //               data: {},
+  //             });
+  //           })
+  //           .catch((error) => {
+  //             res.status(400).json({
+  //               status: false,
+  //               message: error.message,
+  //               data: {},
+  //             });
+  //           });
+  //       } else {
+  //         fetchData("INSERT INTO all_views SET ?", {
+  //           userTeamId: teamId,
+  //           userId,
+  //         })
+  //           .then(() => {
+  //             res.status(200).json({
+  //               status: true,
+  //               message: "success",
+  //               data: {},
+  //             });
+  //           })
+  //           .catch((error) => {
+  //             res.status(400).json({
+  //               status: false,
+  //               message: error.message,
+  //               data: {},
+  //             });
+  //           });
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       res.status(400).json({
+  //         status: false,
+  //         message: error.message,
+  //         data: {},
+  //       });
+  //     });
+  // } else {
+  //   res.status(400).json({
+  //     status: false,
+  //     message: "invalid input",
+  //     data: {},
+  //   });
+  // }
 });
 
 router.post("/set_discussion", verifyUser, async (req, res) => {
@@ -671,55 +699,18 @@ router.post("/set_discussion", verifyUser, async (req, res) => {
   // createrId -> whose team is
   const { matchId, userId, message, createrId } = req.body;
   try {
-    if (
-      !/[^0-9]/g.test(matchId) &&
-      !/[^0-9]/g.test(createrId) &&
-      message.length <= 5000
-    ) {
-      const response = await fetchData("INSERT INTO discussion SET ? ;", {
-        matchId,
-        userId: createrId,
-        messengerId: userId,
-        message,
-      });
-      if (response) {
-        const discussionObject = await fetchData(
-          "SELECT messengerId, displayPicture, firstName AS firstName, message,messageTime AS messageTime FROM discussion JOIN all_users ON messengerId = all_users.userId WHERE discussionId = ? ORDER BY messageTime",
-          [response.insertId]
-        );
-        res.status(200).json({
-          status: true,
-          message: "success",
-          data: {
-            messages: discussionObject[0],
-          },
-        });
-      }
-      // connection.query(
-      //   "INSERT INTO discussion SET ? ;",
-      //   { matchId, userId: createrId, messengerId: userId, message },
-      //   (err, response) => {
-      //     try {
-      //       if (err) throw err;
-      //       else {
-      //         res.status(200).json({
-      //           status: true,
-      //           message: "success",
-      //           data: {},
-      //         });
-      //       }
-      //     } catch (error) {
-      //       res.status(400).json({
-      //         status: false,
-      //         message: error.message,
-      //         data: {},
-      //       });
-      //     }
-      //   }
-      // );
-    } else {
-      throw { message: "invalid input" };
-    }
+    const [[discussionObject]] = await fetchData(
+      "CALL set_discussion(?, ?, ?, ?)",
+      [matchId, userId, createrId, message]
+    );
+
+    res.status(200).json({
+      status: true,
+      message: "success",
+      data: {
+        messages: discussionObject,
+      },
+    });
   } catch (error) {
     res.status(400).json({
       status: false,
