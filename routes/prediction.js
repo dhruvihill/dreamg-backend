@@ -106,11 +106,18 @@ router.post("/get_user_teams", verifyUser, async (req, res) => {
     "SELECT team1_id AS team1Id, team1.name AS team1Name, team1.displayName AS team1DisplayName, team1.teamFlagURLLocal AS team1FlagURL, team2_id AS team2Id, team2.name AS team2Name, team2.displayName AS team2DisplayName, team2.teamFlagURLLocal AS team2FlagURL FROM all_matches JOIN teams AS team1 ON team1.teamId = team1_id JOIN teams AS team2 ON team2.teamId = team2_id WHERE matchId = ?;";
   const playerDetailsQuery =
     "SELECT match_player_relation.playerId AS playerId,players.name AS playerName,players.displayName AS playerDisplayName,player_roles.roleId AS roleId,player_roles.roleName AS roleName,players.profilePictureURLLocal AS URL, points, credits, teams.teamId AS teamId FROM match_player_relation JOIN players ON players.playerId = match_player_relation.playerId JOIN player_roles ON players.role = player_roles.roleId JOIN teams ON teams.teamId = match_player_relation.teamId WHERE match_player_relation.playerId = ? AND match_player_relation.matchId = ?;";
+  const userDetailsQuery =
+    "SELECT all_users.`firstName`, all_users.`lastName`, all_users.`displayPicture` FROM `all_users` WHERE userId = ?;";
 
   try {
     if (!/[^0-9]/g.test(matchId) && !/[^0-9]/g.test(createrId)) {
-      const players = await fetchData(playersQuery, [matchId, createrId]);
-      const teamDetails = await fetchData(teamDetailsQuery, [matchId]);
+      // const players = await fetchData(playersQuery, [matchId, createrId]);
+      // const teamDetails = await fetchData(teamDetailsQuery, [matchId]);
+
+      const [players, teamDetails, [userDetails]] = await fetchData(
+        `${playersQuery}${teamDetailsQuery}${userDetailsQuery}`,
+        [matchId, createrId, matchId, createrId]
+      );
 
       if (players.length > 0) {
         const fetchTeams = () =>
@@ -213,7 +220,7 @@ router.post("/get_user_teams", verifyUser, async (req, res) => {
         res.status(200).json({
           status: true,
           message: "success",
-          data: { userTeams: allTeams },
+          data: { userTeams: allTeams, userDetails: userDetails },
         });
       } else {
         throw { message: "user have no team created" };
@@ -240,9 +247,12 @@ router.post("/get_user_teams_predictor", verifyUser, async (req, res) => {
     "SELECT team1_id AS team1Id, team1.name AS team1Name, team1.displayName AS team1DisplayName, team1.teamFlagURLLocal AS team1FlagURL, team2_id AS team2Id, team2.name AS team2Name, team2.displayName AS team2DisplayName, team2.teamFlagURLLocal AS team2FlagURL FROM all_matches JOIN teams AS team1 ON team1.teamId = team1_id JOIN teams AS team2 ON team2.teamId = team2_id WHERE matchId = ?;";
   const playerDetailsQuery =
     "SELECT match_player_relation.playerId AS playerId,players.name AS playerName,players.displayName AS playerDisplayName,player_roles.roleId AS roleId,player_roles.roleName AS roleName,players.profilePictureURLLocal AS URL, points, credits, teams.teamId AS teamId FROM match_player_relation JOIN players ON players.playerId = match_player_relation.playerId JOIN player_roles ON players.role = player_roles.roleId JOIN teams ON teams.teamId = match_player_relation.teamId WHERE match_player_relation.playerId = ? AND match_player_relation.matchId = ?;";
+  const userDetailsQuery =
+    "SELECT all_users.`firstName`, all_users.`lastName`, all_users.`displayPicture` FROM `all_users` WHERE userId = ?;";
 
   try {
     const players = await fetchData(playersQuery, [createrId]);
+    const [userDetails] = await fetchData(userDetailsQuery, [createrId]);
     if (players.length > 0) {
       const fetchTeams = () =>
         new Promise((resolve, reject) => {
@@ -350,7 +360,7 @@ router.post("/get_user_teams_predictor", verifyUser, async (req, res) => {
       res.status(200).json({
         status: true,
         message: "success",
-        data: { userTeams: allTeams },
+        data: { userTeams: allTeams, userDetails },
       });
     } else {
       throw { message: "user have no team created" };
