@@ -37,7 +37,32 @@ router.post("/get_matches", verifyUser, async (req, res) => {
   } catch (error) {
     res.status(400).json({
       status: false,
-      message: error.message,
+      message: error.sqlMessage ? error.sqlMessage : error.message,
+      data: {},
+    });
+  }
+});
+
+router.post("/recentPlayed", verifyUser, async (req, res) => {
+  const { predictorId } = req.body;
+
+  try {
+    const matchesQuery =
+      "SELECT matchId, seriesName, seriesDname,matchTypeId,matchTyprString, matchStartTimeMilliSeconds,matchStartDateTime,venue, all_matches.displayName,team1.teamId AS `team1Id`,team1.name AS 'team1Name', team1.displayName AS 'team1DisplayName',team1.teamFlagUrlLocal AS 'team1FlagURL', team2.teamId AS `team2Id`,team2.name AS 'team2Name', team2.displayName AS 'team2DisplayName',team2.teamFlagUrlLocal AS 'team2FlagURL' FROM all_matches JOIN teams AS team1 ON all_matches.team1_id = team1.teamId JOIN teams AS team2 ON all_matches.team2_id = team2.teamId JOIN match_type ON match_type.matchTypeId = gameType WHERE matchId IN (SELECT DISTINCT user_team.matchId FROM user_team JOIN user_team_data ON user_team.userTeamId = user_team_data.userTeamId WHERE userId = ? ORDER BY user_team_data.creationTime DESC)";
+
+    const recentPlayed = await fetchData(matchesQuery, [predictorId]);
+
+    res.status(200).json({
+      status: true,
+      message: "success",
+      data: {
+        recentPlayed: recentPlayed,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.sqlMessage ? error.sqlMessage : error.message,
       data: {},
     });
   }
