@@ -19,14 +19,19 @@ const verifyProfile = async (req, res, next) => {
       } else {
         if (typeof body[key] === "string") {
           if (["firstName", "lastName"].includes(key)) {
-            body[key].length > 30 ? (allCorrect = false) : null;
+            body[key].length > 30 || body[key].length === 0
+              ? (allCorrect = false)
+              : null;
           } else if (key === "email") {
-            validator.isEmail(body[key]) ? null : (allCorrect = false);
+            if (body[key] !== "") {
+              validator.isEmail(body[key]) ? null : (allCorrect = false);
+            }
           } else if (key === "pinCode") {
             let regx = /[^0-9]/g;
-            if (regx.test(body[key])) allCorrect = false;
+            if (body[key] !== "" && regx.test(body[key])) allCorrect = false;
           } else if (key === "dateOfBirth") {
             if (
+              body[key] !== "" &&
               !(
                 validator.isDate(body[key]) &&
                 validator.isBefore(body[key], Date())
@@ -35,7 +40,7 @@ const verifyProfile = async (req, res, next) => {
               allCorrect = false;
             }
           } else if (key === "gender") {
-            if (!["male", "female"].includes(body[key])) {
+            if (body[key] !== "" && !["male", "female"].includes(body[key])) {
               allCorrect = false;
             }
           }

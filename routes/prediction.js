@@ -56,10 +56,14 @@ router.post("/get_predictions", verifyUser, async (req, res) => {
   } catch (error) {
     res.status(400).json({
       status: false,
-      message: error.message,
+      message: error.sqlMessage || error.message,
       data: {},
     });
   }
+});
+
+router.post("/getExpertPredictor", verifyUser, async (req, res) => {
+  const { matchId } = req.body;
 });
 
 router.get("/getTrendingPredictors", verifyUser, async (req, res) => {
@@ -90,7 +94,7 @@ router.get("/getTrendingPredictors", verifyUser, async (req, res) => {
   } catch (error) {
     res.status(200).json({
       status: false,
-      message: error.message,
+      message: error.sqlMessage || error.message,
       data: {},
     });
   }
@@ -231,7 +235,7 @@ router.post("/get_user_teams", verifyUser, async (req, res) => {
   } catch (error) {
     res.status(400).json({
       status: false,
-      message: error.message,
+      message: error.sqlMessage || error.message,
       data: {},
     });
   }
@@ -368,7 +372,7 @@ router.post("/get_user_teams_predictor", verifyUser, async (req, res) => {
   } catch (error) {
     res.status(400).json({
       status: false,
-      message: error.message,
+      message: error.sqlMessage || error.message,
       data: {},
     });
   }
@@ -383,7 +387,7 @@ router.post("/get_user_teams_data", verifyUser, async (req, res) => {
   const teamQuery =
     "SELECT team1_id AS team1Id, team1.name AS team1Name, team1.displayName AS team1DisplayName, team1.teamFlagURLLocal AS team1FlagURL, team2_id AS team2Id, team2.name AS team2Name, team2.displayName AS team2DisplayName, team2.teamFlagURLLocal AS team2FlagURL FROM all_matches JOIN teams AS team1 ON team1.teamId = team1_id JOIN teams AS team2 ON team2.teamId = team2_id WHERE matchId = ?;";
   const playerQuery =
-    "SELECT match_player_relation.playerId AS playerId,players.name AS playerName,players.displayName AS playerDisplayName,player_roles.roleId AS roleId,player_roles.roleName AS roleName,players.profilePictureURLLocal AS URL, points, credits, teams.teamId AS teamId FROM match_player_relation JOIN players ON players.playerId = match_player_relation.playerId JOIN player_roles ON players.role = player_roles.roleId JOIN teams ON teams.teamId = match_player_relation.teamId WHERE match_player_relation.playerId = ? AND match_player_relation.matchId = ?;";
+    "SELECT match_player_relation.playerId AS playerId,players.name AS playerName,players.displayName AS playerDisplayName,player_roles.roleId AS roleId,player_roles.roleName AS roleName,players.profilePictureURLLocal AS URL, points, credits, match_player_relation.teamId AS teamId FROM match_player_relation JOIN players ON players.playerId = match_player_relation.playerId JOIN player_roles ON players.role = player_roles.roleId WHERE match_player_relation.playerId = ? AND match_player_relation.matchId = ?;";
 
   try {
     if (!/[^0-9]/g.test(teamId)) {
@@ -471,7 +475,7 @@ router.post("/get_user_teams_data", verifyUser, async (req, res) => {
   } catch (error) {
     res.status(400).json({
       status: false,
-      message: error.message,
+      message: error.sqlMessage || error.message,
       data: {},
     });
   }
@@ -501,7 +505,7 @@ router.post("/update_user_team_likes", verifyUser, async (req, res) => {
   } catch (error) {
     res.status(400).json({
       status: false,
-      message: error.sqlMessage ? error.sqlMessage : error.message,
+      message: error.sqlMessage || error.message,
       data: {},
     });
   }
@@ -618,7 +622,7 @@ router.post("/update_user_team_views", verifyUser, async (req, res) => {
   } catch (error) {
     res.status(400).json({
       status: false,
-      message: error.sqlMessage ? error.sqlMessage : error.messages,
+      message: error.sqlMessage || error.message,
       data: {},
     });
   }
@@ -724,7 +728,7 @@ router.post("/set_discussion", verifyUser, async (req, res) => {
   } catch (error) {
     res.status(400).json({
       status: false,
-      message: error.message,
+      message: error.sqlMessage || error.message,
       data: {},
     });
   }
@@ -776,7 +780,7 @@ router.post("/get_discussion", verifyUser, async (req, res) => {
   } catch (error) {
     res.status(400).json({
       status: false,
-      message: error.message,
+      message: error.sqlMessage || error.message,
       data: {},
     });
   }
@@ -790,8 +794,8 @@ router.post("/compare_teams", verifyUser, async (req, res) => {
   const matchDetails =
     "SELECT matchId, matchStartTimeMilliSeconds AS matchStartTime, venue, seriesDname AS seriesDisplayName,team1_id AS team1Id,team1.displayName AS team1DisplayName, team1.name AS team1Name,team1.teamFlagUrlLocal AS team1FlagURL,team2_id AS team2Id,team2.displayName AS team2DisplayName, team2.name AS team2Name,team2.teamFlagUrlLocal AS team2FlagURL FROM `all_matches` JOIN teams AS team1 ON team1.teamId = team1_id JOIN teams AS team2 ON team2.teamId = team2_id WHERE matchId = ?;";
 
-  if (!/[^0-9]/g.test(matchId)) {
-    try {
+  try {
+    if (!/[^0-9]/g.test(matchId)) {
       const response = await fetchData(allPlayersForMatch, [matchId]);
       const responseData = await fetchData(matchDetails, [matchId]);
 
@@ -821,75 +825,71 @@ router.post("/compare_teams", verifyUser, async (req, res) => {
           matchDetails: responseData[0],
         },
       });
-    } catch (error) {
-      res.status(400).json({
-        status: false,
-        message: error.message,
-        data: {},
-      });
+    } else {
+      throw { message: "invalid input" };
     }
-    // connection.query(allPlayersForMatch, [matchId], (err, response) => {
-    //   try {
-    //     if (err) throw err;
-    //     else {
-    //       connection.query(matchDetails, [matchId], (error, responseData) => {
-    //         try {
-    //           if (error) throw error;
-    //           else {
-    //             // changing server address
-    //             response.forEach((element) => {
-    //               element.URL = element.URL.replace(
-    //                 "http://192.168.1.32:3000",
-    //                 `${req.protocol}://${req.headers.host}`
-    //               );
-    //               element.flagURL = element.flagURL.replace(
-    //                 "http://192.168.1.32:3000",
-    //                 `${req.protocol}://${req.headers.host}`
-    //               );
-    //             });
-    //             responseData[0].team1FlagURL =
-    //               responseData[0].team1FlagURL.replace(
-    //                 "http://192.168.1.32:3000",
-    //                 `${req.protocol}://${req.headers.host}`
-    //               );
-    //             responseData[0].team2FlagURL =
-    //               responseData[0].team2FlagURL.replace(
-    //                 "http://192.168.1.32:3000",
-    //                 `${req.protocol}://${req.headers.host}`
-    //               );
-    //             res.status(200).json({
-    //               status: true,
-    //               message: "success",
-    //               data: {
-    //                 players: response,
-    //                 matchDetails: responseData[0],
-    //               },
-    //             });
-    //           }
-    //         } catch (error) {
-    //           res.status(400).json({
-    //             status: false,
-    //             message: error.message,
-    //             data: {},
-    //           });
-    //         }
-    //       });
-    //     }
-    //   } catch (error) {
-    //     res.status(400).json({
-    //       status: false,
-    //       message: error.message,
-    //       data: {},
-    //     });
-    //   }
-    // });
-  } else {
+  } catch (error) {
     res.status(400).json({
       status: false,
-      message: "invalid input",
+      message: error.sqlMessage || error.message,
       data: {},
     });
   }
+  // connection.query(allPlayersForMatch, [matchId], (err, response) => {
+  //   try {
+  //     if (err) throw err;
+  //     else {
+  //       connection.query(matchDetails, [matchId], (error, responseData) => {
+  //         try {
+  //           if (error) throw error;
+  //           else {
+  //             // changing server address
+  //             response.forEach((element) => {
+  //               element.URL = element.URL.replace(
+  //                 "http://192.168.1.32:3000",
+  //                 `${req.protocol}://${req.headers.host}`
+  //               );
+  //               element.flagURL = element.flagURL.replace(
+  //                 "http://192.168.1.32:3000",
+  //                 `${req.protocol}://${req.headers.host}`
+  //               );
+  //             });
+  //             responseData[0].team1FlagURL =
+  //               responseData[0].team1FlagURL.replace(
+  //                 "http://192.168.1.32:3000",
+  //                 `${req.protocol}://${req.headers.host}`
+  //               );
+  //             responseData[0].team2FlagURL =
+  //               responseData[0].team2FlagURL.replace(
+  //                 "http://192.168.1.32:3000",
+  //                 `${req.protocol}://${req.headers.host}`
+  //               );
+  //             res.status(200).json({
+  //               status: true,
+  //               message: "success",
+  //               data: {
+  //                 players: response,
+  //                 matchDetails: responseData[0],
+  //               },
+  //             });
+  //           }
+  //         } catch (error) {
+  //           res.status(400).json({
+  //             status: false,
+  //             message: error.message,
+  //             data: {},
+  //           });
+  //         }
+  //       });
+  //     }
+  //   } catch (error) {
+  //     res.status(400).json({
+  //       status: false,
+  //       message: error.message,
+  //       data: {},
+  //     });
+  //   }
+  // });
 });
 
 module.exports = router;

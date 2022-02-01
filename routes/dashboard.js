@@ -10,6 +10,7 @@ router.get("/", verifyUser, async (req, res) => {
   const { userId } = req.body;
   const { authtoken } = req.headers;
 
+  /* SELECT seriesName, seriesDname, matchId,matchTypeId,matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime,matchStatus,venue, displayName,team1Id,team1Name, team1DisplayName,team1FlagURL, team2Id,team2Name, team2DisplayName,team2FlagURL FROM fullmatchdetails WHERE matchStatus = 1 ORDER BY matchStartTimeMilliSeconds DESC LIMIT 5; */
   const upcomingMatchesQuery =
     "SELECT seriesName, seriesDname, matchId,matchTypeId,matchTyprString, matchStartTimeMilliSeconds,matchStartDateTime,matchStatus,venue, all_matches.displayName,team1.teamId AS `team1Id`,team1.name AS 'team1Name', team1.displayName AS 'team1DisplayName',team1.teamFlagUrlLocal AS 'team1FlagURL', team2.teamId AS `team2Id`,team2.name AS 'team2Name', team2.displayName AS 'team2DisplayName',team2.teamFlagUrlLocal AS 'team2FlagURL' FROM all_matches JOIN teams AS team1 ON all_matches.team1_id = team1.teamId JOIN teams AS team2 ON all_matches.team2_id = team2.teamId JOIN match_type ON match_type.matchTypeId = gameType WHERE matchStatus = 1 ORDER BY matchStartTimeMilliSeconds DESC LIMIT 5";
   const isNotificationQuery =
