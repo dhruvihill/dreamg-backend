@@ -190,24 +190,28 @@ router.post(
   verifyProfile,
   async (req, res) => {
     const body = req.body;
-    let keys = [],
-      values = [];
-    for (const key in body) {
-      if (key !== "userId") {
-        keys.push(`${key} = ?`);
-        values.push(body[key]);
-      }
-    }
-
-    const updateUserQuery = `UPDATE all_users SET ${keys.join(
-      ","
-    )} WHERE userId = ?`;
 
     try {
-      const updateUserResponse = await fetchData(updateUserQuery, [
-        ...values,
-        body.userId,
-      ]);
+      let keys = [],
+        values = [];
+      for (const key in body) {
+        if (key !== "userId") {
+          keys.push(`${key} = ?`);
+          values.push(body[key]);
+        }
+      }
+      const updateUserQuery = `UPDATE all_users SET ${keys.join(
+        ","
+      )} WHERE userId = ?;`;
+      const getUserPointsQuery = `SELECT (SELECT COUNT(DISTINCT matchId) FROM user_team WHERE userId = ?) AS totalMatches,
+      (SELECT COUNT(DISTINCT userTeamId) FROM user_team WHERE userId = ?) AS totalTeams,
+      (SELECT SUM(user_team_data.userTeamPoints) FROM all_users JOIN user_team ON user_team.userId = all_users.userId JOIN user_team_data ON user_team.userTeamId = user_team_data.userTeamId AND userTeamType = (SELECT teamType FROM team_type WHERE teamTypeString = "MEGA_CONTEST") WHERE all_users.userId = ?) AS mega_contest_totalPoints, 
+      (SELECT SUM(user_team_data.userTeamPoints) FROM all_users JOIN user_team ON user_team.userId = all_users.userId JOIN user_team_data ON user_team.userTeamId = user_team_data.userTeamId AND userTeamType = (SELECT teamType FROM team_type WHERE teamTypeString = "HEAD_TO_HEAD") WHERE all_users.userId = ?) AS head_to_head_totalPoints 
+      FROM all_users WHERE all_users.userId = ?;`;
+      const [updateUserResponse, [getUserPoints]] = await fetchData(
+        `${updateUserQuery}${getUserPointsQuery}`,
+        [...values, body.userId, ...Array(5).fill(body.userId)]
+      );
       delete body.userId;
       if (updateUserResponse.affectedRows > 0) {
         res.status(200).json({
@@ -215,6 +219,7 @@ router.post(
           message: "success",
           data: {
             ...body,
+            ...getUserPoints,
           },
         });
       } else {
