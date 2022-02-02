@@ -207,7 +207,6 @@ router.post(
         [...values, body.userId, ...Array(5).fill(body.userId)]
       );
 
-      delete body.userId;
       if (updateUserResponse.affectedRows > 0) {
         res.status(200).json({
           status: true,
