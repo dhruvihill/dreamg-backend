@@ -54,7 +54,7 @@ router.post("/recentPlayed", verifyUser, async (req, res) => {
 
   try {
     const matchesQuery =
-      "SELECT matchId, seriesName, seriesDname,matchTypeId,matchTyprString, matchStartTimeMilliSeconds,matchStartDateTime,venue, all_matches.displayName,team1.teamId AS `team1Id`,team1.name AS 'team1Name', team1.displayName AS 'team1DisplayName',team1.teamFlagUrlLocal AS 'team1FlagURL', team2.teamId AS `team2Id`,team2.name AS 'team2Name', team2.displayName AS 'team2DisplayName',team2.teamFlagUrlLocal AS 'team2FlagURL' FROM all_matches JOIN teams AS team1 ON all_matches.team1_id = team1.teamId JOIN teams AS team2 ON all_matches.team2_id = team2.teamId JOIN match_type ON match_type.matchTypeId = gameType WHERE all_matches.matchStatus != 1 AND matchId IN (SELECT DISTINCT user_team.matchId FROM user_team JOIN user_team_data ON user_team.userTeamId = user_team_data.userTeamId WHERE userId = ? ORDER BY user_team_data.creationTime DESC);";
+      "SELECT fullmatchdetails.matchId, fullmatchdetails.seriesName, fullmatchdetails.seriesDname, fullmatchdetails.matchTypeId, fullmatchdetails.matchTyprString, fullmatchdetails.matchStartTimeMilliSeconds, fullmatchdetails.matchStartDateTime, fullmatchdetails.venue, fullmatchdetails.displayName, fullmatchdetails.team1Id, fullmatchdetails.team1Name, fullmatchdetails.team1DisplayName, fullmatchdetails.team1FlagURL, fullmatchdetails.team2Id, fullmatchdetails.team2Name, fullmatchdetails.team2DisplayName, fullmatchdetails.team2FlagURL, (SELECT COUNT(*) FROM ( SELECT COUNT(userId) AS GroupAmount FROM fullteamdetails GROUP BY userId ) AS subQuery) AS totalPredictors FROM fullmatchdetails WHERE fullmatchdetails.matchStatus != 1 AND fullmatchdetails.matchId IN (SELECT DISTINCT fullteamdetails.matchId FROM fullteamdetails WHERE fullteamdetails.userId = ? ORDER BY fullteamdetails.creationTime DESC);";
 
     const recentPlayed = await fetchData(matchesQuery, [predictorId]);
 
@@ -89,8 +89,7 @@ router.post("/currentPlayed", verifyUser, async (req, res) => {
 
   try {
     const matchesQuery =
-      "SELECT matchId, seriesName, seriesDname,matchTypeId,matchTyprString, matchStartTimeMilliSeconds,matchStartDateTime,venue, all_matches.displayName,team1.teamId AS `team1Id`,team1.name AS 'team1Name', team1.displayName AS 'team1DisplayName',team1.teamFlagUrlLocal AS 'team1FlagURL', team2.teamId AS `team2Id`,team2.name AS 'team2Name', team2.displayName AS 'team2DisplayName',team2.teamFlagUrlLocal AS 'team2FlagURL' FROM all_matches JOIN teams AS team1 ON all_matches.team1_id = team1.teamId JOIN teams AS team2 ON all_matches.team2_id = team2.teamId JOIN match_type ON match_type.matchTypeId = gameType WHERE all_matches.matchStatus = 1 AND matchId IN (SELECT DISTINCT user_team.matchId FROM user_team JOIN user_team_data ON user_team.userTeamId = user_team_data.userTeamId WHERE userId = ? ORDER BY user_team_data.creationTime DESC);";
-
+      "SELECT fullmatchdetails.matchId, fullmatchdetails.seriesName, fullmatchdetails.seriesDname, fullmatchdetails.matchTypeId, fullmatchdetails.matchTyprString, fullmatchdetails.matchStartTimeMilliSeconds, fullmatchdetails.matchStartDateTime, fullmatchdetails.venue, fullmatchdetails.displayName, fullmatchdetails.team1Id, fullmatchdetails.team1Name, fullmatchdetails.team1DisplayName, fullmatchdetails.team1FlagURL, fullmatchdetails.team2Id, fullmatchdetails.team2Name, fullmatchdetails.team2DisplayName, fullmatchdetails.team2FlagURL, (SELECT COUNT(*) FROM ( SELECT COUNT(userId) AS GroupAmount FROM fullteamdetails GROUP BY userId ) AS subQuery) AS totalPredictors FROM fullmatchdetails WHERE fullmatchdetails.matchStatus = 1 AND fullmatchdetails.matchId IN (SELECT DISTINCT fullteamdetails.matchId FROM fullteamdetails WHERE fullteamdetails.userId = ? ORDER BY fullteamdetails.creationTime DESC);";
     const recentPlayed = await fetchData(matchesQuery, [predictorId]);
 
     recentPlayed.forEach((match) => {
@@ -106,7 +105,7 @@ router.post("/currentPlayed", verifyUser, async (req, res) => {
       status: true,
       message: "success",
       data: {
-        recentPlayed: recentPlayed,
+        currentPlayed: recentPlayed,
       },
     });
   } catch (error) {
