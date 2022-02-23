@@ -2,15 +2,12 @@ dashboard data ascending to decending order
 trending predictor remove defaulte matchId 27947
 
 get user teams predictor error handling
-error handling for invalid json data
-single initialize fetchdata function
 verification of update profile
 
 ******
 solving all kind of error releted to database (database disconnect)
-add foriegne key in matchplayerrelation AND user_team - user_team_data
 inserting data into database in following manner SERIES -> MATCH -> TEAM/PlAYER -> MATCHPLAYERRELATION
 error handling in update_views
+REFACTOR getuserprofile recentMatches (matchStatus = 1 to 3)
+EXPERT PREDICTIONS
 ******
-
-PROCEDURES/CATCH/VIEWS

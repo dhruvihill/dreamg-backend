@@ -35,10 +35,12 @@ router.post("/get_predictions", verifyUser, async (req, res) => {
       const result = await fetchData(query, [matchId]);
 
       result.forEach((element) => {
-        element.displayPicture = element.displayPicture.replace(
-          "http://192.168.1.32:3000",
-          `${req.protocol}://${req.headers.host}`
-        );
+        element.displayPicture = element.displayPicture
+          ? element.displayPicture.replace(
+              "http://192.168.1.32:3000",
+              `${req.protocol}://${req.headers.host}`
+            )
+          : "";
       });
 
       if (result.length > 0) {
@@ -79,10 +81,12 @@ router.get("/getTrendingPredictors", verifyUser, async (req, res) => {
 
     // replace server address
     predictor.forEach((trending) => {
-      trending.displayPicture = trending.displayPicture.replace(
-        "http://192.168.1.32:3000",
-        `${req.protocol}://${req.headers.host}`
-      );
+      trending.displayPicture = trending.displayPicture
+        ? trending.displayPicture.replace(
+            "http://192.168.1.32:3000",
+            `${req.protocol}://${req.headers.host}`
+          )
+        : "";
     });
     res.status(200).json({
       status: true,
@@ -159,10 +163,12 @@ router.post("/get_user_teams", verifyUser, async (req, res) => {
                     teamId: teamDetails[0][`team${j + 1}Id`],
                     teamName: teamDetails[0][`team${j + 1}Name`],
                     teamDisplayName: teamDetails[0][`team${j + 1}DisplayName`],
-                    teamFlagURL: teamDetails[0][`team${j + 1}FlagURL`].replace(
-                      "http://192.168.1.32:3000",
-                      `${req.protocol}://${req.headers.host}`
-                    ),
+                    teamFlagURL: teamDetails[0][`team${j + 1}FlagURL`]
+                      ? teamDetails[0][`team${j + 1}FlagURL`].replace(
+                          "http://192.168.1.32:3000",
+                          `${req.protocol}://${req.headers.host}`
+                        )
+                      : "",
                   };
                 }
 
@@ -175,10 +181,12 @@ router.post("/get_user_teams", verifyUser, async (req, res) => {
                     ]);
 
                     // changing server address
-                    player[0].URL = player[0].URL.replace(
-                      "http://192.168.1.32:3000",
-                      `${req.protocol}://${req.headers.host}`
-                    );
+                    player[0].URL = player[0].URL
+                      ? player[0].URL.replace(
+                          "http://192.168.1.32:3000",
+                          `${req.protocol}://${req.headers.host}`
+                        )
+                      : "";
 
                     // storing captains and vicecaptain details
                     if (team[key] === team["captain"])
@@ -297,10 +305,12 @@ router.post("/get_user_teams_predictor", verifyUser, async (req, res) => {
                     teamId: teamDetails[0][`team${j + 1}Id`],
                     teamName: teamDetails[0][`team${j + 1}Name`],
                     teamDisplayName: teamDetails[0][`team${j + 1}DisplayName`],
-                    teamFlagURL: teamDetails[0][`team${j + 1}FlagURL`].replace(
-                      "http://192.168.1.32:3000",
-                      `${req.protocol}://${req.headers.host}`
-                    ),
+                    teamFlagURL: teamDetails[0][`team${j + 1}FlagURL`]
+                      ? teamDetails[0][`team${j + 1}FlagURL`].replace(
+                          "http://192.168.1.32:3000",
+                          `${req.protocol}://${req.headers.host}`
+                        )
+                      : "",
                   };
                 }
 
@@ -312,10 +322,12 @@ router.post("/get_user_teams_predictor", verifyUser, async (req, res) => {
                       team.matchId,
                     ]);
                     // changing server address
-                    player[0].URL = player[0].URL.replace(
-                      "http://192.168.1.32:3000",
-                      `${req.protocol}://${req.headers.host}`
-                    );
+                    player[0].URL = player[0].URL
+                      ? player[0].URL.replace(
+                          "http://192.168.1.32:3000",
+                          `${req.protocol}://${req.headers.host}`
+                        )
+                      : "";
 
                     // storing captains and vicecaptain details
                     if (team[key] === team["captain"])
@@ -746,6 +758,16 @@ router.post("/get_discussion", verifyUser, async (req, res) => {
         "SELECT messengerId, displayPicture, firstName AS firstName, message,messageTime AS messageTime FROM discussion JOIN all_users ON messengerId = all_users.userId WHERE matchId = ? AND discussion.userId = ? ORDER BY messageTime DESC LIMIT 50;",
         [matchId, createrId]
       );
+
+      response.forEach((message) => {
+        message.displayPicture = message.displayPicture
+          ? message.displayPicture.replace(
+              "http://192.168.1.32:3000",
+              `${req.protocol}://${req.headers.host}`
+            )
+          : "";
+      });
+
       res.status(200).json({
         status: true,
         message: "success",
@@ -803,23 +825,31 @@ router.post("/compare_teams", verifyUser, async (req, res) => {
       const responseData = await fetchData(matchDetails, [matchId]);
 
       response.forEach((element) => {
-        element.URL = element.URL.replace(
-          "http://192.168.1.32:3000",
-          `${req.protocol}://${req.headers.host}`
-        );
-        element.flagURL = element.flagURL.replace(
-          "http://192.168.1.32:3000",
-          `${req.protocol}://${req.headers.host}`
-        );
+        element.URL = element.URL
+          ? element.URL.replace(
+              "http://192.168.1.32:3000",
+              `${req.protocol}://${req.headers.host}`
+            )
+          : "";
+        element.flagURL = element.URL
+          ? element.flagURL.replace(
+              "http://192.168.1.32:3000",
+              `${req.protocol}://${req.headers.host}`
+            )
+          : "";
       });
-      responseData[0].team1FlagURL = responseData[0].team1FlagURL.replace(
-        "http://192.168.1.32:3000",
-        `${req.protocol}://${req.headers.host}`
-      );
-      responseData[0].team2FlagURL = responseData[0].team2FlagURL.replace(
-        "http://192.168.1.32:3000",
-        `${req.protocol}://${req.headers.host}`
-      );
+      responseData[0].team1FlagURL = responseData[0].team1FlagURL
+        ? responseData[0].team1FlagURL.replace(
+            "http://192.168.1.32:3000",
+            `${req.protocol}://${req.headers.host}`
+          )
+        : "";
+      responseData[0].team2FlagURL = responseData[0].team2FlagURL
+        ? responseData[0].team1FlagURL.replace(
+            "http://192.168.1.32:3000",
+            `${req.protocol}://${req.headers.host}`
+          )
+        : "";
       res.status(200).json({
         status: true,
         message: "success",

@@ -10,38 +10,43 @@ router.get("/", verifyUser, async (req, res) => {
   const { userId } = req.body;
   const { authtoken } = req.headers;
 
-  /* SELECT seriesName, seriesDname, matchId,matchTypeId,matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime,matchStatus,venue, displayName,team1Id,team1Name, team1DisplayName,team1FlagURL, team2Id,team2Name, team2DisplayName,team2FlagURL FROM fullmatchdetails WHERE matchStatus = 1 ORDER BY matchStartTimeMilliSeconds DESC LIMIT 5; */
-  const upcomingMatchesQuery =
-    "SELECT seriesName, seriesDname, matchId,matchTypeId,matchTyprString, matchStartTimeMilliSeconds,matchStartDateTime,matchStatus,venue, all_matches.displayName,team1.teamId AS `team1Id`,team1.name AS 'team1Name', team1.displayName AS 'team1DisplayName',team1.teamFlagUrlLocal AS 'team1FlagURL', team2.teamId AS `team2Id`,team2.name AS 'team2Name', team2.displayName AS 'team2DisplayName',team2.teamFlagUrlLocal AS 'team2FlagURL' FROM all_matches JOIN teams AS team1 ON all_matches.team1_id = team1.teamId JOIN teams AS team2 ON all_matches.team2_id = team2.teamId JOIN match_type ON match_type.matchTypeId = gameType WHERE matchStatus = 1 ORDER BY matchStartTimeMilliSeconds DESC LIMIT 5";
+  // const upcomingMatchesQuery =
+  //   "SELECT seriesName, seriesDname, matchId,matchTypeId,matchTyprString, matchStartTimeMilliSeconds,matchStartDateTime,matchStatus,venue, all_matches.displayName,team1.teamId AS `team1Id`,team1.name AS 'team1Name', team1.displayName AS 'team1DisplayName',team1.teamFlagUrlLocal AS 'team1FlagURL', team2.teamId AS `team2Id`,team2.name AS 'team2Name', team2.displayName AS 'team2DisplayName',team2.teamFlagUrlLocal AS 'team2FlagURL' FROM all_matches JOIN teams AS team1 ON all_matches.team1_id = team1.teamId JOIN teams AS team2 ON all_matches.team2_id = team2.teamId JOIN match_type ON match_type.matchTypeId = gameType WHERE matchStatus = 1 ORDER BY matchStartTimeMilliSeconds DESC LIMIT 5;";
+  // const isNotificationQuery =
+  //   "SELECT COUNT(*) > 0 AS isNotification FROM notifications JOIN notification_history ON notification_history.userId = notifications.userId WHERE notifications.userId = ? AND notifications.creationTime > notification_history.lastTimeCalled;";
+
   const isNotificationQuery =
-    "SELECT COUNT(*) > 0 AS isNotification FROM notifications JOIN notification_history ON notification_history.userId = notifications.userId WHERE notifications.userId = ? AND notifications.creationTime > notification_history.lastTimeCalled";
+    "SELECT EXISTS(SELECT notificationId FROM `fullnotification` WHERE fullnotification.userId = 9 AND lastTimeCalled < creationTime) AS isNotification;";
+  const upcomingMatchesQuery =
+    "SELECT seriesName, seriesDname, matchId, matchTypeId, matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime, matchStatus, venue, displayName, team1Id, team1Name, team1DisplayName, team1FlagURL, team2Id, team2Name, team2DisplayName, team2FlagURL FROM fullmatchdetails WHERE matchStatus = 1 ORDER BY matchStartTimeMilliSeconds DESC LIMIT 5;";
 
   try {
     const [upcomingMatches, isNotification] = await fetchData(
-      `${upcomingMatchesQuery};${isNotificationQuery}`,
+      `${upcomingMatchesQuery}${isNotificationQuery}`,
       [userId]
     );
+    const { data } = await axios({
+      url: `${req.protocol}://${req.headers.host}/api/v1/prediction/getTrendingPredictors`,
+      headers: { authtoken },
+    });
 
     if (upcomingMatches.length > 0) {
       // changing url to original server
       upcomingMatches.forEach((match) => {
-        match.team1FlagURL = match.team1FlagURL.replace(
-          "http://192.168.1.32:3000",
-          `${req.protocol}://${req.headers.host}`
-        );
-        match.team2FlagURL = match.team2FlagURL.replace(
-          "http://192.168.1.32:3000",
-          `${req.protocol}://${req.headers.host}`
-        );
+        match.team1FlagURL = match.team1FlagURL
+          ? match.team1FlagURL.replace(
+              "http://192.168.1.32:3000",
+              `${req.protocol}://${req.headers.host}`
+            )
+          : "";
+        match.team2FlagURL = match.team2FlagURL
+          ? match.team2FlagURL.replace(
+              "http://192.168.1.32:3000",
+              `${req.protocol}://${req.headers.host}`
+            )
+          : "";
       });
 
-      const { data } = await axios({
-        url: `${req.protocol}://${req.headers.host}/api/v1/prediction/getTrendingPredictors`,
-        headers: { authtoken },
-      });
-
-      // const start = Date.now();
-      // while (Date.now() - start < 5000) {}
       if (data.status) {
         // changing server address
         data.data.trendingPredictors.forEach((pre) => {
