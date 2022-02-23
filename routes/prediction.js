@@ -409,7 +409,20 @@ router.post("/get_user_teams_data", verifyUser, async (req, res) => {
         teamId,
       ]);
       const teamData = await fetchData(teamQuery, [playersIds[0]?.matchId]);
-      console.log(teamData);
+
+      console.log(teamData[0]);
+      teamData[0].team1FlagURL = teamData[0].team1FlagURL
+        ? teamData[0].team1FlagURL.replace(
+            "http://192.168.1.32:3000",
+            `${req.protocol}://${req.headers.host}`
+          )
+        : "";
+      teamData[0].team2FlagURL = teamData[0].team2FlagURL
+        ? teamData[0].team1FlagURL.replace(
+            "http://192.168.1.32:3000",
+            `${req.protocol}://${req.headers.host}`
+          )
+        : "";
 
       // checking if playerids exists or not
       if (playersIds?.length > 0) {
