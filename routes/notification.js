@@ -25,4 +25,31 @@ router.post("/get_notifications", verifyUser, async (req, res) => {
   }
 });
 
+router.post("/setReadNotification", verifyUser, async (req, res) => {
+  const { userId, notificationId } = req.body;
+
+  try {
+    const done = await fetchData("CALL set_isreaded(?, ?);", [
+      userId,
+      notificationId,
+    ]);
+
+    if (done.affectedRows === 1) {
+      res.status(200).json({
+        status: true,
+        message: "success",
+        data: {},
+      });
+    } else {
+      throw { message: "some error occured" };
+    }
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.message,
+      data: {},
+    });
+  }
+});
+
 module.exports = router;
