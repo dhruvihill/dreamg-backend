@@ -124,8 +124,10 @@ router.post("/getuserprofile", verifyUser, async (req, res) => {
   COALESCE((SELECT SUM(userTeamPoints) AS totalPoints FROM fullteamdetails WHERE userId = ? GROUP BY userTeamType HAVING userTeamType = 1), 0) AS mega_contest_totalPoints,
   COALESCE((SELECT SUM(userTeamPoints) AS totalPoints FROM fullteamdetails WHERE userId = ? GROUP BY userTeamType HAVING userTeamType = 2), 0) AS head_to_head_totalPoints FROM userdetails WHERE userId = ?;`;
 
-  const matchesQuery =
-    "SELECT fullmatchdetails.matchId AS matchId, seriesName, seriesDname,matchTypeId,matchTyprString, matchStartTimeMilliSeconds,matchStartDateTime,venue, displayName, team1Id, team1Name, team1DisplayName, team1FlagURL, team2Id, team2Name, team2DisplayName, team2FlagURL FROM fullmatchdetails JOIN fullteamdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.userId = ? AND fullmatchdetails.matchStatus = 1 GROUP BY fullmatchdetails.matchId ORDER BY fullteamdetails.creationTime DESC LIMIT 5";
+  const recentMatchesQuery =
+    "SELECT fullmatchdetails.matchId AS matchId, seriesName, seriesDname,matchTypeId,matchTyprString, matchStartTimeMilliSeconds,matchStartDateTime,venue, displayName, team1Id, team1Name, team1DisplayName, team1FlagURL, team2Id, team2Name, team2DisplayName, team2FlagURL, (SELECT COUNT(*) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors FROM fullmatchdetails JOIN fullteamdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.userId = ? AND fullmatchdetails.matchStatus != 1 GROUP BY fullmatchdetails.matchId ORDER BY fullteamdetails.creationTime DESC LIMIT 5;";
+  const currentMatchQuery =
+    "SELECT fullmatchdetails.matchId AS matchId, seriesName, seriesDname,matchTypeId,matchTyprString, matchStartTimeMilliSeconds,matchStartDateTime,venue, displayName, team1Id, team1Name, team1DisplayName, team1FlagURL, team2Id, team2Name, team2DisplayName, team2FlagURL, (SELECT COUNT(*) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors FROM fullmatchdetails JOIN fullteamdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.userId = ? AND fullmatchdetails.matchStatus = 1 GROUP BY fullmatchdetails.matchId ORDER BY fullteamdetails.creationTime DESC LIMIT 5;";
 
   // SELECT fullmatchdetails.matchId, seriesName, seriesDname,matchTypeId,matchTyprString, matchStartTimeMilliSeconds,matchStartDateTime,venue, displayName, team1Id, team1Name, team1DisplayName, team1FlagURL, team2Id, team2Name, team2DisplayName, team2FlagURL FROM fullmatchdetails JOIN fullteamdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.userId = ? AND fullmatchdetails.matchStatus = 1 GROUP BY fullmatchdetails.matchId ORDER BY fullteamdetails.creationTime DESC LIMIT 5;
 
@@ -133,9 +135,9 @@ router.post("/getuserprofile", verifyUser, async (req, res) => {
 
   try {
     if (!/[^0-9]/g.test(predictorId)) {
-      const [points, recentPlayed] = await fetchData(
-        `${pointsQuery}${matchesQuery}`,
-        Array(6).fill(predictorId)
+      const [points, recentPlayed, currentPlayed] = await fetchData(
+        `${pointsQuery}${recentMatchesQuery}${currentMatchQuery}`,
+        Array(7).fill(predictorId)
       );
 
       if (points.length > 0) {
@@ -155,6 +157,16 @@ router.post("/getuserprofile", verifyUser, async (req, res) => {
             serverAddress
           );
         });
+        currentPlayed.forEach((macth) => {
+          macth.team1FlagURL = macth.team1FlagURL.replace(
+            "http://192.168.1.32:3000",
+            serverAddress
+          );
+          macth.team2FlagURL = macth.team2FlagURL.replace(
+            "http://192.168.1.32:3000",
+            serverAddress
+          );
+        });
 
         res.status(200).json({
           status: true,
@@ -162,6 +174,7 @@ router.post("/getuserprofile", verifyUser, async (req, res) => {
           data: {
             userDetails: points[0],
             recentPlayed,
+            currentPlayed,
           },
         });
       } else {
