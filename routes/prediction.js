@@ -387,7 +387,7 @@ router.post("/get_user_teams_data", verifyUser, async (req, res) => {
   const teamQuery =
     "SELECT team1_id AS team1Id, team1.name AS team1Name, team1.displayName AS team1DisplayName, team1.teamFlagURLLocal AS team1FlagURL, team2_id AS team2Id, team2.name AS team2Name, team2.displayName AS team2DisplayName, team2.teamFlagURLLocal AS team2FlagURL FROM all_matches JOIN teams AS team1 ON team1.teamId = team1_id JOIN teams AS team2 ON team2.teamId = team2_id WHERE matchId = ?;";
   const playerQuery =
-    "SELECT match_player_relation.playerId AS playerId,players.name AS playerName,players.displayName AS playerDisplayName,player_roles.roleId AS roleId,player_roles.roleName AS roleName,players.profilePictureURLLocal AS URL, points, credits, match_player_relation.teamId AS teamId FROM match_player_relation JOIN players ON players.playerId = match_player_relation.playerId JOIN player_roles ON players.role = player_roles.roleId WHERE match_player_relation.playerId = ? AND match_player_relation.matchId = ?;";
+    "SELECT match_player_relation.playerId AS playerId,players.name AS playerName,players.displayName AS playerDisplayName,player_roles.roleId AS roleId,player_roles.roleName AS roleName,players.profilePictureURLLocal AS URL, points, credits, match_player_relation.teamId AS teamId, teams.displayName AS 'teamDisplayName' FROM match_player_relation JOIN players ON players.playerId = match_player_relation.playerId JOIN player_roles ON players.role = player_roles.roleId JOIN teams ON teams.teamId = match_player_relation.teamId WHERE match_player_relation.playerId = ? AND match_player_relation.matchId = ?;";
 
   try {
     if (!/[^0-9]/g.test(teamId)) {
@@ -397,6 +397,7 @@ router.post("/get_user_teams_data", verifyUser, async (req, res) => {
         teamId,
       ]);
       const teamData = await fetchData(teamQuery, [playersIds[0]?.matchId]);
+      console.log(teamData);
 
       // checking if playerids exists or not
       if (playersIds?.length > 0) {
@@ -438,10 +439,12 @@ router.post("/get_user_teams_data", verifyUser, async (req, res) => {
               ]);
 
               // changing server address
-              player[0].URL = player[0].URL.replace(
-                "http://192.168.1.32:3000",
-                `${req.protocol}://${req.headers.host}`
-              );
+              player[0].URL = player[0].URL
+                ? player[0].URL.replace(
+                    "http://192.168.1.32:3000",
+                    `${req.protocol}://${req.headers.host}`
+                  )
+                : "";
 
               if (team[key] === team["captain"])
                 singleTeam.teamsDetails.captain = player[0];
