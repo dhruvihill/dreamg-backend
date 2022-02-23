@@ -29,12 +29,19 @@ router.post("/setReadNotification", verifyUser, async (req, res) => {
   const { userId, notificationId } = req.body;
 
   try {
-    const done = await fetchData("CALL set_isreaded(?, ?);", [
-      userId,
-      notificationId,
-    ]);
-
-    if (done.affectedRows === 1) {
+    let notificationsReads;
+    if (notificationId) {
+      notificationsReads = await fetchData("CALL set_isreaded(?, ?);", [
+        userId,
+        notificationId,
+      ]);
+    } else {
+      notificationsReads = await fetchData("CALL set_mark_as_read_all(?);", [
+        userId,
+      ]);
+    }
+    console.log(notificationsReads);
+    if (notificationsReads.affectedRows) {
       res.status(200).json({
         status: true,
         message: "success",
