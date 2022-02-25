@@ -10,8 +10,6 @@ router.post("/register", async (req, res) => {
   // getting data from body
   const { number: phoneNumber } = req.body;
 
-  // return true if any other character rather than 0-9
-
   try {
     const result = await fetchData("CALL register_user(?);", [phoneNumber]);
     const jwtData = { user: { userId: result[0][0].userId } };
@@ -244,4 +242,5 @@ router.post(
   }
 );
 
+// exporting module
 module.exports = router;

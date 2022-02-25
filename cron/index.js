@@ -63,7 +63,7 @@ const insertMatch = (matches) => {
       } = match;
       try {
         try {
-          await database("INSERT INTO allseries SET ?", {
+          await database("INSERT INTO all_series SET ?", {
             seriesId: match.seriesId,
             seriesDisplayName: match.seriesDname,
             seriesName: match.seriesName,
@@ -72,7 +72,7 @@ const insertMatch = (matches) => {
           console.log(error.message);
         }
         try {
-          await database("INSERT INTO allmatches SET ?", {
+          await database("INSERT INTO all_matches SET ?", {
             matchId,
             gameType,
             team1Id,

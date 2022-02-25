@@ -11,3 +11,6 @@ error handling in update_views
 REFACTOR getuserprofile recentMatches (matchStatus = 1 to 3)
 EXPERT PREDICTIONS
 ******
+
+
+totalPredictors in recent played and current played

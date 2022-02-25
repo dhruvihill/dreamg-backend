@@ -3,6 +3,7 @@ const router = express.Router();
 const verifyUser = require("../middleware/verifyUser");
 const { fetchData } = require("../database/db_connection");
 
+// get players by match id
 router.post("/getplayers", verifyUser, async (req, res) => {
   const { matchId } = req.body;
 
@@ -104,6 +105,7 @@ router.post("/getplayers", verifyUser, async (req, res) => {
   }
 });
 
+// set team of matchId, userId, teamType
 router.post("/setteam", verifyUser, async (req, res) => {
   const { userTeamType, matchId, players, captain, viceCaptain, userId } =
     req.body;
@@ -245,6 +247,7 @@ router.post("/setteam", verifyUser, async (req, res) => {
   // }
 });
 
+// exporting module
 module.exports = router;
 
 // (SELECT COUNT(*) FROM user_team_data WHERE 3391 IN (captain) AND user_team_data.userTeamId IN (SELECT user_team.userTeamId AS userTeamId FROM user_team WHERE matchId = 27947)) * 100 / (SELECT COUNT(DISTINCT userId) FROM user_team WHERE matchId = 27947) AS captainBy;

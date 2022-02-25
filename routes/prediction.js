@@ -3,6 +3,7 @@ const router = express.Router();
 const verifyUser = require("../middleware/verifyUser");
 const { fetchData } = require("../database/db_connection");
 
+// get predictors by match id or with no match id and match status
 router.post("/get_predictions", verifyUser, async (req, res) => {
   const { matchId, filter } = req.body;
 
@@ -64,10 +65,12 @@ router.post("/get_predictions", verifyUser, async (req, res) => {
   }
 });
 
+// getting expert predictors
 router.post("/getExpertPredictor", verifyUser, async (req, res) => {
   const { matchId } = req.body;
 });
 
+// getting trending predictors by points
 router.get("/getTrendingPredictors", verifyUser, async (req, res) => {
   const recentMatchesQuery =
     "SELECT all_matches.matchId FROM all_matches WHERE (all_matches.matchStartTimeMilliSeconds < unix_timestamp(now()) * 1000 AND all_matches.matchStatus = 3) OR all_matches.matchId = 27947 ORDER By matchStartTimeMilliSeconds DESC LIMIT 5";
@@ -104,6 +107,7 @@ router.get("/getTrendingPredictors", verifyUser, async (req, res) => {
   }
 });
 
+// getting teams by match id and user id
 router.post("/get_user_teams", verifyUser, async (req, res) => {
   const { createrId, matchId } = req.body;
 
@@ -249,6 +253,7 @@ router.post("/get_user_teams", verifyUser, async (req, res) => {
   }
 });
 
+// getting teams with user id
 router.post("/get_user_teams_predictor", verifyUser, async (req, res) => {
   const { createrId } = req.body;
 
@@ -390,6 +395,7 @@ router.post("/get_user_teams_predictor", verifyUser, async (req, res) => {
   }
 });
 
+// getting team data of team
 router.post("/get_user_teams_data", verifyUser, async (req, res) => {
   const { userId, teamId } = req.body;
 
@@ -508,6 +514,7 @@ router.post("/get_user_teams_data", verifyUser, async (req, res) => {
   }
 });
 
+// update likes of team
 router.post("/update_user_team_likes", verifyUser, async (req, res) => {
   let { userId, teamId } = req.body;
 
@@ -623,6 +630,7 @@ router.post("/update_user_team_likes", verifyUser, async (req, res) => {
   // }
 });
 
+// update views of team
 router.post("/update_user_team_views", verifyUser, async (req, res) => {
   let { userId, teamId } = req.body;
 
@@ -735,6 +743,7 @@ router.post("/update_user_team_views", verifyUser, async (req, res) => {
   // }
 });
 
+// setting discussion by match id, user id, team id
 router.post("/set_discussion", verifyUser, async (req, res) => {
   // userId -> whos have made request means messenger who sends the message
   // createrId -> whose team is
@@ -761,6 +770,7 @@ router.post("/set_discussion", verifyUser, async (req, res) => {
   }
 });
 
+// getting discussion match id and user id
 router.post("/get_discussion", verifyUser, async (req, res) => {
   const { matchId, createrId } = req.body;
 
@@ -823,6 +833,7 @@ router.post("/get_discussion", verifyUser, async (req, res) => {
   }
 });
 
+// comapring teams by match id
 router.post("/compare_teams", verifyUser, async (req, res) => {
   const { matchId } = req.body;
 
@@ -937,4 +948,5 @@ router.post("/compare_teams", verifyUser, async (req, res) => {
   // });
 });
 
+// exporting module
 module.exports = router;

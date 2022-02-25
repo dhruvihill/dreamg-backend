@@ -3,6 +3,7 @@ const verifyUser = require("../middleware/verifyUser");
 const router = express.Router();
 const { fetchData } = require("../database/db_connection");
 
+// get all unreaded notifications
 router.post("/get_notifications", verifyUser, async (req, res) => {
   const { userId } = req.body;
 
@@ -25,6 +26,7 @@ router.post("/get_notifications", verifyUser, async (req, res) => {
   }
 });
 
+// set unread notifications to readed
 router.post("/setReadNotification", verifyUser, async (req, res) => {
   const { userId, notificationId } = req.body;
 
@@ -59,4 +61,5 @@ router.post("/setReadNotification", verifyUser, async (req, res) => {
   }
 });
 
+// exporting module
 module.exports = router;
