@@ -6,6 +6,7 @@ const { fetchData } = require("../database/db_connection");
 // get matches according to its status
 router.post("/get_matches", verifyUser, async (req, res) => {
   const { userId, matchType } = req.body;
+
   try {
     // "SELECT (SELECT COUNT(DISTINCT userId) FROM user_team WHERE user_team.matchId = all_matches.matchId) AS totalPredictors, (SELECT COALESCE((SELECT DISTINCT userId FROM `user_team` WHERE matchId = all_matches.matchId AND userId = ?), 0)) AS isUserTeamCreated, seriesName, seriesDname, matchId,matchTypeId,matchTyprString, matchStartTimeMilliSeconds,matchStartDateTime,match_status.matchStatusString,venue, all_matches.displayName,team1.teamId AS `team1Id`,team1.name AS 'team1Name', team1.displayName AS 'team1DisplayName',team1.teamFlagUrlLocal AS 'team1FlagURL', team2.teamId AS `team2Id`,team2.name AS 'team2Name', team2.displayName AS 'team2DisplayName',team2.teamFlagUrlLocal AS 'team2FlagURL' FROM all_matches JOIN teams AS team1 ON all_matches.team1_id = team1.teamId JOIN teams AS team2 ON all_matches.team2_id = team2.teamId JOIN match_type ON match_type.matchTypeId = gameType JOIN match_status ON all_matches.matchStatus = match_status.matchStatus WHERE matchStatusString = ? ORDER BY matchStartTimeMilliSeconds LIMIT 10;",
     if (["UPCOMING", "LIVE", "RECENT", "CANCELED"].includes(matchType)) {
@@ -50,7 +51,7 @@ router.post("/get_matches", verifyUser, async (req, res) => {
 });
 
 // get recent matches of predictor (live, recent, cancelled)
-router.post("/recentPlayed", verifyUser, async (req, res) => {
+router.post("/recentPlayed", async (req, res) => {
   const { predictorId } = req.body;
   const serverAddress = `${req.protocol}://${req.headers.host}`;
 
@@ -90,7 +91,7 @@ router.post("/recentPlayed", verifyUser, async (req, res) => {
 });
 
 // get current matches of predictor (upcoming)
-router.post("/currentPlayed", verifyUser, async (req, res) => {
+router.post("/currentPlayed", async (req, res) => {
   const { predictorId } = req.body;
   const serverAddress = `${req.protocol}://${req.headers.host}`;
 

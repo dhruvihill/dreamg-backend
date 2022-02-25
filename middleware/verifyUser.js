@@ -9,6 +9,16 @@ const verifyUser = async (req, res, next) => {
       req.body.userId = result.user.userId;
       next();
     } else {
+      // console.log(req.baseUrl, req.originalUrl);
+      if (
+        req.originalUrl === "/api/v1/getdashboarddata" ||
+        req.originalUrl === "/api/v1/matches/get_matches" ||
+        req.originalUrl === "/api/v1/prediction/get_user_teams_data"
+      ) {
+        req.body.userId = null;
+        next();
+        return;
+      }
       throw { message: "authtoken not provided" };
     }
   } catch (error) {

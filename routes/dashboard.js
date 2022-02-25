@@ -7,12 +7,6 @@ const { fetchData } = require("../database/db_connection");
 // getting dashboard data upcominng matches, predictors, news and isNotification
 router.get("/", verifyUser, async (req, res) => {
   const { userId } = req.body;
-  const { authtoken } = req.headers;
-
-  // const upcomingMatchesQuery =
-  //   "SELECT seriesName, seriesDname, matchId,matchTypeId,matchTyprString, matchStartTimeMilliSeconds,matchStartDateTime,matchStatus,venue, all_matches.displayName,team1.teamId AS `team1Id`,team1.name AS 'team1Name', team1.displayName AS 'team1DisplayName',team1.teamFlagUrlLocal AS 'team1FlagURL', team2.teamId AS `team2Id`,team2.name AS 'team2Name', team2.displayName AS 'team2DisplayName',team2.teamFlagUrlLocal AS 'team2FlagURL' FROM all_matches JOIN teams AS team1 ON all_matches.team1_id = team1.teamId JOIN teams AS team2 ON all_matches.team2_id = team2.teamId JOIN match_type ON match_type.matchTypeId = gameType WHERE matchStatus = 1 ORDER BY matchStartTimeMilliSeconds DESC LIMIT 5;";
-  // const isNotificationQuery =
-  //   "SELECT COUNT(*) > 0 AS isNotification FROM notifications JOIN notification_history ON notification_history.userId = notifications.userId WHERE notifications.userId = ? AND notifications.creationTime > notification_history.lastTimeCalled;";
 
   const isNotificationQuery =
     "SELECT EXISTS(SELECT notificationId FROM `fullnotification` WHERE fullnotification.userId = ? AND haveReaded = 0) AS isNotification;";
@@ -20,13 +14,20 @@ router.get("/", verifyUser, async (req, res) => {
     "SELECT (SELECT COUNT(DISTINCT userId) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors, seriesName, seriesDname, matchId, matchTypeId, matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team1FlagURL, team2Id, team2Name, team2DisplayName, team2FlagURL, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE matchStatus = 1 ORDER BY matchStartTimeMilliSeconds DESC LIMIT 5;";
 
   try {
-    const [upcomingMatches, isNotification] = await fetchData(
-      `${upcomingMatchesQuery}${isNotificationQuery}`,
-      [userId, userId, userId]
-    );
+    let isNotification = 0;
+    let upcomingMatches = [];
+
+    if (userId) {
+      [upcomingMatches, [{ isNotification }]] = await fetchData(
+        `${upcomingMatchesQuery}${isNotificationQuery}`,
+        [userId, userId, userId]
+      );
+    } else {
+      upcomingMatches = await fetchData(upcomingMatchesQuery, [userId, userId]);
+    }
+
     const { data } = await axios({
       url: `${req.protocol}://${req.headers.host}/api/v1/prediction/getTrendingPredictors`,
-      headers: { authtoken },
     });
 
     if (upcomingMatches.length > 0) {
@@ -62,7 +63,7 @@ router.get("/", verifyUser, async (req, res) => {
             matches: upcomingMatches,
             predictors: [...data.data.trendingPredictors],
             news: [],
-            isNotification: isNotification[0].isNotification,
+            isNotification: isNotification,
           },
         });
       } else {
@@ -73,7 +74,7 @@ router.get("/", verifyUser, async (req, res) => {
             matches: upcomingMatches,
             predictors: [],
             news: [],
-            isNotification: 0,
+            isNotification: isNotification,
           },
         });
       }

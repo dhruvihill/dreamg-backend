@@ -4,7 +4,7 @@ const verifyUser = require("../middleware/verifyUser");
 const { fetchData } = require("../database/db_connection");
 
 // get predictors by match id or with no match id and match status
-router.post("/get_predictions", verifyUser, async (req, res) => {
+router.post("/get_predictions", async (req, res) => {
   const { matchId, filter } = req.body;
 
   let validMatchId = true;
@@ -20,17 +20,17 @@ router.post("/get_predictions", verifyUser, async (req, res) => {
       }
       query =
         filter === "MOST_VIEWED"
-          ? "SELECT user_team.userId, phoneNumber, firstName, lastName, displayPicture,city, registerTime, all_matches.displayName, SUM(user_team_data.userTeamViews) AS totalViews FROM user_team JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId JOIN all_users ON user_team.userId = all_users.userId JOIN all_matches ON user_team.matchId = all_matches.matchId WHERE user_team.matchId = ? GROUP BY userId ORDER BY totalViews DESC LIMIT 20;"
+          ? "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamViews) AS totalViews, phoneNumber, firstName, lastName, displayPicture, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalViews DESC LIMIT 20;"
           : filter === "MOST_LIKED"
-          ? "SELECT user_team.userId, phoneNumber, firstName, lastName, displayPicture,city, registerTime, all_matches.displayName, SUM(user_team_data.userTeamLikes) AS totalLikes FROM user_team JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId JOIN all_users ON user_team.userId = all_users.userId JOIN all_matches ON user_team.matchId = all_matches.matchId WHERE user_team.matchId = ? GROUP BY userId ORDER BY totalLikes DESC LIMIT 20;"
-          : "SELECT user_team.userId, phoneNumber, firstName, lastName, displayPicture,city, registerTime, all_matches.displayName, SUM(user_team_data.userTeamPoints) AS totalPoints FROM user_team JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId JOIN all_users ON user_team.userId = all_users.userId JOIN all_matches ON user_team.matchId = all_matches.matchId WHERE user_team.matchId = ? GROUP BY userId ORDER BY totalPoints DESC LIMIT 20;";
+          ? "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamLikes) AS totalLikes, phoneNumber, firstName, lastName, displayPicture, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalLikes DESC LIMIT 20;"
+          : "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamPoints) AS totalPoints, phoneNumber, firstName, lastName, displayPicture, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT 20;";
     } else {
       query =
         filter === "MOST_VIEWED"
-          ? "SELECT user_team.userId, phoneNumber, firstName, lastName, displayPicture,city, registerTime, user_team.userTeamId, SUM(userTeamViews) AS totalViews FROM user_team JOIN all_users ON all_users.userId = user_team.userId JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId GROUP BY user_team.userId ORDER BY totalViews DESC"
+          ? "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamViews) AS totalViews, phoneNumber, firstName, lastName, displayPicture, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId GROUP BY userdetails.userId ORDER BY totalViews DESC LIMIT 20;"
           : filter === "MOST_LIKED"
-          ? "SELECT user_team.userId, phoneNumber, firstName,city, lastName, displayPicture, registerTime, user_team.userTeamId, SUM(userTeamLikes) AS totalLikes FROM user_team JOIN all_users ON all_users.userId = user_team.userId JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId GROUP BY user_team.userId ORDER BY totalLikes DESC;"
-          : "SELECT user_team.userId, phoneNumber, firstName, lastName, displayPicture,city, registerTime, user_team.userTeamId, SUM(userTeamPoints) AS totalPoints FROM user_team JOIN all_users ON all_users.userId = user_team.userId JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId GROUP BY user_team.userId ORDER BY totalPoints DESC;";
+          ? "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamLikes) AS totalLikes, phoneNumber, firstName, lastName, displayPicture, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId GROUP BY userdetails.userId ORDER BY totalLikes DESC LIMIT 20;"
+          : "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamPoints) AS totalPoints, phoneNumber, firstName, lastName, displayPicture, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT 20;";
     }
     if (validMatchId) {
       const result = await fetchData(query, [matchId]);
@@ -66,16 +66,16 @@ router.post("/get_predictions", verifyUser, async (req, res) => {
 });
 
 // getting expert predictors
-router.post("/getExpertPredictor", verifyUser, async (req, res) => {
+router.post("/getExpertPredictor", async (req, res) => {
   const { matchId } = req.body;
 });
 
 // getting trending predictors by points
-router.get("/getTrendingPredictors", verifyUser, async (req, res) => {
+router.get("/getTrendingPredictors", async (req, res) => {
   const recentMatchesQuery =
-    "SELECT all_matches.matchId FROM all_matches WHERE (all_matches.matchStartTimeMilliSeconds < unix_timestamp(now()) * 1000 AND all_matches.matchStatus = 3) OR all_matches.matchId = 27947 ORDER By matchStartTimeMilliSeconds DESC LIMIT 5";
+    "SELECT matchId FROM fullmatchdetails WHERE (fullmatchdetails.matchStartTimeMilliSeconds < unix_timestamp(now()) * 1000 AND fullmatchdetails.matchStatus = 3) OR fullmatchdetails.matchId = 27947 ORDER BY matchStartTimeMilliSeconds DESC LIMIT 5;";
   const topPredictorsQuery =
-    "SELECT all_users.firstName, all_users.lastName, all_users.displayPicture, user_team.userId, SUM(user_team_data.userTeamPoints) AS totalPoints FROM user_team JOIN user_team_data ON user_team_data.userTeamId = user_team.userTeamId JOIN all_users ON all_users.userId = user_team.userId WHERE user_team.matchId IN (?) GROUP BY userId ORDER BY totalPoints DESC LIMIT 10";
+    "SELECT userdetails.userId, firstName, lastName, displayPicture, SUM(fullteamdetails.userTeamPoints) AS totalPoints FROM fullteamdetails JOIN userdetails ON userdetails.userId = fullteamdetails.userId WHERE fullteamdetails.matchId IN (27947) GROUP BY fullteamdetails.userId ORDER BY totalPoints DESC LIMIT 10;";
 
   try {
     const recentMatches = await fetchData(recentMatchesQuery);
@@ -108,18 +108,23 @@ router.get("/getTrendingPredictors", verifyUser, async (req, res) => {
 });
 
 // getting teams by match id and user id
-router.post("/get_user_teams", verifyUser, async (req, res) => {
+router.post("/get_user_teams", async (req, res) => {
   const { createrId, matchId } = req.body;
 
   // Query for fetch all players playerid
+
+  // SELECT userTeamId, teamTypeString, captain, userTeamLikes AS likes, viceCaptain, player1, player2, player3, player4, player5, player6, player7, player8, player9, player10, player11, team1Id, team1Name, team1DisplayName, team1FlagURL, team2Id, team2Name, team2DisplayName, team2FlagURL FROM fullteamdetails JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = ?;
+
+  const userTeamDetailsQuery = `SELECT userTeamId, teamTypeString, captain, userTeamLikes AS likes, viceCaptain, player1, player2, player3, player4, player5, player6, player7, player8, player9, player10, player11, team1Id, team1Name, team1DisplayName, team1FlagURL, team2Id, team2Name, team2DisplayName, team2FlagURL FROM fullteamdetails JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.userId = 9 AND fullteamdetails.matchId = 27947;`;
+
   const playersQuery =
-    "SELECT user_team_data.userTeamId AS userTeamId, teamTypeString, captain, userTeamLikes AS likes, viceCaptain, player1, player2, player3, player4, player5, player6, player7, player8, player9, player10, player11 FROM user_team_data JOIN user_team ON user_team.userTeamId = user_team_data.userTeamId JOIN team_type ON userTeamType = teamType WHERE user_team_data.userTeamId IN (SELECT userTeamId FROM user_team WHERE matchId = ? AND userId = ?);";
+    "SELECT userTeamId, teamTypeString, captain, userTeamLikes AS likes, viceCaptain, player1, player2, player3, player4, player5, player6, player7, player8, player9, player10, player11 FROM fullteamdetails WHERE matchId = ? AND userId = ?;";
   const teamDetailsQuery =
-    "SELECT team1_id AS team1Id, team1.name AS team1Name, team1.displayName AS team1DisplayName, team1.teamFlagURLLocal AS team1FlagURL, team2_id AS team2Id, team2.name AS team2Name, team2.displayName AS team2DisplayName, team2.teamFlagURLLocal AS team2FlagURL FROM all_matches JOIN teams AS team1 ON team1.teamId = team1_id JOIN teams AS team2 ON team2.teamId = team2_id WHERE matchId = ?;";
+    "SELECT team1Id, team1Name, team1DisplayName, team1FlagURL, team2Id, team2Name, team2DisplayName, team2FlagURL FROM fullmatchdetails WHERE matchId = ?;";
   const playerDetailsQuery =
-    "SELECT match_player_relation.playerId AS playerId,players.name AS playerName,players.displayName AS playerDisplayName,player_roles.roleId AS roleId,player_roles.roleName AS roleName,players.profilePictureURLLocal AS URL, points, credits, teams.teamId AS teamId FROM match_player_relation JOIN players ON players.playerId = match_player_relation.playerId JOIN player_roles ON players.role = player_roles.roleId JOIN teams ON teams.teamId = match_player_relation.teamId WHERE match_player_relation.playerId = ? AND match_player_relation.matchId = ?;";
+    "SELECT DISTINCT playerId, name AS playerName, displayName AS playerDisplayName, roleId, roleName, profilePictureURLLocal AS URL, points, credits, teamId FROM fullplayerdetails WHERE playerId = ? AND matchId = ?;";
   const userDetailsQuery =
-    "SELECT all_users.`firstName`, all_users.`lastName`, all_users.`displayPicture` FROM `all_users` WHERE userId = ?;";
+    "SELECT `firstName`, `lastName`, `displayPicture` FROM userdetails WHERE userId = ?;";
 
   try {
     if (!/[^0-9]/g.test(matchId) && !/[^0-9]/g.test(createrId)) {
@@ -254,18 +259,18 @@ router.post("/get_user_teams", verifyUser, async (req, res) => {
 });
 
 // getting teams with user id
-router.post("/get_user_teams_predictor", verifyUser, async (req, res) => {
+router.post("/get_user_teams_predictor", async (req, res) => {
   const { createrId } = req.body;
 
   // Query for fetch all players playerid
   const playersQuery =
-    "SELECT user_team.matchId, user_team_data.userTeamId AS userTeamId, teamTypeString, captain, userTeamLikes AS likes, viceCaptain, player1, player2, player3, player4, player5, player6, player7, player8, player9, player10, player11 FROM user_team_data JOIN user_team ON user_team.userTeamId = user_team_data.userTeamId JOIN team_type ON userTeamType = teamType WHERE user_team.userId = ?;";
+    "SELECT matchId, userTeamId, teamTypeString, captain, userTeamLikes AS likes, viceCaptain, player1, player2, player3, player4, player5, player6, player7, player8, player9, player10, player11 FROM fullteamdetails WHERE userId = ?;";
   const teamDetailsQuery =
-    "SELECT team1_id AS team1Id, team1.name AS team1Name, team1.displayName AS team1DisplayName, team1.teamFlagURLLocal AS team1FlagURL, team2_id AS team2Id, team2.name AS team2Name, team2.displayName AS team2DisplayName, team2.teamFlagURLLocal AS team2FlagURL FROM all_matches JOIN teams AS team1 ON team1.teamId = team1_id JOIN teams AS team2 ON team2.teamId = team2_id WHERE matchId = ?;";
+    "SELECT team1Id, team1Name, team1DisplayName, team1FlagURL, team2Id, team2Name, team2DisplayName, team2FlagURL FROM fullmatchdetails WHERE matchId = ?;";
   const playerDetailsQuery =
-    "SELECT match_player_relation.playerId AS playerId,players.name AS playerName,players.displayName AS playerDisplayName,player_roles.roleId AS roleId,player_roles.roleName AS roleName,players.profilePictureURLLocal AS URL, points, credits, teams.teamId AS teamId FROM match_player_relation JOIN players ON players.playerId = match_player_relation.playerId JOIN player_roles ON players.role = player_roles.roleId JOIN teams ON teams.teamId = match_player_relation.teamId WHERE match_player_relation.playerId = ? AND match_player_relation.matchId = ?;";
+    "SELECT DISTINCT playerId, name AS playerName, displayName AS playerDisplayName, roleId, roleName, profilePictureURLLocal AS URL, points, credits, teamId FROM fullplayerdetails WHERE playerId = ? AND matchId = ?;";
   const userDetailsQuery =
-    "SELECT all_users.`firstName`, all_users.`lastName`, all_users.`displayPicture` FROM `all_users` WHERE userId = ?;";
+    "SELECT `firstName`, `lastName`, `displayPicture` FROM userdetails WHERE userId = ?;";
 
   try {
     const players = await fetchData(playersQuery, [createrId]);
@@ -401,11 +406,11 @@ router.post("/get_user_teams_data", verifyUser, async (req, res) => {
 
   // queries to fetch data
   const fetchPlayerIdQuery =
-    "SELECT EXISTS(SELECT userId FROM all_likes WHERE userTeamId = ? AND userId = ?) AS isUserLiked, user_team.matchId, user_team_data.userTeamId AS userTeamId, teamTypeString, captain, userTeamLikes AS likes, viceCaptain, player1, player2, player3, player4, player5, player6, player7, player8, player9, player10, player11 FROM user_team JOIN user_team_data ON user_team.userTeamId = user_team_data.userTeamId JOIN team_type ON userTeamType = teamType WHERE user_team_data.userTeamId = ? LIMIT 1;";
+    "SELECT EXISTS(SELECT userId FROM fulllikesdetails WHERE userTeamId = ? AND userId = ?) AS isUserLiked, matchId, userTeamId, teamTypeString, captain, userTeamLikes AS likes, viceCaptain, player1, player2, player3, player4, player5, player6, player7, player8, player9, player10, player11 FROM fullteamdetails WHERE userTeamId = ?;";
   const teamQuery =
-    "SELECT team1_id AS team1Id, team1.name AS team1Name, team1.displayName AS team1DisplayName, team1.teamFlagURLLocal AS team1FlagURL, team2_id AS team2Id, team2.name AS team2Name, team2.displayName AS team2DisplayName, team2.teamFlagURLLocal AS team2FlagURL FROM all_matches JOIN teams AS team1 ON team1.teamId = team1_id JOIN teams AS team2 ON team2.teamId = team2_id WHERE matchId = ?;";
+    "SELECT team1Id, team1Name, team1DisplayName, team1FlagURL, team2Id, team2Name, team2DisplayName, team2FlagURL FROM fullmatchdetails WHERE matchId = ?;";
   const playerQuery =
-    "SELECT match_player_relation.playerId AS playerId,players.name AS playerName,players.displayName AS playerDisplayName,player_roles.roleId AS roleId,player_roles.roleName AS roleName,players.profilePictureURLLocal AS URL, points, credits, match_player_relation.teamId AS teamId, teams.displayName AS 'teamDisplayName' FROM match_player_relation JOIN players ON players.playerId = match_player_relation.playerId JOIN player_roles ON players.role = player_roles.roleId JOIN teams ON teams.teamId = match_player_relation.teamId WHERE match_player_relation.playerId = ? AND match_player_relation.matchId = ?;";
+    "SELECT DISTINCT playerId, fullplayerdetails.name AS playerName, fullplayerdetails.displayName AS playerDisplayName, roleId, roleName, profilePictureURLLocal AS URL, points, credits, fullplayerdetails.teamId, allteams.displayName AS teamDisplayName FROM fullplayerdetails JOIN allteams ON allteams.teamId = fullplayerdetails.teamId WHERE playerId = ? AND matchId = ?;";
 
   try {
     if (!/[^0-9]/g.test(teamId)) {
@@ -771,13 +776,13 @@ router.post("/set_discussion", verifyUser, async (req, res) => {
 });
 
 // getting discussion match id and user id
-router.post("/get_discussion", verifyUser, async (req, res) => {
+router.post("/get_discussion", async (req, res) => {
   const { matchId, createrId } = req.body;
 
   try {
     if (!/[^0-9]/g.test(matchId) && !/[^0-9]/g.test(createrId)) {
       const response = await fetchData(
-        "SELECT messengerId, displayPicture, firstName AS firstName, message,messageTime AS messageTime FROM discussion JOIN all_users ON messengerId = all_users.userId WHERE matchId = ? AND discussion.userId = ? ORDER BY messageTime DESC LIMIT 50;",
+        "SELECT messengerId, displayPicture, firstName message, messageTime FROM `fulldiscussion` JOIN userdetails ON userdetails.userId = fulldiscussion.userId WHERE matchId = ? AND fulldiscussion.userId = ? ORDER BY messageTime DESC LIMIT 50;",
         [matchId, createrId]
       );
 
@@ -834,13 +839,13 @@ router.post("/get_discussion", verifyUser, async (req, res) => {
 });
 
 // comapring teams by match id
-router.post("/compare_teams", verifyUser, async (req, res) => {
+router.post("/compare_teams", async (req, res) => {
   const { matchId } = req.body;
 
   const allPlayersForMatch =
-    "SELECT matchId,match_player_relation.playerId AS playerId,players.name AS playerName,players.displayName AS playerDisplayName,player_roles.roleId AS roleId,player_roles.roleName AS roleName,players.profilePictureURLLocal AS URL, teams.teamId AS teamId,teams.name AS teamName,teams.displayName AS teamDisplayName, teams.teamFlagUrlLocal AS flagURL FROM match_player_relation JOIN players ON players.playerId = match_player_relation.playerId JOIN player_roles ON players.role = player_roles.roleId JOIN teams ON teams.teamId = match_player_relation.teamId WHERE matchId = ?;";
+    "SELECT matchId, playerId, fullplayerdetails.name AS playerName, fullplayerdetails.displayName AS playerDisplayName, roleId, roleName, url AS URL, fullplayerdetails.teamId, allteams.name AS teamName, allteams.displayName AS teamDisplayName, teamFlagURLLocal AS flagURL FROM fullplayerdetails JOIN allteams ON allteams.teamId = fullplayerdetails.teamId WHERE matchId = ?;";
   const matchDetails =
-    "SELECT matchId, matchStartTimeMilliSeconds AS matchStartTime, venue, seriesDname AS seriesDisplayName,team1_id AS team1Id,team1.displayName AS team1DisplayName, team1.name AS team1Name,team1.teamFlagUrlLocal AS team1FlagURL,team2_id AS team2Id,team2.displayName AS team2DisplayName, team2.name AS team2Name,team2.teamFlagUrlLocal AS team2FlagURL FROM `all_matches` JOIN teams AS team1 ON team1.teamId = team1_id JOIN teams AS team2 ON team2.teamId = team2_id WHERE matchId = ?;";
+    "SELECT matchId, matchStartTimeMilliSeconds AS matchStartTime, venue, seriesDname AS seriesDisplayName, team1Id, team1Name, team1DisplayName, team1FlagURL, team2Id, team2Name, team2DisplayName, team2FlagURL FROM fullmatchdetails WHERE matchId = ?;";
 
   try {
     if (!/[^0-9]/g.test(matchId)) {
@@ -891,61 +896,6 @@ router.post("/compare_teams", verifyUser, async (req, res) => {
       data: {},
     });
   }
-  // connection.query(allPlayersForMatch, [matchId], (err, response) => {
-  //   try {
-  //     if (err) throw err;
-  //     else {
-  //       connection.query(matchDetails, [matchId], (error, responseData) => {
-  //         try {
-  //           if (error) throw error;
-  //           else {
-  //             // changing server address
-  //             response.forEach((element) => {
-  //               element.URL = element.URL.replace(
-  //                 "http://192.168.1.32:3000",
-  //                 `${req.protocol}://${req.headers.host}`
-  //               );
-  //               element.flagURL = element.flagURL.replace(
-  //                 "http://192.168.1.32:3000",
-  //                 `${req.protocol}://${req.headers.host}`
-  //               );
-  //             });
-  //             responseData[0].team1FlagURL =
-  //               responseData[0].team1FlagURL.replace(
-  //                 "http://192.168.1.32:3000",
-  //                 `${req.protocol}://${req.headers.host}`
-  //               );
-  //             responseData[0].team2FlagURL =
-  //               responseData[0].team2FlagURL.replace(
-  //                 "http://192.168.1.32:3000",
-  //                 `${req.protocol}://${req.headers.host}`
-  //               );
-  //             res.status(200).json({
-  //               status: true,
-  //               message: "success",
-  //               data: {
-  //                 players: response,
-  //                 matchDetails: responseData[0],
-  //               },
-  //             });
-  //           }
-  //         } catch (error) {
-  //           res.status(400).json({
-  //             status: false,
-  //             message: error.message,
-  //             data: {},
-  //           });
-  //         }
-  //       });
-  //     }
-  //   } catch (error) {
-  //     res.status(400).json({
-  //       status: false,
-  //       message: error.message,
-  //       data: {},
-  //     });
-  //   }
-  // });
 });
 
 // exporting module
