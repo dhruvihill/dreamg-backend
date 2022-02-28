@@ -68,6 +68,169 @@ router.post("/get_predictions", async (req, res) => {
 // getting expert predictors
 router.post("/getExpertPredictor", async (req, res) => {
   const { matchId } = req.body;
+
+  try {
+    const regx = /[^0-9]/g;
+
+    if (!matchId || regx.test(matchId)) {
+      throw { message: "invalid input" };
+    }
+
+    const fetchUserTeamDetails = () => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const [userTeamDetails] = await fetchData(
+            "CALL get_user_team(?, ?);",
+            [matchId, 0]
+          );
+
+          if (!(userTeamDetails && userTeamDetails.length > 0)) {
+            throw { message: "invalid input" };
+          }
+
+          let userTeams = [];
+          userTeamDetails.forEach(async (team, index) => {
+            try {
+              // changing server url
+              team.team1FlagURL = team.team1FlagURL
+                ? team.team1FlagURL.replace(
+                    "http://192.168.1.32:3000",
+                    `${req.protocol}://${req.headers.host}`
+                  )
+                : "";
+              team.team2FlagURL = team.team2FlagURL
+                ? team.team2FlagURL.replace(
+                    "http://192.168.1.32:3000",
+                    `${req.protocol}://${req.headers.host}`
+                  )
+                : "";
+
+              // creating instance of user team
+              let userTeamInstance = {
+                teams: [
+                  {
+                    teamTotalPlayers: 0,
+                    teamId: team.team1Id,
+                    teamName: team.team1Name,
+                    teamDisplayName: team.team1DisplayName,
+                    teamFlagURL: team.team1FlagURL,
+                  },
+                  {
+                    teamTotalPlayers: 0,
+                    teamId: team.team2Id,
+                    teamName: team.team2Name,
+                    teamDisplayName: team.team2DisplayName,
+                    teamFlagURL: team.team2FlagURL,
+                  },
+                ],
+                teamsDetails: {
+                  userTeamId: team.userTeamId,
+                  creditUsed: 0,
+                  teamType: team.teamTypeString,
+                  totalBatsman: 0,
+                  totalBowlers: 0,
+                  totalWicketKeeper: 0,
+                  totalAllrounders: 0,
+                  captain: {},
+                  viceCaptain: {},
+                },
+              };
+
+              // feching all players
+              const [players] = await fetchData(
+                "CALL get_userteam_details(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                [
+                  team.matchId,
+                  team.player1,
+                  team.player2,
+                  team.player3,
+                  team.player4,
+                  team.player5,
+                  team.player6,
+                  team.player7,
+                  team.player8,
+                  team.player9,
+                  team.player10,
+                  team.player11,
+                ]
+              );
+
+              // loop through all players
+              players.forEach((player) => {
+                // changing server url
+                player.URL = player.URL
+                  ? player.URL.replace(
+                      "http://192.168.1.32:3000",
+                      `${req.protocol}://${req.headers.host}`
+                    )
+                  : "";
+
+                // incrementing total players
+                if (player.teamId === userTeamInstance.teams[0].teamId)
+                  userTeamInstance.teams[0].teamTotalPlayers++;
+                else if (player.teamId === userTeamInstance.teams[1].teamId)
+                  userTeamInstance.teams[1].teamTotalPlayers++;
+
+                // incrementing players roles
+                if (player.roleId === 1) {
+                  userTeamInstance.teamsDetails.totalBatsman++;
+                } else if (player.roleId === 2) {
+                  userTeamInstance.teamsDetails.totalBowlers++;
+                } else if (player.roleId === 3) {
+                  userTeamInstance.teamsDetails.totalWicketKeeper++;
+                } else if (player.roleId === 4) {
+                  userTeamInstance.teamsDetails.totalAllrounders++;
+                }
+
+                // total credits used
+                userTeamInstance.teamsDetails.creditUsed += player.credits;
+              });
+
+              // stroing captain and vice captain
+              [userTeamInstance.teamsDetails.captain] = players.filter(
+                (player) => {
+                  return player.playerId === team.captain;
+                }
+              );
+              [userTeamInstance.teamsDetails.viceCaptain] = players.filter(
+                (player) => {
+                  return player.playerId === team.viceCaptain;
+                }
+              );
+
+              // pushing teams into user teams
+              userTeams.push(userTeamInstance);
+
+              // resolving promise
+              if (index + 1 === userTeamDetails.length) {
+                resolve([userTeams]);
+              }
+            } catch (error) {
+              reject(error);
+            }
+          });
+        } catch (error) {
+          reject(error);
+        }
+      });
+    };
+
+    const [userTeams] = await fetchUserTeamDetails();
+
+    res.status(200).json({
+      status: true,
+      message: "success",
+      data: {
+        userTeams,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.sqlMessage || error.message,
+      data: {},
+    });
+  }
 });
 
 // getting trending predictors by points
@@ -111,144 +274,295 @@ router.get("/getTrendingPredictors", async (req, res) => {
 router.post("/get_user_teams", async (req, res) => {
   const { createrId, matchId } = req.body;
 
-  // Query for fetch all players playerid
-
-  // SELECT userTeamId, teamTypeString, captain, userTeamLikes AS likes, viceCaptain, player1, player2, player3, player4, player5, player6, player7, player8, player9, player10, player11, team1Id, team1Name, team1DisplayName, team1FlagURL, team2Id, team2Name, team2DisplayName, team2FlagURL FROM fullteamdetails JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = ?;
-
-  const userTeamDetailsQuery = `SELECT userTeamId, teamTypeString, captain, userTeamLikes AS likes, viceCaptain, player1, player2, player3, player4, player5, player6, player7, player8, player9, player10, player11, team1Id, team1Name, team1DisplayName, team1FlagURL, team2Id, team2Name, team2DisplayName, team2FlagURL FROM fullteamdetails JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.userId = 9 AND fullteamdetails.matchId = 27947;`;
-
-  const playersQuery =
-    "SELECT userTeamId, teamTypeString, captain, userTeamLikes AS likes, viceCaptain, player1, player2, player3, player4, player5, player6, player7, player8, player9, player10, player11 FROM fullteamdetails WHERE matchId = ? AND userId = ?;";
-  const teamDetailsQuery =
-    "SELECT team1Id, team1Name, team1DisplayName, team1FlagURL, team2Id, team2Name, team2DisplayName, team2FlagURL FROM fullmatchdetails WHERE matchId = ?;";
-  const playerDetailsQuery =
-    "SELECT DISTINCT playerId, name AS playerName, displayName AS playerDisplayName, roleId, roleName, profilePictureURLLocal AS URL, points, credits, teamId FROM fullplayerdetails WHERE playerId = ? AND matchId = ?;";
-  const userDetailsQuery =
-    "SELECT `firstName`, `lastName`, `displayPicture` FROM userdetails WHERE userId = ?;";
-
   try {
-    if (!/[^0-9]/g.test(matchId) && !/[^0-9]/g.test(createrId)) {
-      // const players = await fetchData(playersQuery, [matchId, createrId]);
-      // const teamDetails = await fetchData(teamDetailsQuery, [matchId]);
+    const regx = /[^0-9]/g;
 
-      const [players, teamDetails, [userDetails]] = await fetchData(
-        `${playersQuery}${teamDetailsQuery}${userDetailsQuery}`,
-        [matchId, createrId, matchId, createrId]
-      );
-
-      if (players.length > 0) {
-        const fetchTeams = () =>
-          new Promise((resolve, reject) => {
-            let allTeams = [];
-            players.forEach(async (team, index) => {
-              try {
-                let singleTeam = {
-                  teams: [{ teamTotalPlayers: 0 }, { teamTotalPlayers: 0 }],
-                  teamsDetails: {
-                    userTeamId: team["userTeamId"],
-                    creditUsed: 0,
-                    teamType: team.teamTypeString,
-                    totalWicketKeeper: 0,
-                    totalBatsman: 0,
-                    totalBowlers: 0,
-                    totalAllrounders: 0,
-                    captain: {},
-                    viceCaptain: {},
-                  },
-                };
-
-                const ignoreKeys = [
-                  "captain",
-                  "viceCaptain",
-                  "teamTypeString",
-                  "likes",
-                  "userTeamId",
-                ]; // keys to be ignored
-
-                // extract single team from teamData and store it
-                for (let j = 0; j < 2; j++) {
-                  singleTeam.teams[j] = {
-                    ...singleTeam.teams[j],
-                    teamId: teamDetails[0][`team${j + 1}Id`],
-                    teamName: teamDetails[0][`team${j + 1}Name`],
-                    teamDisplayName: teamDetails[0][`team${j + 1}DisplayName`],
-                    teamFlagURL: teamDetails[0][`team${j + 1}FlagURL`]
-                      ? teamDetails[0][`team${j + 1}FlagURL`].replace(
-                          "http://192.168.1.32:3000",
-                          `${req.protocol}://${req.headers.host}`
-                        )
-                      : "",
-                  };
-                }
-
-                let i = 0;
-                for (const key in team) {
-                  if (!ignoreKeys.includes(key)) {
-                    const player = await fetchData(playerDetailsQuery, [
-                      team[key],
-                      matchId,
-                    ]);
-
-                    // changing server address
-                    player[0].URL = player[0].URL
-                      ? player[0].URL.replace(
-                          "http://192.168.1.32:3000",
-                          `${req.protocol}://${req.headers.host}`
-                        )
-                      : "";
-
-                    // storing captains and vicecaptain details
-                    if (team[key] === team["captain"])
-                      singleTeam.teamsDetails.captain = player[0];
-                    else if (team[key] === team["viceCaptain"])
-                      singleTeam.teamsDetails.viceCaptain = player[0];
-
-                    // calculating how many credits used
-                    singleTeam.teamsDetails.creditUsed += player[0].credits;
-
-                    // updating count of bowlers,batsman, wicketkeeper and allrounder
-                    if (player[0].roleName === "BOWLER")
-                      singleTeam.teamsDetails.totalBowlers++;
-                    else if (player[0].roleName === "BATSMAN")
-                      singleTeam.teamsDetails.totalBatsman++;
-                    else if (player[0].roleName === "WICKET_KEEPER")
-                      singleTeam.teamsDetails.totalWicketKeeper++;
-                    else if (player[0].roleName === "ALL_ROUNDER")
-                      singleTeam.teamsDetails.totalAllrounders++;
-
-                    // updating count of teams total player
-                    if (player[0].teamId === singleTeam.teams[0].teamId)
-                      singleTeam.teams[0].teamTotalPlayers++;
-                    else if (player[0].teamId === singleTeam.teams[1].teamId)
-                      singleTeam.teams[1].teamTotalPlayers++;
-
-                    i++;
-
-                    if (i === 11) {
-                      allTeams.push(singleTeam); // push single player in team allteams
-                      if (players.length === index + 1) {
-                        resolve(allTeams);
-                      }
-                    }
-                  }
-                }
-              } catch (error) {
-                reject(error);
-              }
-            });
-          });
-        const allTeams = await fetchTeams();
-        res.status(200).json({
-          status: true,
-          message: "success",
-          data: { userTeams: allTeams, userDetails: userDetails },
-        });
-      } else {
-        throw { message: "user have no team created" };
-      }
-    } else {
+    if (!createrId || !matchId || regx.test(matchId) || regx.test(createrId)) {
       throw { message: "invalid input" };
     }
+
+    const fetchUserTeamDetails = () => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const [[userDetails], userTeamDetails] = await fetchData(
+            "CALL get_user_team(?, ?);",
+            [matchId, createrId]
+          );
+
+          console.log(userTeamDetails);
+
+          if (!(userDetails && userTeamDetails && userTeamDetails.length > 0)) {
+            throw { message: "invalid input" };
+          }
+
+          // change server address
+          userDetails.displayPicture = userDetails.displayPicture
+            ? userDetails.displayPicture.replace(
+                "http://192.168.1.32:3000",
+                `${req.protocol}://${req.headers.host}`
+              )
+            : "";
+
+          let userTeams = [];
+          userTeamDetails.forEach(async (team, index) => {
+            try {
+              // changing server url
+              team.team1FlagURL = team.team1FlagURL
+                ? team.team1FlagURL.replace(
+                    "http://192.168.1.32:3000",
+                    `${req.protocol}://${req.headers.host}`
+                  )
+                : "";
+              team.team2FlagURL = team.team2FlagURL
+                ? team.team2FlagURL.replace(
+                    "http://192.168.1.32:3000",
+                    `${req.protocol}://${req.headers.host}`
+                  )
+                : "";
+
+              // creating instance of user team
+              let userTeamInstance = {
+                teams: [
+                  {
+                    teamTotalPlayers: 0,
+                    teamId: team.team1Id,
+                    teamName: team.team1Name,
+                    teamDisplayName: team.team1DisplayName,
+                    teamFlagURL: team.team1FlagURL,
+                  },
+                  {
+                    teamTotalPlayers: 0,
+                    teamId: team.team2Id,
+                    teamName: team.team2Name,
+                    teamDisplayName: team.team2DisplayName,
+                    teamFlagURL: team.team2FlagURL,
+                  },
+                ],
+                teamsDetails: {
+                  userTeamId: team.userTeamId,
+                  creditUsed: 0,
+                  teamType: team.teamTypeString,
+                  totalBatsman: 0,
+                  totalBowlers: 0,
+                  totalWicketKeeper: 0,
+                  totalAllrounders: 0,
+                  captain: {},
+                  viceCaptain: {},
+                },
+              };
+
+              // feching all players
+              const [players] = await fetchData(
+                "CALL get_userteam_details(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                [
+                  team.matchId,
+                  team.player1,
+                  team.player2,
+                  team.player3,
+                  team.player4,
+                  team.player5,
+                  team.player6,
+                  team.player7,
+                  team.player8,
+                  team.player9,
+                  team.player10,
+                  team.player11,
+                ]
+              );
+
+              // loop through all players
+              players.forEach((player) => {
+                // changing server url
+                player.URL = player.URL
+                  ? player.URL.replace(
+                      "http://192.168.1.32:3000",
+                      `${req.protocol}://${req.headers.host}`
+                    )
+                  : "";
+
+                // incrementing total players
+                if (player.teamId === userTeamInstance.teams[0].teamId)
+                  userTeamInstance.teams[0].teamTotalPlayers++;
+                else if (player.teamId === userTeamInstance.teams[1].teamId)
+                  userTeamInstance.teams[1].teamTotalPlayers++;
+
+                // incrementing players roles
+                if (player.roleId === 1) {
+                  userTeamInstance.teamsDetails.totalBatsman++;
+                } else if (player.roleId === 2) {
+                  userTeamInstance.teamsDetails.totalBowlers++;
+                } else if (player.roleId === 3) {
+                  userTeamInstance.teamsDetails.totalWicketKeeper++;
+                } else if (player.roleId === 4) {
+                  userTeamInstance.teamsDetails.totalAllrounders++;
+                }
+
+                // total credits used
+                userTeamInstance.teamsDetails.creditUsed += player.credits;
+              });
+
+              // stroing captain and vice captain
+              [userTeamInstance.teamsDetails.captain] = players.filter(
+                (player) => {
+                  return player.playerId === team.captain;
+                }
+              );
+              [userTeamInstance.teamsDetails.viceCaptain] = players.filter(
+                (player) => {
+                  return player.playerId === team.viceCaptain;
+                }
+              );
+
+              // pushing teams into user teams
+              userTeams.push(userTeamInstance);
+
+              // resolving promise
+              if (index + 1 === userTeamDetails.length) {
+                resolve([userTeams, userDetails]);
+              }
+            } catch (error) {
+              reject(error);
+            }
+          });
+        } catch (error) {
+          reject(error);
+        }
+      });
+    };
+
+    const [userTeams, userDetails] = await fetchUserTeamDetails();
+
+    res.status(200).json({
+      status: true,
+      message: "success",
+      data: {
+        userTeams,
+        userDetails,
+      },
+    });
+
+    // if (!/[^0-9]/g.test(matchId) && !/[^0-9]/g.test(createrId)) {
+    //   // const players = await fetchData(playersQuery, [matchId, createrId]);
+    //   // const teamDetails = await fetchData(teamDetailsQuery, [matchId]);
+
+    //   const [players, teamDetails, [userDetails]] = await fetchData(
+    //     `${playersQuery}${teamDetailsQuery}${userDetailsQuery}`,
+    //     [matchId, createrId, matchId, createrId]
+    //   );
+
+    //   if (players.length > 0) {
+    //     const fetchTeams = () =>
+    //       new Promise((resolve, reject) => {
+    //         let allTeams = [];
+    //         players.forEach(async (team, index) => {
+    //           try {
+    //             let singleTeam = {
+    //               teams: [{ teamTotalPlayers: 0 }, { teamTotalPlayers: 0 }],
+    //               teamsDetails: {
+    //                 userTeamId: team["userTeamId"],
+    //                 creditUsed: 0,
+    //                 teamType: team.teamTypeString,
+    //                 totalBatsman: 0,
+    //                 totalBowlers: 0,
+    //                 totalWicketKeeper: 0,
+    //                 totalAllrounders: 0,
+    //                 captain: {},
+    //                 viceCaptain: {},
+    //               },
+    //             };
+
+    //             const ignoreKeys = [
+    //               "captain",
+    //               "viceCaptain",
+    //               "teamTypeString",
+    //               "likes",
+    //               "userTeamId",
+    //             ]; // keys to be ignored
+
+    //             // extract single team from teamData and store it
+    //             for (let j = 0; j < 2; j++) {
+    //               singleTeam.teams[j] = {
+    //                 ...singleTeam.teams[j],
+    //                 teamId: teamDetails[0][`team${j + 1}Id`],
+    //                 teamName: teamDetails[0][`team${j + 1}Name`],
+    //                 teamDisplayName: teamDetails[0][`team${j + 1}DisplayName`],
+    //                 teamFlagURL: teamDetails[0][`team${j + 1}FlagURL`]
+    //                   ? teamDetails[0][`team${j + 1}FlagURL`].replace(
+    //                       "http://192.168.1.32:3000",
+    //                       `${req.protocol}://${req.headers.host}`
+    //                     )
+    //                   : "",
+    //               };
+    //             }
+
+    //             let i = 0;
+    //             for (const key in team) {
+    //               if (!ignoreKeys.includes(key)) {
+    //                 const player = await fetchData(playerDetailsQuery, [
+    //                   team[key],
+    //                   matchId,
+    //                 ]);
+
+    //                 // changing server address
+    //                 player[0].URL = player[0].URL
+    //                   ? player[0].URL.replace(
+    //                       "http://192.168.1.32:3000",
+    //                       `${req.protocol}://${req.headers.host}`
+    //                     )
+    //                   : "";
+
+    //                 // storing captains and vicecaptain details
+    //                 if (team[key] === team["captain"])
+    //                   singleTeam.teamsDetails.captain = player[0];
+    //                 else if (team[key] === team["viceCaptain"])
+    //                   singleTeam.teamsDetails.viceCaptain = player[0];
+
+    //                 // calculating how many credits used
+    //                 singleTeam.teamsDetails.creditUsed += player[0].credits;
+
+    //                 // updating count of bowlers,batsman, wicketkeeper and allrounder
+    //                 if (player[0].roleName === "BATSMAN")
+    //                   singleTeam.teamsDetails.totalBatsman++;
+    //                 else if (player[0].roleName === "BOWLER")
+    //                   singleTeam.teamsDetails.totalBowlers++;
+    //                 else if (player[0].roleName === "WICKET_KEEPER")
+    //                   singleTeam.teamsDetails.totalWicketKeeper++;
+    //                 else if (player[0].roleName === "ALL_ROUNDER")
+    //                   singleTeam.teamsDetails.totalAllrounders++;
+
+    //                 // updating count of teams total player
+    //                 if (player[0].teamId === singleTeam.teams[0].teamId)
+    //                   singleTeam.teams[0].teamTotalPlayers++;
+    //                 else if (player[0].teamId === singleTeam.teams[1].teamId)
+    //                   singleTeam.teams[1].teamTotalPlayers++;
+
+    //                 i++;
+
+    //                 if (i === 11) {
+    //                   allTeams.push(singleTeam); // push single player in team allteams
+    //                   if (players.length === index + 1) {
+    //                     resolve(allTeams);
+    //                   }
+    //                 }
+    //               }
+    //             }
+    //           } catch (error) {
+    //             reject(error);
+    //           }
+    //         });
+    //       });
+    //     const allTeams = await fetchTeams();
+    //     res.status(200).json({
+    //       status: true,
+    //       message: "success",
+    //       data: { userTeams: allTeams, userDetails: userDetails },
+    //     });
+    //   } else {
+    //     throw { message: "user have no team created" };
+    //   }
+    // } else {
+    //   throw { message: "invalid input" };
+    // }
   } catch (error) {
     res.status(400).json({
       status: false,
@@ -262,135 +576,170 @@ router.post("/get_user_teams", async (req, res) => {
 router.post("/get_user_teams_predictor", async (req, res) => {
   const { createrId } = req.body;
 
-  // Query for fetch all players playerid
-  const playersQuery =
-    "SELECT matchId, userTeamId, teamTypeString, captain, userTeamLikes AS likes, viceCaptain, player1, player2, player3, player4, player5, player6, player7, player8, player9, player10, player11 FROM fullteamdetails WHERE userId = ?;";
-  const teamDetailsQuery =
-    "SELECT team1Id, team1Name, team1DisplayName, team1FlagURL, team2Id, team2Name, team2DisplayName, team2FlagURL FROM fullmatchdetails WHERE matchId = ?;";
-  const playerDetailsQuery =
-    "SELECT DISTINCT playerId, name AS playerName, displayName AS playerDisplayName, roleId, roleName, profilePictureURLLocal AS URL, points, credits, teamId FROM fullplayerdetails WHERE playerId = ? AND matchId = ?;";
-  const userDetailsQuery =
-    "SELECT `firstName`, `lastName`, `displayPicture` FROM userdetails WHERE userId = ?;";
-
   try {
-    const players = await fetchData(playersQuery, [createrId]);
-    const [userDetails] = await fetchData(userDetailsQuery, [createrId]);
-    if (players.length > 0) {
-      const fetchTeams = () =>
-        new Promise((resolve, reject) => {
-          let allTeams = [];
-          players.forEach(async (team, index) => {
+    const regx = /[^0-9]/g;
+
+    if (!createrId || regx.test(createrId)) {
+      throw { message: "invalid input" };
+    }
+
+    const fetchUserTeamDetails = () => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const [[userDetails], userTeamDetails] = await fetchData(
+            "CALL get_user_team(?, ?);",
+            [0, createrId]
+          );
+
+          if (!(userDetails && userTeamDetails && userTeamDetails.length > 0)) {
+            throw { message: "invalid input" };
+          }
+
+          // change server address
+          userDetails.displayPicture = userDetails.displayPicture
+            ? userDetails.displayPicture.replace(
+                "http://192.168.1.32:3000",
+                `${req.protocol}://${req.headers.host}`
+              )
+            : "";
+
+          let userTeams = [];
+          userTeamDetails.forEach(async (team, index) => {
             try {
-              let singleTeam = {
-                teams: [{ teamTotalPlayers: 0 }, { teamTotalPlayers: 0 }],
+              // changing server url
+              team.team1FlagURL = team.team1FlagURL
+                ? team.team1FlagURL.replace(
+                    "http://192.168.1.32:3000",
+                    `${req.protocol}://${req.headers.host}`
+                  )
+                : "";
+              team.team2FlagURL = team.team2FlagURL
+                ? team.team2FlagURL.replace(
+                    "http://192.168.1.32:3000",
+                    `${req.protocol}://${req.headers.host}`
+                  )
+                : "";
+
+              // creating instance of user team
+              let userTeamInstance = {
+                teams: [
+                  {
+                    teamTotalPlayers: 0,
+                    teamId: team.team1Id,
+                    teamName: team.team1Name,
+                    teamDisplayName: team.team1DisplayName,
+                    teamFlagURL: team.team1FlagURL,
+                  },
+                  {
+                    teamTotalPlayers: 0,
+                    teamId: team.team2Id,
+                    teamName: team.team2Name,
+                    teamDisplayName: team.team2DisplayName,
+                    teamFlagURL: team.team2FlagURL,
+                  },
+                ],
                 teamsDetails: {
-                  userTeamId: team["userTeamId"],
+                  userTeamId: team.userTeamId,
                   creditUsed: 0,
                   teamType: team.teamTypeString,
-                  totalWicketKeeper: 0,
                   totalBatsman: 0,
                   totalBowlers: 0,
+                  totalWicketKeeper: 0,
                   totalAllrounders: 0,
                   captain: {},
                   viceCaptain: {},
                 },
               };
-              const ignoreKeys = [
-                "captain",
-                "viceCaptain",
-                "teamTypeString",
-                "likes",
-                "userTeamId",
-                "matchId",
-              ]; // keys to be ignored
 
-              const teamDetails = await fetchData(teamDetailsQuery, [
-                team.matchId,
-              ]);
-              if (teamDetails.length !== 0) {
-                // extract single team from teamData and store it
-                for (let j = 0; j < 2; j++) {
-                  singleTeam.teams[j] = {
-                    ...singleTeam.teams[j],
-                    teamId: teamDetails[0][`team${j + 1}Id`],
-                    teamName: teamDetails[0][`team${j + 1}Name`],
-                    teamDisplayName: teamDetails[0][`team${j + 1}DisplayName`],
-                    teamFlagURL: teamDetails[0][`team${j + 1}FlagURL`]
-                      ? teamDetails[0][`team${j + 1}FlagURL`].replace(
-                          "http://192.168.1.32:3000",
-                          `${req.protocol}://${req.headers.host}`
-                        )
-                      : "",
-                  };
+              // feching all players
+              const [players] = await fetchData(
+                "CALL get_userteam_details(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                [
+                  team.matchId,
+                  team.player1,
+                  team.player2,
+                  team.player3,
+                  team.player4,
+                  team.player5,
+                  team.player6,
+                  team.player7,
+                  team.player8,
+                  team.player9,
+                  team.player10,
+                  team.player11,
+                ]
+              );
+
+              // loop through all players
+              players.forEach((player) => {
+                // changing server url
+                player.URL = player.URL
+                  ? player.URL.replace(
+                      "http://192.168.1.32:3000",
+                      `${req.protocol}://${req.headers.host}`
+                    )
+                  : "";
+
+                // incrementing total players
+                if (player.teamId === userTeamInstance.teams[0].teamId)
+                  userTeamInstance.teams[0].teamTotalPlayers++;
+                else if (player.teamId === userTeamInstance.teams[1].teamId)
+                  userTeamInstance.teams[1].teamTotalPlayers++;
+
+                // incrementing players roles
+                if (player.roleId === 1) {
+                  userTeamInstance.teamsDetails.totalBatsman++;
+                } else if (player.roleId === 2) {
+                  userTeamInstance.teamsDetails.totalBowlers++;
+                } else if (player.roleId === 3) {
+                  userTeamInstance.teamsDetails.totalWicketKeeper++;
+                } else if (player.roleId === 4) {
+                  userTeamInstance.teamsDetails.totalAllrounders++;
                 }
 
-                let i = 0;
-                for (const key in team) {
-                  if (!ignoreKeys.includes(key)) {
-                    const player = await fetchData(playerDetailsQuery, [
-                      team[key],
-                      team.matchId,
-                    ]);
-                    // changing server address
-                    player[0].URL = player[0].URL
-                      ? player[0].URL.replace(
-                          "http://192.168.1.32:3000",
-                          `${req.protocol}://${req.headers.host}`
-                        )
-                      : "";
+                // total credits used
+                userTeamInstance.teamsDetails.creditUsed += player.credits;
+              });
 
-                    // storing captains and vicecaptain details
-                    if (team[key] === team["captain"])
-                      singleTeam.teamsDetails.captain = player[0];
-                    else if (team[key] === team["viceCaptain"])
-                      singleTeam.teamsDetails.viceCaptain = player[0];
-
-                    // calculating how many credits used
-                    singleTeam.teamsDetails.creditUsed += player[0].credits;
-
-                    // updating count of bowlers,batsman, wicketkeeper and allrounder
-                    if (player[0].roleName === "BOWLER")
-                      singleTeam.teamsDetails.totalBowlers++;
-                    else if (player[0].roleName === "BATSMAN")
-                      singleTeam.teamsDetails.totalBatsman++;
-                    else if (player[0].roleName === "WICKET_KEEPER")
-                      singleTeam.teamsDetails.totalWicketKeeper++;
-                    else if (player[0].roleName === "ALL_ROUNDER")
-                      singleTeam.teamsDetails.totalAllrounders++;
-
-                    // updating count of teams total player
-                    if (player[0].teamId === singleTeam.teams[0].teamId)
-                      singleTeam.teams[0].teamTotalPlayers++;
-                    else if (player[0].teamId === singleTeam.teams[1].teamId)
-                      singleTeam.teams[1].teamTotalPlayers++;
-
-                    i++;
-
-                    if (i === 11) {
-                      allTeams.push(singleTeam); // push single player in team allteams
-                      if (players.length === index + 1) {
-                        resolve(allTeams);
-                      }
-                    }
-                  }
+              // stroing captain and vice captain
+              [userTeamInstance.teamsDetails.captain] = players.filter(
+                (player) => {
+                  return player.playerId === team.captain;
                 }
-              } else {
-                throw { message: "team not exixts" };
+              );
+              [userTeamInstance.teamsDetails.viceCaptain] = players.filter(
+                (player) => {
+                  return player.playerId === team.viceCaptain;
+                }
+              );
+
+              // pushing teams into user teams
+              userTeams.push(userTeamInstance);
+
+              // resolving promise
+              if (index + 1 === userTeamDetails.length) {
+                resolve([userTeams, userDetails]);
               }
             } catch (error) {
               reject(error);
             }
           });
-        });
-      const allTeams = await fetchTeams();
-      res.status(200).json({
-        status: true,
-        message: "success",
-        data: { userTeams: allTeams, userDetails },
+        } catch (error) {
+          reject(error);
+        }
       });
-    } else {
-      throw { message: "user have no team created" };
-    }
+    };
+
+    const [userTeams, userDetails] = await fetchUserTeamDetails();
+
+    res.status(200).json({
+      status: true,
+      message: "success",
+      data: {
+        userTeams,
+        userDetails,
+      },
+    });
   } catch (error) {
     res.status(400).json({
       status: false,
@@ -398,6 +747,143 @@ router.post("/get_user_teams_predictor", async (req, res) => {
       data: {},
     });
   }
+
+  // // Query for fetch all players playerid
+  // const playersQuery =
+  //   "SELECT matchId, userTeamId, teamTypeString, captain, userTeamLikes AS likes, viceCaptain, player1, player2, player3, player4, player5, player6, player7, player8, player9, player10, player11 FROM fullteamdetails WHERE userId = ?;";
+  // const teamDetailsQuery =
+  //   "SELECT team1Id, team1Name, team1DisplayName, team1FlagURL, team2Id, team2Name, team2DisplayName, team2FlagURL FROM fullmatchdetails WHERE matchId = ?;";
+  // const playerDetailsQuery =
+  //   "SELECT DISTINCT playerId, name AS playerName, displayName AS playerDisplayName, roleId, roleName, profilePictureURLLocal AS URL, points, credits, teamId FROM fullplayerdetails WHERE playerId = ? AND matchId = ?;";
+  // const userDetailsQuery =
+  //   "SELECT `firstName`, `lastName`, `displayPicture` FROM userdetails WHERE userId = ?;";
+
+  // try {
+  //   const players = await fetchData(playersQuery, [createrId]);
+  //   const [userDetails] = await fetchData(userDetailsQuery, [createrId]);
+  //   if (players.length > 0) {
+  //     const fetchTeams = () =>
+  //       new Promise((resolve, reject) => {
+  //         let allTeams = [];
+  //         players.forEach(async (team, index) => {
+  //           try {
+  //             let singleTeam = {
+  //               teams: [{ teamTotalPlayers: 0 }, { teamTotalPlayers: 0 }],
+  //               teamsDetails: {
+  //                 userTeamId: team["userTeamId"],
+  //                 creditUsed: 0,
+  //                 teamType: team.teamTypeString,
+  //                 totalWicketKeeper: 0,
+  //                 totalBatsman: 0,
+  //                 totalBowlers: 0,
+  //                 totalAllrounders: 0,
+  //                 captain: {},
+  //                 viceCaptain: {},
+  //               },
+  //             };
+  //             const ignoreKeys = [
+  //               "captain",
+  //               "viceCaptain",
+  //               "teamTypeString",
+  //               "likes",
+  //               "userTeamId",
+  //               "matchId",
+  //             ]; // keys to be ignored
+
+  //             const teamDetails = await fetchData(teamDetailsQuery, [
+  //               team.matchId,
+  //             ]);
+  //             if (teamDetails.length !== 0) {
+  //               // extract single team from teamData and store it
+  //               for (let j = 0; j < 2; j++) {
+  //                 singleTeam.teams[j] = {
+  //                   ...singleTeam.teams[j],
+  //                   teamId: teamDetails[0][`team${j + 1}Id`],
+  //                   teamName: teamDetails[0][`team${j + 1}Name`],
+  //                   teamDisplayName: teamDetails[0][`team${j + 1}DisplayName`],
+  //                   teamFlagURL: teamDetails[0][`team${j + 1}FlagURL`]
+  //                     ? teamDetails[0][`team${j + 1}FlagURL`].replace(
+  //                         "http://192.168.1.32:3000",
+  //                         `${req.protocol}://${req.headers.host}`
+  //                       )
+  //                     : "",
+  //                 };
+  //               }
+
+  //               let i = 0;
+  //               for (const key in team) {
+  //                 if (!ignoreKeys.includes(key)) {
+  //                   const player = await fetchData(playerDetailsQuery, [
+  //                     team[key],
+  //                     team.matchId,
+  //                   ]);
+  //                   // changing server address
+  //                   player[0].URL = player[0].URL
+  //                     ? player[0].URL.replace(
+  //                         "http://192.168.1.32:3000",
+  //                         `${req.protocol}://${req.headers.host}`
+  //                       )
+  //                     : "";
+
+  //                   // storing captains and vicecaptain details
+  //                   if (team[key] === team["captain"])
+  //                     singleTeam.teamsDetails.captain = player[0];
+  //                   else if (team[key] === team["viceCaptain"])
+  //                     singleTeam.teamsDetails.viceCaptain = player[0];
+
+  //                   // calculating how many credits used
+  //                   singleTeam.teamsDetails.creditUsed += player[0].credits;
+
+  //                   // updating count of bowlers,batsman, wicketkeeper and allrounder
+  //                   if (player[0].roleName === "BOWLER")
+  //                     singleTeam.teamsDetails.totalBowlers++;
+  //                   else if (player[0].roleName === "BATSMAN")
+  //                     singleTeam.teamsDetails.totalBatsman++;
+  //                   else if (player[0].roleName === "WICKET_KEEPER")
+  //                     singleTeam.teamsDetails.totalWicketKeeper++;
+  //                   else if (player[0].roleName === "ALL_ROUNDER")
+  //                     singleTeam.teamsDetails.totalAllrounders++;
+
+  //                   // updating count of teams total player
+  //                   if (player[0].teamId === singleTeam.teams[0].teamId)
+  //                     singleTeam.teams[0].teamTotalPlayers++;
+  //                   else if (player[0].teamId === singleTeam.teams[1].teamId)
+  //                     singleTeam.teams[1].teamTotalPlayers++;
+
+  //                   i++;
+
+  //                   if (i === 11) {
+  //                     allTeams.push(singleTeam); // push single player in team allteams
+  //                     if (players.length === index + 1) {
+  //                       resolve(allTeams);
+  //                     }
+  //                   }
+  //                 }
+  //               }
+  //             } else {
+  //               throw { message: "team not exixts" };
+  //             }
+  //           } catch (error) {
+  //             reject(error);
+  //           }
+  //         });
+  //       });
+  //     const allTeams = await fetchTeams();
+  //     res.status(200).json({
+  //       status: true,
+  //       message: "success",
+  //       data: { userTeams: allTeams, userDetails },
+  //     });
+  //   } else {
+  //     throw { message: "user have no team created" };
+  //   }
+  // } catch (error) {
+  //   res.status(400).json({
+  //     status: false,
+  //     message: error.sqlMessage || error.message,
+  //     data: {},
+  //   });
+  // }
 });
 
 // getting team data of team
