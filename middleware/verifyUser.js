@@ -5,16 +5,20 @@ const verifyUser = async (req, res, next) => {
 
   try {
     if (authtoken) {
+      // verifying auth token
       const result = await jwt.verify(authtoken, process.env.JWT_SECRET_KEY);
+
+      // setting user id to req object
       req.body.userId = result.user.userId;
       next();
     } else {
-      // console.log(req.baseUrl, req.originalUrl);
+      // ignoring auth token for following routes
       if (
         req.originalUrl === "/api/v1/getdashboarddata" ||
         req.originalUrl === "/api/v1/matches/get_matches" ||
         req.originalUrl === "/api/v1/prediction/get_user_teams_data"
       ) {
+        // setting user id to req object
         req.body.userId = null;
         next();
         return;

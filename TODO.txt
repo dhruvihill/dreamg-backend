@@ -13,7 +13,28 @@ EXPERT PREDICTIONS
 ******
 
 
-// without login
-dashboard done
-get matches done
-get user team data
+// authtoken optional
+dashboarddata
+get_matches 
+get_user_team_data
+
+// authtoken required
+getuserprofile
+updateuserprofile
+get_notificationa
+setReadNotification
+setteam
+update_user_team_likes
+update_user_team_views
+set_discussion
+
+// auth token removed
+recentPlayed
+currentPlayed
+getplayers
+get_predictions
+getExpertPredictor
+get_user_teams
+get_user_teams_predictor
+get_discussion
+compare_teams

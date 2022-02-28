@@ -22,6 +22,8 @@ require("dotenv/config");
 // );
 
 let connection;
+
+// intializing connection
 const initializeConnection = () => {
   try {
     connection = mysql.createConnection({
@@ -36,7 +38,10 @@ const initializeConnection = () => {
     console.log(error.message);
   }
 };
+
+// connectiong to database
 connectToDb = () => {
+  // connect to database
   connection.connect((err) => {
     try {
       if (err) throw err;
@@ -57,13 +62,14 @@ connectToDb = () => {
     console.log("db error", err.code);
     setTimeout(() => {
       initializeConnection();
-    }, 2000);
+    }, 100);
   });
 };
 
 // initialize connection and connection to db
 initializeConnection();
 
+// function to execute query
 const fetchData = (query, options = []) =>
   new Promise((resolve, reject) => {
     connection.query(query, options, (err, response) => {
@@ -72,4 +78,5 @@ const fetchData = (query, options = []) =>
     });
   });
 
+// exporting fetchData function
 module.exports = { fetchData };
