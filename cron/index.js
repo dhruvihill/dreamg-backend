@@ -33,10 +33,10 @@ connectToDb = () => {
 const initializeConnection = () => {
   try {
     connection = mysql.createConnection({
-      host: process.env.CLEVER_CLOUD_HOST,
-      user: process.env.CLEVER_CLOUD_USER,
-      password: process.env.CLEVER_CLOUD_PASSWORD,
-      database: process.env.CLEVER_CLOUD_DATABASE_NAME,
+      host: "localhost",
+      user: "dreamg",
+      password: "Dhruv@1810",
+      database: "dreamg2",
       multipleStatements: true,
     });
     connectToDb();
@@ -75,74 +75,114 @@ const makeRequest = (url, method, data) => {
   });
 };
 
-// inserts match, series, teams
 const insertMatch = (matches) => {
+  // inserts match, series, teams
   [1, 2, 3].forEach((type) => {
     matches[type].forEach(async (match) => {
-      const {
-        matchId,
-        gameType,
-        team1: { id: team1Id },
-        team2: { id: team2Id },
-        matchStartTime: matchStartTimeMilliSeconds,
-        matchStatus,
-        venue,
-        displayName,
-        seriesId,
-      } = match;
       try {
-        try {
-          await database("INSERT INTO all_series SET ?", {
-            seriesId: match.seriesId,
-            seriesDisplayName: match.seriesDname,
-            seriesName: match.seriesName,
-          });
-        } catch (error) {
-          console.log(error.message);
-        }
-        try {
-          await database("INSERT INTO all_matches SET ?", {
-            matchId,
-            gameType,
-            team1_id,
-            team2_id,
-            matchStartTimeMilliSeconds,
-            matchStatus,
-            venue,
-            displayName,
-            seriesId: match.seriesId,
-            seriesDname: match.seriesDname,
-            seriesName: match.seriesName,
-            matchStartDateTime: matchStartTimeMilliSeconds,
-          });
-        } catch (error) {
-          console.log(error.message);
-        }
-        try {
-          storeTeams = () =>
-            new Promise((resolve, reject) => {
-              [1, 2].forEach(async (item, index) => {
-                try {
-                  const storeTeam = await database(
-                    "INSERT INTO allteams SET ?",
-                    {
-                      teamId: match[`team${item}`].id,
-                      name: match[`team${item}`].name,
-                      displayName: match[`team${item}`].dName,
-                      teamFlagUrl: match[`team${item}`].teamFlagURL,
-                    }
-                  );
-                  if (storeTeam && index === 1) {
-                    resolve();
-                  }
-                } catch (error) {
-                  reject(error);
-                }
+        const storeSeries = () => {
+          return new Promise(async (resolve, reject) => {
+            try {
+              const series = await database("INSERT INTO all_series SET ?", {
+                seriesId: match.seriesId,
+                seriesDisplayName: match.seriesDname,
+                seriesName: match.seriesName,
               });
+              if (series) {
+                resolve(true);
+              }
+            } catch (error) {
+              if (
+                error.sqlMessage &&
+                error.sqlMessage.includes("Duplicate entry")
+              ) {
+                resolve(true);
+              } else {
+                console.log(error.message);
+              }
+            }
+          });
+        };
+        const storeMatch = () => {
+          return new Promise(async (resolve, reject) => {
+            try {
+              const {
+                matchId,
+                gameType,
+                team1: { id: team1Id },
+                team2: { id: team2Id },
+                matchStartTime: matchStartTimeMilliSeconds,
+                matchStatus,
+                venue,
+                displayName,
+                seriesId,
+              } = match;
+              const matchSetted = await database(
+                "INSERT INTO all_matches SET ?",
+                {
+                  matchId,
+                  gameType,
+                  team1Id,
+                  team2Id,
+                  matchStartTimeMilliSeconds,
+                  matchStatus,
+                  venue,
+                  displayName,
+                  seriesId: match.seriesId,
+                  matchStartDateTime: matchStartTimeMilliSeconds,
+                  seriesId,
+                }
+              );
+              if (matchSetted) {
+                resolve(true);
+              }
+            } catch (error) {
+              if (
+                error.sqlMessage &&
+                error.sqlMessage.includes("Duplicate entry")
+              ) {
+                resolve(true);
+              }
+              console.log(error.message);
+            }
+          });
+        };
+        const storeTeams = () => {
+          return new Promise((resolve) => {
+            [1, 2].forEach(async (item, index) => {
+              try {
+                const storeTeam = await database("INSERT INTO teams SET ?", {
+                  teamId: match[`team${item}`].id,
+                  name: match[`team${item}`].name,
+                  displayName: match[`team${item}`].dName,
+                  teamFlagUrl: match[`team${item}`].teamFlagURL,
+                });
+                if (storeTeam && index === 1) {
+                  resolve(true);
+                }
+              } catch (error) {
+                if (
+                  error.sqlMessage &&
+                  error.sqlMessage.includes("Duplicate") &&
+                  index === 1
+                ) {
+                  resolve(true);
+                }
+                console.log(error.message);
+              }
             });
-          await storeTeams();
-        } catch (error) {
-          console.log(error.message);
+          });
+        };
+        const teamSetted = await storeTeams();
+        if (teamSetted) {
+          const seriesSetted = await storeSeries();
+          if (seriesSetted) {
+            const matchSetted = await storeMatch();
+            if (matchSetted) {
+              console.log("calles", match.matchId);
+              insertPlayers(match.matchId);
+            }
+          }
         }
       } catch (error) {
         console.log(error.message);
@@ -151,45 +191,93 @@ const insertMatch = (matches) => {
   });
 };
 
-// inserts players, matchplayerrelation
-const insertPlayers = (allMatchesIds) => {
-  allMatchesIds.forEach((matchIdsByTypes) => {
-    matchIdsByTypes.forEach(async (matchId) => {
-      try {
-        const { players } = await makeRequest(
-          "https://www.my11circle.com/api/lobbyApi/matches/v1/getMatchSquad",
-          "POST",
-          { matchId }
-        );
-        players?.forEach(async (player) => {
-          try {
-            await database("INSERT INTO allplayers SET ?", {
+// // inserts players, matchplayerrelation
+// const insertPlayers = (allMatchesIds) => {
+//   allMatchesIds.forEach((matchIdsByTypes) => {
+//     matchIdsByTypes.forEach(async (matchId) => {
+//       try {
+//         const { players } = await makeRequest(
+//           "https://www.my11circle.com/api/lobbyApi/matches/v1/getMatchSquad",
+//           "POST",
+//           { matchId }
+//         );
+//         players?.forEach(async (player) => {
+//           try {
+//             await database("INSERT INTO allplayers SET ?", {
+//               playerId: player.id,
+//               name: player.name,
+//               role: player.role,
+//               displayName: player.dName,
+//               url: player.imgURL,
+//             });
+//           } catch (error) {
+//             console.log(error.message);
+//           }
+//           try {
+//             await database("INSERT INTO matchplayerrelation SET ?", {
+//               matchId,
+//               playerId: player.id,
+//               teamId: player.teamId,
+//               credits: player.credits,
+//               points: player.points,
+//             });
+//           } catch (error) {
+//             console.log(error.message);
+//           }
+//         });
+//       } catch (error) {
+//         console.log(error.message);
+//       }
+//     });
+//   });
+// };
+
+const insertPlayers = async (matchId) => {
+  try {
+    const { players } = await makeRequest(
+      "https://www.my11circle.com/api/lobbyApi/matches/v1/getMatchSquad",
+      "POST",
+      { matchId }
+    );
+
+    players?.forEach(async (player) => {
+      const insertSinglePlayer = async () => {
+        try {
+          const singlePlayerInserted = await database(
+            "INSERT INTO players SET ?",
+            {
               playerId: player.id,
               name: player.name,
               role: player.role,
               displayName: player.dName,
               url: player.imgURL,
-            });
-          } catch (error) {
-            console.log(error.message);
+            }
+          );
+          if (singlePlayerInserted) {
+            insertSingleMatchPlayerRelation();
           }
-          try {
-            await database("INSERT INTO matchplayerrelation SET ?", {
-              matchId,
-              playerId: player.id,
-              teamId: player.teamId,
-              credits: player.credits,
-              points: player.points,
-            });
-          } catch (error) {
-            console.log(error.message);
-          }
-        });
-      } catch (error) {
-        console.log(error.message);
-      }
+        } catch (error) {
+          console.log(error.message);
+        }
+      };
+      const insertSingleMatchPlayerRelation = async () => {
+        try {
+          await database("INSERT INTO match_player_relation SET ?", {
+            matchId,
+            playerId: player.id,
+            teamId: player.teamId,
+            credits: player.credits,
+            points: player.points,
+          });
+        } catch (error) {
+          console.log(error.message);
+        }
+      };
+      insertSinglePlayer();
     });
-  });
+  } catch (error) {
+    console.log(error.message);
+  }
 };
 
 // manage to insert all data into database
@@ -201,14 +289,10 @@ const fetchAndStore = async () => {
       "POST",
       { sportsType: 1 }
     );
-    // let allMatchesIds = [1, 2, 3].map((item) =>
-    //   matches[item].map((match) => match.matchId)
-    // );
-    // insertMatch(matches);
-    // insertPlayers(allMatchesIds);
+    insertMatch(matches);
   } catch (error) {
     console.log(error);
   }
 };
 
-module.exports = fetchAndStore();
+module.exports = fetchAndStore;

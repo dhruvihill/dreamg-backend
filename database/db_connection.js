@@ -1,7 +1,6 @@
 const mysql = require("mysql");
 const fs = require("fs");
 const path = require("path");
-const { dirname } = require("path");
 require("dotenv/config");
 
 // Creating Connection
@@ -65,7 +64,7 @@ connectToDb = () => {
     console.log("db error", err.code);
     setTimeout(() => {
       initializeConnection();
-    }, 100);
+    }, 1000);
   });
 };
 

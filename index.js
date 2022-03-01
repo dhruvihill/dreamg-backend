@@ -1,11 +1,18 @@
 require("dotenv/config");
 const express = require("express");
 const bodyParser = require("body-parser");
+const fetchAndStore = require("./cron");
 
 const app = express();
 
 // creates Cron job
-// fetchAndStore();
+setInterval(() => {
+  try {
+    fetchAndStore();
+  } catch (error) {
+    console.log(error.message);
+  }
+}, 24 * 60 * 60 * 1000);
 
 // Parsing body
 app.use(bodyParser.urlencoded({ extended: true }));
