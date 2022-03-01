@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const verifyUser = require("../middleware/verifyUser");
-const { fetchData } = require("../database/db_connection");
+const { fetchData, imageUrl } = require("../database/db_connection");
 
 // get players by match id
 router.post("/getplayers", async (req, res) => {
@@ -10,18 +10,19 @@ router.post("/getplayers", async (req, res) => {
   try {
     if (!/[^0-9]/g.test(matchId)) {
       const data = await fetchData("CALL get_players(?);", [matchId]);
+      const serverAddress = `${req.protocol}://${req.headers.host}`;
 
       data[0]?.forEach((player) => {
         player.captainBy = parseFloat(player.captainBy.toFixed(2));
         player.viceCaptainBy = parseFloat(player.viceCaptainBy.toFixed(2));
         player.selectedBy = parseFloat(player.selectedBy.toFixed(2));
         // changing url address
-        player.URL = player.URL
-          ? player.URL.replace(
-              "http://192.168.1.32:3000",
-              `${req.protocol}://${req.headers.host}`
-            )
-          : "";
+        player.URL = imageUrl(
+          __dirname,
+          "../",
+          `/public/images/teamflag/${player.playerId}.jpg`,
+          serverAddress
+        );
       });
       res.status(200).json({
         status: true,
@@ -30,65 +31,6 @@ router.post("/getplayers", async (req, res) => {
           players: data[0],
         },
       });
-
-      // if (allPlayers.length > 0) {
-      //   const calculateSelectedBy = () => {
-      //     return new Promise((resolve, reject) => {
-      //       allPlayers.forEach(async (player, index) => {
-      //         try {
-      //           const playerDetails = await fetchData(playerDetailsQuery, [
-      //             player.playerId,
-      //             matchId,
-      //             matchId,
-      //             player.playerId,
-      //             matchId,
-      //             matchId,
-      //             player.playerId,
-      //             matchId,
-      //             matchId,
-      //           ]);
-      //           player.captainBy = parseFloat(
-      //             playerDetails[0].captainBy.toFixed(2)
-      //           );
-      //           player.viceCaptainBy = parseFloat(
-      //             playerDetails[0].viceCaptainBy.toFixed(2)
-      //           );
-      //           player.selectedBy = parseFloat(
-      //             playerDetails[0].selectedBy.toFixed(2)
-      //           );
-      //           // changing url address
-      //           player.URL = player.URL.replace(
-      //             "http://192.168.1.32:3000",
-      //             `${req.protocol}://${req.headers.host}`
-      //           );
-
-      //           if (index === allPlayers.length - 1) resolve();
-      //         } catch (error) {
-      //           reject(error);
-      //         }
-      //       });
-      //     });
-      //   };
-      //   calculateSelectedBy()
-      //     .then(() => {
-      //       res.status(200).json({
-      //         status: true,
-      //         message: "success",
-      //         data: {
-      //           players: allPlayers,
-      //         },
-      //       });
-      //     })
-      //     .catch((error) => {
-      //       res.status(400).json({
-      //         status: false,
-      //         message: error.message,
-      //         data: {},
-      //       });
-      //     });
-      // } else {
-      //   throw { message: "invalid matchId" };
-      // }
     } else {
       throw { message: "invalid input" };
     }

@@ -403,11 +403,9 @@ describe("MATCHES", () => {
         "team1Id",
         "team1Name",
         "team1DisplayName",
-        "team1FlagURL",
         "team2Id",
         "team2Name",
         "team2DisplayName",
-        "team2FlagURL",
       ];
 
       let objectVerified = true;
@@ -456,11 +454,9 @@ describe("MATCHES", () => {
         "team1Id",
         "team1Name",
         "team1DisplayName",
-        "team1FlagURL",
         "team2Id",
         "team2Name",
         "team2DisplayName",
-        "team2FlagURL",
       ];
 
       let objectVerified = true;
@@ -509,11 +505,9 @@ describe("MATCHES", () => {
         "team1Id",
         "team1Name",
         "team1DisplayName",
-        "team1FlagURL",
         "team2Id",
         "team2Name",
         "team2DisplayName",
-        "team2FlagURL",
       ];
 
       let objectVerified = true;
@@ -591,7 +585,6 @@ describe("get prediction", () => {
       "phoneNumber",
       "firstName",
       "lastName",
-      "displayPicture",
       "city",
       "registerTime",
       "userTeamId",
@@ -629,7 +622,6 @@ describe("get prediction", () => {
       "phoneNumber",
       "firstName",
       "lastName",
-      "displayPicture",
       "city",
       "registerTime",
       "displayName",
@@ -678,13 +670,7 @@ describe("get trending predictors", () => {
 
     const data = JSON.parse(res.text);
 
-    const properties = [
-      "userId",
-      "firstName",
-      "lastName",
-      "displayPicture",
-      "totalPoints",
-    ];
+    const properties = ["userId", "firstName", "lastName", "totalPoints"];
 
     let objectVerified = true;
 

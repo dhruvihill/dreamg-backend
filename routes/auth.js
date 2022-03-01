@@ -3,7 +3,8 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const verifyUser = require("../middleware/verifyUser");
 const verifyProfile = require("../middleware/verifyProfile");
-const { fetchData } = require("../database/db_connection");
+const { fetchData, imageUrl } = require("../database/db_connection");
+const path = require("path");
 
 // Creating user
 router.post("/register", async (req, res) => {
@@ -123,16 +124,16 @@ router.post("/getuserprofile", verifyUser, async (req, res) => {
   const { predictorId } = req.body;
 
   try {
-    const pointsQuery = `SELECT userId, firstName, lastName, phoneNumber, displayPicture, email, dateOfBirth, gender, address, city, pinCode, state, country,
+    const pointsQuery = `SELECT userId, firstName, lastName, phoneNumber, email, dateOfBirth, gender, address, city, pinCode, state, country,
     (SELECT COUNT(DISTINCT matchId) FROM fullteamdetails WHERE userId = ?) AS totalMatches,
     (SELECT COUNT(DISTINCT userTeamId) FROM fullteamdetails WHERE userId = ?) AS totalTeams,
     COALESCE((SELECT SUM(userTeamPoints) AS totalPoints FROM fullteamdetails WHERE userId = ? GROUP BY userTeamType HAVING userTeamType = 1), 0) AS mega_contest_totalPoints,
     COALESCE((SELECT SUM(userTeamPoints) AS totalPoints FROM fullteamdetails WHERE userId = ? GROUP BY userTeamType HAVING userTeamType = 2), 0) AS head_to_head_totalPoints FROM userdetails WHERE userId = ?;`;
 
     const recentMatchesQuery =
-      "SELECT matchId, seriesName, seriesDname, matchTypeId, matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team1FlagURL, team2Id, team2Name, team2DisplayName, team2FlagURL, (SELECT COUNT(DISTINCT userId) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE fullmatchdetails.matchStatus != 1 AND fullmatchdetails.matchId IN (SELECT DISTINCT fullteamdetails.matchId FROM fullteamdetails WHERE fullteamdetails.userId = ? ORDER BY fullteamdetails.creationTime DESC) LIMIT 5;";
+      "SELECT matchId, seriesName, seriesDname, matchTypeId, matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName, (SELECT COUNT(DISTINCT userId) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE fullmatchdetails.matchStatus != 1 AND fullmatchdetails.matchId IN (SELECT DISTINCT fullteamdetails.matchId FROM fullteamdetails WHERE fullteamdetails.userId = ? ORDER BY fullteamdetails.creationTime DESC) LIMIT 5;";
     const currentMatchQuery =
-      "SELECT matchId, seriesName, seriesDname, matchTypeId, matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team1FlagURL, team2Id, team2Name, team2DisplayName, team2FlagURL, (SELECT COUNT(DISTINCT userId) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE fullmatchdetails.matchStatus = 1 AND fullmatchdetails.matchId IN (SELECT DISTINCT fullteamdetails.matchId FROM fullteamdetails WHERE fullteamdetails.userId = ? ORDER BY fullteamdetails.creationTime DESC) LIMIT 5;";
+      "SELECT matchId, seriesName, seriesDname, matchTypeId, matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName, (SELECT COUNT(DISTINCT userId) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE fullmatchdetails.matchStatus = 1 AND fullmatchdetails.matchId IN (SELECT DISTINCT fullteamdetails.matchId FROM fullteamdetails WHERE fullteamdetails.userId = ? ORDER BY fullteamdetails.creationTime DESC) LIMIT 5;";
 
     if (!/[^0-9]/g.test(predictorId)) {
       const [points, recentPlayed, currentPlayed] = await fetchData(
@@ -141,29 +142,42 @@ router.post("/getuserprofile", verifyUser, async (req, res) => {
       );
 
       if (points.length > 0) {
-        // changing address in url
         const serverAddress = `${req.protocol}://${req.headers.host}`;
-        points[0].displayPicture = points[0].displayPicture.replace(
-          "http://192.168.1.32:3000",
+
+        // user profile picture
+        points[0].displayPicture = imageUrl(
+          __dirname,
+          "../",
+          `/public/images/user/${predictorId}.jpg`,
           serverAddress
         );
-        recentPlayed.forEach((macth) => {
-          macth.team1FlagURL = macth.team1FlagURL.replace(
-            "http://192.168.1.32:3000",
+
+        // adding teamFlag image url to matches
+        recentPlayed.forEach(async (macth) => {
+          macth.team1FlagURL = imageUrl(
+            __dirname,
+            "../",
+            `/public/images/teamflag/${macth.team1Id}.jpg`,
             serverAddress
           );
-          macth.team2FlagURL = macth.team2FlagURL.replace(
-            "http://192.168.1.32:3000",
+          macth.team2FlagURL = imageUrl(
+            __dirname,
+            "../",
+            `/public/images/teamflag/${macth.team2Id}.jpg`,
             serverAddress
           );
         });
         currentPlayed.forEach((macth) => {
-          macth.team1FlagURL = macth.team1FlagURL.replace(
-            "http://192.168.1.32:3000",
+          macth.team1FlagURL = imageUrl(
+            __dirname,
+            "../",
+            `/public/images/teamflag/${macth.team1Id}.jpg`,
             serverAddress
           );
-          macth.team2FlagURL = macth.team2FlagURL.replace(
-            "http://192.168.1.32:3000",
+          macth.team2FlagURL = imageUrl(
+            __dirname,
+            "../",
+            `/public/images/teamflag/${macth.team2Id}.jpg`,
             serverAddress
           );
         });

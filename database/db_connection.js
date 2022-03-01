@@ -1,4 +1,7 @@
 const mysql = require("mysql");
+const fs = require("fs");
+const path = require("path");
+const { dirname } = require("path");
 require("dotenv/config");
 
 // Creating Connection
@@ -78,5 +81,16 @@ const fetchData = (query, options = []) =>
     });
   });
 
+// function to check if file exists
+const imageUrl = (dir, dirFileRelation, file, server) => {
+  try {
+    const newPath = path.join(dir, dirFileRelation, file);
+    if (fs.existsSync(newPath)) return server + file;
+    return "";
+  } catch {
+    return "";
+  }
+};
+
 // exporting fetchData function
-module.exports = { fetchData };
+module.exports = { fetchData, imageUrl };

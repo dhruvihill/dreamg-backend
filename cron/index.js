@@ -1,20 +1,49 @@
 const axios = require("axios");
 const mysql = require("mysql");
-const connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "Dhruv@1810",
-  database: "dream",
-});
+require("dotenv/config");
+let connection;
 
-connection.connect((err) => {
+// connectiong to database
+connectToDb = () => {
+  // connect to database
+  connection.connect((err) => {
+    try {
+      if (err) throw err;
+      else console.log("Connected Successfully");
+    } catch (error) {
+      console.log(error.message);
+      if (error.message.includes("ECONNREFUSED")) {
+        // some email stuff goes here
+      }
+      setTimeout(() => {
+        initializeConnection();
+      }, 3000);
+    }
+  });
+
+  // error handling to Database
+  connection.on("error", (err) => {
+    console.log("db error", err.code);
+    setTimeout(() => {
+      initializeConnection();
+    }, 100);
+  });
+};
+// intializing connection
+const initializeConnection = () => {
   try {
-    if (err) throw err;
-    else console.log("Connected Successfully");
+    connection = mysql.createConnection({
+      host: process.env.CLEVER_CLOUD_HOST,
+      user: process.env.CLEVER_CLOUD_USER,
+      password: process.env.CLEVER_CLOUD_PASSWORD,
+      database: process.env.CLEVER_CLOUD_DATABASE_NAME,
+      multipleStatements: true,
+    });
+    connectToDb();
   } catch (error) {
     console.log(error.message);
   }
-});
+};
 
 // query to fetch, insert data
 const database = (query, options) =>
@@ -75,13 +104,16 @@ const insertMatch = (matches) => {
           await database("INSERT INTO all_matches SET ?", {
             matchId,
             gameType,
-            team1Id,
-            team2Id,
+            team1_id,
+            team2_id,
             matchStartTimeMilliSeconds,
             matchStatus,
             venue,
             displayName,
-            seriesId,
+            seriesId: match.seriesId,
+            seriesDname: match.seriesDname,
+            seriesName: match.seriesName,
+            matchStartDateTime: matchStartTimeMilliSeconds,
           });
         } catch (error) {
           console.log(error.message);
@@ -163,19 +195,20 @@ const insertPlayers = (allMatchesIds) => {
 // manage to insert all data into database
 const fetchAndStore = async () => {
   try {
+    initializeConnection();
     const { matches } = await makeRequest(
       "https://www.my11circle.com/api/lobbyApi/v1/getMatches",
       "POST",
       { sportsType: 1 }
     );
-    let allMatchesIds = [1, 2, 3].map((item) =>
-      matches[item].map((match) => match.matchId)
-    );
-    insertMatch(matches);
-    insertPlayers(allMatchesIds);
+    // let allMatchesIds = [1, 2, 3].map((item) =>
+    //   matches[item].map((match) => match.matchId)
+    // );
+    // insertMatch(matches);
+    // insertPlayers(allMatchesIds);
   } catch (error) {
     console.log(error);
   }
 };
 
-module.exports = fetchAndStore;
+module.exports = fetchAndStore();
