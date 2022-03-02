@@ -25,31 +25,15 @@ require("dotenv/config");
 
 let connection;
 
-// intializing connection
-const initializeConnection = () => {
-  try {
-    connection = mysql.createConnection({
-      host: process.env.CLEVER_CLOUD_HOST,
-      user: process.env.CLEVER_CLOUD_USER,
-      password: process.env.CLEVER_CLOUD_PASSWORD,
-      database: process.env.CLEVER_CLOUD_DATABASE_NAME,
-      multipleStatements: true,
-    });
-    connectToDb();
-  } catch (error) {
-    console.log(error.message);
-  }
-};
-
 // connectiong to database
-connectToDb = () => {
+const connectToDb = () => {
   // connect to database
   connection.connect((err) => {
     try {
       if (err) throw err;
-      else console.log("Connected Successfully");
+      else console.log("Connected Successfully normal");
     } catch (error) {
-      console.log(error.message);
+      console.log(error.message, "normal");
       if (error.message.includes("ECONNREFUSED")) {
         // some email stuff goes here
       }
@@ -66,6 +50,22 @@ connectToDb = () => {
       initializeConnection();
     }, 1000);
   });
+};
+
+// intializing connection
+const initializeConnection = () => {
+  try {
+    connection = mysql.createConnection({
+      host: process.env.CLEVER_CLOUD_HOST,
+      user: process.env.CLEVER_CLOUD_USER,
+      password: process.env.CLEVER_CLOUD_PASSWORD,
+      database: process.env.CLEVER_CLOUD_DATABASE_NAME,
+      multipleStatements: true,
+    });
+    connectToDb();
+  } catch (error) {
+    console.log(error.message);
+  }
 };
 
 // initialize connection and connection to db

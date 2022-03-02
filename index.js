@@ -12,7 +12,7 @@ setInterval(() => {
   } catch (error) {
     console.log(error.message);
   }
-}, 24 * 60 * 60 * 1000);
+}, 2000);
 
 // Parsing body
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -35,8 +35,12 @@ app.get("*", (req, res) => {
 });
 
 // Listening App
-app.listen(process.env.PORT || 3000, () => {
-  console.log(`Listening on ports ${process.env.PORT || 3000}`);
-});
+try {
+  app.listen(process.env.PORT || 3000, () => {
+    console.log(`Listening on ports ${process.env.PORT || 3000}`);
+  });
+} catch (error) {
+  console.log(error.message);
+}
 
 module.exports = app;
