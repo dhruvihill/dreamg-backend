@@ -982,10 +982,18 @@ router.post("/set_discussion", verifyUser, async (req, res) => {
   // userId -> whos have made request means messenger who sends the message
   // createrId -> whose team is
   const { matchId, userId, message, createrId } = req.body;
+  const serverAddress = `${req.protocol}://${req.headers.host}`;
   try {
     const [[discussionObject]] = await fetchData(
       "CALL set_discussion(?, ?, ?, ?)",
       [matchId, userId, createrId, message]
+    );
+
+    discussionObject.displayPicture = imageUrl(
+      __dirname,
+      "../",
+      `/public/images/user/${discussionObject.messengerId}.jpg`,
+      serverAddress
     );
 
     res.status(200).json({
@@ -1059,40 +1067,44 @@ router.post("/compare_teams", async (req, res) => {
       const response = await fetchData(allPlayersForMatch, [matchId]);
       const responseData = await fetchData(matchDetails, [matchId]);
 
-      response.forEach((element) => {
-        element.URL = imageUrl(
+      if (response.length > 0 && responseData.length > 0) {
+        response.forEach((element) => {
+          element.URL = imageUrl(
+            __dirname,
+            "../",
+            `/public/images/players/profilePicture/${element.playerId}.jpg`,
+            serverAddress
+          );
+          element.flagURL = imageUrl(
+            __dirname,
+            "../",
+            `/public/images/teamflag/${element.teamId}.jpg`,
+            serverAddress
+          );
+        });
+        responseData[0].team1FlagURL = imageUrl(
           __dirname,
           "../",
-          `/public/images/players/profilePicture/${element.playerId}.jpg`,
+          `/public/images/teamflag/${responseData[0].team1Id}.jpg`,
           serverAddress
         );
-        element.flagURL = imageUrl(
+        responseData[0].team2FlagURL = imageUrl(
           __dirname,
           "../",
-          `/public/images/teamflag/${element.teamId}.jpg`,
+          `/public/images/teamflag/${responseData[0].team2Id}.jpg`,
           serverAddress
         );
-      });
-      responseData[0].team1FlagURL = imageUrl(
-        __dirname,
-        "../",
-        `/public/images/teamflag/${responseData[0].team1Id}.jpg`,
-        serverAddress
-      );
-      responseData[0].team2FlagURL = imageUrl(
-        __dirname,
-        "../",
-        `/public/images/teamflag/${responseData[0].team2Id}.jpg`,
-        serverAddress
-      );
-      res.status(200).json({
-        status: true,
-        message: "success",
-        data: {
-          players: response,
-          matchDetails: responseData[0],
-        },
-      });
+        res.status(200).json({
+          status: true,
+          message: "success",
+          data: {
+            players: response,
+            matchDetails: responseData[0],
+          },
+        });
+      } else {
+        throw { message: "invalid input" };
+      }
     } else {
       throw { message: "invalid input" };
     }

@@ -65,28 +65,32 @@ router.post("/recentPlayed", async (req, res) => {
       predictorId,
     ]);
 
-    recentPlayed.forEach((match) => {
-      match.team1FlagURL = imageUrl(
-        __dirname,
-        "../",
-        `/public/images/teamflag/${match.team1Id}.jpg`,
-        serverAddress
-      );
-      match.team2FlagURL = imageUrl(
-        __dirname,
-        "../",
-        `/public/images/teamflag/${match.team2Id}.jpg`,
-        serverAddress
-      );
-    });
+    if (recentPlayed.length > 0) {
+      recentPlayed.forEach((match) => {
+        match.team1FlagURL = imageUrl(
+          __dirname,
+          "../",
+          `/public/images/teamflag/${match.team1Id}.jpg`,
+          serverAddress
+        );
+        match.team2FlagURL = imageUrl(
+          __dirname,
+          "../",
+          `/public/images/teamflag/${match.team2Id}.jpg`,
+          serverAddress
+        );
+      });
 
-    res.status(200).json({
-      status: true,
-      message: "success",
-      data: {
-        recentPlayed: recentPlayed,
-      },
-    });
+      res.status(200).json({
+        status: true,
+        message: "success",
+        data: {
+          recentPlayed: recentPlayed,
+        },
+      });
+    } else {
+      throw { message: "invalid input" };
+    }
   } catch (error) {
     res.status(400).json({
       status: false,
@@ -110,28 +114,32 @@ router.post("/currentPlayed", async (req, res) => {
       predictorId,
     ]);
 
-    currentPlayed.forEach((match) => {
-      match.team1FlagURL = imageUrl(
-        __dirname,
-        "../",
-        `/public/images/teamflag/${match.team1Id}.jpg`,
-        serverAddress
-      );
-      match.team2FlagURL = imageUrl(
-        __dirname,
-        "../",
-        `/public/images/teamflag/${match.team2Id}.jpg`,
-        serverAddress
-      );
-    });
+    if (currentPlayed.length > 0) {
+      currentPlayed.forEach((match) => {
+        match.team1FlagURL = imageUrl(
+          __dirname,
+          "../",
+          `/public/images/teamflag/${match.team1Id}.jpg`,
+          serverAddress
+        );
+        match.team2FlagURL = imageUrl(
+          __dirname,
+          "../",
+          `/public/images/teamflag/${match.team2Id}.jpg`,
+          serverAddress
+        );
+      });
 
-    res.status(200).json({
-      status: true,
-      message: "success",
-      data: {
-        currentPlayed: currentPlayed,
-      },
-    });
+      res.status(200).json({
+        status: true,
+        message: "success",
+        data: {
+          currentPlayed: currentPlayed,
+        },
+      });
+    } else {
+      throw { message: "invalid input" };
+    }
   } catch (error) {
     res.status(400).json({
       status: false,

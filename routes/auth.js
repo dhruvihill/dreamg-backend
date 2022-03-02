@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken");
 const verifyUser = require("../middleware/verifyUser");
 const verifyProfile = require("../middleware/verifyProfile");
 const { fetchData, imageUrl } = require("../database/db_connection");
-const path = require("path");
 
 // Creating user
 router.post("/register", async (req, res) => {

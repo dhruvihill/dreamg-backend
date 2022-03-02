@@ -42,16 +42,11 @@ router.post("/setReadNotification", verifyUser, async (req, res) => {
         userId,
       ]);
     }
-    console.log(notificationsReads);
-    if (notificationsReads.affectedRows) {
-      res.status(200).json({
-        status: true,
-        message: "success",
-        data: {},
-      });
-    } else {
-      throw { message: "some error occured" };
-    }
+    res.status(200).json({
+      status: true,
+      message: "success",
+      data: {},
+    });
   } catch (error) {
     res.status(400).json({
       status: false,
