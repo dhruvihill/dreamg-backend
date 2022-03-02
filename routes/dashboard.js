@@ -46,6 +46,31 @@ router.get("/", verifyUser, async (req, res) => {
           `/public/images/teamflag/${match.team2Id}.jpg`,
           serverAddress
         );
+        match.matchStartDateTime = new Date(
+          parseInt(match.matchStartTimeMilliSeconds)
+        );
+        match.matchStartDateTime =
+          (match.matchStartDateTime.getDate() > 9
+            ? match.matchStartDateTime.getDate()
+            : "0" + match.matchStartDateTime.getDate()) +
+          "/" +
+          (match.matchStartDateTime.getMonth() > 8
+            ? match.matchStartDateTime.getMonth() + 1
+            : "0" + (match.matchStartDateTime.getMonth() + 1)) +
+          "/" +
+          match.matchStartDateTime.getFullYear() +
+          ", " +
+          (match.matchStartDateTime.getHours() > 9
+            ? match.matchStartDateTime.getHours()
+            : "0" + match.matchStartDateTime.getHours()) +
+          ":" +
+          (match.matchStartDateTime.getMinutes() > 9
+            ? match.matchStartDateTime.getMinutes()
+            : "0" + match.matchStartDateTime.getMinutes()) +
+          ":" +
+          (match.matchStartDateTime.getSeconds() > 9
+            ? match.matchStartDateTime.getSeconds()
+            : "0" + match.matchStartDateTime.getSeconds());
       });
 
       if (data.status) {
