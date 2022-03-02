@@ -39,7 +39,7 @@ const connectToDb = () => {
       }
       setTimeout(() => {
         initializeConnection();
-      }, 3000);
+      }, 1000);
     }
   });
 
