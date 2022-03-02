@@ -12,7 +12,7 @@ setInterval(() => {
   } catch (error) {
     console.log(error.message);
   }
-}, 100 * 1000);
+}, 3 * 60 * 60 * 1000);
 
 // Parsing body
 app.use(bodyParser.urlencoded({ extended: true }));
