@@ -1052,7 +1052,7 @@ router.post("/get_discussion", async (req, res) => {
     ) {
       const serverAddress = `${req.protocol}://${req.headers.host}`;
       const [response, [{ totalMessages }]] = await fetchData(
-        "SELECT messengerId, firstName message, messageTime FROM `fulldiscussion` JOIN userdetails ON userdetails.userId = fulldiscussion.userId WHERE matchId = ? AND fulldiscussion.userId = ? ORDER BY messageTime DESC LIMIT ?, 50;SELECT COUNT (*) AS totalMessages FROM fulldiscussion WHERE matchId = ? AND fulldiscussion.userId = ?",
+        "SELECT messengerId, firstName, message, messageTime FROM `fulldiscussion` JOIN userdetails ON userdetails.userId = fulldiscussion.userId WHERE matchId = ? AND fulldiscussion.userId = ? ORDER BY messageTime DESC LIMIT ?, 50;SELECT COUNT (*) AS totalMessages FROM fulldiscussion WHERE matchId = ? AND fulldiscussion.userId = ?",
         [matchId, createrId, (pageNumber - 1) * 50, matchId, createrId]
       );
 
