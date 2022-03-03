@@ -23,7 +23,8 @@ const verifyProfile = async (req, res, next) => {
         }
       } else {
         // checking all values for string
-        if (typeof body[key] === "string") {
+
+        if (typeof body[key] === "string" || key === "dateOfBirth") {
           // firstName lastName changed
           if (["firstName", "lastName"].includes(key)) {
             body[key].length > 30 || body[key].length === 0
@@ -40,14 +41,26 @@ const verifyProfile = async (req, res, next) => {
             if (body[key] !== "" && regx.test(body[key])) allCorrect = false;
           } else if (key === "dateOfBirth") {
             // checking dateOfBirth
-            if (
-              body[key] !== "" &&
-              !(
-                validator.isDate(body[key]) &&
-                validator.isBefore(body[key], Date())
-              )
-            ) {
-              allCorrect = false;
+            if (body[key]) {
+              const date = new Date(body[key]);
+              const year = date.getFullYear();
+              const month =
+                date.getMonth() + 1 < 10
+                  ? "0" + (date.getMonth() + 1)
+                  : date.getMonth() + 1;
+              const day =
+                date.getDate() + 1 < 10 ? "0" + date.getDate() : date.getDate();
+              if (
+                !(
+                  validator.isDate(`${year}/${month}/${day}`) &&
+                  validator.isBefore(
+                    `${year - 12}/${month}/${day}`,
+                    `${year}/${month}/${day}`
+                  )
+                )
+              ) {
+                allCorrect = false;
+              }
             }
           } else if (key === "gender") {
             // checking gender
@@ -72,3 +85,5 @@ const verifyProfile = async (req, res, next) => {
 };
 
 module.exports = verifyProfile;
+
+console.log(validator.isBefore("2024/10/18", "2020/1/1"));

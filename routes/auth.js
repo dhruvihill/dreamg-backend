@@ -181,6 +181,8 @@ router.post("/getuserprofile", verifyUser, async (req, res) => {
           );
         });
 
+        points[0].dateOfBirth = parseInt(points[0].dateOfBirth);
+
         // sending response
         res.status(200).json({
           status: true,
