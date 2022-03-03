@@ -91,12 +91,6 @@ const insertTeamsOfMatch = async (match) => {
           teamFlagUrl: match[`team${item}`].teamFlagURL,
         });
 
-        const teamId = match[`team${item}`].id;
-        downloadImage(
-          match[`team${item}`].teamFlagURL,
-          path.join(__dirname, `../public/images/teamflag/${teamId}.jpg`)
-        );
-
         if (storeTeam && index === 1) {
           teamsStatistics.insertedTeamIds.push(match[`team${item}`].id);
           resolve(teamsStatistics);
@@ -110,6 +104,12 @@ const insertTeamsOfMatch = async (match) => {
         } else {
           console.log(error.message);
         }
+      } finally {
+        const teamId = match[`team${item}`].id;
+        downloadImage(
+          match[`team${item}`].teamFlagURL,
+          path.join(__dirname, `../public/images/teamflag/${teamId}.jpg`)
+        );
       }
     });
   });
@@ -266,13 +266,6 @@ const insertSinglePlayer = async (player, matchId) => {
         displayName: player.dName,
         url: player.imgURL,
       });
-      downloadImage(
-        player.imgURL,
-        path.join(
-          __dirname,
-          `../public/images/players/profilePicture/${player.id}.jpg`
-        )
-      );
 
       if (singlePlayerInserted) {
         singlePlayerStatistics.playersStatistics.insertedPlayerIds.push(
@@ -309,6 +302,14 @@ const insertSinglePlayer = async (player, matchId) => {
       } else {
         console.log(error.message, "single player error");
       }
+    } finally {
+      downloadImage(
+        player.imgURL,
+        path.join(
+          __dirname,
+          `../public/images/players/profilePicture/${player.id}.jpg`
+        )
+      );
     }
   });
 };
@@ -457,48 +458,48 @@ const fetchAndStore = async () => {
                                 ...matchStatistics.duplicateMatchIds
                               );
 
-                              if (
-                                !(
-                                  matchStatistics.duplicateMatchIds.length >
-                                    0 &&
-                                  matchStatistics.insertedMatchIds.length === 0
-                                )
-                              ) {
-                                // inserting match players
-                                insertPlayersOfMatch(match.matchId)
-                                  .then(
-                                    ({
-                                      playersStatistics,
-                                      relationStatistics,
-                                    }) => {
-                                      statistics.playersStatistics.insertedPlayerIds.push(
-                                        ...playersStatistics.insertedPlayers
-                                      );
-                                      statistics.playersStatistics.duplicatePlayerIds.push(
-                                        ...playersStatistics.duplicatePlayers
-                                      );
-                                      statistics.relationStatistics.insertedRelation.push(
-                                        ...relationStatistics.insertedRelation
-                                      );
-                                      statistics.relationStatistics.duplicateRelation.push(
-                                        ...relationStatistics.duplicateRelation
-                                      );
+                              // if (
+                              //   !(
+                              //     matchStatistics.duplicateMatchIds.length >
+                              //       0 &&
+                              //     matchStatistics.insertedMatchIds.length === 0
+                              //   )
+                              // ) {
+                              // inserting match players
+                              insertPlayersOfMatch(match.matchId)
+                                .then(
+                                  ({
+                                    playersStatistics,
+                                    relationStatistics,
+                                  }) => {
+                                    statistics.playersStatistics.insertedPlayerIds.push(
+                                      ...playersStatistics.insertedPlayers
+                                    );
+                                    statistics.playersStatistics.duplicatePlayerIds.push(
+                                      ...playersStatistics.duplicatePlayers
+                                    );
+                                    statistics.relationStatistics.insertedRelation.push(
+                                      ...relationStatistics.insertedRelation
+                                    );
+                                    statistics.relationStatistics.duplicateRelation.push(
+                                      ...relationStatistics.duplicateRelation
+                                    );
 
-                                      loopCount++;
-                                      if (loopCount === totalMatchObjects) {
-                                        resolve();
-                                      }
+                                    loopCount++;
+                                    if (loopCount === totalMatchObjects) {
+                                      resolve();
                                     }
-                                  )
-                                  .catch((error) => {
-                                    console.log(error.message, "here");
-                                  });
-                              } else {
-                                loopCount++;
-                                if (loopCount === totalMatchObjects) {
-                                  resolve();
-                                }
-                              }
+                                  }
+                                )
+                                .catch((error) => {
+                                  console.log(error.message, "here");
+                                });
+                              // } else {
+                              //   loopCount++;
+                              //   if (loopCount === totalMatchObjects) {
+                              //     resolve();
+                              //   }
+                              // }
                             })
                             .catch((error) => {
                               console.log(error.message);
@@ -603,4 +604,4 @@ const fetchAndStore = async () => {
   }
 };
 
-module.exports = fetchAndStore;
+module.exports = fetchAndStore();

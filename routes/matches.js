@@ -19,6 +19,8 @@ router.post("/get_matches", verifyUser, async (req, res) => {
         [userId, userId, matchType, (pageNumber - 1) * 10, matchType]
       );
 
+      const totalPages = Math.ceil(totalResult / 10);
+
       // changing server url
       const serverAddress = `${req.protocol}://${req.headers.host}`;
       result.forEach((match) => {
@@ -40,6 +42,7 @@ router.post("/get_matches", verifyUser, async (req, res) => {
         message: "success",
         data: {
           matches: result,
+          totalPages,
         },
       });
     } else {
