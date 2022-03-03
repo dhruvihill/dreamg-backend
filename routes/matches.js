@@ -10,58 +10,43 @@ router.post("/get_matches", verifyUser, async (req, res) => {
   try {
     // "SELECT (SELECT COUNT(DISTINCT userId) FROM user_team WHERE user_team.matchId = all_matches.matchId) AS totalPredictors, (SELECT COALESCE((SELECT DISTINCT userId FROM `user_team` WHERE matchId = all_matches.matchId AND userId = ?), 0)) AS isUserTeamCreated, seriesName, seriesDname, matchId,matchTypeId,matchTyprString, matchStartTimeMilliSeconds,matchStartDateTime,match_status.matchStatusString,venue, all_matches.displayName,team1.teamId AS `team1Id`,team1.name AS 'team1Name', team1.displayName AS 'team1DisplayName',team1.teamFlagUrlLocal AS 'team1FlagURL', team2.teamId AS `team2Id`,team2.name AS 'team2Name', team2.displayName AS 'team2DisplayName',team2.teamFlagUrlLocal AS 'team2FlagURL' FROM all_matches JOIN teams AS team1 ON all_matches.team1_id = team1.teamId JOIN teams AS team2 ON all_matches.team2_id = team2.teamId JOIN match_type ON match_type.matchTypeId = gameType JOIN match_status ON all_matches.matchStatus = match_status.matchStatus WHERE matchStatusString = ? ORDER BY matchStartTimeMilliSeconds LIMIT 10;",
 
-    let isUserIdCorrect = false;
     if (
       ["UPCOMING", "LIVE", "RECENT", "CANCELED"].includes(matchType) &&
       pageNumber &&
       pageNumber > 0 &&
       !/[^0-9]/.test(pageNumber)
     ) {
-      if (userId) {
-        if (!/[^0-9]/.test(userId)) {
-          isUserIdCorrect = true;
-        } else {
-          isUserIdCorrect = false;
-        }
-      } else {
-        isUserIdCorrect = true;
-      }
+      const [result, [{ totalResult }]] = await fetchData(
+        `SELECT (SELECT COUNT(DISTINCT userId) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors, seriesName, seriesDname, matchId, matchTypeId, matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE matchStatusString = ? ORDER BY matchStartTimeMilliSeconds LIMIT ?, 10; SELECT COUNT(*) AS totalResult FROM fullmatchdetails WHERE matchStatusString = ?;`,
+        [userId, userId, matchType, (pageNumber - 1) * 10, matchType]
+      );
 
-      if (isUserIdCorrect) {
-        const [result, [{ totalResult }]] = await fetchData(
-          `SELECT (SELECT COUNT(DISTINCT userId) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors, seriesName, seriesDname, matchId, matchTypeId, matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE matchStatusString = ? ORDER BY matchStartTimeMilliSeconds LIMIT ?, 10; SELECT COUNT(*) AS totalResult FROM fullmatchdetails WHERE matchStatusString = ?;`,
-          [userId, userId, matchType, (pageNumber - 1) * 10, matchType]
+      const totalPages = Math.ceil(totalResult / 10);
+
+      // changing server url
+      const serverAddress = `${req.protocol}://${req.headers.host}`;
+      result.forEach((match) => {
+        match.team1FlagURL = imageUrl(
+          __dirname,
+          "../",
+          `/public/images/teamflag/${match.team1Id}.jpg`,
+          serverAddress
         );
-
-        const totalPages = Math.ceil(totalResult / 10);
-
-        // changing server url
-        const serverAddress = `${req.protocol}://${req.headers.host}`;
-        result.forEach((match) => {
-          match.team1FlagURL = imageUrl(
-            __dirname,
-            "../",
-            `/public/images/teamflag/${match.team1Id}.jpg`,
-            serverAddress
-          );
-          match.team2FlagURL = imageUrl(
-            __dirname,
-            "../",
-            `/public/images/teamflag/${match.team2Id}.jpg`,
-            serverAddress
-          );
-        });
-        res.status(200).json({
-          status: true,
-          message: "success",
-          data: {
-            matches: result,
-            totalPages,
-          },
-        });
-      } else {
-        throw { message: "invalid input" };
-      }
+        match.team2FlagURL = imageUrl(
+          __dirname,
+          "../",
+          `/public/images/teamflag/${match.team2Id}.jpg`,
+          serverAddress
+        );
+      });
+      res.status(200).json({
+        status: true,
+        message: "success",
+        data: {
+          matches: result,
+          totalPages,
+        },
+      });
     } else {
       throw { message: "invalid input" };
     }
