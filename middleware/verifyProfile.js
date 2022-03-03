@@ -85,5 +85,3 @@ const verifyProfile = async (req, res, next) => {
 };
 
 module.exports = verifyProfile;
-
-console.log(validator.isBefore("2024/10/18", "2020/1/1"));

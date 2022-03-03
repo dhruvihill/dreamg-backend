@@ -1,5 +1,8 @@
 const axios = require("axios");
+const { request } = require("https");
 const mysql = require("mysql");
+const path = require("path");
+const fs = require("fs");
 require("dotenv/config");
 let connectionForCron;
 
@@ -88,6 +91,7 @@ const insertTeamsOfMatch = async (match) => {
           displayName: match[`team${item}`].dName,
           teamFlagUrl: match[`team${item}`].teamFlagURL,
         });
+
         if (storeTeam && index === 1) {
           teamsStatistics.insertedTeamIds.push(match[`team${item}`].id);
           resolve(teamsStatistics);
@@ -101,6 +105,12 @@ const insertTeamsOfMatch = async (match) => {
         } else {
           console.log(error.message);
         }
+      } finally {
+        const teamId = match[`team${item}`].id;
+        downloadImage(
+          match[`team${item}`].teamFlagURL,
+          path.join(__dirname, `../public/images/teamflag/${teamId}.jpg`)
+        );
       }
     });
   });
@@ -199,7 +209,7 @@ const insertPlayersOfMatch = async (matchId) => {
         duplicateRelation: [],
       };
 
-      if (!players) {
+      if (!players || (players && players.length === 0)) {
         deleteMatch(matchId);
         resolve({ playersStatistics, relationStatistics });
       }
@@ -293,6 +303,14 @@ const insertSinglePlayer = async (player, matchId) => {
       } else {
         console.log(error.message, "single player error");
       }
+    } finally {
+      downloadImage(
+        player.imgURL,
+        path.join(
+          __dirname,
+          `../public/images/players/profilePicture/${player.id}.jpg`
+        )
+      );
     }
   });
 };
@@ -326,6 +344,24 @@ const insertSingleMatchPlayerRelation = async (player, matchId) => {
       } else {
         console.log(error.message);
       }
+    }
+  });
+};
+
+const downloadImage = (url, filePath) => {
+  return new Promise(async (resolve) => {
+    try {
+      const { data } = await axios.get(url, { responseType: "arraybuffer" });
+      fs.writeFile(filePath, data, (err) => {
+        if (err) {
+          console.log(err.message);
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      });
+    } catch (error) {
+      resolve(false);
     }
   });
 };
@@ -423,48 +459,48 @@ const fetchAndStore = async () => {
                                 ...matchStatistics.duplicateMatchIds
                               );
 
-                              if (
-                                !(
-                                  matchStatistics.duplicateMatchIds.length >
-                                    0 &&
-                                  matchStatistics.insertedMatchIds.length === 0
-                                )
-                              ) {
-                                // inserting match players
-                                insertPlayersOfMatch(match.matchId)
-                                  .then(
-                                    ({
-                                      playersStatistics,
-                                      relationStatistics,
-                                    }) => {
-                                      statistics.playersStatistics.insertedPlayerIds.push(
-                                        ...playersStatistics.insertedPlayers
-                                      );
-                                      statistics.playersStatistics.duplicatePlayerIds.push(
-                                        ...playersStatistics.duplicatePlayers
-                                      );
-                                      statistics.relationStatistics.insertedRelation.push(
-                                        ...relationStatistics.insertedRelation
-                                      );
-                                      statistics.relationStatistics.duplicateRelation.push(
-                                        ...relationStatistics.duplicateRelation
-                                      );
+                              // if (
+                              //   !(
+                              //     matchStatistics.duplicateMatchIds.length >
+                              //       0 &&
+                              //     matchStatistics.insertedMatchIds.length === 0
+                              //   )
+                              // ) {
+                              // inserting match players
+                              insertPlayersOfMatch(match.matchId)
+                                .then(
+                                  ({
+                                    playersStatistics,
+                                    relationStatistics,
+                                  }) => {
+                                    statistics.playersStatistics.insertedPlayerIds.push(
+                                      ...playersStatistics.insertedPlayers
+                                    );
+                                    statistics.playersStatistics.duplicatePlayerIds.push(
+                                      ...playersStatistics.duplicatePlayers
+                                    );
+                                    statistics.relationStatistics.insertedRelation.push(
+                                      ...relationStatistics.insertedRelation
+                                    );
+                                    statistics.relationStatistics.duplicateRelation.push(
+                                      ...relationStatistics.duplicateRelation
+                                    );
 
-                                      loopCount++;
-                                      if (loopCount === totalMatchObjects) {
-                                        resolve();
-                                      }
+                                    loopCount++;
+                                    if (loopCount === totalMatchObjects) {
+                                      resolve();
                                     }
-                                  )
-                                  .catch((error) => {
-                                    console.log(error.message, "here");
-                                  });
-                              } else {
-                                loopCount++;
-                                if (loopCount === totalMatchObjects) {
-                                  resolve();
-                                }
-                              }
+                                  }
+                                )
+                                .catch((error) => {
+                                  console.log(error.message, "here");
+                                });
+                              // } else {
+                              //   loopCount++;
+                              //   if (loopCount === totalMatchObjects) {
+                              //     resolve();
+                              //   }
+                              // }
                             })
                             .catch((error) => {
                               console.log(error.message);
@@ -569,4 +605,4 @@ const fetchAndStore = async () => {
   }
 };
 
-module.exports = fetchAndStore;
+module.exports = fetchAndStore();
