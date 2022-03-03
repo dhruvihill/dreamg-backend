@@ -39,3 +39,9 @@ get_user_teams_predictor
 get_discussion
 compare_teams
 
+get_matches,
+recentPlayed,
+currentPlayed,
+get_predictions,
+get_discussion,
+get_user_teams_predictor

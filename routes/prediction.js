@@ -5,13 +5,13 @@ const { fetchData, imageUrl } = require("../database/db_connection");
 
 // get predictors by match id or with no match id and match status
 router.post("/get_predictions", async (req, res) => {
-  const { matchId, filter } = req.body;
+  const { matchId, filter, pageNumber } = req.body;
 
   let validMatchId = true;
 
   // creating query to fetch predictions
   try {
-    let totalPredictorsQuery = `SELECT COUNT(*) FROM predictors`;
+    let totalPredictorsQuery = "";
     let query;
     if (matchId) {
       validMatchId = true;
@@ -19,23 +19,35 @@ router.post("/get_predictions", async (req, res) => {
       else {
         throw { message: "invalid input" };
       }
+      totalPredictorsQuery =
+        "SELECT COUNT(*) AS totalPredictors FROM fullteamdetails WHERE matchId = ?;";
       query =
         filter === "MOST_VIEWED"
-          ? "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamViews) AS totalViews, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalViews DESC LIMIT 20;"
+          ? "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamViews) AS totalViews, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalViews DESC LIMIT ?, 20;"
           : filter === "MOST_LIKED"
-          ? "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamLikes) AS totalLikes, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalLikes DESC LIMIT 20;"
-          : "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamPoints) AS totalPoints, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT 20;";
+          ? "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamLikes) AS totalLikes, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalLikes DESC LIMIT ?, 20;"
+          : "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamPoints) AS totalPoints, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT ?, 20;";
     } else {
+      totalPredictorsQuery =
+        "SELECT COUNT(*) AS totalPredictors FROM fullteamdetails;";
       query =
         filter === "MOST_VIEWED"
-          ? "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamViews) AS totalViews, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId GROUP BY userdetails.userId ORDER BY totalViews DESC LIMIT 20;"
+          ? "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamViews) AS totalViews, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId GROUP BY userdetails.userId ORDER BY totalViews DESC LIMIT ?, 20;"
           : filter === "MOST_LIKED"
-          ? "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamLikes) AS totalLikes, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId GROUP BY userdetails.userId ORDER BY totalLikes DESC LIMIT 20;"
-          : "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamPoints) AS totalPoints, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT 20;";
+          ? "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamLikes) AS totalLikes, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId GROUP BY userdetails.userId ORDER BY totalLikes DESC LIMIT ?, 20;"
+          : "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamPoints) AS totalPoints, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT ?, 20;";
     }
-    if (validMatchId) {
+    if (
+      validMatchId &&
+      pageNumber &&
+      pageNumber > 0 &&
+      !/[^0-9]/g.test(pageNumber)
+    ) {
       const serverAddress = `${req.protocol}://${req.headers.host}`;
-      const result = await fetchData(query, [matchId]);
+      const [result, [{ totalPredictors }]] = await fetchData(
+        `${query}${totalPredictorsQuery}`,
+        [matchId, (pageNumber - 1) * 20, matchId]
+      );
 
       result.forEach((element) => {
         element.displayPicture = imageUrl(
@@ -47,10 +59,11 @@ router.post("/get_predictions", async (req, res) => {
       });
 
       if (result.length > 0) {
+        const totalPages = Math.ceil(totalPredictors / 20);
         res.status(200).json({
           status: true,
           message: "success",
-          data: { users: result },
+          data: { users: result, totalPages },
         });
       } else {
         throw { message: "no team created" };
@@ -453,12 +466,18 @@ router.post("/get_user_teams", async (req, res) => {
 
 // getting teams with user id
 router.post("/get_user_teams_predictor", async (req, res) => {
-  const { createrId } = req.body;
+  const { createrId, pageNumber } = req.body;
 
   try {
     const regx = /[^0-9]/g;
 
-    if (!createrId || regx.test(createrId)) {
+    if (
+      !createrId ||
+      regx.test(createrId) ||
+      regx.test(pageNumber) ||
+      pageNumber < 1 ||
+      !pageNumber
+    ) {
       throw { message: "invalid input" };
     }
 
@@ -466,10 +485,14 @@ router.post("/get_user_teams_predictor", async (req, res) => {
       return new Promise(async (resolve, reject) => {
         try {
           const serverAddress = `${req.protocol}://${req.headers.host}`;
-          const [[userDetails], userTeamDetails] = await fetchData(
-            "CALL get_user_team(?, ?);",
-            [0, createrId]
-          );
+          const [[userDetails], userTeamDetails, [{ totalUserTeams }]] =
+            await fetchData("CALL get_user_team(?, ?, ?);", [
+              0,
+              createrId,
+              (pageNumber - 1) * 20,
+            ]);
+
+          const totalPages = Math.ceil(totalUserTeams / 20);
 
           if (!(userDetails && userTeamDetails && userTeamDetails.length > 0)) {
             throw { message: "invalid input" };
@@ -598,7 +621,7 @@ router.post("/get_user_teams_predictor", async (req, res) => {
 
               // resolving promise
               if (index + 1 === userTeamDetails.length) {
-                resolve([userTeams, userDetails]);
+                resolve([userTeams, userDetails, totalPages]);
               }
             } catch (error) {
               reject(error);
@@ -610,7 +633,7 @@ router.post("/get_user_teams_predictor", async (req, res) => {
       });
     };
 
-    const [userTeams, userDetails] = await fetchUserTeamDetails();
+    const [userTeams, userDetails, totalPages] = await fetchUserTeamDetails();
 
     res.status(200).json({
       status: true,
@@ -618,6 +641,7 @@ router.post("/get_user_teams_predictor", async (req, res) => {
       data: {
         userTeams,
         userDetails,
+        totalPages,
       },
     });
   } catch (error) {
@@ -1016,15 +1040,23 @@ router.post("/set_discussion", verifyUser, async (req, res) => {
 
 // getting discussion match id and user id
 router.post("/get_discussion", async (req, res) => {
-  const { matchId, createrId } = req.body;
+  const { matchId, createrId, pageNumber } = req.body;
 
   try {
-    if (!/[^0-9]/g.test(matchId) && !/[^0-9]/g.test(createrId)) {
+    if (
+      !/[^0-9]/g.test(matchId) &&
+      !/[^0-9]/g.test(createrId) &&
+      pageNumber &&
+      pageNumber > 0 &&
+      !/[^0-9]/g.test(pageNumber)
+    ) {
       const serverAddress = `${req.protocol}://${req.headers.host}`;
-      const response = await fetchData(
-        "SELECT messengerId, firstName message, messageTime FROM `fulldiscussion` JOIN userdetails ON userdetails.userId = fulldiscussion.userId WHERE matchId = ? AND fulldiscussion.userId = ? ORDER BY messageTime DESC LIMIT 50;",
-        [matchId, createrId]
+      const [response, [{ totalMessages }]] = await fetchData(
+        "SELECT messengerId, firstName message, messageTime FROM `fulldiscussion` JOIN userdetails ON userdetails.userId = fulldiscussion.userId WHERE matchId = ? AND fulldiscussion.userId = ? ORDER BY messageTime DESC LIMIT ?, 50;SELECT COUNT (*) AS totalMessages FROM fulldiscussion WHERE matchId = ? AND fulldiscussion.userId = ?",
+        [matchId, createrId, (pageNumber - 1) * 50, matchId, createrId]
       );
+
+      const totalPages = Math.ceil(totalMessages / 50);
 
       response.forEach((message) => {
         message.displayPicture = imageUrl(
@@ -1040,6 +1072,7 @@ router.post("/get_discussion", async (req, res) => {
         message: "success",
         data: {
           messages: response,
+          totalPages,
         },
       });
     } else {
