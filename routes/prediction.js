@@ -995,6 +995,7 @@ router.post("/set_discussion", verifyUser, async (req, res) => {
       `/public/images/user/${discussionObject.messengerId}.jpg`,
       serverAddress
     );
+    discussionObject.messengerId = parseInt(discussionObject.messengerId);
 
     res.status(200).json({
       status: true,
