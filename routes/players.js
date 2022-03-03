@@ -20,7 +20,7 @@ router.post("/getplayers", async (req, res) => {
         player.URL = imageUrl(
           __dirname,
           "../",
-          `/public/images/teamflag/${player.playerId}.jpg`,
+          `/public/images/players/profilePicture/${player.playerId}.jpg`,
           serverAddress
         );
       });

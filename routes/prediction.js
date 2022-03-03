@@ -11,6 +11,7 @@ router.post("/get_predictions", async (req, res) => {
 
   // creating query to fetch predictions
   try {
+    let totalPredictorsQuery = `SELECT COUNT(*) FROM predictors`;
     let query;
     if (matchId) {
       validMatchId = true;
