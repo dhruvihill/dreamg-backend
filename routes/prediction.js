@@ -302,8 +302,8 @@ router.post("/get_user_teams", async (req, res) => {
         try {
           const serverAddress = `${req.protocol}://${req.headers.host}`;
           const [[userDetails], userTeamDetails] = await fetchData(
-            "CALL get_user_team(?, ?);",
-            [matchId, createrId]
+            "CALL get_user_team(?, ?, ?);",
+            [matchId, createrId, 0]
           );
 
           if (!(userDetails && userTeamDetails && userTeamDetails.length > 0)) {
