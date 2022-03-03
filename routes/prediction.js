@@ -251,9 +251,9 @@ router.post("/getExpertPredictor", async (req, res) => {
 // getting trending predictors by points
 router.get("/getTrendingPredictors", async (req, res) => {
   const recentMatchesQuery =
-    "SELECT matchId FROM fullmatchdetails WHERE (fullmatchdetails.matchStartTimeMilliSeconds < unix_timestamp(now()) * 1000 AND fullmatchdetails.matchStatus = 3) OR fullmatchdetails.matchId = 27947 ORDER BY matchStartTimeMilliSeconds DESC LIMIT 5;";
+    "SELECT matchId FROM fullmatchdetails WHERE (fullmatchdetails.matchStartTimeMilliSeconds < unix_timestamp(now()) * 1000 AND fullmatchdetails.matchStatus != 3) ORDER BY matchStartTimeMilliSeconds DESC LIMIT 5;";
   const topPredictorsQuery =
-    "SELECT userdetails.userId, firstName, lastName, SUM(fullteamdetails.userTeamPoints) AS totalPoints FROM fullteamdetails JOIN userdetails ON userdetails.userId = fullteamdetails.userId WHERE fullteamdetails.matchId IN (27947) GROUP BY fullteamdetails.userId ORDER BY totalPoints DESC LIMIT 10;";
+    "SELECT userdetails.userId, firstName, lastName, SUM(fullteamdetails.userTeamPoints) AS totalPoints FROM fullteamdetails JOIN userdetails ON userdetails.userId = fullteamdetails.userId GROUP BY fullteamdetails.userId ORDER BY totalPoints DESC LIMIT 10;";
 
   try {
     const serverAddress = `${req.protocol}://${req.headers.host}`;
@@ -1052,7 +1052,7 @@ router.post("/get_discussion", async (req, res) => {
     ) {
       const serverAddress = `${req.protocol}://${req.headers.host}`;
       const [response, [{ totalMessages }]] = await fetchData(
-        "SELECT messengerId, firstName, message, messageTime FROM `fulldiscussion` JOIN userdetails ON userdetails.userId = fulldiscussion.userId WHERE matchId = ? AND fulldiscussion.userId = ? ORDER BY messageTime DESC LIMIT ?, 50;SELECT COUNT (*) AS totalMessages FROM fulldiscussion WHERE matchId = ? AND fulldiscussion.userId = ?",
+        "SELECT messengerId, firstName, message, messageTime FROM `fulldiscussion` JOIN userdetails ON userdetails.userId = fulldiscussion.messengerId WHERE matchId = ? AND fulldiscussion.userId = ? ORDER BY messageTime DESC LIMIT ?, 50;SELECT COUNT (*) AS totalMessages FROM fulldiscussion WHERE matchId = ? AND fulldiscussion.userId = ?",
         [matchId, createrId, (pageNumber - 1) * 50, matchId, createrId]
       );
 

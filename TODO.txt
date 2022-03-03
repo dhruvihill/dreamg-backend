@@ -10,6 +10,7 @@ inserting data into database in following manner SERIES -> MATCH -> TEAM/PlAYER 
 error handling in update_views
 REFACTOR getuserprofile recentMatches (matchStatus = 1 to 3)
 EXPERT PREDICTIONS
+trending predictor matchStatus != 3 to matchStatus = 3
 ******
 
 
