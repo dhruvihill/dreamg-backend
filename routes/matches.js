@@ -45,6 +45,7 @@ router.post("/get_matches", verifyUser, async (req, res) => {
         data: {
           matches: result,
           totalPages,
+          currentPage: pageNumber,
         },
       });
     } else {
@@ -65,7 +66,14 @@ router.post("/recentPlayed", async (req, res) => {
   const serverAddress = `${req.protocol}://${req.headers.host}`;
 
   try {
-    if (predictorId && predictorId > 0 && !/[^0-9]/g.test(predictorId)) {
+    if (
+      predictorId &&
+      predictorId > 0 &&
+      !/[^0-9]/g.test(predictorId) &&
+      pageNumber &&
+      pageNumber > 0 &&
+      !/[^0-9]/g.test(pageNumber)
+    ) {
       const matchesQuery =
         "SELECT matchId, seriesName, seriesDname, matchTypeId, matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName, (SELECT COUNT(DISTINCT userId) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE fullmatchdetails.matchStatus != 1 AND fullmatchdetails.matchId IN (SELECT DISTINCT fullteamdetails.matchId FROM fullteamdetails WHERE fullteamdetails.userId = ? ORDER BY fullteamdetails.creationTime DESC) LIMIT ?, 20;SELECT COUNT(*) AS totalMatches FROM fullmatchdetails WHERE fullmatchdetails.matchStatus != 1 AND fullmatchdetails.matchId IN (SELECT DISTINCT fullteamdetails.matchId FROM fullteamdetails WHERE fullteamdetails.userId = ? ORDER BY fullteamdetails.creationTime DESC);";
 
@@ -74,6 +82,7 @@ router.post("/recentPlayed", async (req, res) => {
         predictorId,
         predictorId,
         (pageNumber - 1) * 20,
+        predictorId,
       ]);
 
       const totalPages = Math.ceil(totalMatches / 20);
@@ -103,7 +112,7 @@ router.post("/recentPlayed", async (req, res) => {
           },
         });
       } else {
-        throw { message: "invalid input" };
+        throw { message: "no matches available" };
       }
     } else {
       throw { message: "invalid input" };
@@ -170,7 +179,7 @@ router.post("/currentPlayed", async (req, res) => {
           },
         });
       } else {
-        throw { message: "invalid input" };
+        throw { message: "no matches available" };
       }
     } else {
       throw { message: "invalid input" };

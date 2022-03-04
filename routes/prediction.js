@@ -44,10 +44,18 @@ router.post("/get_predictions", async (req, res) => {
       !/[^0-9]/g.test(pageNumber)
     ) {
       const serverAddress = `${req.protocol}://${req.headers.host}`;
-      const [result, [{ totalPredictors }]] = await fetchData(
-        `${query}${totalPredictorsQuery}`,
-        [matchId, (pageNumber - 1) * 20, matchId]
-      );
+      let result, totalPredictors;
+      if (matchId) {
+        [result, [{ totalPredictors }]] = await fetchData(
+          `${query}${totalPredictorsQuery}`,
+          [matchId, (pageNumber - 1) * 20, matchId]
+        );
+      } else {
+        [result, [{ totalPredictors }]] = await fetchData(
+          `${query}${totalPredictorsQuery}`,
+          [(pageNumber - 1) * 20, matchId]
+        );
+      }
 
       result.forEach((element) => {
         element.displayPicture = imageUrl(
@@ -63,7 +71,7 @@ router.post("/get_predictions", async (req, res) => {
         res.status(200).json({
           status: true,
           message: "success",
-          data: { users: result, totalPages },
+          data: { users: result, totalPages, currentPage: pageNumber },
         });
       } else {
         throw { message: "no team created" };
@@ -251,9 +259,9 @@ router.post("/getExpertPredictor", async (req, res) => {
 // getting trending predictors by points
 router.get("/getTrendingPredictors", async (req, res) => {
   const recentMatchesQuery =
-    "SELECT matchId FROM fullmatchdetails WHERE (fullmatchdetails.matchStartTimeMilliSeconds < unix_timestamp(now()) * 1000 AND fullmatchdetails.matchStatus != 3) ORDER BY matchStartTimeMilliSeconds DESC LIMIT 5;";
+    "SELECT DISTINCT fullmatchdetails.matchId FROM fullmatchdetails JOIN fullteamdetails ON fullteamdetails.matchId = fullmatchdetails.matchId WHERE (fullmatchdetails.matchStartTimeMilliSeconds < unix_timestamp(now()) * 1000 AND fullmatchdetails.matchStatus != 3) ORDER BY matchStartTimeMilliSeconds DESC LIMIT 5";
   const topPredictorsQuery =
-    "SELECT userdetails.userId, firstName, lastName, SUM(fullteamdetails.userTeamPoints) AS totalPoints FROM fullteamdetails JOIN userdetails ON userdetails.userId = fullteamdetails.userId GROUP BY fullteamdetails.userId ORDER BY totalPoints DESC LIMIT 10;";
+    "SELECT userdetails.userId, firstName, lastName, SUM(fullteamdetails.userTeamPoints) AS totalPoints FROM fullteamdetails JOIN userdetails ON userdetails.userId = fullteamdetails.userId WHERE matchId IN (30100, 30096,30030) GROUP BY fullteamdetails.userId ORDER BY totalPoints DESC LIMIT 10";
 
   try {
     const serverAddress = `${req.protocol}://${req.headers.host}`;
@@ -642,6 +650,7 @@ router.post("/get_user_teams_predictor", async (req, res) => {
         userTeams,
         userDetails,
         totalPages,
+        currentPage: pageNumber,
       },
     });
   } catch (error) {
@@ -1073,6 +1082,7 @@ router.post("/get_discussion", async (req, res) => {
         data: {
           messages: response,
           totalPages,
+          currentPage: pageNumber,
         },
       });
     } else {
