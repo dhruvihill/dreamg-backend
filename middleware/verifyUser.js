@@ -16,7 +16,8 @@ const verifyUser = async (req, res, next) => {
       if (
         req.originalUrl === "/api/v1/getdashboarddata" ||
         req.originalUrl === "/api/v1/matches/get_matches" ||
-        req.originalUrl === "/api/v1/prediction/get_user_teams_data"
+        req.originalUrl === "/api/v1/prediction/get_user_teams_data" ||
+        req.originalUrl === "/api/v1/auth/getuserprofile"
       ) {
         // setting user id to req object
         req.body.userId = null;

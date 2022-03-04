@@ -174,7 +174,7 @@ const insertSingleMatch = async (match) => {
         seriesId,
       });
       if (matchSetted) {
-        matchStatistics.duplicateMatchIds.push(matchId);
+        matchStatistics.insertedMatchIds.push(matchId);
         resolve(matchStatistics);
       }
     } catch (error) {
@@ -205,34 +205,50 @@ const insertPlayersOfMatch = async (matchId) => {
         insertedRelation: [],
         duplicateRelation: [],
       };
+      const statistics = {
+        insertedStatistics: [],
+        duplicatedStatistics: [],
+      };
 
       if (!players || (players && players.length === 0)) {
         deleteMatch(matchId);
-        resolve({ playersStatistics, relationStatistics });
+        resolve({ playersStatistics, relationStatistics, statistics });
       }
       let loopCount = 0;
       players?.forEach(async (player, index) => {
         try {
-          insertSinglePlayer(player, matchId).then((singlePlayerStatistics) => {
-            playersStatistics.insertedPlayers.push(
-              ...singlePlayerStatistics.playersStatistics.insertedPlayerIds
-            );
-            playersStatistics.duplicatePlayers.push(
-              ...singlePlayerStatistics.playersStatistics.duplicatePlayerIds
-            );
-            relationStatistics.insertedRelation.push(
-              ...singlePlayerStatistics.relationStatistics.insertedRelation
-            );
-            relationStatistics.duplicateRelation.push(
-              ...singlePlayerStatistics.relationStatistics.duplicateRelation
-            );
+          insertSinglePlayer(player, matchId).then(
+            ({
+              playersStatistics,
+              relationStatistics,
+              statistics: statistics2,
+            }) => {
+              playersStatistics.insertedPlayers.push(
+                ...playersStatistics.insertedPlayerIds
+              );
+              playersStatistics.duplicatePlayers.push(
+                ...playersStatistics.duplicatePlayerIds
+              );
+              relationStatistics.insertedRelation.push(
+                ...relationStatistics.insertedRelation
+              );
+              relationStatistics.duplicateRelation.push(
+                ...relationStatistics.duplicateRelation
+              );
+              statistics.insertedStatistics.push(
+                ...statistics2.insertedStatistics
+              );
+              statistics.duplicatedStatistics.push(
+                ...statistics2.duplicateStatistics
+              );
 
-            loopCount++;
+              loopCount++;
 
-            if (loopCount === players.length) {
-              resolve({ playersStatistics, relationStatistics });
+              if (loopCount === players.length) {
+                resolve({ playersStatistics, relationStatistics, statistics });
+              }
             }
-          });
+          );
         } catch (error) {
           console.log(error.message);
         }
@@ -253,6 +269,10 @@ const insertSinglePlayer = async (player, matchId) => {
       relationStatistics: {
         insertedRelation: [],
         duplicateRelation: [],
+      },
+      statistics: {
+        insertedStatistics: [],
+        duplicateStatistics: [],
       },
     };
 
@@ -277,12 +297,23 @@ const insertSinglePlayer = async (player, matchId) => {
           player.id
         );
         insertSingleMatchPlayerRelation(player, matchId).then(
-          (relationStatistics) => {
+          ({
+            insertedRelation,
+            duplicateRelation,
+            insertedStatistics,
+            duplicateStatistics,
+          }) => {
             singlePlayerStatistics.relationStatistics.insertedRelation.push(
-              ...relationStatistics.insertedRelation
+              ...insertedRelation
             );
             singlePlayerStatistics.relationStatistics.duplicateRelation.push(
-              ...relationStatistics.duplicateRelation
+              ...duplicateRelation
+            );
+            singlePlayerStatistics.statistics.insertedStatistics.push(
+              ...insertedStatistics
+            );
+            singlePlayerStatistics.statistics.duplicateStatistics.push(
+              ...duplicateStatistics
             );
             resolve(singlePlayerStatistics);
           }
@@ -294,12 +325,23 @@ const insertSinglePlayer = async (player, matchId) => {
           player.id
         );
         insertSingleMatchPlayerRelation(player, matchId).then(
-          (relationStatistics) => {
+          ({
+            insertedRelation,
+            duplicateRelation,
+            insertedStatistics,
+            duplicateStatistics,
+          }) => {
             singlePlayerStatistics.relationStatistics.insertedRelation.push(
-              ...relationStatistics.insertedRelation
+              ...insertedRelation
             );
             singlePlayerStatistics.relationStatistics.duplicateRelation.push(
-              ...relationStatistics.duplicateRelation
+              ...duplicateRelation
+            );
+            singlePlayerStatistics.statistics.insertedStatistics.push(
+              ...insertedStatistics
+            );
+            singlePlayerStatistics.statistics.duplicateStatistics.push(
+              ...duplicateStatistics
             );
             resolve(singlePlayerStatistics);
           }
@@ -316,6 +358,8 @@ const insertSingleMatchPlayerRelation = async (player, matchId) => {
     const matchPlayerRelationStatistics = {
       insertedRelation: [],
       duplicateRelation: [],
+      insertedStatistics: [],
+      duplicateStatistics: [],
     };
 
     try {
@@ -331,6 +375,15 @@ const insertSingleMatchPlayerRelation = async (player, matchId) => {
       );
       if (insertedRelation) {
         matchPlayerRelationStatistics.insertedRelation.push(player.id);
+        const playerLastNMatchStatistics = insertPlayerStatistics(
+          player.lastNMatchStatistics,
+          insertedRelation.insertId
+        );
+        if (playerLastNMatchStatistics) {
+          matchPlayerRelationStatistics.insertedStatistics.push(player.id);
+        } else if (playerLastNMatchStatistics === false) {
+          matchPlayerRelationStatistics.duplicateStatistics.push(player.id);
+        }
         resolve(matchPlayerRelationStatistics);
       }
     } catch (error) {
@@ -340,6 +393,38 @@ const insertSingleMatchPlayerRelation = async (player, matchId) => {
       } else {
         console.log(error.message);
       }
+    }
+  });
+};
+
+const insertPlayerStatistics = async (playersStatistics, insertId) => {
+  return new Promise(async (resolve) => {
+    try {
+      const insertedStatistics = await database(
+        "INSERT INTO playerlastnmatchstatistics SET ?",
+        {
+          relationId: insertId,
+          gameType: playersStatistics.gameType,
+          runs: playersStatistics.runs,
+          centuries: playersStatistics["num100s"],
+          fifties: playersStatistics["num50s"],
+          strikeRate: playersStatistics.strikeRate,
+          wickets: playersStatistics.wickets,
+          economy: playersStatistics.economy,
+          highestScore: playersStatistics.highestScore,
+          bestBowling: playersStatistics.bestBowling,
+          average: playersStatistics.average,
+          balls: playersStatistics.balls,
+          innings: playersStatistics.innings,
+        }
+      );
+      if (insertedStatistics) {
+        resolve(true);
+        console.log("success");
+      }
+    } catch (error) {
+      resolve(false);
+      console.log(error.message);
     }
   });
 };
@@ -407,6 +492,10 @@ const fetchAndStore = async () => {
         insertedRelation: [],
         duplicateRelation: [],
       },
+      statistics: {
+        insertedStatistics: [],
+        duplicateStatistics: [],
+      },
     };
 
     initializeConnection();
@@ -469,6 +558,7 @@ const fetchAndStore = async () => {
                                     ({
                                       playersStatistics,
                                       relationStatistics,
+                                      statistics: statisticsOfPlayers,
                                     }) => {
                                       statistics.playersStatistics.insertedPlayerIds.push(
                                         ...playersStatistics.insertedPlayers
@@ -481,6 +571,12 @@ const fetchAndStore = async () => {
                                       );
                                       statistics.relationStatistics.duplicateRelation.push(
                                         ...relationStatistics.duplicateRelation
+                                      );
+                                      statistics.statistics.insertedStatistics.push(
+                                        ...statisticsOfPlayers.insertedStatistics
+                                      );
+                                      statistics.statistics.duplicateStatistics.push(
+                                        ...statisticsOfPlayers.duplicateStatistics
                                       );
 
                                       loopCount++;
@@ -555,6 +651,13 @@ const fetchAndStore = async () => {
         const duplicateRelations = new Set(
           statistics.relationStatistics.duplicateRelation
         );
+        const insertedStatistics = new Set(
+          statistics.statistics.insertedStatistics
+        );
+        const duplicateStatistics = new Set(
+          statistics.statistics.duplicateStatistics
+        );
+
         console.table({
           insertedTeamIds: insertedTeamIds.size,
           duplicateTeamIds: duplicateTeamIds.size,
@@ -566,6 +669,8 @@ const fetchAndStore = async () => {
           duplicatePlayerIds: duplicatePlayerIds.size,
           insertedRelations: insertedRelations.size,
           duplicateRelations: duplicateRelations.size,
+          insertedStatistics: insertedStatistics.size,
+          duplicateStatistics: duplicateStatistics.size,
         });
 
         console.log({
@@ -588,6 +693,10 @@ const fetchAndStore = async () => {
           insertedRelation: Array.from(insertedRelations),
           duplicateRelation: Array.from(duplicateRelations),
         });
+        console.log({
+          insertedStatistics: Array.from(insertedStatistics),
+          duplicateStatistics: Array.from(duplicateStatistics),
+        });
 
         connectionForCron.end((err) => {
           if (err) console.log(err.sqlMessage);
@@ -602,4 +711,4 @@ const fetchAndStore = async () => {
   }
 };
 
-module.exports = fetchAndStore;
+module.exports = fetchAndStore();
