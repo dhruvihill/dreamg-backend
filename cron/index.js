@@ -362,7 +362,6 @@ const insertPlayerStatistics = async (
 };
 
 const downloadImage = async (url, filePath, id, isTeam = false) => {
-  console.log(url);
   try {
     const { data } = await axios.get(url, { responseType: "arraybuffer" });
     const res = writeFile(filePath, data);
