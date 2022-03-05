@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const verifyUser = require("../middleware/verifyUser");
 const verifyProfile = require("../middleware/verifyProfile");
 const { fetchData, imageUrl } = require("../database/db_connection");
+// const errors = require("../errorCode");
 
 // Creating user
 router.post("/register", async (req, res) => {
@@ -29,6 +30,22 @@ router.post("/register", async (req, res) => {
     });
   } catch (error) {
     // sending response
+    // if (error.sqlMessage) {
+    //   if (error.code === "ER_DUP_ENTRY") {
+    //     res.status(error.databaseErrors.handledError.ER_DUP_ENTRY.code).json({
+    //       status: false,
+    //       message: error.databaseErrors.handledError.ER_DUP_ENTRY.message,
+    //       data: {},
+    //     });
+    //     return;
+    //   } else {
+    //     res.status(error.databaseErrors.unhandledError.code).json({
+    //       status: false,
+    //       message: error.databaseErrors.unhandledError.message,
+    //       data: {},
+    //     });
+    //   }
+    // }
     res.status(400).json({
       status: false,
       message: error.sqlMessage ? error.sqlMessage : error.message,

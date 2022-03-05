@@ -314,8 +314,12 @@ router.post("/get_user_teams", async (req, res) => {
             [matchId, createrId, 0]
           );
 
-          if (!(userDetails && userTeamDetails && userTeamDetails.length > 0)) {
-            throw { message: "invalid input" };
+          if (!(userDetails && userTeamDetails)) {
+            if (!userTeamDetails.length > 0) {
+              throw { message: "invalid input" };
+            } else {
+              throw { message: "no team created" };
+            }
           }
 
           // change server address

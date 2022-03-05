@@ -1,9 +1,43 @@
 const axios = require("axios");
 const mysql = require("mysql");
 const path = require("path");
-const fs = require("fs");
+const { writeFile } = require("fs/promises");
 require("dotenv/config");
 let connectionForCron;
+
+let allStatistics = {
+  teamsStatistics: {
+    insertedIds: [],
+    duplicatedIds: [],
+  },
+  seriesStatistics: {
+    insertedIds: [],
+    duplicatedIds: [],
+  },
+  matchesStatistics: {
+    insertedIds: [],
+    duplicatedIds: [],
+  },
+  playersStatistics: {
+    insertedIds: [],
+    duplicatedIds: [],
+  },
+  relationStatistics: {
+    insertedIds: [],
+    duplicatedIds: [],
+  },
+  playerPerformanceStatistics: {
+    insertedIds: [],
+    duplicatedIds: [],
+  },
+  playerImagesStatistics: {
+    insertedIds: [],
+  },
+  teamsImageStatistics: {
+    insertedIds: [],
+  },
+  deleteMatchStatistics: [],
+};
 
 // connectiong to database
 const connectToDb = () => {
@@ -42,7 +76,7 @@ const initializeConnection = () => {
     });
     connectToDb();
   } catch (error) {
-    console.log(error.message);
+    console.log(error.message, "initializeConnection");
   }
 };
 
@@ -78,11 +112,8 @@ const makeRequest = (url, method, data) => {
 
 const insertTeamsOfMatch = async (match) => {
   return new Promise((resolve) => {
-    const teamsStatistics = {
-      insertedTeamIds: [],
-      duplicateTeamIds: [],
-    };
     [1, 2].forEach(async (item, index) => {
+      const teamId = match[`team${item}`].id;
       try {
         const storeTeam = await database("INSERT INTO teams SET ?", {
           teamId: match[`team${item}`].id,
@@ -90,23 +121,24 @@ const insertTeamsOfMatch = async (match) => {
           displayName: match[`team${item}`].dName,
           teamFlagUrl: match[`team${item}`].teamFlagURL,
         });
-        const teamId = match[`team${item}`].id;
         downloadImage(
           match[`team${item}`].teamFlagURL,
-          path.join(__dirname, `../public/images/teamflag/${teamId}.jpg`)
+          path.join(__dirname, `../public/images/teamflag/${teamId}.jpg`),
+          teamId,
+          true
         );
         if (storeTeam && index === 1) {
-          teamsStatistics.insertedTeamIds.push(match[`team${item}`].id);
-          resolve(teamsStatistics);
+          allStatistics.teamsStatistics.insertedIds.push(teamId);
+          resolve();
         }
       } catch (error) {
         if (error.sqlMessage && error.sqlMessage.includes("Duplicate")) {
-          teamsStatistics.duplicateTeamIds.push(match[`team${item}`].id);
+          allStatistics.teamsStatistics.duplicatedIds.push(teamId);
           if (index === 1) {
-            resolve(teamsStatistics);
+            resolve();
           }
         } else {
-          console.log(error.message);
+          console.log(error.message, "insertTeamsOfMatch");
         }
       }
     });
@@ -115,11 +147,6 @@ const insertTeamsOfMatch = async (match) => {
 
 const insertSingleSeries = async (match) => {
   return new Promise(async (resolve) => {
-    const seriesStatistics = {
-      insertedSeriesIds: [],
-      duplicateSeriesIds: [],
-    };
-
     try {
       const series = await database("INSERT INTO all_series SET ?", {
         seriesId: match.seriesId,
@@ -127,15 +154,15 @@ const insertSingleSeries = async (match) => {
         seriesName: match.seriesName,
       });
       if (series) {
-        seriesStatistics.insertedSeriesIds.push(match.seriesId);
-        resolve(seriesStatistics);
+        allStatistics.seriesStatistics.insertedIds.push(match.seriesId);
+        resolve();
       }
     } catch (error) {
       if (error.sqlMessage && error.sqlMessage.includes("Duplicate entry")) {
-        seriesStatistics.duplicateSeriesIds.push(match.seriesId);
-        resolve(seriesStatistics);
+        allStatistics.seriesStatistics.duplicatedIds.push(match.seriesId);
+        resolve();
       } else {
-        console.log(error.message);
+        console.log(error.message, "insertSingleSeries");
       }
     }
   });
@@ -144,8 +171,8 @@ const insertSingleSeries = async (match) => {
 const insertSingleMatch = async (match) => {
   return new Promise(async (resolve) => {
     const matchStatistics = {
-      insertedMatchIds: [],
-      duplicateMatchIds: [],
+      insertedIds: [],
+      duplicateIds: [],
     };
 
     const {
@@ -174,15 +201,17 @@ const insertSingleMatch = async (match) => {
         seriesId,
       });
       if (matchSetted) {
-        matchStatistics.insertedMatchIds.push(matchId);
+        matchStatistics.insertedIds.push(match.matchId);
+        allStatistics.matchesStatistics.insertedIds.push(matchId);
         resolve(matchStatistics);
       }
     } catch (error) {
       if (error.sqlMessage && error.sqlMessage.includes("Duplicate entry")) {
-        matchStatistics.duplicateMatchIds.push(match.matchId);
+        matchStatistics.duplicateIds.push(match.matchId);
+        allStatistics.matchesStatistics.duplicatedIds.push(match.matchId);
         resolve(matchStatistics);
       } else {
-        console.log(error.message);
+        console.log(error.message, "insertSingleMatch");
       }
     }
   });
@@ -196,86 +225,36 @@ const insertPlayersOfMatch = async (matchId) => {
         "POST",
         { matchId }
       );
-
-      const playersStatistics = {
-        insertedPlayers: [],
-        duplicatePlayers: [],
-      };
-      const relationStatistics = {
-        insertedRelation: [],
-        duplicateRelation: [],
-      };
-      const statistics = {
-        insertedStatistics: [],
-        duplicatedStatistics: [],
-      };
-
       if (!players || (players && players.length === 0)) {
         deleteMatch(matchId);
-        resolve({ playersStatistics, relationStatistics, statistics });
+        resolve();
       }
       let loopCount = 0;
-      players?.forEach(async (player, index) => {
+      players?.forEach(async (player) => {
         try {
-          insertSinglePlayer(player, matchId).then(
-            ({
-              playersStatistics,
-              relationStatistics,
-              statistics: statistics2,
-            }) => {
-              playersStatistics.insertedPlayers.push(
-                ...playersStatistics.insertedPlayerIds
-              );
-              playersStatistics.duplicatePlayers.push(
-                ...playersStatistics.duplicatePlayerIds
-              );
-              relationStatistics.insertedRelation.push(
-                ...relationStatistics.insertedRelation
-              );
-              relationStatistics.duplicateRelation.push(
-                ...relationStatistics.duplicateRelation
-              );
-              statistics.insertedStatistics.push(
-                ...statistics2.insertedStatistics
-              );
-              statistics.duplicatedStatistics.push(
-                ...statistics2.duplicateStatistics
-              );
-
+          insertSinglePlayer(player, matchId)
+            .then(() => {
               loopCount++;
 
               if (loopCount === players.length) {
-                resolve({ playersStatistics, relationStatistics, statistics });
+                resolve();
               }
-            }
-          );
+            })
+            .catch((error) => {
+              console.log(error.message, "insertPlayersOfMatch");
+            });
         } catch (error) {
-          console.log(error.message);
+          console.log(error.message, "insertPlayersOfMatch");
         }
       });
     } catch (error) {
-      console.log(error.message);
+      console.log(error.message, "insertPlayersOfMatch");
     }
   });
 };
 
 const insertSinglePlayer = async (player, matchId) => {
   return new Promise(async (resolve) => {
-    const singlePlayerStatistics = {
-      playersStatistics: {
-        insertedPlayerIds: [],
-        duplicatePlayerIds: [],
-      },
-      relationStatistics: {
-        insertedRelation: [],
-        duplicateRelation: [],
-      },
-      statistics: {
-        insertedStatistics: [],
-        duplicateStatistics: [],
-      },
-    };
-
     try {
       const singlePlayerInserted = await database("INSERT INTO players SET ?", {
         playerId: player.id,
@@ -289,63 +268,22 @@ const insertSinglePlayer = async (player, matchId) => {
         path.join(
           __dirname,
           `../public/images/players/profilePicture/${player.id}.jpg`
-        )
+        ),
+        player.id
       );
 
       if (singlePlayerInserted) {
-        singlePlayerStatistics.playersStatistics.insertedPlayerIds.push(
-          player.id
-        );
-        insertSingleMatchPlayerRelation(player, matchId).then(
-          ({
-            insertedRelation,
-            duplicateRelation,
-            insertedStatistics,
-            duplicateStatistics,
-          }) => {
-            singlePlayerStatistics.relationStatistics.insertedRelation.push(
-              ...insertedRelation
-            );
-            singlePlayerStatistics.relationStatistics.duplicateRelation.push(
-              ...duplicateRelation
-            );
-            singlePlayerStatistics.statistics.insertedStatistics.push(
-              ...insertedStatistics
-            );
-            singlePlayerStatistics.statistics.duplicateStatistics.push(
-              ...duplicateStatistics
-            );
-            resolve(singlePlayerStatistics);
-          }
-        );
+        allStatistics.playersStatistics.insertedIds.push(player.id);
+        insertSingleMatchPlayerRelation(player, matchId).then(() => {
+          resolve();
+        });
       }
     } catch (error) {
       if (error.sqlMessage && error.sqlMessage.includes("Duplicate entry")) {
-        singlePlayerStatistics.playersStatistics.duplicatePlayerIds.push(
-          player.id
-        );
-        insertSingleMatchPlayerRelation(player, matchId).then(
-          ({
-            insertedRelation,
-            duplicateRelation,
-            insertedStatistics,
-            duplicateStatistics,
-          }) => {
-            singlePlayerStatistics.relationStatistics.insertedRelation.push(
-              ...insertedRelation
-            );
-            singlePlayerStatistics.relationStatistics.duplicateRelation.push(
-              ...duplicateRelation
-            );
-            singlePlayerStatistics.statistics.insertedStatistics.push(
-              ...insertedStatistics
-            );
-            singlePlayerStatistics.statistics.duplicateStatistics.push(
-              ...duplicateStatistics
-            );
-            resolve(singlePlayerStatistics);
-          }
-        );
+        allStatistics.playersStatistics.duplicatedIds.push(player.id);
+        insertSingleMatchPlayerRelation(player, matchId).then(() => {
+          resolve();
+        });
       } else {
         console.log(error.message, "single player error");
       }
@@ -355,13 +293,6 @@ const insertSinglePlayer = async (player, matchId) => {
 
 const insertSingleMatchPlayerRelation = async (player, matchId) => {
   return new Promise(async (resolve) => {
-    const matchPlayerRelationStatistics = {
-      insertedRelation: [],
-      duplicateRelation: [],
-      insertedStatistics: [],
-      duplicateStatistics: [],
-    };
-
     try {
       const insertedRelation = await database(
         "INSERT INTO match_player_relation SET ?",
@@ -374,30 +305,30 @@ const insertSingleMatchPlayerRelation = async (player, matchId) => {
         }
       );
       if (insertedRelation) {
-        matchPlayerRelationStatistics.insertedRelation.push(player.id);
-        const playerLastNMatchStatistics = insertPlayerStatistics(
+        allStatistics.relationStatistics.insertedIds.push(player.id);
+        await insertPlayerStatistics(
           player.lastNMatchStatistics,
-          insertedRelation.insertId
+          insertedRelation.insertId,
+          player.id
         );
-        if (playerLastNMatchStatistics) {
-          matchPlayerRelationStatistics.insertedStatistics.push(player.id);
-        } else if (playerLastNMatchStatistics === false) {
-          matchPlayerRelationStatistics.duplicateStatistics.push(player.id);
-        }
-        resolve(matchPlayerRelationStatistics);
+        resolve();
       }
     } catch (error) {
       if (error.sqlMessage && error.sqlMessage.includes("Duplicate entry")) {
-        matchPlayerRelationStatistics.duplicateRelation.push(player.id);
-        resolve(matchPlayerRelationStatistics);
+        allStatistics.relationStatistics.duplicatedIds.push(player.id);
+        resolve();
       } else {
-        console.log(error.message);
+        console.log(error.message, "insertSingleMatchPlayerRelation");
       }
     }
   });
 };
 
-const insertPlayerStatistics = async (playersStatistics, insertId) => {
+const insertPlayerStatistics = async (
+  playersStatistics,
+  insertId,
+  playerId
+) => {
   return new Promise(async (resolve) => {
     try {
       const insertedStatistics = await database(
@@ -419,36 +350,35 @@ const insertPlayerStatistics = async (playersStatistics, insertId) => {
         }
       );
       if (insertedStatistics) {
+        allStatistics.playerPerformanceStatistics.insertedIds.push(playerId);
         resolve(true);
-        console.log("success");
       }
     } catch (error) {
+      allStatistics.playerPerformanceStatistics.duplicatedIds.push(playerId);
       resolve(false);
-      console.log(error.message);
+      console.log(error.message, "insertPlayerStatistics");
     }
   });
 };
 
-const downloadImage = (url, filePath) => {
-  return new Promise(async (resolve) => {
-    try {
-      const { data } = await axios.get(url, { responseType: "arraybuffer" });
-      fs.writeFile(filePath, data, (err) => {
-        if (err) {
-          console.log(err.message);
-          resolve(false);
-        } else {
-          console.log(filePath);
-          resolve(true);
-        }
-      });
-    } catch (error) {
-      resolve(false);
+const downloadImage = async (url, filePath, id, isTeam = false) => {
+  console.log(url);
+  try {
+    const { data } = await axios.get(url, { responseType: "arraybuffer" });
+    const res = writeFile(filePath, data);
+    if (res) {
+      if (isTeam) {
+        allStatistics.teamsImageStatistics.insertedIds.push(id);
+        return;
+      }
+      allStatistics.playerImagesStatistics.insertedIds.push(id);
     }
-  });
+  } catch (error) {
+    console.log(error.message, "downloadImage");
+  }
 };
 
-const deleteMatch = (matchId) => {
+const deleteMatch = async (matchId) => {
   return new Promise(async (resolve) => {
     try {
       const deleted = await database(
@@ -460,10 +390,11 @@ const deleteMatch = (matchId) => {
         matchId
       );
       if (deleted && deleteRelation) {
-        resolve(true);
+        allStatistics.deleteMatchStatistics.push(matchId);
+        resolve();
       }
     } catch (error) {
-      console.log(error.message);
+      console.log(error.message, "deleteMatch");
     }
   });
 };
@@ -471,33 +402,39 @@ const deleteMatch = (matchId) => {
 // manage to insert all data into database
 const fetchAndStore = async () => {
   try {
-    const statistics = {
+    allStatistics = {
       teamsStatistics: {
-        insertedTeamIds: [],
-        duplicateTeamIds: [],
+        insertedIds: [],
+        duplicatedIds: [],
       },
       seriesStatistics: {
-        insertedSeriesIds: [],
-        duplicateSeriesIds: [],
+        insertedIds: [],
+        duplicatedIds: [],
       },
       matchesStatistics: {
-        insertedMatchIds: [],
-        duplicateMatchIds: [],
+        insertedIds: [],
+        duplicatedIds: [],
       },
       playersStatistics: {
-        insertedPlayerIds: [],
-        duplicatePlayerIds: [],
+        insertedIds: [],
+        duplicatedIds: [],
       },
       relationStatistics: {
-        insertedRelation: [],
-        duplicateRelation: [],
+        insertedIds: [],
+        duplicatedIds: [],
       },
-      statistics: {
-        insertedStatistics: [],
-        duplicateStatistics: [],
+      playerPerformanceStatistics: {
+        insertedIds: [],
+        duplicatedIds: [],
       },
+      playerImagesStatistics: {
+        insertedIds: [],
+      },
+      teamsImageStatistics: {
+        insertedIds: [],
+      },
+      deleteMatchStatistics: [],
     };
-
     initializeConnection();
     const { matches } = await makeRequest(
       "https://www.my11circle.com/api/lobbyApi/v1/getMatches",
@@ -517,76 +454,32 @@ const fetchAndStore = async () => {
                 try {
                   // inserting match teams
                   insertTeamsOfMatch(match)
-                    .then((teamsStatistics) => {
-                      statistics.teamsStatistics.insertedTeamIds.push(
-                        ...teamsStatistics.insertedTeamIds
-                      );
-                      statistics.teamsStatistics.duplicateTeamIds.push(
-                        ...teamsStatistics.duplicateTeamIds
-                      );
-
+                    .then(() => {
                       // inserting series
                       insertSingleSeries(match)
-                        .then((seriesStatistics) => {
-                          statistics.seriesStatistics.insertedSeriesIds.push(
-                            ...seriesStatistics.insertedSeriesIds
-                          );
-                          statistics.seriesStatistics.duplicateSeriesIds.push(
-                            ...seriesStatistics.duplicateSeriesIds
-                          );
-
+                        .then(() => {
                           // inserting matches
                           insertSingleMatch(match)
                             .then((matchStatistics) => {
-                              statistics.matchesStatistics.insertedMatchIds.push(
-                                ...matchStatistics.insertedMatchIds
-                              );
-                              statistics.matchesStatistics.duplicateMatchIds.push(
-                                ...matchStatistics.duplicateMatchIds
-                              );
-
                               if (
                                 !(
-                                  matchStatistics.duplicateMatchIds.length >
-                                    0 &&
-                                  matchStatistics.insertedMatchIds.length === 0
+                                  matchStatistics.duplicateIds.length > 0 &&
+                                  matchStatistics.insertedIds.length === 0
                                 )
                               ) {
                                 // inserting match players
                                 insertPlayersOfMatch(match.matchId)
-                                  .then(
-                                    ({
-                                      playersStatistics,
-                                      relationStatistics,
-                                      statistics: statisticsOfPlayers,
-                                    }) => {
-                                      statistics.playersStatistics.insertedPlayerIds.push(
-                                        ...playersStatistics.insertedPlayers
-                                      );
-                                      statistics.playersStatistics.duplicatePlayerIds.push(
-                                        ...playersStatistics.duplicatePlayers
-                                      );
-                                      statistics.relationStatistics.insertedRelation.push(
-                                        ...relationStatistics.insertedRelation
-                                      );
-                                      statistics.relationStatistics.duplicateRelation.push(
-                                        ...relationStatistics.duplicateRelation
-                                      );
-                                      statistics.statistics.insertedStatistics.push(
-                                        ...statisticsOfPlayers.insertedStatistics
-                                      );
-                                      statistics.statistics.duplicateStatistics.push(
-                                        ...statisticsOfPlayers.duplicateStatistics
-                                      );
-
-                                      loopCount++;
-                                      if (loopCount === totalMatchObjects) {
-                                        resolve();
-                                      }
+                                  .then(() => {
+                                    loopCount++;
+                                    if (loopCount === totalMatchObjects) {
+                                      resolve();
                                     }
-                                  )
+                                  })
                                   .catch((error) => {
-                                    console.log(error.message, "here");
+                                    console.log(
+                                      error.message,
+                                      "calling insertPlayersOfMatch"
+                                    );
                                   });
                               } else {
                                 loopCount++;
@@ -596,67 +489,80 @@ const fetchAndStore = async () => {
                               }
                             })
                             .catch((error) => {
-                              console.log(error.message);
+                              console.log(
+                                error.message,
+                                "calling insertSingleMatch"
+                              );
                             });
                         })
                         .catch((error) => {
-                          console.log(error.message);
+                          console.log(
+                            error.message,
+                            "calling insertSingleSeries"
+                          );
                         });
                     })
                     .catch((error) => {
-                      console.log(error.message);
+                      console.log(error.message, "calling insertTeamsOfMatch");
                     });
                 } catch (error) {
-                  console.log(error.message);
+                  console.log(error.message, "calling loop");
                 }
               });
             } catch (error) {
-              console.log(error.message);
+              console.log(error.message, "calling loop2");
             }
           });
         } catch (error) {
-          console.log(error.message);
+          console.log(error.message, "calling");
         }
       });
     };
     storeData()
       .then(() => {
         const insertedTeamIds = new Set(
-          statistics.teamsStatistics.insertedTeamIds
+          allStatistics.teamsStatistics.insertedIds
         );
         const duplicateTeamIds = new Set(
-          statistics.teamsStatistics.duplicateTeamIds
+          allStatistics.teamsStatistics.duplicatedIds
         );
         const insertedSeriesIds = new Set(
-          statistics.seriesStatistics.insertedSeriesIds
+          allStatistics.seriesStatistics.insertedIds
         );
         const duplicateSeriesIds = new Set(
-          statistics.seriesStatistics.duplicateSeriesIds
+          allStatistics.seriesStatistics.duplicatedIds
         );
         const insertedMatchIds = new Set(
-          statistics.matchesStatistics.insertedMatchIds
+          allStatistics.matchesStatistics.insertedIds
         );
         const duplicateMatchIds = new Set(
-          statistics.matchesStatistics.duplicateMatchIds
+          allStatistics.matchesStatistics.duplicatedIds
         );
         const insertedPlayerIds = new Set(
-          statistics.playersStatistics.insertedPlayerIds
+          allStatistics.playersStatistics.insertedIds
         );
         const duplicatePlayerIds = new Set(
-          statistics.playersStatistics.duplicatePlayerIds
+          allStatistics.playersStatistics.duplicatedIds
         );
         const insertedRelations = new Set(
-          statistics.relationStatistics.insertedRelation
+          allStatistics.relationStatistics.insertedIds
         );
         const duplicateRelations = new Set(
-          statistics.relationStatistics.duplicateRelation
+          allStatistics.relationStatistics.duplicatedIds
         );
         const insertedStatistics = new Set(
-          statistics.statistics.insertedStatistics
+          allStatistics.playerPerformanceStatistics.insertedIds
         );
         const duplicateStatistics = new Set(
-          statistics.statistics.duplicateStatistics
+          allStatistics.playerPerformanceStatistics.duplicatedIds
         );
+        const insertedPlayerImage = new Set(
+          allStatistics.playerImagesStatistics.insertedIds
+        );
+        const insertedTeamsImage = new Set(
+          allStatistics.teamsImageStatistics.insertedIds
+        );
+        const deleteMatch = new Set(allStatistics.deleteMatchStatistics);
 
         console.table({
           insertedTeamIds: insertedTeamIds.size,
@@ -671,6 +577,9 @@ const fetchAndStore = async () => {
           duplicateRelations: duplicateRelations.size,
           insertedStatistics: insertedStatistics.size,
           duplicateStatistics: duplicateStatistics.size,
+          playerImage: insertedPlayerImage.size,
+          teamsImage: insertedTeamsImage.size,
+          deleteMatch: deleteMatch.size,
         });
 
         console.log({
@@ -697,6 +606,13 @@ const fetchAndStore = async () => {
           insertedStatistics: Array.from(insertedStatistics),
           duplicateStatistics: Array.from(duplicateStatistics),
         });
+        console.log({
+          playerImage: Array.from(insertedPlayerImage),
+          teamsImage: Array.from(insertedTeamsImage),
+        });
+        console.log({
+          deleteMatch: Array.from(deleteMatch),
+        });
 
         connectionForCron.end((err) => {
           if (err) console.log(err.sqlMessage);
@@ -704,7 +620,7 @@ const fetchAndStore = async () => {
         });
       })
       .catch((error) => {
-        console.log(error.message);
+        console.log(error.message, "calling storeData");
       });
   } catch (error) {
     console.log(error.message);
