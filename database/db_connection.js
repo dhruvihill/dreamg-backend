@@ -3,35 +3,21 @@ const fs = require("fs");
 const path = require("path");
 require("dotenv/config");
 
-// Creating Connection
-
-// let connection;
-// try {
-//   connection = mysql.createConnection({
-//     host: process.env.CLEVER_CLOUD_HOST,
-//     user: process.env.CLEVER_CLOUD_USER,
-//     password: process.env.CLEVER_CLOUD_PASSWORD,
-//     database: process.env.CLEVER_CLOUD_DATABASE_NAME,
-//   });
-// } catch (error) {
-//   console.log(error.message);
-// }
-// console.log(
-//   process.env.CLEVER_CLOUD_HOST,
-//   process.env.CLEVER_CLOUD_USER,
-//   process.env.CLEVER_CLOUD_PASSWORD,
-//   process.env.CLEVER_CLOUD_DATABASE_NAME
-// );
-
 let connection;
 
 // connectiong to database
 const connectToDb = () => {
+  let time = 0;
   // connect to database
   connection.connect((err) => {
     try {
       if (err) throw err;
-      else console.log("Connected Successfully normal");
+      else {
+        console.log("Connected Successfully normal");
+        setInterval(() => {
+          time++;
+        }, 1000);
+      }
     } catch (error) {
       console.log(error.message, "normal");
       if (error.message.includes("ECONNREFUSED")) {
@@ -45,6 +31,8 @@ const connectToDb = () => {
 
   // error handling to Database
   connection.on("error", (err) => {
+    console.log(time);
+    time = 0;
     console.log("db error", err.code);
     setTimeout(() => {
       initializeConnection();

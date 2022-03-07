@@ -626,4 +626,4 @@ const fetchAndStore = async () => {
   }
 };
 
-module.exports = fetchAndStore();
+module.exports = fetchAndStore;
