@@ -86,34 +86,29 @@ router.post("/recentPlayed", async (req, res) => {
       ]);
 
       const totalPages = Math.ceil(totalMatches / 20);
+      recentPlayed.forEach((match) => {
+        match.team1FlagURL = imageUrl(
+          __dirname,
+          "../",
+          `/public/images/teamflag/${match.team1Id}.jpg`,
+          serverAddress
+        );
+        match.team2FlagURL = imageUrl(
+          __dirname,
+          "../",
+          `/public/images/teamflag/${match.team2Id}.jpg`,
+          serverAddress
+        );
+      });
 
-      if (recentPlayed.length > 0) {
-        recentPlayed.forEach((match) => {
-          match.team1FlagURL = imageUrl(
-            __dirname,
-            "../",
-            `/public/images/teamflag/${match.team1Id}.jpg`,
-            serverAddress
-          );
-          match.team2FlagURL = imageUrl(
-            __dirname,
-            "../",
-            `/public/images/teamflag/${match.team2Id}.jpg`,
-            serverAddress
-          );
-        });
-
-        res.status(200).json({
-          status: true,
-          message: "success",
-          data: {
-            recentPlayed: recentPlayed,
-            totalPages,
-          },
-        });
-      } else {
-        throw { message: "no matches available" };
-      }
+      res.status(200).json({
+        status: true,
+        message: "success",
+        data: {
+          recentPlayed: recentPlayed,
+          totalPages,
+        },
+      });
     } else {
       throw { message: "invalid input" };
     }
@@ -152,7 +147,6 @@ router.post("/currentPlayed", async (req, res) => {
         ]
       );
 
-      // if (currentPlayed.length > 0) {
       currentPlayed.forEach((match) => {
         match.team1FlagURL = imageUrl(
           __dirname,
@@ -178,9 +172,6 @@ router.post("/currentPlayed", async (req, res) => {
           totalPages,
         },
       });
-      // } else {
-      //   throw { message: "no matches available" };
-      // }
     } else {
       throw { message: "invalid input" };
     }

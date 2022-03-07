@@ -66,16 +66,12 @@ router.post("/get_predictions", async (req, res) => {
         );
       });
 
-      if (result.length > 0) {
-        const totalPages = Math.ceil(totalPredictors / 20);
-        res.status(200).json({
-          status: true,
-          message: "success",
-          data: { users: result, totalPages, currentPage: pageNumber },
-        });
-      } else {
-        throw { message: "no team created" };
-      }
+      const totalPages = Math.ceil(totalPredictors / 20);
+      res.status(200).json({
+        status: true,
+        message: "success",
+        data: { users: result, totalPages, currentPage: pageNumber },
+      });
     } else {
       throw { message: "invalid input" };
     }
@@ -103,14 +99,13 @@ router.post("/getExpertPredictor", async (req, res) => {
       return new Promise(async (resolve, reject) => {
         try {
           const [userTeamDetails] = await fetchData(
-            "CALL get_user_team(?, ?);",
-            [matchId, 0]
+            "CALL get_user_team(?, ?, ?);",
+            [matchId, 0, 0]
           );
 
-          if (!(userTeamDetails && userTeamDetails.length > 0)) {
-            throw { message: "invalid input" };
+          if (userTeamDetails.length === 0) {
+            resolve([[]]);
           }
-
           let userTeams = [];
           userTeamDetails.forEach(async (team, index) => {
             try {
@@ -244,7 +239,7 @@ router.post("/getExpertPredictor", async (req, res) => {
       status: true,
       message: "success",
       data: {
-        userTeams,
+        userTeams: userTeams,
       },
     });
   } catch (error) {
@@ -314,8 +309,11 @@ router.post("/get_user_teams", async (req, res) => {
             [matchId, createrId, 0]
           );
 
-          if (!(userDetails && userTeamDetails && userTeamDetails.length > 0)) {
-            throw { message: "invalid input" };
+          if (!userDetails) {
+            throw { message: "user does not exists" };
+          }
+          if (!(userTeamDetails && userTeamDetails.length !== 0)) {
+            resolve([[], userDetails]);
           }
 
           // change server address
@@ -455,6 +453,8 @@ router.post("/get_user_teams", async (req, res) => {
 
     const [userTeams, userDetails] = await fetchUserTeamDetails();
 
+    console.log(userTeams, userDetails);
+
     res.status(200).json({
       status: true,
       message: "success",
@@ -502,8 +502,12 @@ router.post("/get_user_teams_predictor", async (req, res) => {
 
           const totalPages = Math.ceil(totalUserTeams / 20);
 
-          if (!(userDetails && userTeamDetails && userTeamDetails.length > 0)) {
-            throw { message: "invalid input" };
+          if (!userDetails) {
+            throw { message: "user does not exists" };
+          }
+
+          if (!(userTeamDetails && userTeamDetails.length != 0)) {
+            resolve([[], userDetails, totalPages]);
           }
 
           // change server address
@@ -684,21 +688,20 @@ router.post("/get_user_teams_data", verifyUser, async (req, res) => {
       ]);
       const teamData = await fetchData(teamQuery, [playersIds[0]?.matchId]);
 
-      teamData[0].team1FlagURL = imageUrl(
-        __dirname,
-        "../",
-        `/public/images/teamflag/${teamData[0].team1Id}.jpg`,
-        serverAddress
-      );
-      teamData[0].team2FlagURL = imageUrl(
-        __dirname,
-        "../",
-        `/public/images/teamflag/${teamData[0].team2Id}.jpg`,
-        serverAddress
-      );
+      if (teamData.length > 0 && playersIds.length > 0) {
+        teamData[0].team1FlagURL = imageUrl(
+          __dirname,
+          "../",
+          `/public/images/teamflag/${teamData[0].team1Id}.jpg`,
+          serverAddress
+        );
+        teamData[0].team2FlagURL = imageUrl(
+          __dirname,
+          "../",
+          `/public/images/teamflag/${teamData[0].team2Id}.jpg`,
+          serverAddress
+        );
 
-      // checking if playerids exists or not
-      if (playersIds?.length > 0) {
         let newAllTeams = [];
 
         // function to fetch all the users
@@ -768,7 +771,7 @@ router.post("/get_user_teams_data", verifyUser, async (req, res) => {
           }
         });
       } else {
-        throw { message: "user have no team" };
+        throw { message: "invalid team id" };
       }
     } else {
       throw { message: "invalid input" };
@@ -1103,14 +1106,16 @@ router.post("/compare_teams", async (req, res) => {
 
   const allPlayersForMatch =
     "SELECT matchId, playerId, fullplayerdetails.name AS playerName, fullplayerdetails.displayName AS playerDisplayName, roleId, roleName, fullplayerdetails.teamId, allteams.name AS teamName, allteams.displayName AS teamDisplayName FROM fullplayerdetails JOIN allteams ON allteams.teamId = fullplayerdetails.teamId WHERE matchId = ?;";
-  const matchDetails =
+  const matchDetailsQuery =
     "SELECT matchId, matchStartTimeMilliSeconds AS matchStartTime, venue, seriesDname AS seriesDisplayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName FROM fullmatchdetails WHERE matchId = ?;";
 
   try {
     if (!/[^0-9]/g.test(matchId)) {
       const serverAddress = `${req.protocol}://${req.headers.host}`;
-      const response = await fetchData(allPlayersForMatch, [matchId]);
-      const responseData = await fetchData(matchDetails, [matchId]);
+      const [response, responseData] = await fetchData(
+        `${allPlayersForMatch}${matchDetailsQuery}`,
+        [matchId, matchId]
+      );
 
       if (response.length > 0 && responseData.length > 0) {
         response.forEach((element) => {
@@ -1148,7 +1153,7 @@ router.post("/compare_teams", async (req, res) => {
           },
         });
       } else {
-        throw { message: "invalid input" };
+        throw { message: "data not found" };
       }
     } else {
       throw { message: "invalid input" };
