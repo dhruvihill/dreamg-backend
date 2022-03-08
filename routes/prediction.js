@@ -971,13 +971,13 @@ router.post("/compare_teams", async (req, res) => {
         );
       });
       if (responseData.length > 0) {
-        responseData[0]?.team1FlagURL = imageUrl(
+        responseData[0].team1FlagURL = imageUrl(
           __dirname,
           "../",
           `/public/images/teamflag/${responseData[0].team1Id}.jpg`,
           serverAddress
         );
-        responseData[0]?.team2FlagURL = imageUrl(
+        responseData[0].team2FlagURL = imageUrl(
           __dirname,
           "../",
           `/public/images/teamflag/${responseData[0].team2Id}.jpg`,
