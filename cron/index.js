@@ -75,7 +75,7 @@ const connectToDb = () => {
 const initializeConnection = () => {
   try {
     connectionForCron = mysql.createPool({
-      connectionLimit: 1,
+      connectionLimit: 0,
       host: process.env.CLEVER_CLOUD_HOST,
       user: process.env.CLEVER_CLOUD_USER,
       password: process.env.CLEVER_CLOUD_PASSWORD,
