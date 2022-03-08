@@ -22,35 +22,46 @@ const connectToDb = () => {
       console.log(error.message, "normal");
       if (error.message.includes("ECONNREFUSED")) {
         // some email stuff goes here
+  return new Promise((resolve, reject) => {
+    connection.getConnection((err, connection) => {
+      try {
+        if (err) throw err;
+        else {
+          console.log("Connected Successfully normal");
+          resolve(connection);
+        }
+      } catch (error) {
+        console.log(error.message, "normal");
+        initializeConnection();
+        if (error.message.includes("ECONNREFUSED")) {
+          // some email stuff goes here
+        }
+        reject(err);
       }
+    });
+    // error handling to Database
+    connection.on("error", (err) => {
+      console.log("db error", err.code);
       setTimeout(() => {
         initializeConnection();
       }, 1000);
-    }
-  });
-
-  // error handling to Database
-  connection.on("error", (err) => {
-    console.log(time);
-    time = 0;
-    console.log("db error", err.code);
-    setTimeout(() => {
-      initializeConnection();
-    }, 1000);
+    });
+    connection.on("release", () => {
+      console.log("released");
+    });
   });
 };
 
 // intializing connection
 const initializeConnection = () => {
   try {
-    connection = mysql.createConnection({
+    connection = mysql.createPool({
       host: process.env.CLEVER_CLOUD_HOST,
       user: process.env.CLEVER_CLOUD_USER,
       password: process.env.CLEVER_CLOUD_PASSWORD,
       database: process.env.CLEVER_CLOUD_DATABASE_NAME,
       multipleStatements: true,
     });
-    connectToDb();
   } catch (error) {
     console.log(error.message);
   }
@@ -61,11 +72,17 @@ initializeConnection();
 
 // function to execute query
 const fetchData = (query, options = []) =>
-  new Promise((resolve, reject) => {
-    connection.query(query, options, (err, response) => {
-      if (err) reject(err);
-      else resolve(response);
-    });
+  new Promise(async (resolve, reject) => {
+    try {
+      const connection = await connectToDb();
+      connection.query(query, options, (err, response) => {
+        connection.release();
+        if (err) reject(err);
+        else resolve(response);
+      });
+    } catch (error) {
+      reject(error);
+    }
   });
 
 // function to check if file exists

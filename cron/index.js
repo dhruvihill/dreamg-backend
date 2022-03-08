@@ -42,52 +42,64 @@ let allStatistics = {
 // connectiong to database
 const connectToDb = () => {
   // connect to database
-  connectionForCron.connect((err) => {
-    try {
-      if (err) throw err;
-      else console.log("Connected Successfully for cron");
-    } catch (error) {
-      if (error.message.includes("ECONNREFUSED")) {
-        // some email stuff goes here
+  return new Promise((resolve, reject) => {
+    connectionForCron.getConnection((err, connection) => {
+      try {
+        if (err) throw err;
+        else {
+          console.log("Connected Successfully for cron");
+          resolve(connection);
+        }
+      } catch (error) {
+        if (error.message.includes("ECONNREFUSED")) {
+          // some email stuff goes here
+        }
+        reject(error);
+        initializeConnection();
       }
+    });
+
+    // error handling to Database
+    connectionForCron.on("error", (err) => {
+      console.log("db error", err.code);
       setTimeout(() => {
         initializeConnection();
       }, 1000);
-    }
-  });
-
-  // error handling to Database
-  connectionForCron.on("error", (err) => {
-    console.log("db error", err.code);
-    setTimeout(() => {
-      initializeConnection();
-    }, 1000);
+    });
+    connectionForCron.on("release", () => {
+      console.log("db connection released");
+    });
   });
 };
 // intializing connection
 const initializeConnection = () => {
   try {
-    connectionForCron = mysql.createConnection({
+    connectionForCron = mysql.createPool({
+      connectionLimit: 1,
       host: process.env.CLEVER_CLOUD_HOST,
       user: process.env.CLEVER_CLOUD_USER,
       password: process.env.CLEVER_CLOUD_PASSWORD,
       database: process.env.CLEVER_CLOUD_DATABASE_NAME,
       multipleStatements: true,
     });
-    connectToDb();
   } catch (error) {
     console.log(error.message, "initializeConnection");
   }
 };
 
 // query to fetch, insert data
-const database = (query, options) =>
-  new Promise((resolve, reject) => {
-    connectionForCron.query(query, options, (err, reponse) => {
-      if (err) reject(err);
-      else resolve(reponse);
-    });
+const database = (query, options, connection) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      connection.query(query, options, (err, reponse) => {
+        if (err) reject(err);
+        else resolve(reponse);
+      });
+    } catch (error) {
+      console.log(error.message, "cron databse function");
+    }
   });
+};
 
 // Axios request
 const makeRequest = (url, method, data) => {
@@ -97,7 +109,7 @@ const makeRequest = (url, method, data) => {
       method: method,
       headers: {
         Cookie:
-          process.env.SSID || "SSID=SSID9101099d-3d6c-455f-934a-24da0276d04d",
+          process.env.SSID || "SSID=SSIDf8bf70f0-77e7-478d-957e-d262ad0694c2",
       },
       data,
     })
@@ -105,22 +117,27 @@ const makeRequest = (url, method, data) => {
         resolve(data.data);
       })
       .catch((error) => {
+        console.log(error.message, "makeRequest");
         reject(error);
       });
   });
 };
 
-const insertTeamsOfMatch = async (match) => {
+const insertTeamsOfMatch = async (match, connection) => {
   return new Promise((resolve) => {
     [1, 2].forEach(async (item, index) => {
       const teamId = match[`team${item}`].id;
       try {
-        const storeTeam = await database("INSERT INTO teams SET ?", {
-          teamId: match[`team${item}`].id,
-          name: match[`team${item}`].name,
-          displayName: match[`team${item}`].dName,
-          teamFlagUrl: match[`team${item}`].teamFlagURL,
-        });
+        const storeTeam = await database(
+          "INSERT INTO teams SET ?",
+          {
+            teamId: match[`team${item}`].id,
+            name: match[`team${item}`].name,
+            displayName: match[`team${item}`].dName,
+            teamFlagUrl: match[`team${item}`].teamFlagURL,
+          },
+          connection
+        );
         downloadImage(
           match[`team${item}`].teamFlagURL,
           path.join(__dirname, `../public/images/teamflag/${teamId}.jpg`),
@@ -145,14 +162,18 @@ const insertTeamsOfMatch = async (match) => {
   });
 };
 
-const insertSingleSeries = async (match) => {
+const insertSingleSeries = async (match, connection) => {
   return new Promise(async (resolve) => {
     try {
-      const series = await database("INSERT INTO all_series SET ?", {
-        seriesId: match.seriesId,
-        seriesDisplayName: match.seriesDname,
-        seriesName: match.seriesName,
-      });
+      const series = await database(
+        "INSERT INTO all_series SET ?",
+        {
+          seriesId: match.seriesId,
+          seriesDisplayName: match.seriesDname,
+          seriesName: match.seriesName,
+        },
+        connection
+      );
       if (series) {
         allStatistics.seriesStatistics.insertedIds.push(match.seriesId);
         resolve();
@@ -168,7 +189,7 @@ const insertSingleSeries = async (match) => {
   });
 };
 
-const insertSingleMatch = async (match) => {
+const insertSingleMatch = async (match, connection) => {
   return new Promise(async (resolve) => {
     const matchStatistics = {
       insertedIds: [],
@@ -187,19 +208,23 @@ const insertSingleMatch = async (match) => {
       seriesId,
     } = match;
     try {
-      const matchSetted = await database("INSERT INTO all_matches SET ?", {
-        matchId,
-        gameType,
-        team1Id,
-        team2Id,
-        matchStartTimeMilliSeconds,
-        matchStatus,
-        venue,
-        displayName,
-        seriesId: match.seriesId,
-        matchStartDateTime: matchStartTimeMilliSeconds,
-        seriesId,
-      });
+      const matchSetted = await database(
+        "INSERT INTO all_matches SET ?",
+        {
+          matchId,
+          gameType,
+          team1Id,
+          team2Id,
+          matchStartTimeMilliSeconds,
+          matchStatus,
+          venue,
+          displayName,
+          seriesId: match.seriesId,
+          matchStartDateTime: matchStartTimeMilliSeconds,
+          seriesId,
+        },
+        connection
+      );
       if (matchSetted) {
         matchStatistics.insertedIds.push(match.matchId);
         allStatistics.matchesStatistics.insertedIds.push(matchId);
@@ -217,7 +242,7 @@ const insertSingleMatch = async (match) => {
   });
 };
 
-const insertPlayersOfMatch = async (matchId) => {
+const insertPlayersOfMatch = async (matchId, connection) => {
   return new Promise(async (resolve) => {
     try {
       const { players } = await makeRequest(
@@ -227,12 +252,13 @@ const insertPlayersOfMatch = async (matchId) => {
       );
       if (!players || (players && players.length === 0)) {
         deleteMatch(matchId);
+        deleteMatch(matchId, connection);
         resolve();
       }
       let loopCount = 0;
       players?.forEach(async (player) => {
         try {
-          insertSinglePlayer(player, matchId)
+          insertSinglePlayer(player, matchId, connection)
             .then(() => {
               loopCount++;
 
@@ -253,16 +279,20 @@ const insertPlayersOfMatch = async (matchId) => {
   });
 };
 
-const insertSinglePlayer = async (player, matchId) => {
+const insertSinglePlayer = async (player, matchId, connection) => {
   return new Promise(async (resolve) => {
     try {
-      const singlePlayerInserted = await database("INSERT INTO players SET ?", {
-        playerId: player.id,
-        name: player.name,
-        role: player.role,
-        displayName: player.dName,
-        url: player.imgURL,
-      });
+      const singlePlayerInserted = await database(
+        "INSERT INTO players SET ?",
+        {
+          playerId: player.id,
+          name: player.name,
+          role: player.role,
+          displayName: player.dName,
+          url: player.imgURL,
+        },
+        connection
+      );
       downloadImage(
         player.imgURL,
         path.join(
@@ -291,7 +321,7 @@ const insertSinglePlayer = async (player, matchId) => {
   });
 };
 
-const insertSingleMatchPlayerRelation = async (player, matchId) => {
+const insertSingleMatchPlayerRelation = async (player, matchId, connection) => {
   return new Promise(async (resolve) => {
     try {
       const insertedRelation = await database(
@@ -302,7 +332,8 @@ const insertSingleMatchPlayerRelation = async (player, matchId) => {
           teamId: player.teamId,
           credits: player.credits,
           points: player.points,
-        }
+        },
+        connection
       );
       if (insertedRelation) {
         allStatistics.relationStatistics.insertedIds.push(player.id);
@@ -327,7 +358,8 @@ const insertSingleMatchPlayerRelation = async (player, matchId) => {
 const insertPlayerStatistics = async (
   playersStatistics,
   insertId,
-  playerId
+  playerId,
+  connection
 ) => {
   return new Promise(async (resolve) => {
     try {
@@ -347,7 +379,8 @@ const insertPlayerStatistics = async (
           average: playersStatistics.average,
           balls: playersStatistics.balls,
           innings: playersStatistics.innings,
-        }
+        },
+        connection
       );
       if (insertedStatistics) {
         allStatistics.playerPerformanceStatistics.insertedIds.push(playerId);
@@ -377,16 +410,18 @@ const downloadImage = async (url, filePath, id, isTeam = false) => {
   }
 };
 
-const deleteMatch = async (matchId) => {
+const deleteMatch = async (matchId, connection) => {
   return new Promise(async (resolve) => {
     try {
       const deleted = await database(
         "DELETE FROM all_matches WHERE matchId = ?",
-        matchId
+        matchId,
+        connection
       );
       const deleteRelation = await database(
         "DELETE FROM match_player_relation WHERE matchId = ?",
-        matchId
+        matchId,
+        connection
       );
       if (deleted && deleteRelation) {
         allStatistics.deleteMatchStatistics.push(matchId);
@@ -440,7 +475,7 @@ const fetchAndStore = async () => {
       "POST",
       { sportsType: 1 }
     );
-    const storeData = () => {
+    const storeData = (connection) => {
       return new Promise(async (resolve) => {
         try {
           const totalMatchObjects =
@@ -452,13 +487,13 @@ const fetchAndStore = async () => {
               matches[type].forEach(async (match) => {
                 try {
                   // inserting match teams
-                  insertTeamsOfMatch(match)
+                  insertTeamsOfMatch(match, connection)
                     .then(() => {
                       // inserting series
-                      insertSingleSeries(match)
+                      insertSingleSeries(match, connection)
                         .then(() => {
                           // inserting matches
-                          insertSingleMatch(match)
+                          insertSingleMatch(match, connection)
                             .then((matchStatistics) => {
                               if (
                                 !(
@@ -466,8 +501,7 @@ const fetchAndStore = async () => {
                                   matchStatistics.insertedIds.length === 0
                                 )
                               ) {
-                                // inserting match players
-                                insertPlayersOfMatch(match.matchId)
+                                insertPlayersOfMatch(match.matchId, connection)
                                   .then(() => {
                                     loopCount++;
                                     if (loopCount === totalMatchObjects) {
@@ -517,8 +551,10 @@ const fetchAndStore = async () => {
         }
       });
     };
-    storeData()
+    const connection = await connectToDb();
+    storeData(connection)
       .then(() => {
+        connection.release();
         const insertedTeamIds = new Set(
           allStatistics.teamsStatistics.insertedIds
         );
@@ -612,13 +648,17 @@ const fetchAndStore = async () => {
         console.log({
           deleteMatch: Array.from(deleteMatch),
         });
-
-        connectionForCron.end((err) => {
-          if (err) console.log(err.sqlMessage);
-          else console.log("connection ended");
+        console.log({
+          deleteMatch: Array.from(deleteMatch),
         });
+
+        // connectionForCron.end((err) => {
+        //   if (err) console.log(err.sqlMessage);
+        //   else console.log("connection ended");
+        // });
       })
       .catch((error) => {
+        connection.release();
         console.log(error.message, "calling storeData");
       });
   } catch (error) {

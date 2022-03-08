@@ -309,11 +309,20 @@ router.post("/get_user_teams", async (req, res) => {
             [matchId, createrId, 0]
           );
 
+<<<<<<< HEAD
           if (!userDetails) {
             throw { message: "user does not exists" };
           }
           if (!(userTeamDetails && userTeamDetails.length !== 0)) {
             resolve([[], userDetails]);
+=======
+          if (!(userDetails && userTeamDetails)) {
+            if (!userTeamDetails.length > 0) {
+              throw { message: "invalid input" };
+            } else {
+              throw { message: "no team created" };
+            }
+>>>>>>> c128dbd3df23d01737dc9f760d68992e9d28feb5
           }
 
           // change server address
