@@ -9,10 +9,10 @@ router.post("/getplayers", async (req, res) => {
 
   try {
     if (!/[^0-9]/g.test(matchId)) {
-      const [data] = await fetchData("CALL get_players(?);", [matchId]);
+      const data = await fetchData("CALL get_players(?);", [matchId]);
       const serverAddress = `${req.protocol}://${req.headers.host}`;
 
-      data?.forEach((player) => {
+      data[0]?.forEach((player) => {
         player.captainBy = parseFloat(player.captainBy.toFixed(2));
         player.viceCaptainBy = parseFloat(player.viceCaptainBy.toFixed(2));
         player.selectedBy = parseFloat(player.selectedBy.toFixed(2));
@@ -28,7 +28,7 @@ router.post("/getplayers", async (req, res) => {
         status: true,
         message: "success",
         data: {
-          players: data,
+          players: data[0],
         },
       });
     } else {

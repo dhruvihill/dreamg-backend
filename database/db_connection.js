@@ -7,21 +7,7 @@ let connection;
 
 // connectiong to database
 const connectToDb = () => {
-  let time = 0;
   // connect to database
-  connection.connect((err) => {
-    try {
-      if (err) throw err;
-      else {
-        console.log("Connected Successfully normal");
-        setInterval(() => {
-          time++;
-        }, 1000);
-      }
-    } catch (error) {
-      console.log(error.message, "normal");
-      if (error.message.includes("ECONNREFUSED")) {
-        // some email stuff goes here
   return new Promise((resolve, reject) => {
     connection.getConnection((err, connection) => {
       try {
@@ -39,7 +25,6 @@ const connectToDb = () => {
         reject(err);
       }
     });
-    // error handling to Database
     connection.on("error", (err) => {
       console.log("db error", err.code);
       setTimeout(() => {
@@ -50,6 +35,8 @@ const connectToDb = () => {
       console.log("released");
     });
   });
+
+  // error handling to Database
 };
 
 // intializing connection

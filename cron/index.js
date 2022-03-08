@@ -251,7 +251,6 @@ const insertPlayersOfMatch = async (matchId, connection) => {
         { matchId }
       );
       if (!players || (players && players.length === 0)) {
-        deleteMatch(matchId);
         deleteMatch(matchId, connection);
         resolve();
       }
@@ -501,6 +500,7 @@ const fetchAndStore = async () => {
                                   matchStatistics.insertedIds.length === 0
                                 )
                               ) {
+                                // inserting match players
                                 insertPlayersOfMatch(match.matchId, connection)
                                   .then(() => {
                                     loopCount++;
@@ -644,9 +644,6 @@ const fetchAndStore = async () => {
         console.log({
           playerImage: Array.from(insertedPlayerImage),
           teamsImage: Array.from(insertedTeamsImage),
-        });
-        console.log({
-          deleteMatch: Array.from(deleteMatch),
         });
         console.log({
           deleteMatch: Array.from(deleteMatch),
