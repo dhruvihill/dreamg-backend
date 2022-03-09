@@ -71,10 +71,15 @@ router.post("/setteam", verifyUser, async (req, res) => {
         correctInput = false;
       }
     });
-    if (players.length === 11 && correctInput) {
-      let data;
+    if (
+      players.length === 11 &&
+      correctInput &&
+      players.includes(captain) &&
+      players.includes(viceCaptain)
+    ) {
+      let message;
       if (userTeamId && !/[^0-9]/g.test(userTeamId) && userTeamId > 0) {
-        data = await fetchData("CALL set_team(?, ?, ?, ?, ?, ?,?)", [
+        [[{ message }]] = await fetchData("CALL set_team(?, ?, ?, ?, ?, ?,?)", [
           userTeamType,
           matchId,
           userId,
@@ -84,7 +89,7 @@ router.post("/setteam", verifyUser, async (req, res) => {
           [...players],
         ]);
       } else {
-        data = await fetchData("CALL set_team(?, ?, ?, ?, ?, ?,?)", [
+        [[{ message }]] = await fetchData("CALL set_team(?, ?, ?, ?, ?, ?,?)", [
           userTeamType,
           matchId,
           userId,
@@ -94,7 +99,8 @@ router.post("/setteam", verifyUser, async (req, res) => {
           [...players],
         ]);
       }
-      if (data[0][0].message === "success") {
+      console.log(message);
+      if (message === "success") {
         res.status(200).json({
           status: true,
           message: "success",
