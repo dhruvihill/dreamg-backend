@@ -66,9 +66,6 @@ const connectToDb = () => {
         initializeConnection();
       }, 1000);
     });
-    connectionForCron.on("release", () => {
-      console.log("db connection released");
-    });
   });
 };
 // intializing connection

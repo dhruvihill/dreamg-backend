@@ -989,7 +989,7 @@ router.post("/compare_teams", async (req, res) => {
         message: "success",
         data: {
           players: response,
-          matchDetails: responseData[0],
+          matchDetails: responseData[0] || [],
         },
       });
     } else {
