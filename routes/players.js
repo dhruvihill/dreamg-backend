@@ -53,8 +53,15 @@ router.post("/getplayers", async (req, res) => {
 
 // set team of matchId, userId, teamType
 router.post("/setteam", verifyUser, async (req, res) => {
-  const { userTeamType, matchId, players, captain, viceCaptain, userId } =
-    req.body;
+  const {
+    userTeamType,
+    matchId,
+    players,
+    captain,
+    viceCaptain,
+    userId,
+    userTeamId,
+  } = req.body;
 
   try {
     const regx = /[^0-9]/g;
@@ -65,14 +72,28 @@ router.post("/setteam", verifyUser, async (req, res) => {
       }
     });
     if (players.length === 11 && correctInput) {
-      const data = await fetchData("CALL set_team(?, ?, ?, ?, ?, ?)", [
-        userTeamType,
-        matchId,
-        userId,
-        captain,
-        viceCaptain,
-        [...players],
-      ]);
+      let data;
+      if (userTeamId && !/[^0-9]/g.test(userTeamId) && userTeamId > 0) {
+        data = await fetchData("CALL set_team(?, ?, ?, ?, ?, ?,?)", [
+          userTeamType,
+          matchId,
+          userId,
+          captain,
+          viceCaptain,
+          userTeamId,
+          [...players],
+        ]);
+      } else {
+        data = await fetchData("CALL set_team(?, ?, ?, ?, ?, ?,?)", [
+          userTeamType,
+          matchId,
+          userId,
+          captain,
+          viceCaptain,
+          0,
+          [...players],
+        ]);
+      }
       if (data[0][0].message === "success") {
         res.status(200).json({
           status: true,
