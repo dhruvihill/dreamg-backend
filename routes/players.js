@@ -5,11 +5,19 @@ const { fetchData, imageUrl } = require("../database/db_connection");
 
 // get players by match id
 router.post("/getplayers", async (req, res) => {
-  const { matchId } = req.body;
+  const { matchId, userTeamId } = req.body;
 
   try {
     if (!/[^0-9]/g.test(matchId)) {
-      const [data] = await fetchData("CALL get_players(?);", [matchId]);
+      let data;
+      if (userTeamId && !/[^0-9]/g.test(userTeamId) && userTeamId > 0) {
+        [data] = await fetchData("CALL get_players(?, ?);", [
+          matchId,
+          userTeamId,
+        ]);
+      } else {
+        [data] = await fetchData("CALL get_players(?, ?);", [matchId, 0]);
+      }
       const serverAddress = `${req.protocol}://${req.headers.host}`;
 
       data?.forEach((player) => {
