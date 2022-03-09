@@ -46,3 +46,27 @@ currentPlayed,
 get_predictions,
 get_discussion,
 get_user_teams_predictor
+
+// api endpoints
+/api/v1/auth/getuserprofile --> /api/v1/user/userProfile
+/api/v1/auth/updateuserprofile --> /api/v1/user/updateProfile
+
+/api/v1/getdashboarddata --> /api/v1/getDashboardData
+
+/api/v1/matches/get_matches --> /api/v1/matches/getMatches
+
+/api/v1/notification/get_notifications --> /api/v1/notification/getNotifications
+
+/api/v1/players/getplayers --> /api/v1/userTeams/getPlayers
+/api/v1/players/setteam --> /api/v1/userTeams/setTeam
+/api/v1/prediction/get_predictions --> /api/v1/userTeams/getPredictions
+/api/v1/prediction/getExpertPredictor --> /api/v1/userTeams/getExpertPredictor
+/api/v1/prediction/getTrendingPredictors --> /api/v1/userTeams/getTrendingPredictors
+/api/v1/prediction/get_user_teams --> /api/v1/userTeams/getUserTeamsByMatch
+/api/v1/prediction/get_user_teams_predictor --> /api/v1/userTeams/getUserTeamsAll
+/api/v1/prediction/get_user_teams_data --> /api/v1/userTeams/getUserTeamPlayers
+/api/v1/prediction/update_user_team_likes --> /api/v1/userTeams/updateUserTeamLikes
+/api/v1/prediction/update_user_team_views --> /api/v1/userTeams/updateUserTeamViews
+/api/v1/prediction/set_discussion --> /api/v1/userTeams/setDiscussion
+/api/v1/prediction/get_discussion --> /api/v1/userTeams/getDiscussion
+/api/v1/prediction/compare_teams --> /api/v1/userTeams/compareTeams

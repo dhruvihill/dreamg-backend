@@ -4,7 +4,7 @@ const router = express.Router();
 const { fetchData } = require("../database/db_connection");
 
 // get all unreaded notifications
-router.post("/get_notifications", verifyUser, async (req, res) => {
+router.post("/getNotifications", verifyUser, async (req, res) => {
   const { userId } = req.body;
 
   try {

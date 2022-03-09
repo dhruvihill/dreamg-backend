@@ -28,7 +28,7 @@ router.get("/", verifyUser, async (req, res) => {
 
     const serverAddress = `${req.protocol}://${req.headers.host}`;
     const { data } = await axios({
-      url: `${serverAddress}/api/v1/prediction/getTrendingPredictors`,
+      url: `${serverAddress}/api/v1/userTeams/getTrendingPredictors`,
     });
 
     // changing url to original server

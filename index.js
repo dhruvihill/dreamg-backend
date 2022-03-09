@@ -23,9 +23,9 @@ app.use("/public", express.static("public"));
 
 // Routes
 app.use("/api/v1/auth", require("./routes/auth"));
-app.use("/api/v1/getdashboarddata", require("./routes/dashboard"));
-app.use("/api/v1/players", require("./routes/players"));
-app.use("/api/v1/prediction", require("./routes/prediction"));
+app.use("/api/v1/user", require("./routes/user"));
+app.use("/api/v1/getDashboardData", require("./routes/dashboard"));
+app.use("/api/v1/userTeams", require("./routes/userTeams"));
 app.use("/api/v1/notification", require("./routes/notification"));
 app.use("/api/v1/matches", require("./routes/matches"));
 app.get("*", (req, res) => {

@@ -4,7 +4,7 @@ const verifyUser = require("../middleware/verifyUser");
 const { fetchData, imageUrl } = require("../database/db_connection");
 
 // get matches according to its status
-router.post("/get_matches", verifyUser, async (req, res) => {
+router.post("/getMatches", verifyUser, async (req, res) => {
   const { userId, matchType, pageNumber } = req.body;
 
   try {
@@ -108,6 +108,7 @@ router.post("/recentPlayed", async (req, res) => {
         data: {
           recentPlayed: recentPlayed,
           totalPages,
+          pageNumber,
         },
       });
     } else {
@@ -171,6 +172,7 @@ router.post("/currentPlayed", async (req, res) => {
         data: {
           currentPlayed: currentPlayed,
           totalPages,
+          pageNumber,
         },
       });
     } else {
