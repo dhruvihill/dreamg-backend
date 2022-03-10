@@ -3,6 +3,9 @@ const router = express.Router();
 const verifyUser = require("../middleware/verifyUser");
 const verifyProfile = require("../middleware/verifyProfile");
 const { fetchData, imageUrl } = require("../database/db_connection");
+const fs = require("fs/promises");
+const path = require("path");
+const upload = require("express-fileupload");
 
 // fetching user data
 router.post("/userProfile", verifyUser, async (req, res) => {
@@ -136,6 +139,35 @@ router.post("/updateProfile", verifyUser, verifyProfile, async (req, res) => {
     res.status(400).json({
       status: false,
       message: error.message,
+      data: {},
+    });
+  }
+});
+
+router.post("/uploadProfilePicture", upload(), verifyUser, async (req, res) => {
+  const { userId } = req.body;
+
+  try {
+    if (!req.files) {
+      throw { message: "no file found" };
+    }
+
+    await fs.writeFile(
+      path.join(__dirname, `../public/images/user/${userId}.jpg`),
+      req.files.profilePicture.data
+    );
+
+    res.status(200).json({
+      status: true,
+      message: "success",
+      data: {
+        profilePicture: `${req.protocol}://${req.headers.host}/public/images/user/${userId}.jpg`,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: "some error occured",
       data: {},
     });
   }

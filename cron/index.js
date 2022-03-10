@@ -3,7 +3,7 @@ const mysql = require("mysql");
 const path = require("path");
 const { writeFile } = require("fs/promises");
 require("dotenv/config");
-let connectionForCron;
+let connectionForCron = null;
 
 let allStatistics = {
   teamsStatistics: {
@@ -43,21 +43,36 @@ let allStatistics = {
 const connectToDb = () => {
   // connect to database
   return new Promise((resolve, reject) => {
-    connectionForCron.getConnection((err, connection) => {
-      try {
-        if (err) throw err;
-        else {
-          console.log("Connected Successfully for cron");
-          resolve(connection);
-        }
-      } catch (error) {
-        if (error.message.includes("ECONNREFUSED")) {
-          // some email stuff goes here
-        }
-        reject(error);
+    try {
+      if (connectionForCron) {
+        connectionForCron.getConnection((err, connection) => {
+          try {
+            if (err) throw err;
+            else {
+              console.log("Connected Successfully for cron");
+              resolve(connection);
+            }
+          } catch (error) {
+            if (error.message.includes("ECONNREFUSED")) {
+              // some email stuff goes here
+            }
+            reject(error);
+            initializeConnection();
+          }
+        });
+      } else {
         initializeConnection();
+        connectToDb()
+          .then((connection) => {
+            resolve(connection);
+          })
+          .catch((error) => {
+            console.log(error.message, "connectToDb");
+          });
       }
-    });
+    } catch (error) {
+      console.log(error, "connectToDb");
+    }
 
     // error handling to Database
     connectionForCron.on("error", (err) => {
@@ -88,6 +103,9 @@ const initializeConnection = () => {
 const database = (query, options, connection) => {
   return new Promise(async (resolve, reject) => {
     try {
+      if (!connection) {
+        console.log(connection.query);
+      }
       connection.query(query, options, (err, reponse) => {
         if (err) reject(err);
         else resolve(reponse);
@@ -135,12 +153,14 @@ const insertTeamsOfMatch = async (match, connection) => {
           },
           connection
         );
-        downloadImage(
-          match[`team${item}`].teamFlagURL,
-          path.join(__dirname, `../public/images/teamflag/${teamId}.jpg`),
-          teamId,
-          true
-        );
+        if (match[`team${item}`].teamFlagURL) {
+          downloadImage(
+            match[`team${item}`].teamFlagURL,
+            path.join(__dirname, `../public/images/teamflag/${teamId}.jpg`),
+            teamId,
+            true
+          );
+        }
         if (storeTeam && index === 1) {
           allStatistics.teamsStatistics.insertedIds.push(teamId);
           resolve();
@@ -257,7 +277,6 @@ const insertPlayersOfMatch = async (matchId, connection) => {
           insertSinglePlayer(player, matchId, connection)
             .then(() => {
               loopCount++;
-
               if (loopCount === players.length) {
                 resolve();
               }
@@ -289,27 +308,33 @@ const insertSinglePlayer = async (player, matchId, connection) => {
         },
         connection
       );
-      downloadImage(
-        player.imgURL,
-        path.join(
-          __dirname,
-          `../public/images/players/profilePicture/${player.id}.jpg`
-        ),
-        player.id
-      );
+      if (player?.imgURL) {
+        downloadImage(
+          player.imgURL,
+          path.join(
+            __dirname,
+            `../public/images/players/profilePicture/${player.id}.jpg`
+          ),
+          player.id
+        );
+      }
 
       if (singlePlayerInserted) {
         allStatistics.playersStatistics.insertedIds.push(player.id);
-        insertSingleMatchPlayerRelation(player, matchId).then(() => {
-          resolve();
-        });
+        insertSingleMatchPlayerRelation(player, matchId, connection).then(
+          () => {
+            resolve();
+          }
+        );
       }
     } catch (error) {
       if (error.sqlMessage && error.sqlMessage.includes("Duplicate entry")) {
         allStatistics.playersStatistics.duplicatedIds.push(player.id);
-        insertSingleMatchPlayerRelation(player, matchId).then(() => {
-          resolve();
-        });
+        insertSingleMatchPlayerRelation(player, matchId, connection).then(
+          () => {
+            resolve();
+          }
+        );
       } else {
         console.log(error.message, "single player error");
       }
@@ -409,17 +434,12 @@ const downloadImage = async (url, filePath, id, isTeam = false) => {
 const deleteMatch = async (matchId, connection) => {
   return new Promise(async (resolve) => {
     try {
-      const deleted = await database(
-        "DELETE FROM all_matches WHERE matchId = ?",
-        matchId,
+      const [deleted, deletedRelation] = await database(
+        "DELETE FROM all_matches WHERE matchId = ?;DELETE FROM match_player_relation WHERE matchId = ?;",
+        [matchId, matchId],
         connection
       );
-      const deleteRelation = await database(
-        "DELETE FROM match_player_relation WHERE matchId = ?",
-        matchId,
-        connection
-      );
-      if (deleted && deleteRelation) {
+      if (deleted && deletedRelation) {
         allStatistics.deleteMatchStatistics.push(matchId);
         resolve();
       }
@@ -491,6 +511,7 @@ const fetchAndStore = async () => {
                           // inserting matches
                           insertSingleMatch(match, connection)
                             .then((matchStatistics) => {
+                              // console.log(matchStatistics);
                               if (
                                 !(
                                   matchStatistics.duplicateIds.length > 0 &&
@@ -498,6 +519,7 @@ const fetchAndStore = async () => {
                                 )
                               ) {
                                 // inserting match players
+
                                 insertPlayersOfMatch(match.matchId, connection)
                                   .then(() => {
                                     loopCount++;

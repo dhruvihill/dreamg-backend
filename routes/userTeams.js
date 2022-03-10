@@ -52,7 +52,7 @@ router.post("/getPlayers", async (req, res) => {
 });
 
 // set team of matchId, userId, teamType
-router.post("/setteam", verifyUser, async (req, res) => {
+router.post("/setTeam", verifyUser, async (req, res) => {
   const {
     userTeamType,
     matchId,
@@ -78,7 +78,7 @@ router.post("/setteam", verifyUser, async (req, res) => {
       players.includes(viceCaptain)
     ) {
       let message;
-      if (userTeamId && !/[^0-9]/g.test(userTeamId) && userTeamId > 0) {
+      if (userTeamId && !regx.test(userTeamId) && userTeamId > 0) {
         [[{ message }]] = await fetchData("CALL set_team(?, ?, ?, ?, ?, ?,?)", [
           userTeamType,
           matchId,
@@ -99,7 +99,6 @@ router.post("/setteam", verifyUser, async (req, res) => {
           [...players],
         ]);
       }
-      console.log(message);
       if (message === "success") {
         res.status(200).json({
           status: true,
@@ -108,9 +107,11 @@ router.post("/setteam", verifyUser, async (req, res) => {
         });
       }
     } else {
+      console.log(error.sqlMessage);
       throw { message: "invalid input" };
     }
   } catch (error) {
+    console.log(error.sqlMessage);
     res.status(400).json({
       status: false,
       message: error.sqlMessage ? error.sqlMessage : error.message,
