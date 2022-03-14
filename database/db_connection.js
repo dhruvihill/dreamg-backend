@@ -13,7 +13,6 @@ const connectToDb = () => {
       try {
         if (err) throw err;
         else {
-          console.log("Connected Successfully normal");
           resolve(connection);
         }
       } catch (error) {
@@ -30,9 +29,6 @@ const connectToDb = () => {
       setTimeout(() => {
         initializeConnection();
       }, 1000);
-    });
-    connection.on("release", () => {
-      console.log("released");
     });
   });
 
