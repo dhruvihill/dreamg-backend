@@ -111,7 +111,7 @@ router.post("/setTeam", verifyUser, async (req, res) => {
       throw { message: "invalid input" };
     }
   } catch (error) {
-    console.log(error.sqlMessage);
+    console.log(error.sqlMessage, userId);
     res.status(400).json({
       status: false,
       message: error.sqlMessage ? error.sqlMessage : error.message,
