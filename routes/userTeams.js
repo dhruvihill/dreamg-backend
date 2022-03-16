@@ -206,6 +206,7 @@ router.post("/getExpertPredictor", async (req, res) => {
   const { matchId } = req.body;
 
   try {
+    const serverAddress = `${req.protocol}://${req.headers.host}`;
     const regx = /[^0-9]/g;
 
     if (!matchId || regx.test(matchId)) {
@@ -227,7 +228,6 @@ router.post("/getExpertPredictor", async (req, res) => {
           let userTeams = [];
           userTeamDetails.forEach(async (team, index) => {
             try {
-              const serverAddress = `${req.protocol}://${req.headers.host}`;
               // changing server url
               team.team1FlagURL = imageUrl(
                 __dirname,
@@ -270,6 +270,17 @@ router.post("/getExpertPredictor", async (req, res) => {
                   totalAllrounders: 0,
                   captain: {},
                   viceCaptain: {},
+                },
+                userDetails: {
+                  userId: team.userId,
+                  firstName: team.firstName,
+                  lastName: team.lastName,
+                  displayPicture: imageUrl(
+                    __dirname,
+                    "../",
+                    `/public/images/user/${team.userId}.jpg`,
+                    serverAddress
+                  ),
                 },
               };
 
@@ -427,7 +438,7 @@ router.post("/getUserTeamsByMatch", async (req, res) => {
             [matchId, createrId, 0]
           );
 
-          if (userDetails && userDetails.length > 0) {
+          if (userDetails) {
             // change server address
             userDetails.displayPicture = imageUrl(
               __dirname,
@@ -977,28 +988,41 @@ router.post("/setDiscussion", verifyUser, async (req, res) => {
   const { matchId, userId, message, createrId } = req.body;
   const serverAddress = `${req.protocol}://${req.headers.host}`;
   try {
-    const [[discussionObject]] = await fetchData(
-      "CALL set_discussion(?, ?, ?, ?)",
-      [matchId, userId, createrId, message]
-    );
-
-    if (discussionObject) {
-      discussionObject.displayPicture = imageUrl(
-        __dirname,
-        "../",
-        `/public/images/user/${discussionObject.messengerId}.jpg`,
-        serverAddress
+    const regx = /[^0-9]/g;
+    if (
+      matchId &&
+      userId &&
+      createrId &&
+      message !== "" &&
+      !regx.test(matchId) &&
+      !regx.test(userId) &&
+      !regx.test(createrId)
+    ) {
+      const [[discussionObject]] = await fetchData(
+        "CALL set_discussion(?, ?, ?, ?)",
+        [matchId, userId, createrId, message]
       );
-      discussionObject.messengerId = parseInt(discussionObject.messengerId);
-    }
 
-    res.status(200).json({
-      status: true,
-      message: "success",
-      data: {
-        messages: discussionObject || {},
-      },
-    });
+      if (discussionObject) {
+        discussionObject.displayPicture = imageUrl(
+          __dirname,
+          "../",
+          `/public/images/user/${discussionObject.messengerId}.jpg`,
+          serverAddress
+        );
+        discussionObject.messengerId = parseInt(discussionObject.messengerId);
+      }
+
+      res.status(200).json({
+        status: true,
+        message: "success",
+        data: {
+          messages: discussionObject || {},
+        },
+      });
+    } else {
+      throw { message: "invalid input" };
+    }
   } catch (error) {
     res.status(400).json({
       status: false,

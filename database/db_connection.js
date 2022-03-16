@@ -72,6 +72,7 @@ const fetchData = (query, options = []) =>
 const imageUrl = (dir, dirFileRelation, file, server) => {
   try {
     const newPath = path.join(dir, dirFileRelation, file);
+    console.log(newPath);
     if (fs.existsSync(newPath)) return server + file;
     return "";
   } catch {

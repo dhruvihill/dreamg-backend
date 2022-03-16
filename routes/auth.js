@@ -12,22 +12,32 @@ router.post("/register", async (req, res) => {
   const { number: phoneNumber } = req.body;
 
   try {
-    // registering user
-    const result = await fetchData("CALL register_user(?);", [phoneNumber]);
+    if (
+      (phoneNumber.length === 10 || phoneNumber.length === 11) &&
+      !/^[0-9]/g.test(phoneNumber)
+    ) {
+      // registering user
+      const result = await fetchData("CALL register_user(?);", [phoneNumber]);
 
-    // creating auth token
-    const jwtData = { user: { userId: result[0][0].userId } };
-    const token = await jwt.sign(jwtData, process.env.JWT_SECRET_KEY);
+      // creating auth token
+      const jwtData = { user: { userId: result[0][0].userId } };
+      const token = await jwt.sign(jwtData, process.env.JWT_SECRET_KEY);
 
-    // sending response
-    res.status(200).json({
-      status: true,
-      message: "success",
-      data: {
-        authToken: token,
-        userId: result[0][0].userId,
-      },
-    });
+      // sending response
+      res.status(200).json({
+        status: true,
+        message: "success",
+        data: {
+          authToken: token,
+          userId: result[0][0].userId,
+        },
+      });
+    } else {
+      res.status(400).json({
+        status: false,
+        message: "invalid input",
+      });
+    }
   } catch (error) {
     // sending response
     // if (error.sqlMessage) {
