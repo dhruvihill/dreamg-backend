@@ -221,141 +221,142 @@ router.post("/getExpertPredictor", async (req, res) => {
             [matchId, 0, 0]
           );
 
-          if (!(userTeamDetails && userTeamDetails.length > 0)) {
-            throw { message: "invalid input" };
-          }
-
           let userTeams = [];
-          userTeamDetails.forEach(async (team, index) => {
-            try {
-              // changing server url
-              team.team1FlagURL = imageUrl(
-                __dirname,
-                "../",
-                `/public/images/teamflag/${team.team1Id}.jpg`,
-                serverAddress
-              );
-              team.team2FlagURL = imageUrl(
-                __dirname,
-                "../",
-                `/public/images/teamflag/${team.team2Id}.jpg`,
-                serverAddress
-              );
-
-              // creating instance of user team
-              let userTeamInstance = {
-                teams: [
-                  {
-                    teamTotalPlayers: 0,
-                    teamId: team.team1Id,
-                    teamName: team.team1Name,
-                    teamDisplayName: team.team1DisplayName,
-                    teamFlagURL: team.team1FlagURL,
-                  },
-                  {
-                    teamTotalPlayers: 0,
-                    teamId: team.team2Id,
-                    teamName: team.team2Name,
-                    teamDisplayName: team.team2DisplayName,
-                    teamFlagURL: team.team2FlagURL,
-                  },
-                ],
-                teamsDetails: {
-                  userTeamId: team.userTeamId,
-                  creditUsed: 0,
-                  teamType: team.teamTypeString,
-                  totalBatsman: 0,
-                  totalBowlers: 0,
-                  totalWicketKeeper: 0,
-                  totalAllrounders: 0,
-                  captain: {},
-                  viceCaptain: {},
-                },
-                userDetails: {
-                  userId: team.userId,
-                  firstName: team.firstName,
-                  lastName: team.lastName,
-                  displayPicture: imageUrl(
-                    __dirname,
-                    "../",
-                    `/public/images/user/${team.userId}.jpg`,
-                    serverAddress
-                  ),
-                },
-              };
-
-              // feching all players
-              const [players] = await fetchData(
-                "CALL get_userteam_details(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
-                [
-                  team.matchId,
-                  team.player1,
-                  team.player2,
-                  team.player3,
-                  team.player4,
-                  team.player5,
-                  team.player6,
-                  team.player7,
-                  team.player8,
-                  team.player9,
-                  team.player10,
-                  team.player11,
-                ]
-              );
-
-              // loop through all players
-              players.forEach((player) => {
-                player.URL = imageUrl(
+          if (userTeamDetails) {
+            let counter = 0;
+            userTeamDetails.forEach(async (team) => {
+              try {
+                // changing server url
+                team.team1FlagURL = imageUrl(
                   __dirname,
                   "../",
-                  `/public/images/players/profilePicture/${player.playerId}.jpg`,
+                  `/public/images/teamflag/${team.team1Id}.jpg`,
+                  serverAddress
+                );
+                team.team2FlagURL = imageUrl(
+                  __dirname,
+                  "../",
+                  `/public/images/teamflag/${team.team2Id}.jpg`,
                   serverAddress
                 );
 
-                // incrementing total players
-                if (player.teamId === userTeamInstance.teams[0].teamId)
-                  userTeamInstance.teams[0].teamTotalPlayers++;
-                else if (player.teamId === userTeamInstance.teams[1].teamId)
-                  userTeamInstance.teams[1].teamTotalPlayers++;
+                // creating instance of user team
+                let userTeamInstance = {
+                  teams: [
+                    {
+                      teamTotalPlayers: 0,
+                      teamId: team.team1Id,
+                      teamName: team.team1Name,
+                      teamDisplayName: team.team1DisplayName,
+                      teamFlagURL: team.team1FlagURL,
+                    },
+                    {
+                      teamTotalPlayers: 0,
+                      teamId: team.team2Id,
+                      teamName: team.team2Name,
+                      teamDisplayName: team.team2DisplayName,
+                      teamFlagURL: team.team2FlagURL,
+                    },
+                  ],
+                  teamsDetails: {
+                    userTeamId: team.userTeamId,
+                    creditUsed: 0,
+                    teamType: team.teamTypeString,
+                    totalBatsman: 0,
+                    totalBowlers: 0,
+                    totalWicketKeeper: 0,
+                    totalAllrounders: 0,
+                    captain: {},
+                    viceCaptain: {},
+                  },
+                  userDetails: {
+                    userId: team.userId,
+                    firstName: team.firstName,
+                    lastName: team.lastName,
+                    displayPicture: imageUrl(
+                      __dirname,
+                      "../",
+                      `/public/images/user/${team.userId}.jpg`,
+                      serverAddress
+                    ),
+                  },
+                };
 
-                // incrementing players roles
-                if (player.roleId === 1) {
-                  userTeamInstance.teamsDetails.totalBatsman++;
-                } else if (player.roleId === 2) {
-                  userTeamInstance.teamsDetails.totalBowlers++;
-                } else if (player.roleId === 3) {
-                  userTeamInstance.teamsDetails.totalWicketKeeper++;
-                } else if (player.roleId === 4) {
-                  userTeamInstance.teamsDetails.totalAllrounders++;
+                // feching all players
+                const [players] = await fetchData(
+                  "CALL get_userteam_details(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                  [
+                    team.matchId,
+                    team.player1,
+                    team.player2,
+                    team.player3,
+                    team.player4,
+                    team.player5,
+                    team.player6,
+                    team.player7,
+                    team.player8,
+                    team.player9,
+                    team.player10,
+                    team.player11,
+                  ]
+                );
+
+                // loop through all players
+                players.forEach((player) => {
+                  player.URL = imageUrl(
+                    __dirname,
+                    "../",
+                    `/public/images/players/profilePicture/${player.playerId}.jpg`,
+                    serverAddress
+                  );
+
+                  // incrementing total players
+                  if (player.teamId === userTeamInstance.teams[0].teamId)
+                    userTeamInstance.teams[0].teamTotalPlayers++;
+                  else if (player.teamId === userTeamInstance.teams[1].teamId)
+                    userTeamInstance.teams[1].teamTotalPlayers++;
+
+                  // incrementing players roles
+                  if (player.roleId === 1) {
+                    userTeamInstance.teamsDetails.totalBatsman++;
+                  } else if (player.roleId === 2) {
+                    userTeamInstance.teamsDetails.totalBowlers++;
+                  } else if (player.roleId === 3) {
+                    userTeamInstance.teamsDetails.totalWicketKeeper++;
+                  } else if (player.roleId === 4) {
+                    userTeamInstance.teamsDetails.totalAllrounders++;
+                  }
+
+                  // total credits used
+                  userTeamInstance.teamsDetails.creditUsed += player.credits;
+                });
+
+                // stroing captain and vice captain
+                [userTeamInstance.teamsDetails.captain] = players.filter(
+                  (player) => {
+                    return player.playerId === team.captain;
+                  }
+                );
+                [userTeamInstance.teamsDetails.viceCaptain] = players.filter(
+                  (player) => {
+                    return player.playerId === team.viceCaptain;
+                  }
+                );
+
+                // pushing teams into user teams
+                userTeams.push(userTeamInstance);
+                counter++;
+                // resolving promise
+                if (counter === userTeamDetails.length) {
+                  resolve([userTeams]);
                 }
-
-                // total credits used
-                userTeamInstance.teamsDetails.creditUsed += player.credits;
-              });
-
-              // stroing captain and vice captain
-              [userTeamInstance.teamsDetails.captain] = players.filter(
-                (player) => {
-                  return player.playerId === team.captain;
-                }
-              );
-              [userTeamInstance.teamsDetails.viceCaptain] = players.filter(
-                (player) => {
-                  return player.playerId === team.viceCaptain;
-                }
-              );
-
-              // pushing teams into user teams
-              userTeams.push(userTeamInstance);
-
-              // resolving promise
-              if (index + 1 === userTeamDetails.length) {
-                resolve([userTeams]);
+              } catch (error) {
+                reject(error);
               }
-            } catch (error) {
-              reject(error);
-            }
-          });
+            });
+          } else {
+            resolve([userTeams]);
+          }
         } catch (error) {
           reject(error);
         }
@@ -449,8 +450,9 @@ router.post("/getUserTeamsByMatch", async (req, res) => {
           }
 
           let userTeams = [];
-          if (userTeamDetails && userTeamDetails.length > 0) {
-            userTeamDetails?.forEach(async (team, index) => {
+          let counter = 0;
+          if (userTeamDetails) {
+            userTeamDetails?.forEach(async (team) => {
               try {
                 // changing server url
                 team.team1FlagURL = imageUrl(
@@ -561,9 +563,10 @@ router.post("/getUserTeamsByMatch", async (req, res) => {
 
                 // pushing teams into user teams
                 userTeams.push(userTeamInstance);
+                counter++;
 
                 // resolving promise
-                if (index + 1 === userTeamDetails.length) {
+                if (counter === userTeamDetails.length) {
                   resolve([userTeams, userDetails]);
                 }
               } catch (error) {
@@ -638,8 +641,9 @@ router.post("/getUserTeamsAll", async (req, res) => {
             );
           }
           let userTeams = [];
-          if (userTeamDetails && userTeamDetails.length > 0) {
-            userTeamDetails.forEach(async (team, index) => {
+          if (userTeamDetails) {
+            let counter = 0;
+            userTeamDetails.forEach(async (team) => {
               try {
                 // changing server url
                 team.team1FlagURL = imageUrl(
@@ -751,8 +755,10 @@ router.post("/getUserTeamsAll", async (req, res) => {
                 // pushing teams into user teams
                 userTeams.push(userTeamInstance);
 
+                counter++;
+
                 // resolving promise
-                if (index + 1 === userTeamDetails.length) {
+                if (counter === userTeamDetails.length) {
                   resolve([userTeams, userDetails, totalPages]);
                 }
               } catch (error) {
@@ -831,7 +837,8 @@ router.post("/getUserTeamPlayers", verifyUser, async (req, res) => {
 
       // function to fetch all the users
       if (playersIds && playersIds.length > 0) {
-        playersIds.forEach(async (team, index) => {
+        let counter = 0;
+        playersIds.forEach(async (team) => {
           // creating data structure for team
           let singleTeam = {
             players: [],
@@ -883,7 +890,8 @@ router.post("/getUserTeamPlayers", verifyUser, async (req, res) => {
 
               if (i === 11) {
                 newAllTeams.push(singleTeam);
-                if (playersIds.length === index + 1) {
+                counter++;
+                if (playersIds.length === counter) {
                   res.status(200).json({
                     status: true,
                     message: "success",
