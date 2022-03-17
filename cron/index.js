@@ -295,7 +295,7 @@ const insertPlayersOfMatch = async (matchId, connection) => {
 };
 
 const insertSinglePlayer = async (player, matchId, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const singlePlayerInserted = await database(
         "INSERT INTO players SET ?",
@@ -337,6 +337,7 @@ const insertSinglePlayer = async (player, matchId, connection) => {
         );
       } else {
         console.log(error.message, "single player error");
+        reject(error);
       }
     }
   });
@@ -361,7 +362,8 @@ const insertSingleMatchPlayerRelation = async (player, matchId, connection) => {
         await insertPlayerStatistics(
           player.lastNMatchStatistics,
           insertedRelation.insertId,
-          player.id
+          player.id,
+          connection
         );
         resolve();
       }
@@ -494,75 +496,65 @@ const fetchAndStore = async () => {
     const storeData = (connection) => {
       return new Promise(async (resolve) => {
         try {
-          const totalMatchObjects =
-            matches["1"].length + matches["2"].length + matches["3"].length;
-
           let loopCount = 0;
-          [1, 2, 3].forEach((type) => {
+          const allMatches = [...matches[1], ...matches[2], ...matches[3]];
+          const totalMatchObjects = allMatches.length;
+          allMatches.forEach(async (match) => {
             try {
-              matches[type].forEach(async (match) => {
-                try {
-                  // inserting match teams
-                  insertTeamsOfMatch(match, connection)
+              // inserting match teams
+              insertTeamsOfMatch(match, connection)
+                .then(() => {
+                  // inserting series
+                  insertSingleSeries(match, connection)
                     .then(() => {
-                      // inserting series
-                      insertSingleSeries(match, connection)
-                        .then(() => {
-                          // inserting matches
-                          insertSingleMatch(match, connection)
-                            .then((matchStatistics) => {
-                              // console.log(matchStatistics);
-                              if (
-                                !(
-                                  matchStatistics.duplicateIds.length > 0 &&
-                                  matchStatistics.insertedIds.length === 0
-                                )
-                              ) {
-                                // inserting match players
+                      // inserting matches
+                      insertSingleMatch(match, connection)
+                        .then((matchStatistics) => {
+                          // console.log(matchStatistics);
+                          // if (
+                          //   !(
+                          //     matchStatistics.duplicateIds.length > 0 &&
+                          //     matchStatistics.insertedIds.length === 0
+                          //   )
+                          // ) {
+                          // inserting match players
 
-                                insertPlayersOfMatch(match.matchId, connection)
-                                  .then(() => {
-                                    loopCount++;
-                                    if (loopCount === totalMatchObjects) {
-                                      resolve();
-                                    }
-                                  })
-                                  .catch((error) => {
-                                    console.log(
-                                      error.message,
-                                      "calling insertPlayersOfMatch"
-                                    );
-                                  });
-                              } else {
-                                loopCount++;
-                                if (loopCount === totalMatchObjects) {
-                                  resolve();
-                                }
+                          insertPlayersOfMatch(match.matchId, connection)
+                            .then(() => {
+                              loopCount++;
+                              if (loopCount === totalMatchObjects) {
+                                resolve();
                               }
                             })
                             .catch((error) => {
                               console.log(
                                 error.message,
-                                "calling insertSingleMatch"
+                                "calling insertPlayersOfMatch"
                               );
                             });
+                          // } else {
+                          //   loopCount++;
+                          //   if (loopCount === totalMatchObjects) {
+                          //     resolve();
+                          //   }
+                          // }
                         })
                         .catch((error) => {
                           console.log(
                             error.message,
-                            "calling insertSingleSeries"
+                            "calling insertSingleMatch"
                           );
                         });
                     })
                     .catch((error) => {
-                      console.log(error.message, "calling insertTeamsOfMatch");
+                      console.log(error.message, "calling insertSingleSeries");
                     });
-                } catch (error) {
-                  console.log(error.message, "calling loop");
-                }
-              });
+                })
+                .catch((error) => {
+                  console.log(error.message, "calling insertTeamsOfMatch");
+                });
             } catch (error) {
-              console.log(error.message, "calling loop2");
+              console.log(error.message, "calling loop");
             }
           });
         } catch (error) {
