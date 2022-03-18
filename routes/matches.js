@@ -29,13 +29,13 @@ router.post("/getMatches", verifyUser, async (req, res) => {
         match.team1FlagURL = imageUrl(
           __dirname,
           "../",
-          `/public/images/teamflag/${match.team1Id}.jpg`,
+          `${process.env.TEAM_IMAGE_URL}${match.team1Id}.jpg`,
           serverAddress
         );
         match.team2FlagURL = imageUrl(
           __dirname,
           "../",
-          `/public/images/teamflag/${match.team2Id}.jpg`,
+          `${process.env.TEAM_IMAGE_URL}${match.team2Id}.jpg`,
           serverAddress
         );
       });
@@ -91,13 +91,13 @@ router.post("/recentPlayed", async (req, res) => {
         match.team1FlagURL = imageUrl(
           __dirname,
           "../",
-          `/public/images/teamflag/${match.team1Id}.jpg`,
+          `${process.env.TEAM_IMAGE_URL}${match.team1Id}.jpg`,
           serverAddress
         );
         match.team2FlagURL = imageUrl(
           __dirname,
           "../",
-          `/public/images/teamflag/${match.team2Id}.jpg`,
+          `${process.env.TEAM_IMAGE_URL}${match.team2Id}.jpg`,
           serverAddress
         );
       });
@@ -153,13 +153,13 @@ router.post("/currentPlayed", async (req, res) => {
         match.team1FlagURL = imageUrl(
           __dirname,
           "../",
-          `/public/images/teamflag/${match.team1Id}.jpg`,
+          `${process.env.TEAM_IMAGE_URL}${match.team1Id}.jpg`,
           serverAddress
         );
         match.team2FlagURL = imageUrl(
           __dirname,
           "../",
-          `/public/images/teamflag/${match.team2Id}.jpg`,
+          `${process.env.TEAM_IMAGE_URL}${match.team2Id}.jpg`,
           serverAddress
         );
       });

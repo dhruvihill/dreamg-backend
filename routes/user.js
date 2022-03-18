@@ -12,7 +12,7 @@ router.post("/userProfile", verifyUser, async (req, res) => {
   const { predictorId } = req.body;
 
   try {
-    const pointsQuery = `SELECT userId, firstName, lastName, phoneNumber, email, dateOfBirth, gender, address, city, pinCode, state, country,
+    const pointsQuery = `SELECT userId, firstName, imageStamp, lastName, phoneNumber, email, dateOfBirth, gender, address, city, pinCode, state, country,
       (SELECT COUNT(DISTINCT matchId) FROM fullteamdetails WHERE userId = ?) AS totalMatches,
       (SELECT COUNT(DISTINCT userTeamId) FROM fullteamdetails WHERE userId = ?) AS totalTeams,
       COALESCE((SELECT SUM(userTeamPoints) AS totalPoints FROM fullteamdetails WHERE userId = ? GROUP BY userTeamType HAVING userTeamType = 1), 0) AS mega_contest_totalPoints,
@@ -36,22 +36,23 @@ router.post("/userProfile", verifyUser, async (req, res) => {
         points[0].displayPicture = imageUrl(
           __dirname,
           "../",
-          `/public/images/user/${predictorId}.jpg`,
+          `${process.env.USER_IMAGE_URL}${points[0].imageStamp}.jpg`,
           serverAddress
         );
+        delete points[0].imageStamp;
 
         // adding teamFlag image url to matches
         recentPlayed.forEach(async (macth) => {
           macth.team1FlagURL = imageUrl(
             __dirname,
             "../",
-            `/public/images/teamflag/${macth.team1Id}.jpg`,
+            `${process.env.TEAM_IMAGE_URL}${macth.team1Id}.jpg`,
             serverAddress
           );
           macth.team2FlagURL = imageUrl(
             __dirname,
             "../",
-            `/public/images/teamflag/${macth.team2Id}.jpg`,
+            `${process.env.TEAM_IMAGE_URL}${macth.team2Id}.jpg`,
             serverAddress
           );
         });
@@ -59,13 +60,13 @@ router.post("/userProfile", verifyUser, async (req, res) => {
           macth.team1FlagURL = imageUrl(
             __dirname,
             "../",
-            `/public/images/teamflag/${macth.team1Id}.jpg`,
+            `${process.env.TEAM_IMAGE_URL}${macth.team1Id}.jpg`,
             serverAddress
           );
           macth.team2FlagURL = imageUrl(
             __dirname,
             "../",
-            `/public/images/teamflag/${macth.team2Id}.jpg`,
+            `${process.env.TEAM_IMAGE_URL}${macth.team2Id}.jpg`,
             serverAddress
           );
         });
@@ -152,18 +153,50 @@ router.post("/uploadProfilePicture", upload(), verifyUser, async (req, res) => {
       throw { message: "no file found" };
     }
 
-    await fs.writeFile(
-      path.join(__dirname, `../public/images/user/${userId}.jpg`),
-      req.files.profilePicture.data
-    );
+    const user = {
+      userId,
+      time: new Date().getTime(),
+    };
+    const newImageStamp = btoa(JSON.stringify(user));
 
-    res.status(200).json({
-      status: true,
-      message: "success",
-      data: {
-        profilePicture: `${req.protocol}://${req.headers.host}/public/images/user/${userId}.jpg`,
-      },
-    });
+    const [[{ imageStamp }], imageStampSet] = await fetchData(
+      "SELECT imageStamp FROM userdetails WHERE userdetails.userId = ?;UPDATE all_users SET imageStamp = ? WHERE all_users.userId = ?;",
+      [userId, newImageStamp, userId]
+    );
+    if (imageStamp) {
+      fs.rename(
+        path.join(
+          __dirname,
+          "../",
+          process.env.USER_IMAGE_URL + imageStamp + ".jpg"
+        ),
+        path.join(
+          __dirname,
+          "../",
+          process.env.OLD_USER_IMAGE_URL + imageStamp + ".jpg"
+        )
+      );
+    }
+
+    if (imageStampSet.affectedRows > 0) {
+      await fs.writeFile(
+        path.join(
+          __dirname,
+          `..${process.env.USER_IMAGE_URL}${newImageStamp}.jpg`
+        ),
+        req.files.profilePicture.data
+      );
+
+      res.status(200).json({
+        status: true,
+        message: "success",
+        data: {
+          profilePicture: `${req.protocol}://${req.headers.host}${process.env.USER_IMAGE_URL}${newImageStamp}.jpg`,
+        },
+      });
+    } else {
+      throw { message: "some error occured" };
+    }
   } catch (error) {
     res.status(400).json({
       status: false,

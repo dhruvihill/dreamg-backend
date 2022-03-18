@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const verifyUser = require("../middleware/verifyUser");
 const { fetchData, imageUrl } = require("../database/db_connection");
+const path = require("path");
 
 // get players by match id
 router.post("/getPlayers", async (req, res) => {
@@ -28,7 +29,7 @@ router.post("/getPlayers", async (req, res) => {
         player.URL = imageUrl(
           __dirname,
           "../",
-          `/public/images/players/profilePicture/${player.playerId}.jpg`,
+          `${process.env.PLAYER_IMAGE_URL}${player.playerId}.jpg`,
           serverAddress
         );
       });
@@ -142,17 +143,17 @@ router.post("/getPredictions", async (req, res) => {
         filter === "MOST_VIEWED"
           ? "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamViews) AS totalViews, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalViews DESC LIMIT ?, 20;"
           : filter === "MOST_LIKED"
-          ? "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamLikes) AS totalLikes, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalLikes DESC LIMIT ?, 20;"
-          : "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamPoints) AS totalPoints, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT ?, 20;";
+          ? "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamLikes) AS totalLikes, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalLikes DESC LIMIT ?, 20;"
+          : "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamPoints) AS totalPoints, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT ?, 20;";
     } else {
       totalPredictorsQuery =
         "SELECT COUNT(*) AS totalPredictors FROM fullteamdetails;";
       query =
         filter === "MOST_VIEWED"
-          ? "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamViews) AS totalViews, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId GROUP BY userdetails.userId ORDER BY totalViews DESC LIMIT ?, 20;"
+          ? "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamViews) AS totalViews, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId GROUP BY userdetails.userId ORDER BY totalViews DESC LIMIT ?, 20;"
           : filter === "MOST_LIKED"
-          ? "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamLikes) AS totalLikes, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId GROUP BY userdetails.userId ORDER BY totalLikes DESC LIMIT ?, 20;"
-          : "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamPoints) AS totalPoints, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT ?, 20;";
+          ? "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamLikes) AS totalLikes, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId GROUP BY userdetails.userId ORDER BY totalLikes DESC LIMIT ?, 20;"
+          : "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamPoints) AS totalPoints, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT ?, 20;";
     }
     if (
       validMatchId &&
@@ -178,9 +179,10 @@ router.post("/getPredictions", async (req, res) => {
         element.displayPicture = imageUrl(
           __dirname,
           "../",
-          `/public/images/user/${element.userId}.jpg`,
+          `${process.env.USER_IMAGE_URL}${element.imageStamp}.jpg`,
           serverAddress
         );
+        delete element.imageStamp;
       });
 
       const totalPages = Math.ceil(totalPredictors / 20);
@@ -222,7 +224,7 @@ router.post("/getExpertPredictor", async (req, res) => {
           );
 
           let userTeams = [];
-          if (userTeamDetails) {
+          if (userTeamDetails && userTeamDetails.length) {
             let counter = 0;
             userTeamDetails.forEach(async (team) => {
               try {
@@ -230,13 +232,13 @@ router.post("/getExpertPredictor", async (req, res) => {
                 team.team1FlagURL = imageUrl(
                   __dirname,
                   "../",
-                  `/public/images/teamflag/${team.team1Id}.jpg`,
+                  `${process.env.TEAM_IMAGE_URL}${team.team1Id}.jpg`,
                   serverAddress
                 );
                 team.team2FlagURL = imageUrl(
                   __dirname,
                   "../",
-                  `/public/images/teamflag/${team.team2Id}.jpg`,
+                  `${process.env.TEAM_IMAGE_URL}${team.team2Id}.jpg`,
                   serverAddress
                 );
 
@@ -276,7 +278,7 @@ router.post("/getExpertPredictor", async (req, res) => {
                     displayPicture: imageUrl(
                       __dirname,
                       "../",
-                      `/public/images/user/${team.userId}.jpg`,
+                      `${process.env.USER_IMAGE_URL}${team.imageStamp}.jpg`,
                       serverAddress
                     ),
                   },
@@ -306,7 +308,7 @@ router.post("/getExpertPredictor", async (req, res) => {
                   player.URL = imageUrl(
                     __dirname,
                     "../",
-                    `/public/images/players/profilePicture/${player.playerId}.jpg`,
+                    `${process.env.PLAYER_IMAGE_URL}${player.playerId}.jpg`,
                     serverAddress
                   );
 
@@ -386,7 +388,7 @@ router.get("/getTrendingPredictors", async (req, res) => {
   const recentMatchesQuery =
     "SELECT DISTINCT fullmatchdetails.matchId FROM fullmatchdetails JOIN fullteamdetails ON fullteamdetails.matchId = fullmatchdetails.matchId WHERE (fullmatchdetails.matchStartTimeMilliSeconds < unix_timestamp(now()) * 1000 AND fullmatchdetails.matchStatus != 3) ORDER BY matchStartTimeMilliSeconds DESC LIMIT 5";
   const topPredictorsQuery =
-    "SELECT userdetails.userId, firstName, lastName, SUM(fullteamdetails.userTeamPoints) AS totalPoints FROM fullteamdetails JOIN userdetails ON userdetails.userId = fullteamdetails.userId WHERE matchId IN (30100, 30096,30030) GROUP BY fullteamdetails.userId ORDER BY totalPoints DESC LIMIT 10";
+    "SELECT userdetails.userId, userdetails.imageStamp, firstName, lastName, SUM(fullteamdetails.userTeamPoints) AS totalPoints FROM fullteamdetails JOIN userdetails ON userdetails.userId = fullteamdetails.userId WHERE matchId IN (30100, 30096,30030) GROUP BY fullteamdetails.userId ORDER BY totalPoints DESC LIMIT 10";
 
   try {
     const serverAddress = `${req.protocol}://${req.headers.host}`;
@@ -399,9 +401,10 @@ router.get("/getTrendingPredictors", async (req, res) => {
       trending.displayPicture = imageUrl(
         __dirname,
         "../",
-        `/public/images/user/${trending.userId}.jpg`,
+        `${process.env.USER_IMAGE_URL}${trending.imageStamp}.jpg`,
         serverAddress
       );
+      delete trending.imageStamp;
     });
     res.status(200).json({
       status: true,
@@ -444,27 +447,28 @@ router.post("/getUserTeamsByMatch", async (req, res) => {
             userDetails.displayPicture = imageUrl(
               __dirname,
               "../",
-              `/public/images/user/${userDetails.userId}.jpg`,
+              `${process.env.USER_IMAGE_URL}${userDetails.imageStamp}.jpg`,
               serverAddress
             );
+            delete userDetails.imageStamp;
           }
 
           let userTeams = [];
           let counter = 0;
-          if (userTeamDetails) {
+          if (userTeamDetails && userTeamDetails.length) {
             userTeamDetails?.forEach(async (team) => {
               try {
                 // changing server url
                 team.team1FlagURL = imageUrl(
                   __dirname,
                   "../",
-                  `/public/images/teamflag/${team.team1Id}.jpg`,
+                  `${process.env.TEAM_IMAGE_URL}${team.team1Id}.jpg`,
                   serverAddress
                 );
                 team.team2FlagURL = imageUrl(
                   __dirname,
                   "../",
-                  `/public/images/teamflag/${team.team2Id}.jpg`,
+                  `${process.env.TEAM_IMAGE_URL}${team.team2Id}.jpg`,
                   serverAddress
                 );
 
@@ -524,7 +528,7 @@ router.post("/getUserTeamsByMatch", async (req, res) => {
                   player.URL = imageUrl(
                     __dirname,
                     "../",
-                    `/public/images/players/profilePicture/${player.playerId}.jpg`,
+                    `${process.env.PLAYER_IMAGE_URL}${player.playerId}.jpg`,
                     serverAddress
                   );
 
@@ -589,7 +593,7 @@ router.post("/getUserTeamsByMatch", async (req, res) => {
       message: "success",
       data: {
         userTeams,
-        userDetails,
+        userDetails: userDetails || [],
       },
     });
   } catch (error) {
@@ -631,12 +635,12 @@ router.post("/getUserTeamsAll", async (req, res) => {
 
           const totalPages = Math.ceil(totalUserTeams / 20);
 
-          if (userDetails && userTeamDetails.length > 0) {
+          if (userDetails && userTeamDetails.length) {
             // change server address
             userDetails.displayPicture = imageUrl(
               __dirname,
               "../",
-              `/public/images/user/${userDetails.userId}.jpg`,
+              `${process.env.USER_IMAGE_URL}${userDetails.imageStamp}.jpg`,
               serverAddress
             );
           }
@@ -649,13 +653,13 @@ router.post("/getUserTeamsAll", async (req, res) => {
                 team.team1FlagURL = imageUrl(
                   __dirname,
                   "../",
-                  `/public/images/teamflag/${team.team1Id}.jpg`,
+                  `${process.env.TEAM_IMAGE_URL}${team.team1Id}.jpg`,
                   serverAddress
                 );
                 team.team2FlagURL = imageUrl(
                   __dirname,
                   "../",
-                  `/public/images/teamflag/${team.team2Id}.jpg`,
+                  `${process.env.TEAM_IMAGE_URL}${team.team2Id}.jpg`,
                   serverAddress
                 );
 
@@ -715,7 +719,7 @@ router.post("/getUserTeamsAll", async (req, res) => {
                   player.URL = imageUrl(
                     __dirname,
                     "../",
-                    `/public/images/players/profilePicture/${player.playerId}.jpg`,
+                    `${process.env.PLAYER_IMAGE_URL}${player.playerId}.jpg`,
                     serverAddress
                   );
 
@@ -821,13 +825,13 @@ router.post("/getUserTeamPlayers", verifyUser, async (req, res) => {
         teamData[0].team1FlagURL = imageUrl(
           __dirname,
           "../",
-          `/public/images/teamflag/${teamData[0].team1Id}.jpg`,
+          `${process.env.TEAM_IMAGE_URL}${teamData[0].team1Id}.jpg`,
           serverAddress
         );
         teamData[0].team2FlagURL = imageUrl(
           __dirname,
           "../",
-          `/public/images/teamflag/${teamData[0].team2Id}.jpg`,
+          `${process.env.TEAM_IMAGE_URL}${teamData[0].team2Id}.jpg`,
           serverAddress
         );
       }
@@ -876,7 +880,7 @@ router.post("/getUserTeamPlayers", verifyUser, async (req, res) => {
               player[0].URL = imageUrl(
                 __dirname,
                 "../",
-                `/public/images/players/profilePicture/${player[0].playerId}.jpg`,
+                `${process.env.PLAYER_IMAGE_URL}${player[0].playerId}.jpg`,
                 serverAddress
               );
 
@@ -1015,9 +1019,10 @@ router.post("/setDiscussion", verifyUser, async (req, res) => {
         discussionObject.displayPicture = imageUrl(
           __dirname,
           "../",
-          `/public/images/user/${discussionObject.messengerId}.jpg`,
+          `${process.env.USER_IMAGE_URL}${discussionObject.imageStamp}.jpg`,
           serverAddress
         );
+        delete discussionObject.imageStamp;
         discussionObject.messengerId = parseInt(discussionObject.messengerId);
       }
 
@@ -1054,7 +1059,7 @@ router.post("/getDiscussion", async (req, res) => {
     ) {
       const serverAddress = `${req.protocol}://${req.headers.host}`;
       const [response, [{ totalMessages }]] = await fetchData(
-        "SELECT messengerId, firstName, message, messageTime FROM `fulldiscussion` JOIN userdetails ON userdetails.userId = fulldiscussion.messengerId WHERE matchId = ? AND fulldiscussion.userId = ? ORDER BY messageTime DESC LIMIT ?, 50;SELECT COUNT (*) AS totalMessages FROM fulldiscussion WHERE matchId = ? AND fulldiscussion.userId = ?",
+        "SELECT messengerId, imageStamp, firstName, message, messageTime FROM `fulldiscussion` JOIN userdetails ON userdetails.userId = fulldiscussion.messengerId WHERE matchId = ? AND fulldiscussion.userId = ? ORDER BY messageTime DESC LIMIT ?, 50;SELECT COUNT (*) AS totalMessages FROM fulldiscussion WHERE matchId = ? AND fulldiscussion.userId = ?",
         [matchId, createrId, (pageNumber - 1) * 50, matchId, createrId]
       );
 
@@ -1064,9 +1069,10 @@ router.post("/getDiscussion", async (req, res) => {
         message.displayPicture = imageUrl(
           __dirname,
           "../",
-          `/public/images/user/${message.messengerId}.jpg`,
+          `${process.env.USER_IMAGE_URL}${message.imageStamp}.jpg`,
           serverAddress
         );
+        delete message.imageStamp;
       });
 
       res.status(200).json({
@@ -1109,13 +1115,13 @@ router.post("/compareTeams", async (req, res) => {
         element.URL = imageUrl(
           __dirname,
           "../",
-          `/public/images/players/profilePicture/${element.playerId}.jpg`,
+          `${process.env.PLAYER_IMAGE_URL}${element.playerId}.jpg`,
           serverAddress
         );
         element.flagURL = imageUrl(
           __dirname,
           "../",
-          `/public/images/teamflag/${element.teamId}.jpg`,
+          `${process.env.TEAM_IMAGE_URL}${element.teamId}.jpg`,
           serverAddress
         );
       });
@@ -1123,13 +1129,13 @@ router.post("/compareTeams", async (req, res) => {
         responseData[0].team1FlagURL = imageUrl(
           __dirname,
           "../",
-          `/public/images/teamflag/${responseData[0].team1Id}.jpg`,
+          `${process.env.TEAM_IMAGE_URL}${responseData[0].team1Id}.jpg`,
           serverAddress
         );
         responseData[0].team2FlagURL = imageUrl(
           __dirname,
           "../",
-          `/public/images/teamflag/${responseData[0].team2Id}.jpg`,
+          `${process.env.TEAM_IMAGE_URL}${responseData[0].team2Id}.jpg`,
           serverAddress
         );
       }

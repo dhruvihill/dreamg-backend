@@ -156,7 +156,10 @@ const insertTeamsOfMatch = async (match, connection) => {
         if (match[`team${item}`].teamFlagURL) {
           downloadImage(
             match[`team${item}`].teamFlagURL,
-            path.join(__dirname, `../public/images/teamflag/${teamId}.jpg`),
+            path.join(
+              __dirname,
+              `..${process.env.TEAM_IMAGE_URL}${teamId}.jpg`
+            ),
             teamId,
             true
           );
@@ -313,7 +316,7 @@ const insertSinglePlayer = async (player, matchId, connection) => {
           player.imgURL,
           path.join(
             __dirname,
-            `../public/images/players/profilePicture/${player.id}.jpg`
+            `..${process.env.PLAYER_IMAGE_URL}${player.id}.jpg`
           ),
           player.id
         );

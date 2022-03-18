@@ -71,8 +71,18 @@ const fetchData = (query, options = []) =>
 // function to check if file exists
 const imageUrl = (dir, dirFileRelation, file, server) => {
   try {
+    console.log(file);
+    if (file.includes(process.env.USER_IMAGE_URL)) {
+      if (file.includes("null")) {
+        return "";
+      } else {
+        return server + file;
+      }
+      // const imageStamp = file.slice(process.env.USER_IMAGE_URL.length);
+      // const userObject = JSON.parse(atob(imageStamp));
+      // file = file.replace(imageStamp, `${userObject.userId}.jpg`);
+    }
     const newPath = path.join(dir, dirFileRelation, file);
-    console.log(newPath);
     if (fs.existsSync(newPath)) return server + file;
     return "";
   } catch {
