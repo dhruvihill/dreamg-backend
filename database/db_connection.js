@@ -71,7 +71,6 @@ const fetchData = (query, options = []) =>
 // function to check if file exists
 const imageUrl = (dir, dirFileRelation, file, server) => {
   try {
-    console.log(file);
     if (file.includes(process.env.USER_IMAGE_URL)) {
       if (file.includes("null")) {
         return "";

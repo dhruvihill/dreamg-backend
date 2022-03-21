@@ -3,7 +3,8 @@ const router = express.Router();
 const verifyUser = require("../middleware/verifyUser");
 const verifyProfile = require("../middleware/verifyProfile");
 const { fetchData, imageUrl } = require("../database/db_connection");
-const fs = require("fs/promises");
+const { rename, writeFile } = require("fs/promises");
+const { existsSync } = require("fs");
 const path = require("path");
 const upload = require("express-fileupload");
 
@@ -163,8 +164,17 @@ router.post("/uploadProfilePicture", upload(), verifyUser, async (req, res) => {
       "SELECT imageStamp FROM userdetails WHERE userdetails.userId = ?;UPDATE all_users SET imageStamp = ? WHERE all_users.userId = ?;",
       [userId, newImageStamp, userId]
     );
-    if (imageStamp) {
-      fs.rename(
+    if (
+      imageStamp &&
+      existsSync(
+        path.join(
+          __dirname,
+          "../",
+          process.env.USER_IMAGE_URL + imageStamp + ".jpg"
+        )
+      )
+    ) {
+      rename(
         path.join(
           __dirname,
           "../",
@@ -179,7 +189,7 @@ router.post("/uploadProfilePicture", upload(), verifyUser, async (req, res) => {
     }
 
     if (imageStampSet.affectedRows > 0) {
-      await fs.writeFile(
+      await writeFile(
         path.join(
           __dirname,
           `..${process.env.USER_IMAGE_URL}${newImageStamp}.jpg`

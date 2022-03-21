@@ -103,9 +103,6 @@ const initializeConnection = () => {
 const database = (query, options, connection) => {
   return new Promise(async (resolve, reject) => {
     try {
-      if (!connection) {
-        console.log(connection.query);
-      }
       connection.query(query, options, (err, reponse) => {
         if (err) reject(err);
         else resolve(reponse);
