@@ -1,7 +1,6 @@
 const axios = require("axios");
 const mysql = require("mysql");
 const path = require("path");
-const { writeFile } = require("fs/promises");
 require("dotenv/config");
 let connectionForCron = null;
 
@@ -88,16 +87,17 @@ const initializeConnection = () => {
   try {
     connectionForCron = mysql.createPool({
       connectionLimit: 0,
-      host: process.env.LOCAL_DB.HOST,
-      user: process.env.LOCAL_DB.USER,
-      password: process.env.LOCAL_DB.PASSWORD,
-      database: process.env.LOCAL_DB.NAME,
+      host: process.env.LOCAL_DB_HOST,
+      user: process.env.LOCAL_DB_USER,
+      password: process.env.LOCAL_DB_PASSWORD,
+      database: process.env.LOCAL_DB_NAME,
       multipleStatements: true,
     });
   } catch (error) {
     console.log(error.message, "initializeConnection");
   }
 };
+initializeConnection();
 
 // query to fetch, insert data
 const database = (query, options, connection) => {
@@ -115,7 +115,6 @@ const database = (query, options, connection) => {
 
 const axiosInstance = axios.create({
   baseURL: "https://api.sportradar.us/cricket-t2/en/",
-  timeout: 1000,
   params: {
     api_key: process.env.SPORT_RADAR_API_KEY,
   },
@@ -124,6 +123,7 @@ const axiosInstance = axios.create({
 // Axios request
 const makeRequest = (url) => {
   return new Promise((resolve, reject) => {
+    console.log(url);
     axiosInstance
       .get(url)
       .then((data) => {
@@ -136,21 +136,95 @@ const makeRequest = (url) => {
   });
 };
 
+const tournamentCompetitorsWithPlayers = async (groups, tournamentId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const storePlayersInTeams = async () => {
+        let competitorsCountLoop = 0;
+        allCompetitors.forEach((competitor) => {
+          const { players } = makeRequest(
+            `/tournaments/${tournamentId}/teams/${competitor.id}/squads.json`
+          );
+
+          if (players && players.length >= 11) {
+            competitor.players = players;
+            competitor.isPlayerArrived = true;
+          } else {
+            competitor.players = [];
+            competitor.isPlayerArrived = false;
+          }
+          competitorsCountLoop++;
+          if (competitorsCountLoop === allCompetitors.length) {
+            resolve(allCompetitors);
+          }
+        });
+      };
+      const allCompetitors = [];
+
+      let groupsCountLoop = 0;
+      groups?.forEach((group) => {
+        try {
+          allCompetitors.push(...group.teams);
+          groupsCountLoop++;
+
+          if (groupsCountLoop === groups.length) {
+            storePlayersInTeams();
+          }
+        } catch (error) {
+          console.log(error.message, "tournamentCompetitorsWithPlayers");
+        }
+      });
+    } catch (error) {
+      console.log(error.message, "tournamentCompetitorsWithPlayers");
+      reject([]);
+    }
+    /*
+     try {
+          group?.teams?.forEach((team) => {
+            try {
+              const { players } = makeRequest(
+                `/tournaments/${tournament.id}/teams/${team.id}/squads.json`
+              );
+
+              if (players && players.length >= 11) {
+                team.players = players;
+                team.isPlayerArrived = true;
+                tournamentTeams.push(team);
+              } else {
+                team.players = [];
+                team.isPlayerArrived = false;
+                tournamentTeams.push(team);
+              }
+            } catch (error) {
+              console.log(error.message, "processTournaments");
+            }
+          });
+        } catch (error) {
+          console.log(error.message, "processTournaments");
+        }
+    */
+  });
+};
+
 const processTournaments = async (tournaments) => {
   try {
-    tournaments.forEach((tournament) => {
+    tournaments.forEach(async (tournament) => {
       try {
-        const tournamentSchema = {
-          id: tournament.id,
-          name: tournament.name,
-          sport: tournament.sport,
-          category: tournament.category,
-          current_season: tournament.current_season,
-          type: tournament.type,
-          gender: tournament.gender,
-          tour_id: tournament.tour_id,
-        };
-      } catch (error) {}
+        const { groups } = await makeRequest(
+          `/tournaments/${tournament.id}/info.json`
+        );
+        // const { sport_events: matches } = await makeRequest(
+        //   `/tournaments/${tournament.id}/schedule.json`
+        // );
+
+        const tournamentTeams = await tournamentCompetitorsWithPlayers(
+          groups,
+          tournament.id
+        );
+        console.log(tournamentTeams);
+      } catch (error) {
+        console.log(error.message, "processTournaments");
+      }
     });
   } catch {}
 };
@@ -158,10 +232,36 @@ const processTournaments = async (tournaments) => {
 const fetchAndStore = async (url, method, data) => {
   try {
     let connection = await connectToDb();
-    let { tournaments } = await makeRequest("/tournaments.json");
+    // const { tournaments } = await makeRequest("/tournaments.json");
+
+    const tournaments = [
+      {
+        id: "sr:tournament:2472",
+        name: "Indian Premier League",
+        sport: {
+          id: "sr:sport:21",
+          name: "Cricket",
+        },
+        category: {
+          id: "sr:category:497",
+          name: "India",
+          country_code: "IND",
+        },
+        current_season: {
+          id: "sr:season:91319",
+          name: "Indian Premier League 2022",
+          start_date: "2022-03-26",
+          end_date: "2022-05-29",
+          year: "2022",
+        },
+        type: "t20",
+        gender: "men",
+      },
+    ];
+    processTournaments(tournaments);
   } catch (error) {
     console.log(error.message, "fetchAndStore");
   }
 };
 
-// fetchAndStore();
+fetchAndStore();

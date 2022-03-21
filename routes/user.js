@@ -4,7 +4,7 @@ const verifyUser = require("../middleware/verifyUser");
 const verifyProfile = require("../middleware/verifyProfile");
 const { fetchData, imageUrl } = require("../database/db_connection");
 const { rename, writeFile } = require("fs/promises");
-const { existsSync } = require("fs");
+const { existsSync, mkdirSync } = require("fs");
 const path = require("path");
 const upload = require("express-fileupload");
 
@@ -164,6 +164,21 @@ router.post("/uploadProfilePicture", upload(), verifyUser, async (req, res) => {
       "SELECT imageStamp FROM userdetails WHERE userdetails.userId = ?;UPDATE all_users SET imageStamp = ? WHERE all_users.userId = ?;",
       [userId, newImageStamp, userId]
     );
+
+    if (
+      !existsSync(path.join(__dirname, "../", `${process.env.USER_IMAGE_URL}`))
+    ) {
+      mkdirSync(path.join(__dirname, "../", `${process.env.USER_IMAGE_URL}`));
+    }
+    if (
+      !existsSync(
+        path.join(__dirname, "../", `${process.env.OLD_USER_IMAGE_URL}`)
+      )
+    ) {
+      mkdirSync(
+        path.join(__dirname, "../", `${process.env.OLD_USER_IMAGE_URL}`)
+      );
+    }
     if (
       imageStamp &&
       existsSync(
