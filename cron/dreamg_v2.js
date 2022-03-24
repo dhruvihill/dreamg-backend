@@ -4,6 +4,13 @@ require("dotenv/config");
 let connectionForCron = null;
 const data = require("../data2.js");
 
+const api_tokens = [
+  "juf28k8fkz54wqf3ds8bpxj4",
+  "gtme2pht49kqmnzyp3pacz4t",
+  "srsw8sr9pbefe7hr9m7zcfds",
+];
+let currentSelectedToken = 0;
+
 let allStatistics = {
   teamsStatistics: {
     insertedIds: [],
@@ -108,6 +115,7 @@ const database = (query, options, connection) => {
       connection.query(query, options, (err, reponse) => {
         if (err) {
           if (err.code === "ER_DUP_ENTRY") {
+            console.log(err.message);
             resolve(true);
           } else {
             reject(err);
@@ -123,7 +131,7 @@ const database = (query, options, connection) => {
 const axiosInstance = axios.create({
   baseURL: "https://api.sportradar.us/cricket-t2/en/",
   params: {
-    api_key: process.env.SPORT_RADAR_API_KEY,
+    api_key: api_tokens[currentSelectedToken],
   },
 });
 
@@ -135,13 +143,24 @@ const makeRequest = (url) => {
         axiosInstance
           .get(url)
           .then((data) => {
+            if (
+              data.headers["X-Plan-Quota-Current"] > 1000 ||
+              data.headers["X-Plan-Quota-Remaining"] === 1000
+            ) {
+              if (currentSelectedToken === api_tokens.length - 1) {
+                console.warn("API limit reached");
+              } else {
+                currentSelectedToken++;
+              }
+            }
             resolve(data.data);
           })
           .catch((error) => {
+            console.log(error.response.data, "error");
             console.log(error.message, "makeRequest");
             reject(error);
           });
-      }, delay);
+      }, delay + 1200);
       delay += 1200;
     } catch (error) {
       console.log(error.message, "makeRequest");
@@ -218,9 +237,9 @@ const storeVenue = async (venue, connection) => {
             venueCapacity: venue.capacity,
             venueCountry: venue.country_name,
             venueCountryCode: venue.country_code,
-            venueMapCardinalities: venue.map_coordinates,
-            venueEnd1: venue.bowling_ends[0].name,
-            venueEnd2: venue.bowling_ends[1].name,
+            venueMapCardinalities: venue.map_coordinates || null,
+            venueEnd1: venue?.bowling_ends[0]?.name || null,
+            venueEnd2: venue?.bowling_ends[1]?.name || null,
           },
           connection
         );
@@ -264,24 +283,20 @@ const storeMatchStatusParent = async (status, connection) => {
 const storePlayerRoleParent = async (role, connection) => {
   return new Promise(async (resolve) => {
     try {
-      if (role && role !== "") {
-        let [{ isExists: isRoleExist, roleId }] = await database(
-          "SELECT COUNT(player_roles.roleId) AS isExists, player_roles.roleId AS roleId FROM player_roles WHERE player_roles.roleString = ?;",
+      let [{ isExists: isRoleExist, roleId }] = await database(
+        "SELECT COUNT(player_roles.roleId) AS isExists, player_roles.roleId AS roleId FROM player_roles WHERE player_roles.roleString = ?;",
+        [role],
+        connection
+      );
+      if (!isRoleExist) {
+        const storeRole = await database(
+          "INSERT INTO player_roles (roleString ) VALUES (?)",
           [role],
           connection
         );
-        if (!isRoleExist) {
-          const storeRole = await database(
-            "INSERT INTO player_roles (roleString ) VALUES (?)",
-            [role],
-            connection
-          );
-          resolve(storeRole.insertId);
-        } else {
-          resolve(roleId);
-        }
+        resolve(storeRole.insertId);
       } else {
-        resolve(0);
+        resolve(roleId);
       }
     } catch (error) {
       console.log(error.message, "storePlayerRoleParent");
@@ -325,21 +340,6 @@ const storeTournamentTeamsParent = async (tournament, connection) => {
           }
         }
       }
-      // team.players.forEach((player) => {
-      //   const storePlayers = await database(
-      //     "INSERT INTO players SET ?",
-      //     {
-      //       playerRadarId,
-      //       playerFirstName,
-      //       playerLastName,
-      //       playerCountryCode,
-      //       playerRole,
-      //       playerDOB,
-      //       playerCountry,
-      //     },
-      //     connection
-      //   );
-      // });
     });
   });
 };
@@ -348,9 +348,13 @@ const storeTournamentTeamsParent = async (tournament, connection) => {
 const storePlayersOfTeamsParent = async (tournament, connection) => {
   return new Promise(async (resolve) => {
     let teamsLoopCount = 0;
-    tournament.teams.forEach(async (team) => {
+    const totalTeams = tournament.teams.length;
+
+    const storePlayersOfSingleTeam = async (team) => {
       let playerLoopCount = 0;
-      team.players.forEach(async (player) => {
+      const totalPlayers = team.players.length;
+
+      const storeSinglePlayer = async (player) => {
         try {
           let [{ isExists: isPlayerExist, playerId }] = await database(
             "SELECT COUNT(playerId) AS isExists, playerId FROM players WHERE players.playerRadarId = ?;",
@@ -360,11 +364,15 @@ const storePlayersOfTeamsParent = async (tournament, connection) => {
           if (isPlayerExist === 1) {
             player.insertId = playerId;
             playerLoopCount++;
-            if (playerLoopCount === team.players.length) {
+            if (playerLoopCount === totalPlayers) {
               teamsLoopCount++;
-              if (teamsLoopCount === tournament.teams.length) {
+              if (teamsLoopCount === totalTeams) {
                 resolve(tournament);
+              } else {
+                storePlayersOfSingleTeam(tournament.teams[teamsLoopCount]);
               }
+            } else {
+              storeSinglePlayer(team.players[playerLoopCount]);
             }
           } else {
             if (player.type && player.type !== "") {
@@ -389,30 +397,43 @@ const storePlayersOfTeamsParent = async (tournament, connection) => {
                 player.insertId = storePlayers.insertId;
                 if (storePlayers.insertId) {
                   playerLoopCount++;
-                  if (playerLoopCount === team.players.length) {
+                  if (playerLoopCount === totalPlayers) {
                     teamsLoopCount++;
-                    if (teamsLoopCount === tournament.teams.length) {
+                    if (teamsLoopCount === totalTeams) {
                       resolve(tournament);
+                    } else {
+                      storePlayersOfSingleTeam(
+                        tournament.teams[teamsLoopCount]
+                      );
                     }
+                  } else {
+                    storeSinglePlayer(team.players[playerLoopCount]);
                   }
                 }
               } else {
                 playerLoopCount++;
-                if (playerLoopCount === team.players.length) {
+                if (playerLoopCount === totalPlayers) {
                   teamsLoopCount++;
-                  if (teamsLoopCount === tournament.teams.length) {
+                  if (teamsLoopCount === totalTeams) {
                     resolve(tournament);
+                  } else {
+                    storePlayersOfSingleTeam(tournament.teams[teamsLoopCount]);
                   }
+                } else {
+                  storeSinglePlayer(team.players[playerLoopCount]);
                 }
               }
             } else {
               playerLoopCount++;
-              if (playerLoopCount === team.players.length) {
+              if (playerLoopCount === totalPlayers) {
                 teamsLoopCount++;
-                if (teamsLoopCount === tournament.teams.length) {
-                  console.log(tournament.teams[0].players);
+                if (teamsLoopCount === totalTeams) {
                   resolve(tournament);
+                } else {
+                  storePlayersOfSingleTeam(tournament.teams[teamsLoopCount]);
                 }
+              } else {
+                storeSinglePlayer(team.players[playerLoopCount]);
               }
             }
           }
@@ -420,8 +441,86 @@ const storePlayersOfTeamsParent = async (tournament, connection) => {
           playerLoopCount++;
           console.log(error.message, "storePlayersOfTeamsParent");
         }
-      });
-    });
+      };
+      storeSinglePlayer(team.players[playerLoopCount]);
+    };
+
+    storePlayersOfSingleTeam(tournament.teams[teamsLoopCount]);
+
+    // tournament.teams.forEach(async (team) => {
+    //   let playerLoopCount = 0;
+    //   team.players.forEach(async (player) => {
+    //     try {
+    //       let [{ isExists: isPlayerExist, playerId }] = await database(
+    //         "SELECT COUNT(playerId) AS isExists, playerId FROM players WHERE players.playerRadarId = ?;",
+    //         [player.id.substr(10)],
+    //         connection
+    //       );
+    //       if (isPlayerExist === 1) {
+    //         player.insertId = playerId;
+    //         playerLoopCount++;
+    //         if (playerLoopCount === team.players.length) {
+    //           teamsLoopCount++;
+    //           if (teamsLoopCount === tournament.teams.length) {
+    //             resolve(tournament);
+    //           }
+    //         }
+    //       } else {
+    //         if (player.type && player.type !== "") {
+    //           const roleId = await storePlayerRoleParent(
+    //             player.type,
+    //             connection
+    //           );
+    //           if (roleId !== 0) {
+    //             const storePlayers = await database(
+    //               "INSERT INTO players SET ?",
+    //               {
+    //                 playerRadarId: player.id.substr(10),
+    //                 playerFirstName: player.name.split(", ")[1] || "",
+    //                 playerLastName: player.name.split(", ")[0] || "",
+    //                 playerCountryCode: player.country_code || null,
+    //                 playerRole: roleId,
+    //                 playerDOB: player.date_of_birth || null,
+    //                 playerCountry: player.nationality || null,
+    //               },
+    //               connection
+    //             );
+    //             player.insertId = storePlayers.insertId;
+    //             if (storePlayers.insertId) {
+    //               playerLoopCount++;
+    //               if (playerLoopCount === team.players.length) {
+    //                 teamsLoopCount++;
+    //                 if (teamsLoopCount === tournament.teams.length) {
+    //                   resolve(tournament);
+    //                 }
+    //               }
+    //             }
+    //           } else {
+    //             playerLoopCount++;
+    //             if (playerLoopCount === team.players.length) {
+    //               teamsLoopCount++;
+    //               if (teamsLoopCount === tournament.teams.length) {
+    //                 resolve(tournament);
+    //               }
+    //             }
+    //           }
+    //         } else {
+    //           playerLoopCount++;
+    //           if (playerLoopCount === team.players.length) {
+    //             teamsLoopCount++;
+    //             if (teamsLoopCount === tournament.teams.length) {
+    //               console.log(tournament.teams[0].players);
+    //               resolve(tournament);
+    //             }
+    //           }
+    //         }
+    //       }
+    //     } catch (error) {
+    //       playerLoopCount++;
+    //       console.log(error.message, "storePlayersOfTeamsParent");
+    //     }
+    //   });
+    // });
   });
 };
 
@@ -434,7 +533,7 @@ const storeTournamentCompetitorsRelation = async (tournament, connection) => {
         try {
           const [{ isExists: isTeamExists, tournamentCompetitorId }] =
             await database(
-              "SELECT COUNT(tournament_competitor.tournamentCompetitorId) AS isExists, tournament_competitor.tournamentCompetitorId AS tournamentCompetitorId FROM `tournament_competitor` WHERE tournament_competitor.tournamentId = ? AND tournament_competitor.competitorId = ?;",
+              "SELECT COUNT(tournament_competitor.tournamentCompetitorId) AS isExists, tournament_competitor.tournamentCompetitorId AS tournamentCompetitorId, isPlayerArrived FROM `tournament_competitor` WHERE tournament_competitor.tournamentId = ? AND tournament_competitor.competitorId = ?;",
               [tournament.insertId, team.insertId],
               connection
             );
@@ -452,6 +551,7 @@ const storeTournamentCompetitorsRelation = async (tournament, connection) => {
               teamsLoopCount++;
               team.tournamentCompetitorId = storeTournamentCompetitors.insertId;
               if (teamsLoopCount === tournament.teams.length) {
+                resolve(tournament);
               }
             }
           } else {
@@ -479,11 +579,15 @@ const storeTournamentCompetitorsPlayersRelation = async (
   return new Promise(async (resolve) => {
     try {
       let teamsLoopCount = 0;
-      tournament.teams.forEach(async (team) => {
-        try {
-          let playersLoopCount = 0;
-          team.players.forEach(async (player) => {
-            try {
+      const totalTeams = tournament.teams.length;
+
+      const storePlayersOfSingleTeam = async (team) => {
+        let playerLoopCount = 0;
+        const totalPlayers = team.players.length;
+
+        const storeSinglePlayer = async (player) => {
+          try {
+            if (player.id && player.name && player.type) {
               const [
                 { isExists: isPlayerExists, tournamentCompetitorPlayerId },
               ] = await database(
@@ -502,17 +606,23 @@ const storeTournamentCompetitorsPlayersRelation = async (
                     connection
                   );
                   if (storeTournamentCompetitorsPlayers.insertId) {
-                    playersLoopCount++;
-                    if (playersLoopCount === team.players.length) {
+                    playerLoopCount++;
+                    if (playerLoopCount === totalPlayers) {
                       teamsLoopCount++;
-                      if (teamsLoopCount === tournament.teams.length) {
+                      if (teamsLoopCount === totalTeams) {
                         resolve(tournament);
+                      } else {
+                        storePlayersOfSingleTeam(
+                          tournament.teams[teamsLoopCount]
+                        );
                       }
+                    } else {
+                      storeSinglePlayer(team.players[playerLoopCount]);
                     }
                   }
                 } else {
-                  playersLoopCount++;
-                  if (playersLoopCount === team.players.length) {
+                  playerLoopCount++;
+                  if (playerLoopCount === team.players.length) {
                     teamsLoopCount++;
                     if (teamsLoopCount === tournament.teams.length) {
                       resolve(tournament);
@@ -520,22 +630,39 @@ const storeTournamentCompetitorsPlayersRelation = async (
                   }
                 }
               } else {
-                playersLoopCount++;
-                if (playersLoopCount === team.players.length) {
+                playerLoopCount++;
+                if (playerLoopCount === team.players.length) {
                   teamsLoopCount++;
                   if (teamsLoopCount === tournament.teams.length) {
                     resolve(tournament);
+                  } else {
+                    storePlayersOfSingleTeam(tournament.teams[teamsLoopCount]);
                   }
+                } else {
+                  storeSinglePlayer(team.players[playerLoopCount]);
                 }
               }
-            } catch (error) {
-              console.log(error.message, "storeAllRelations");
+            } else {
+              playerLoopCount++;
+              if (playerLoopCount === team.players.length) {
+                teamsLoopCount++;
+                if (teamsLoopCount === tournament.teams.length) {
+                  resolve(tournament);
+                } else {
+                  storePlayersOfSingleTeam(tournament.teams[teamsLoopCount]);
+                }
+              } else {
+                storeSinglePlayer(team.players[playerLoopCount]);
+              }
             }
-          });
-        } catch (error) {
-          console.log(error.message, "storeAllRelations");
-        }
-      });
+          } catch (error) {
+            console.log(error.message, "storeAllRelations");
+          }
+        };
+
+        storeSinglePlayer(team.players[playerLoopCount]);
+      };
+      storePlayersOfSingleTeam(tournament.teams[teamsLoopCount]);
     } catch (error) {
       console.log(error.message, "storeAllRelations");
     }
@@ -547,7 +674,9 @@ const storeTournamentMatchesRelation = async (tournament, connection) => {
   return new Promise(async (resolve) => {
     try {
       let matchLoopCount = 0;
-      tournament.matches.forEach(async (match, index) => {
+      const totalMatchObject = tournament.matches.length;
+
+      const storeSingleMatch = async (match) => {
         try {
           const competitors = tournament.teams.filter((competitor) => {
             return (
@@ -562,49 +691,55 @@ const storeTournamentMatchesRelation = async (tournament, connection) => {
               connection
             );
           if (isMatchExists === 0) {
-            setTimeout(async () => {
-              const venueId = await storeVenue(match.venue, connection);
-              const statusId = await storeMatchStatusParent(
-                match.status,
+            const venueId = await storeVenue(match.venue, connection);
+            const statusId = await storeMatchStatusParent(
+              match.status,
+              connection
+            );
+            if (venueId && statusId) {
+              const storeTournamentMatches = await database(
+                "INSERT INTO tournament_matches SET ?",
+                {
+                  matchRadarId: match.id.substr(9),
+                  matchTournamentId: tournament.insertId,
+                  matchStartTime: match.scheduled,
+                  competitor1: competitors[0].insertId,
+                  competitor2: competitors[1].insertId,
+                  venueId: venueId,
+                  matchStatus: statusId,
+                },
                 connection
               );
-              if (venueId && statusId) {
-                const storeTournamentMatches = await database(
-                  "INSERT INTO tournament_matches SET ?",
-                  {
-                    matchRadarId: match.id.substr(9),
-                    matchTournamentId: tournament.insertId,
-                    matchStartTime: match.scheduled,
-                    competitor1: competitors[0].insertId,
-                    competitor2: competitors[1].insertId,
-                    venueId: venueId,
-                    matchStatus: statusId,
-                  },
-                  connection
-                );
-                if (storeTournamentMatches) {
-                  matchLoopCount++;
-                  if (matchLoopCount === tournament.matches.length) {
-                    resolve(true);
-                  }
-                }
-              } else {
+              if (storeTournamentMatches) {
                 matchLoopCount++;
-                if (matchLoopCount === tournament.matches.length) {
+                if (matchLoopCount === totalMatchObject) {
                   resolve(true);
+                } else {
+                  storeSingleMatch(tournament.matches[matchLoopCount]);
                 }
               }
-            }, index * 100);
+            } else {
+              matchLoopCount++;
+              if (matchLoopCount === totalMatchObject) {
+                resolve(true);
+              } else {
+                storeSingleMatch(tournament.matches[matchLoopCount]);
+              }
+            }
           } else {
             matchLoopCount++;
-            if (matchLoopCount === tournament.matches.length) {
+            if (matchLoopCount === totalMatchObject) {
               resolve(true);
+            } else {
+              storeSingleMatch(tournament.matches[matchLoopCount]);
             }
           }
         } catch (error) {
           console.log(error.message, "storeAllMatches");
         }
-      });
+      };
+
+      storeSingleMatch(tournament.matches[matchLoopCount]);
     } catch (error) {
       console.log(error.message, "storeTournamentMatchesRelation");
     }
@@ -627,7 +762,7 @@ const storeAllRelations = (tournament, connection) => {
             storeTournamentCompetitorsRes,
             connection
           );
-        if (storeTournamentCompetitorsPlayersRes) {
+        if (storeTournamentCompetitorsPlayersRes && storeTournamentMatchesRes) {
           resolve(true);
         }
       }
@@ -642,14 +777,15 @@ const storeTournaments = async (tournaments) => {
   try {
     let connection = await connectToDb();
     tournaments.forEach(async (tournament) => {
-      const categoryId = await storeCategoryParent(
-        tournament.category,
-        connection
-      );
-      const typeId = await storeTypeParent(tournament.type, connection);
+      const categoryId = tournament.category
+        ? await storeCategoryParent(tournament.category, connection)
+        : null;
+      const typeId = tournament.type
+        ? await storeTypeParent(tournament.type, connection)
+        : null;
       if (categoryId && typeId) {
         let [{ isExists: isTournamentExist, tournamentId }] = await database(
-          "SELECT COUNT(tournamentId) AS isExists, tournamentId FROM `tournament_information` WHERE tournament_information.tournamentRadarId = ?;",
+          "SELECT COUNT(tournamentId) AS isExists, tournamentId, isCompetitorsArrived, isMatchesArrived FROM `tournament_information` WHERE tournament_information.tournamentRadarId = ?;",
           [tournament.id.substr(14)],
           connection
         );
@@ -666,7 +802,7 @@ const storeTournaments = async (tournaments) => {
               tournamentMatchType: typeId,
               tournamentCategory: categoryId,
               tournamentPlayersGender: tournament.gender,
-              tournamentCountry: tournament.current_season.name,
+              tournamentCountry: tournament.category.country || null,
               tournamentCountryCode: tournament.category.country_code || null,
               isCompetitorsArrived: tournament.isCompetitorsArrived,
               isMatchesArrived: tournament.isMatchesArrived,
@@ -675,22 +811,53 @@ const storeTournaments = async (tournaments) => {
             false
           );
           tournament.insertId = storeTournament.insertId;
+          if (storeTournament) {
+            const storeTournamentTeamsRes = await storeTournamentTeamsParent(
+              tournament,
+              connection
+            );
+            if (storeTournamentTeamsRes) {
+              const storePlayersTournament = await storePlayersOfTeamsParent(
+                storeTournamentTeamsRes,
+                connection
+              );
+              if (storePlayersTournament) {
+                const res = await storeAllRelations(
+                  storePlayersTournament,
+                  connection
+                );
+                if (res) {
+                  connection.release();
+                }
+                console.log(res);
+              }
+            }
+          }
         } else {
           tournament.insertId = tournamentId;
-        }
-        const storeTournamentTeamsRes = await storeTournamentTeamsParent(
-          tournament,
-          connection
-        );
-        if (storeTournamentTeamsRes) {
-          const storePlayersTournament = await storePlayersOfTeamsParent(
-            storeTournamentTeamsRes,
+          const storeTournamentTeamsRes = await storeTournamentTeamsParent(
+            tournament,
             connection
           );
-          if (storePlayersTournament) {
-            storeAllRelations(storePlayersTournament, connection);
+          if (storeTournamentTeamsRes) {
+            const storePlayersTournament = await storePlayersOfTeamsParent(
+              storeTournamentTeamsRes,
+              connection
+            );
+            if (storePlayersTournament) {
+              const res = await storeAllRelations(
+                storePlayersTournament,
+                connection
+              );
+              if (res) {
+                connection.release();
+              }
+              console.log(res);
+            }
           }
         }
+      } else {
+        connection.release();
       }
     });
   } catch (error) {
@@ -708,24 +875,27 @@ const tournamentCompetitorsWithPlayers = async (groups, tournamentId) => {
         let competitorsCountLoop = 0;
         allCompetitors.forEach(async (competitor, index) => {
           try {
-            setTimeout(async () => {
-              const { players } = await makeRequest(
-                `/tournaments/${tournamentId}/teams/${competitor.id}/squads.json`
-              );
-
-              if (players && players.length >= 11) {
-                competitor.players = [...players];
-                competitor.isPlayerArrived = true;
-              } else {
-                competitor.players = [];
-                competitor.isPlayerArrived = false;
-              }
-              competitorsCountLoop++;
-              if (competitorsCountLoop === allCompetitors.length) {
-                resolve(allCompetitors);
-              }
-            }, (index + 1) * 1200);
+            const { players } = await makeRequest(
+              `/tournaments/${tournamentId}/teams/${competitor.id}/squads.json`
+            );
+            if (players && players.length >= 11) {
+              competitor.players = [...players];
+              competitor.isPlayerArrived = true;
+            } else {
+              competitor.players = [];
+              competitor.isPlayerArrived = false;
+            }
+            competitorsCountLoop++;
+            if (competitorsCountLoop === allCompetitors.length) {
+              resolve(allCompetitors);
+            }
           } catch (error) {
+            competitor.isPlayerArrived = false;
+            competitor.players = [];
+            competitorsCountLoop++;
+            if (competitorsCountLoop === allCompetitors.length) {
+              resolve(allCompetitors);
+            }
             console.log(error.message);
           }
         });
@@ -748,40 +918,17 @@ const tournamentCompetitorsWithPlayers = async (groups, tournamentId) => {
       console.log(error.message, "tournamentCompetitorsWithPlayers");
       reject([]);
     }
-    /*
-     try {
-          group?.teams?.forEach((team) => {
-            try {
-              const { players } = makeRequest(
-                `/tournaments/${tournament.id}/teams/${team.id}/squads.json`
-              );
-
-              if (players && players.length >= 11) {
-                team.players = players;
-                team.isPlayerArrived = true;
-                tournamentTeams.push(team);
-              } else {
-                team.players = [];
-                team.isPlayerArrived = false;
-                tournamentTeams.push(team);
-              }
-            } catch (error) {
-              console.log(error.message, "processTournaments");
-            }
-          });
-        } catch (error) {
-          console.log(error.message, "processTournaments");
-        }
-    */
   });
 };
 
 // will make tournament object with team details
 const processTournaments = async (tournaments) => {
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async (resolve) => {
     try {
-      let tournamentsCountLoop = 0;
-      tournaments.forEach(async (tournament) => {
+      let currentTournament = 0;
+      const totalTournaments = tournaments.length;
+
+      const processTournament = async (tournament) => {
         try {
           const { groups } = await makeRequest(
             `/tournaments/${tournament.id}/info.json`
@@ -801,80 +948,188 @@ const processTournaments = async (tournaments) => {
             if (matches && matches.length > 0) {
               tournament.matches = matches;
               tournament.isMatchesArrived = true;
-              tournamentsCountLoop++;
-              if (tournamentsCountLoop === tournaments.length) {
+
+              if (currentTournament === totalTournaments - 1) {
                 resolve(tournaments);
+              } else {
+                storeTournaments([tournaments[currentTournament]]);
+                currentTournament++;
+                processTournament(tournaments[currentTournament]);
               }
             } else {
               tournament.matches = [];
               tournament.isMatchesArrived = false;
-              tournamentsCountLoop++;
-              if (tournamentsCountLoop === tournaments.length) {
+              if (currentTournament === totalTournaments - 1) {
                 resolve(tournaments);
+              } else {
+                storeTournaments([tournaments[currentTournament]]);
+                currentTournament++;
+                processTournament(tournaments[currentTournament]);
               }
             }
           } else {
             tournament.teams = [];
             tournament.isCompetitorsArrived = false;
-            tournamentsCountLoop++;
-            if (tournamentsCountLoop === tournaments.length) {
+            if (currentTournament === totalTournaments - 1) {
               resolve(tournaments);
+            } else {
+              storeTournaments([tournaments[currentTournament]]);
+              currentTournament++;
+              processTournament(tournaments[currentTournament]);
             }
           }
         } catch (error) {
+          tournament.matches = [];
+          tournament.isMatchesArrived = false;
+          if (currentTournament === totalTournaments - 1) {
+            resolve(tournaments);
+          } else {
+            currentTournament++;
+            processTournament(tournaments[currentTournament]);
+          }
           console.log(error.message, "processTournaments");
         }
-      });
+      };
+      processTournament(tournaments[currentTournament]);
     } catch (error) {
       console.log(error.message, "processTournaments");
     }
   });
 };
 
-const fetchAndStore = async (url, method, data) => {
+const fetchAndStore = async () => {
   try {
     delay = 0;
-    // const { tournaments } = await makeRequest("/tournaments.json");
-    const tournaments = [
-      {
-        id: "sr:tournament:2472",
-        name: "Indian Premier League",
-        sport: {
-          id: "sr:sport:21",
-          name: "Cricket",
-        },
-        category: {
-          id: "sr:category:497",
-          name: "India",
-          country_code: "IND",
-        },
-        current_season: {
-          id: "sr:season:91319",
-          name: "Indian Premier League 2022",
-          start_date: "2022-03-26",
-          end_date: "2022-05-29",
-          year: "2022",
-        },
-        type: "t20",
-        gender: "men",
-      },
-    ];
+    const { tournaments } = await makeRequest("/tournaments.json");
     const newTournaments = await processTournaments(tournaments);
-    storeTournaments(newTournaments);
+    console.log(newTournaments);
   } catch (error) {
     console.log(error.message, "fetchAndStore");
   }
 };
 
-// fetchAndStore();
+fetchAndStore();
 
-const a = async () => {
-  try {
-    const connection = await connectToDb();
-    const res = await storeAllRelations(data, connection);
-    console.log(res);
-  } catch (error) {
-    console.log(error.message, "a");
-  }
-};
-a();
+// const a = async () => {
+//   try {
+//     const res = await storeTournaments([data]);
+//   } catch (error) {
+//     console.log(error.message, "a");
+//   }
+// };
+// a();
+
+// tournament.matches.forEach(async (match) => {
+//   try {
+//     const competitors = tournament.teams.filter((competitor) => {
+//       return (
+//         competitor.id === match.competitors[0].id ||
+//         competitor.id === match.competitors[1].id
+//       );
+//     });
+//     const [{ isExists: isMatchExists, tournamentMatchId }] =
+//       await database(
+//         "SELECT COUNT(tournament_matches.matchTournamentId) AS isExists, tournament_matches.matchTournamentId AS matchTournamentId FROM tournament_matches WHERE tournament_matches.matchRadarId = ?;",
+//         [match.id.substr(9)],
+//         connection
+//       );
+//     if (isMatchExists === 0) {
+//       const venueId = await storeVenue(match.venue, connection);
+//       const statusId = await storeMatchStatusParent(
+//         match.status,
+//         connection
+//       );
+//       if (venueId && statusId) {
+//         const storeTournamentMatches = await database(
+//           "INSERT INTO tournament_matches SET ?",
+//           {
+//             matchRadarId: match.id.substr(9),
+//             matchTournamentId: tournament.insertId,
+//             matchStartTime: match.scheduled,
+//             competitor1: competitors[0].insertId,
+//             competitor2: competitors[1].insertId,
+//             venueId: venueId,
+//             matchStatus: statusId,
+//           },
+//           connection
+//         );
+//         if (storeTournamentMatches) {
+//           matchLoopCount++;
+//           if (matchLoopCount === totalMatchObject) {
+//             resolve(true);
+//           }
+//         }
+//       } else {
+//         matchLoopCount++;
+//         if (matchLoopCount === tournament.matches.length) {
+//           resolve(true);
+//         }
+//       }
+//     } else {
+//       matchLoopCount++;
+//       if (matchLoopCount === tournament.matches.length) {
+//         resolve(true);
+//       }
+//     }
+//   } catch (error) {
+//     console.log(error.message, "storeAllMatches");
+//   }
+// });
+
+// tournament.teams.forEach(async (team) => {
+//   try {
+//     let playersLoopCount = 0;
+//     team.players.forEach(async (player) => {
+//       try {
+//         const [
+//           { isExists: isPlayerExists, tournamentCompetitorPlayerId },
+//         ] = await database(
+//           "SELECT COUNT(tournament_competitor_player.tournamentCompetitorPlayerId) AS isExists, tournament_competitor_player.tournamentCompetitorPlayerId AS tournamentCompetitorPlayerId FROM `tournament_competitor_player` WHERE tournament_competitor_player.tournamentCompetitorId = ? AND tournament_competitor_player.playerId = ?;",
+//           [team.tournamentCompetitorId, player.insertId],
+//           connection
+//         );
+//         if (!isPlayerExists) {
+//           if (player.insertId) {
+//             const storeTournamentCompetitorsPlayers = await database(
+//               "INSERT INTO tournament_competitor_player SET ?",
+//               {
+//                 tournamentCompetitorId: team.tournamentCompetitorId,
+//                 playerId: player.insertId,
+//               },
+//               connection
+//             );
+//             // if (storeTournamentCompetitorsPlayers.insertId) {
+//             playersLoopCount++;
+//             if (playersLoopCount === team.players.length) {
+//               teamsLoopCount++;
+//               if (teamsLoopCount === tournament.teams.length) {
+//                 resolve(tournament);
+//               }
+//             }
+//             // }
+//           } else {
+//             playersLoopCount++;
+//             if (playersLoopCount === team.players.length) {
+//               teamsLoopCount++;
+//               if (teamsLoopCount === tournament.teams.length) {
+//                 resolve(tournament);
+//               }
+//             }
+//           }
+//         } else {
+//           playersLoopCount++;
+//           if (playersLoopCount === team.players.length) {
+//             teamsLoopCount++;
+//             if (teamsLoopCount === tournament.teams.length) {
+//               resolve(tournament);
+//             }
+//           }
+//         }
+//       } catch (error) {
+//         console.log(error.message, "storeAllRelations");
+//       }
+//     });
+//   } catch (error) {
+//     console.log(error.message, "storeAllRelations");
+//   }
+// });
