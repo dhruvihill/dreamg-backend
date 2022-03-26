@@ -22,6 +22,7 @@ router.post("/getPlayers", async (req, res) => {
       const serverAddress = `${req.protocol}://${req.headers.host}`;
 
       data?.forEach((player) => {
+        player.roleName = player.roleName.toUpperCase();
         player.captainBy = parseFloat(player.captainBy.toFixed(2));
         player.viceCaptainBy = parseFloat(player.viceCaptainBy.toFixed(2));
         player.selectedBy = parseFloat(player.selectedBy.toFixed(2));
@@ -643,7 +644,7 @@ router.post("/getUserTeamsAll", async (req, res) => {
             );
           }
           let userTeams = [];
-          if (userTeamDetails) {
+          if (userTeamDetails && userTeamDetails.length) {
             let counter = 0;
             userTeamDetails.forEach(async (team) => {
               try {

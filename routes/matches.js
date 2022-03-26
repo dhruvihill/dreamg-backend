@@ -5,27 +5,49 @@ const { fetchData, imageUrl } = require("../database/db_connection");
 
 // get matches according to its status
 router.post("/getMatches", verifyUser, async (req, res) => {
-  const { userId, matchType, pageNumber } = req.body;
+  const { userId, pageNumber } = req.body;
+  let matchType = req.body.matchType;
 
   try {
-    // "SELECT (SELECT COUNT(DISTINCT userId) FROM user_team WHERE user_team.matchId = all_matches.matchId) AS totalPredictors, (SELECT COALESCE((SELECT DISTINCT userId FROM `user_team` WHERE matchId = all_matches.matchId AND userId = ?), 0)) AS isUserTeamCreated, seriesName, seriesDname, matchId,matchTypeId,matchTyprString, matchStartTimeMilliSeconds,matchStartDateTime,match_status.matchStatusString,venue, all_matches.displayName,team1.teamId AS `team1Id`,team1.name AS 'team1Name', team1.displayName AS 'team1DisplayName',team1.teamFlagUrlLocal AS 'team1FlagURL', team2.teamId AS `team2Id`,team2.name AS 'team2Name', team2.displayName AS 'team2DisplayName',team2.teamFlagUrlLocal AS 'team2FlagURL' FROM all_matches JOIN teams AS team1 ON all_matches.team1_id = team1.teamId JOIN teams AS team2 ON all_matches.team2_id = team2.teamId JOIN match_type ON match_type.matchTypeId = gameType JOIN match_status ON all_matches.matchStatus = match_status.matchStatus WHERE matchStatusString = ? ORDER BY matchStartTimeMilliSeconds LIMIT 10;",
-
     if (
       ["UPCOMING", "LIVE", "RECENT", "CANCELED"].includes(matchType) &&
       pageNumber &&
       pageNumber > 0 &&
       !/[^0-9]/.test(pageNumber)
     ) {
-      const [result, [{ totalResult }]] = await fetchData(
-        `SELECT (SELECT COUNT(DISTINCT userId) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors, seriesName, seriesDname, matchId, matchTypeId, matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE matchStatusString = ? ORDER BY matchStartTimeMilliSeconds LIMIT ?, 10; SELECT COUNT(*) AS totalResult FROM fullmatchdetails WHERE matchStatusString = ?;`,
-        [userId, userId, matchType, (pageNumber - 1) * 10, matchType]
-      );
+      let matchQuery = "";
+      if (matchType === "UPCOMING") {
+        matchQuery = `SELECT (SELECT COUNT(DISTINCT userId) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors, seriesName, seriesDname, matchId, matchTypeId, UPPER(matchTyprString) AS matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE matchStatusString = 'not_started' AND fullmatchdetails.matchStartTimeMilliSeconds > (UNIX_TIMESTAMP(now()) * 1000) ORDER BY matchStartTimeMilliSeconds LIMIT ?, 10; SELECT COUNT(*) AS totalResult FROM fullmatchdetails WHERE matchStatusString = 'not_started';`;
+      } else if (matchType === "LIVE") {
+        matchQuery = `SELECT (SELECT COUNT(DISTINCT userId) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors, seriesName, seriesDname, matchId, matchTypeId, UPPER(matchTyprString) AS matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE matchStatusString = 'live' AND (UNIX_TIMESTAMP(now()) - 604800) * 1000 < matchStartTimeMilliSeconds ORDER BY matchStartTimeMilliSeconds LIMIT ?, 10; SELECT COUNT(*) AS totalResult FROM fullmatchdetails WHERE matchStatusString = 'live';`;
+      } else if (matchType === "RECENT") {
+        matchQuery = `SELECT (SELECT COUNT(DISTINCT userId) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors, seriesName, seriesDname, matchId, matchTypeId, UPPER(matchTyprString) AS matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE matchStatusString = 'ended' OR matchStatusString = 'closed' ORDER BY matchStartTimeMilliSeconds DESC LIMIT ?, 10; SELECT COUNT(*) AS totalResult FROM fullmatchdetails WHERE matchStatusString = 'ended' OR matchStatusString = 'closed';`;
+      } else if (matchType === "CANCELED") {
+        matchQuery = `SELECT (SELECT COUNT(DISTINCT userId) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors, seriesName, seriesDname, matchId, matchTypeId, UPPER(matchTyprString) AS matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE matchStatusString = 'cancelled' ORDER BY matchStartTimeMilliSeconds DESC LIMIT ?, 10; SELECT COUNT(*) AS totalResult FROM fullmatchdetails WHERE matchStatusString = 'cancelled'`;
+      }
+      const [result, [{ totalResult }]] = await fetchData(matchQuery, [
+        userId,
+        userId,
+        (pageNumber - 1) * 10,
+      ]);
 
       const totalPages = Math.ceil(totalResult / 10);
 
       // changing server url
       const serverAddress = `${req.protocol}://${req.headers.host}`;
       result.forEach((match) => {
+        if (match.matchStatusString === "not_started") {
+          match.matchStatusString = "UPCOMING";
+        } else if (match.matchStatusString === "live") {
+          match.matchStatusString = "LIVE";
+        } else if (
+          match.matchStatusString === "ended" ||
+          match.matchStatusString === "closed"
+        ) {
+          match.matchStatusString = "RECENT";
+        } else if (match.matchStatusString === "cancelled") {
+          match.matchStatusString = "CANCELED";
+        }
         match.team1FlagURL = imageUrl(
           __dirname,
           "../",
@@ -75,7 +97,7 @@ router.post("/recentPlayed", async (req, res) => {
       !/[^0-9]/g.test(pageNumber)
     ) {
       const matchesQuery =
-        "SELECT matchId, seriesName, seriesDname, matchTypeId, matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName, (SELECT COUNT(DISTINCT userId) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE fullmatchdetails.matchStatus != 1 AND fullmatchdetails.matchId IN (SELECT DISTINCT fullteamdetails.matchId FROM fullteamdetails WHERE fullteamdetails.userId = ? ORDER BY fullteamdetails.creationTime DESC) LIMIT ?, 20;SELECT COUNT(*) AS totalMatches FROM fullmatchdetails WHERE fullmatchdetails.matchStatus != 1 AND fullmatchdetails.matchId IN (SELECT DISTINCT fullteamdetails.matchId FROM fullteamdetails WHERE fullteamdetails.userId = ? ORDER BY fullteamdetails.creationTime DESC);";
+        "SELECT matchId, seriesName, seriesDname, matchTypeId, UPPER(matchTyprString) AS matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName, (SELECT COUNT(DISTINCT userId) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString != 'not_started' AND fullmatchdetails.matchId IN (SELECT DISTINCT fullteamdetails.matchId FROM fullteamdetails WHERE fullteamdetails.userId = ? ORDER BY fullteamdetails.creationTime DESC) LIMIT ?, 20;SELECT COUNT(*) AS totalMatches FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString != 'not_started' AND fullmatchdetails.matchId IN (SELECT DISTINCT fullteamdetails.matchId FROM fullteamdetails WHERE fullteamdetails.userId = ? ORDER BY fullteamdetails.creationTime DESC);";
 
       const [recentPlayed, [{ totalMatches }]] = await fetchData(matchesQuery, [
         predictorId,
@@ -88,6 +110,18 @@ router.post("/recentPlayed", async (req, res) => {
       const totalPages = Math.ceil(totalMatches / 20);
 
       recentPlayed.forEach((match) => {
+        if (match.matchStatusString === "not_started") {
+          match.matchStatusString = "UPCOMING";
+        } else if (match.matchStatusString === "live") {
+          match.matchStatusString = "LIVE";
+        } else if (
+          match.matchStatusString === "ended" ||
+          match.matchStatusString === "closed"
+        ) {
+          match.matchStatusString = "RECENT";
+        } else if (match.matchStatusString === "cancelled") {
+          match.matchStatusString = "CANCELED";
+        }
         match.team1FlagURL = imageUrl(
           __dirname,
           "../",
@@ -137,7 +171,7 @@ router.post("/currentPlayed", async (req, res) => {
       !/[^0-9]/g.test(pageNumber)
     ) {
       const matchesQuery =
-        "SELECT matchId, seriesName, seriesDname, matchTypeId, matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName, (SELECT COUNT(DISTINCT userId) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE fullmatchdetails.matchStatus = 1 AND fullmatchdetails.matchId IN (SELECT DISTINCT fullteamdetails.matchId FROM fullteamdetails WHERE fullteamdetails.userId = ? ORDER BY fullteamdetails.creationTime DESC) LIMIT ?, 20;SELECT COUNT(*) AS totalMatches FROM fullmatchdetails WHERE fullmatchdetails.matchStatus = 1 AND fullmatchdetails.matchId IN (SELECT DISTINCT fullteamdetails.matchId FROM fullteamdetails WHERE fullteamdetails.userId = ? ORDER BY fullteamdetails.creationTime DESC);";
+        "SELECT matchId, seriesName, seriesDname, matchTypeId, UPPER(matchTyprString) AS matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName, (SELECT COUNT(DISTINCT userId) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString = 'not_started' AND fullmatchdetails.matchId IN (SELECT DISTINCT fullteamdetails.matchId FROM fullteamdetails WHERE fullteamdetails.userId = ? ORDER BY fullteamdetails.creationTime DESC) LIMIT ?, 20;SELECT COUNT(*) AS totalMatches FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString = 'not_started' AND fullmatchdetails.matchId IN (SELECT DISTINCT fullteamdetails.matchId FROM fullteamdetails WHERE fullteamdetails.userId = ? ORDER BY fullteamdetails.creationTime DESC);";
       const [currentPlayed, [{ totalMatches }]] = await fetchData(
         matchesQuery,
         [
@@ -150,6 +184,18 @@ router.post("/currentPlayed", async (req, res) => {
       );
 
       currentPlayed.forEach((match) => {
+        if (match.matchStatusString === "not_started") {
+          match.matchStatusString = "UPCOMING";
+        } else if (match.matchStatusString === "live") {
+          match.matchStatusString = "LIVE";
+        } else if (
+          match.matchStatusString === "ended" ||
+          match.matchStatusString === "closed"
+        ) {
+          match.matchStatusString = "RECENT";
+        } else if (match.matchStatusString === "cancelled") {
+          match.matchStatusString = "CANCELED";
+        }
         match.team1FlagURL = imageUrl(
           __dirname,
           "../",

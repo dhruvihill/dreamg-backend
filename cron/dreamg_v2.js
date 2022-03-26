@@ -9,11 +9,7 @@ const tournamentStatistics = {
   improper: [],
 };
 
-const api_tokens = [
-  "srsw8sr9pbefe7hr9m7zcfds",
-  "gej38ey64cqm4amkvcb8uezb",
-  "gtme2pht49kqmnzyp3pacz4t",
-];
+const api_tokens = ["gej38ey64cqm4amkvcb8uezb", "86es3v3uadks3nxj4ts994z4"];
 let currentSelectedToken = 0;
 
 let delay = 0;
@@ -113,30 +109,37 @@ let axiosInstance = createInstance();
 const makeRequest = (url) => {
   return new Promise((resolve, reject) => {
     try {
-      setTimeout(() => {
-        axiosInstance
-          .get(url)
-          .then((data) => {
-            if (
-              data.headers["X-Plan-Quota-Current"] > 1000 ||
-              data.headers["X-Plan-Quota-Current"] === 1000
-            ) {
-              if (currentSelectedToken === api_tokens.length - 1) {
-                console.warn("API limit reached");
-              } else {
+      const makeCall = () => {
+        setTimeout(() => {
+          axiosInstance
+            .get(url)
+            .then((data) => {
+              resolve(data.data);
+            })
+            .catch((error) => {
+              if (
+                parseInt(error.response.headers["x-plan-quota-current"]) >
+                  parseInt(error.response.headers["x-plan-quota-allotted"]) ||
+                parseInt(error.response.headers["x-plan-quota-current"]) ===
+                  parseInt(error.response.headers["x-plan-quota-allotted"])
+              ) {
                 currentSelectedToken++;
-                axiosInstance = createInstance();
+                if (currentSelectedToken === api_tokens.length) {
+                  console.warn("API limit reached");
+                } else {
+                  axiosInstance = createInstance();
+                  makeCall();
+                }
+              } else {
+                console.log(error.response.data, "error");
+                console.log(error.message, "makeRequest");
+                reject(error);
               }
-            }
-            resolve(data.data);
-          })
-          .catch((error) => {
-            console.log(error.response.data, "error");
-            console.log(error.message, "makeRequest");
-            reject(error);
-          });
-      }, delay + 1200);
-      delay += 1200;
+            });
+        }, delay + 1200);
+        delay += 1200;
+      };
+      makeCall();
     } catch (error) {
       console.log(error.message, "makeRequest");
     }
@@ -359,7 +362,9 @@ const storePlayersOfTeamsParent = async (tournament, connection) => {
                   storePlayersOfSingleTeam(tournament.teams[teamsLoopCount]);
                 }
               } else {
-                storeSinglePlayer(team.players[playerLoopCount]);
+                setTimeout(() => {
+                  storeSinglePlayer(team.players[playerLoopCount]);
+                }, 0);
               }
             } else {
               if (player.type && player.type !== "") {
@@ -394,7 +399,9 @@ const storePlayersOfTeamsParent = async (tournament, connection) => {
                         );
                       }
                     } else {
-                      storeSinglePlayer(team.players[playerLoopCount]);
+                      setTimeout(() => {
+                        storeSinglePlayer(team.players[playerLoopCount]);
+                      }, 0);
                     }
                   }
                 } else {
@@ -409,7 +416,9 @@ const storePlayersOfTeamsParent = async (tournament, connection) => {
                       );
                     }
                   } else {
-                    storeSinglePlayer(team.players[playerLoopCount]);
+                    setTimeout(() => {
+                      storeSinglePlayer(team.players[playerLoopCount]);
+                    }, 0);
                   }
                 }
               } else {
@@ -422,7 +431,9 @@ const storePlayersOfTeamsParent = async (tournament, connection) => {
                     storePlayersOfSingleTeam(tournament.teams[teamsLoopCount]);
                   }
                 } else {
-                  storeSinglePlayer(team.players[playerLoopCount]);
+                  setTimeout(() => {
+                    storeSinglePlayer(team.players[playerLoopCount]);
+                  }, 0);
                 }
               }
             }
@@ -436,7 +447,9 @@ const storePlayersOfTeamsParent = async (tournament, connection) => {
                 storePlayersOfSingleTeam(tournament.teams[teamsLoopCount]);
               }
             } else {
-              storeSinglePlayer(team.players[playerLoopCount]);
+              setTimeout(() => {
+                storeSinglePlayer(team.players[playerLoopCount]);
+              }, 0);
             }
           }
         } catch (error) {
@@ -450,7 +463,9 @@ const storePlayersOfTeamsParent = async (tournament, connection) => {
               storePlayersOfSingleTeam(tournament.teams[teamsLoopCount]);
             }
           } else {
-            storeSinglePlayer(team.players[playerLoopCount]);
+            setTimeout(() => {
+              storeSinglePlayer(team.players[playerLoopCount]);
+            }, 0);
           }
         }
       };
@@ -654,7 +669,9 @@ const storeTournamentMatchesRelation = async (tournament, connection) => {
                 if (matchLoopCount === totalMatchObject) {
                   resolve(true);
                 } else {
-                  storeSingleMatch(tournament.matches[matchLoopCount]);
+                  setTimeout(() => {
+                    storeSingleMatch(tournament.matches[matchLoopCount]);
+                  });
                 }
               }
             } else {
@@ -662,7 +679,9 @@ const storeTournamentMatchesRelation = async (tournament, connection) => {
               if (matchLoopCount === totalMatchObject) {
                 resolve(true);
               } else {
-                storeSingleMatch(tournament.matches[matchLoopCount]);
+                setTimeout(() => {
+                  storeSingleMatch(tournament.matches[matchLoopCount]);
+                });
               }
             }
           } else {
@@ -670,7 +689,9 @@ const storeTournamentMatchesRelation = async (tournament, connection) => {
             if (matchLoopCount === totalMatchObject) {
               resolve(true);
             } else {
-              storeSingleMatch(tournament.matches[matchLoopCount]);
+              setTimeout(() => {
+                storeSingleMatch(tournament.matches[matchLoopCount]);
+              });
             }
           }
         } catch (error) {
@@ -937,7 +958,9 @@ const processTournaments = async (tournaments) => {
                   } else {
                     storeTournaments([tournaments[currentTournament]]);
                     currentTournament++;
-                    processTournament(tournaments[currentTournament]);
+                    setTimeout(() => {
+                      processTournament(tournaments[currentTournament]);
+                    }, 0);
                   }
                 } else {
                   tournament.matches = [];
@@ -947,7 +970,9 @@ const processTournaments = async (tournaments) => {
                   } else {
                     storeTournaments([tournaments[currentTournament]]);
                     currentTournament++;
-                    processTournament(tournaments[currentTournament]);
+                    setTimeout(() => {
+                      processTournament(tournaments[currentTournament]);
+                    }, 0);
                   }
                 }
               } else {
@@ -958,7 +983,9 @@ const processTournaments = async (tournaments) => {
                 } else {
                   storeTournaments([tournaments[currentTournament]]);
                   currentTournament++;
-                  processTournament(tournaments[currentTournament]);
+                  setTimeout(() => {
+                    processTournament(tournaments[currentTournament]);
+                  }, 0);
                 }
               }
             } else {
@@ -971,7 +998,9 @@ const processTournaments = async (tournaments) => {
               } else {
                 storeTournaments([tournaments[currentTournament]]);
                 currentTournament++;
-                processTournament(tournaments[currentTournament]);
+                setTimeout(() => {
+                  processTournament(tournaments[currentTournament]);
+                }, 0);
               }
             }
           } else {
@@ -980,7 +1009,9 @@ const processTournaments = async (tournaments) => {
               resolve(tournaments);
             } else {
               currentTournament++;
-              processTournament(tournaments[currentTournament]);
+              setTimeout(() => {
+                processTournament(tournaments[currentTournament]);
+              }, 0);
             }
           }
         } catch (error) {

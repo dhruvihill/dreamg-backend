@@ -1,20 +1,17 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const verifyUser = require("../middleware/verifyUser");
-const verifyProfile = require("../middleware/verifyProfile");
-const { fetchData, imageUrl } = require("../database/db_connection");
+const { fetchData } = require("../database/db_connection");
 // const errors = require("../errorCode");
 
 // Creating user
 router.post("/register", async (req, res) => {
   // getting data from body
   const { number: phoneNumber } = req.body;
-
   try {
     if (
       (phoneNumber.length === 10 || phoneNumber.length === 11) &&
-      !/^[0-9]/g.test(phoneNumber)
+      !/[^0-9]/g.test(phoneNumber)
     ) {
       // registering user
       const result = await fetchData("CALL register_user(?);", [phoneNumber]);
