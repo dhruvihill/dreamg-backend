@@ -4,11 +4,6 @@ require("dotenv/config");
 let connectionForCron = null;
 const data = require("../data2.js");
 
-const tournamentStatistics = {
-  proper: [],
-  improper: [],
-};
-
 const api_tokens = ["gej38ey64cqm4amkvcb8uezb", "86es3v3uadks3nxj4ts994z4"];
 let currentSelectedToken = 0;
 
