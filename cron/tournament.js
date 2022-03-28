@@ -113,8 +113,11 @@ const makeRequest = (url) => {
             })
             .catch((error) => {
               if (
-                parseInt(error.response.headers["x-plan-quota-current"]) >
-                  parseInt(error.response.headers["x-plan-quota-allotted"]) ||
+                (error.response &&
+                  parseInt(error.response.headers["x-plan-quota-current"]) >
+                    parseInt(
+                      error.response.headers["x-plan-quota-allotted"]
+                    )) ||
                 parseInt(error.response.headers["x-plan-quota-current"]) ===
                   parseInt(error.response.headers["x-plan-quota-allotted"])
               ) {
@@ -266,20 +269,24 @@ const storeMatchStatusParent = async (status, connection) => {
 const storePlayerRoleParent = async (role, connection) => {
   return new Promise(async (resolve) => {
     try {
-      let [{ isExists: isRoleExist, roleId }] = await database(
-        "SELECT COUNT(player_roles.roleId) AS isExists, player_roles.roleId AS roleId FROM player_roles WHERE player_roles.roleString = ?;",
-        [role],
-        connection
-      );
-      if (!isRoleExist) {
-        const storeRole = await database(
-          "INSERT INTO player_roles (roleString ) VALUES (?)",
+      if (role) {
+        let [{ isExists: isRoleExist, roleId }] = await database(
+          "SELECT COUNT(player_roles.roleId) AS isExists, player_roles.roleId AS roleId FROM player_roles WHERE player_roles.roleString = ?;",
           [role],
           connection
         );
-        resolve(storeRole.insertId);
+        if (!isRoleExist) {
+          const storeRole = await database(
+            "INSERT INTO player_roles (roleString ) VALUES (?)",
+            [role],
+            connection
+          );
+          resolve(storeRole.insertId);
+        } else {
+          resolve(roleId);
+        }
       } else {
-        resolve(roleId);
+        resolve(null);
       }
     } catch (error) {
       console.log(error.message, "storePlayerRoleParent");
@@ -362,44 +369,26 @@ const storePlayersOfTeamsParent = async (tournament, connection) => {
                 }, 0);
               }
             } else {
-              if (player.type && player.type !== "") {
-                const roleId = await storePlayerRoleParent(
-                  player.type,
+              const roleId = await storePlayerRoleParent(
+                player.type,
+                connection
+              );
+              if (roleId !== 0) {
+                const storePlayers = await database(
+                  "INSERT INTO players SET ?",
+                  {
+                    playerRadarId: player.id.substr(10),
+                    playerFirstName: player.name.split(", ")[1] || "",
+                    playerLastName: player.name.split(", ")[0] || "",
+                    playerCountryCode: player.country_code || null,
+                    playerRole: roleId,
+                    playerDOB: player.date_of_birth || null,
+                    playerCountry: player.nationality || null,
+                  },
                   connection
                 );
-                if (roleId !== 0) {
-                  const storePlayers = await database(
-                    "INSERT INTO players SET ?",
-                    {
-                      playerRadarId: player.id.substr(10),
-                      playerFirstName: player.name.split(", ")[1] || "",
-                      playerLastName: player.name.split(", ")[0] || "",
-                      playerCountryCode: player.country_code || null,
-                      playerRole: roleId,
-                      playerDOB: player.date_of_birth || null,
-                      playerCountry: player.nationality || null,
-                    },
-                    connection
-                  );
-                  player.insertId = storePlayers.insertId;
-                  if (storePlayers.insertId) {
-                    playerLoopCount++;
-                    if (playerLoopCount === totalPlayers) {
-                      teamsLoopCount++;
-                      if (teamsLoopCount === totalTeams) {
-                        resolve(tournament);
-                      } else {
-                        storePlayersOfSingleTeam(
-                          tournament.teams[teamsLoopCount]
-                        );
-                      }
-                    } else {
-                      setTimeout(() => {
-                        storeSinglePlayer(team.players[playerLoopCount]);
-                      }, 0);
-                    }
-                  }
-                } else {
+                player.insertId = storePlayers.insertId;
+                if (storePlayers.insertId) {
                   playerLoopCount++;
                   if (playerLoopCount === totalPlayers) {
                     teamsLoopCount++;

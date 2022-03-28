@@ -2,7 +2,6 @@ const axios = require("axios");
 const mysql = require("mysql");
 require("dotenv/config");
 let connectionForCron = null;
-const data = require("../data2.js");
 
 const api_tokens = [
   "3frs3xa587s9uhfwa2wnkufu",
@@ -145,6 +144,118 @@ const makeRequest = (url) => {
   });
 };
 
+const storeBattingStyle = async (battingStyle, connection) => {
+  return new Promise(async (resolve) => {
+    try {
+      if (battingStyle) {
+        let [{ isExists: isStyleExist, styleId }] = await database(
+          "SELECT COUNT(player_batting_style.playerBattingStyleId) As isExists, player_batting_style.playerBattingStyleId AS styleId FROM `player_batting_style` WHERE player_batting_style.battingStyleString = ?;",
+          [battingStyle],
+          connection
+        );
+        if (!isStyleExist) {
+          const storeStyle = await database(
+            "INSERT INTO player_batting_style SET ?;",
+            { battingStyleString: battingStyle },
+            connection
+          );
+          resolve(storeStyle.insertId);
+        } else {
+          resolve(styleId);
+        }
+      } else {
+        resolve(null);
+      }
+    } catch (error) {
+      console.log(error.message, "storeBattingStyle");
+    }
+  });
+};
+
+const storeBowlingStyle = async (bowlingStyle, connection) => {
+  return new Promise(async (resolve) => {
+    try {
+      if (bowlingStyle) {
+        let [{ isExists: isStyleExist, styleId }] = await database(
+          "SELECT COUNT(player_bowling_style.playerBowlingStyleId) As isExists, player_bowling_style.playerBowlingStyleId AS styleId FROM `player_bowling_style` WHERE player_bowling_style.playerBowlingStyleString = ?;",
+          [bowlingStyle],
+          connection
+        );
+        if (!isStyleExist) {
+          const storeStyle = await database(
+            "INSERT INTO player_bowling_style SET ?;",
+            { playerBowlingStyleString: bowlingStyle },
+            connection
+          );
+          resolve(storeStyle.insertId);
+        } else {
+          resolve(styleId);
+        }
+      } else {
+        resolve(null);
+      }
+    } catch (error) {
+      console.log(error.message, "storeBattingStyle");
+    }
+  });
+};
+
+const storePlayerStyle = async (player, connection) => {
+  return new Promise(async (resolve) => {
+    try {
+      const battingStyleId = await storeBattingStyle(
+        player.batting_style,
+        connection
+      );
+      const bowlingStyleId = await storeBowlingStyle(
+        player.bowling_style,
+        connection
+      );
+
+      const updatePlayer = await database(
+        "UPDATE players SET playerBattingStyleId = ?, playerBowlingStyleId = ? WHERE playerRadarId = ?;",
+        [battingStyleId, bowlingStyleId, player.id.substr(10)],
+        connection
+      );
+      if (updatePlayer.affectedRows) {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    } catch (error) {
+      console.log(error.message, "storePlayerStyle");
+    }
+  });
+};
+
+const storePlayerRoleParent = async (role, connection) => {
+  return new Promise(async (resolve) => {
+    try {
+      if (role) {
+        let [{ isExists: isRoleExist, roleId }] = await database(
+          "SELECT COUNT(player_roles.roleId) AS isExists, player_roles.roleId AS roleId FROM player_roles WHERE player_roles.roleString = ?;",
+          [role],
+          connection
+        );
+        if (!isRoleExist) {
+          const storeRole = await database(
+            "INSERT INTO player_roles (roleString ) VALUES (?)",
+            [role],
+            connection
+          );
+          resolve(storeRole.insertId);
+        } else {
+          resolve(roleId);
+        }
+      } else {
+        resolve(null);
+      }
+    } catch (error) {
+      console.log(error.message, "storePlayerRoleParent");
+    }
+  });
+};
+
 const storeMatchLineup = async (matchId, matchRadarId, connection) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -171,49 +282,94 @@ const storeMatchLineup = async (matchId, matchRadarId, connection) => {
             team === "home" ? homeCompetitor[0].id : awayCompetitor[0].id;
 
           let playersloopCount = 0;
-          lineup?.starting_lineup?.forEach(async (player) => {
+          const storePlayer = async (player) => {
             try {
-              const [{ playerId }] = await database(
-                "SELECT playerId FROM allplayers WHERE playerRadarId = ?",
+              const [{ isExists: isPlayerExists, playerId }] = await database(
+                "SELECT COUNT(playerId) AS isExists, playerId FROM allplayers WHERE playerRadarId = ?",
                 [player.id.substr(10)],
                 connection
               );
-              const [{ competitorIdStored }] = await database(
-                "SELECT teamId AS competitorIdStored FROM allteams WHERE teamRadarId = ?",
-                [competitorId.substr(14)],
-                connection
-              );
-              const storePlayer = await database(
-                "INSERT INTO match_lineup SET ?",
-                {
-                  matchId,
-                  playerId: playerId,
-                  competitorId: competitorIdStored,
-                  order: player.order,
-                },
-                connection
-              );
 
-              if (storePlayer) {
-                playersloopCount++;
-                if (playersloopCount === lineup.starting_lineup.length) {
-                  teamsloopCount++;
-                  if (teamsloopCount === matchLineUp.lineups.length) {
-                    resolve(true);
+              if (isPlayerExists) {
+                const [{ competitorIdStored }] = await database(
+                  "SELECT teamId AS competitorIdStored FROM allteams WHERE teamRadarId = ?",
+                  [competitorId.substr(14)],
+                  connection
+                );
+                const storePlayer = await database(
+                  "INSERT INTO match_lineup SET ?",
+                  {
+                    matchId,
+                    playerId: playerId,
+                    competitorId: competitorIdStored,
+                    order: player.order,
+                    isCaptain: player.is_captain ? 1 : 0,
+                    isWicketKeeper: player.is_wicketkeeper ? 1 : 0,
+                  },
+                  connection
+                );
+
+                if (storePlayer) {
+                  playersloopCount++;
+                  if (playersloopCount === lineup.starting_lineup.length) {
+                    teamsloopCount++;
+                    if (teamsloopCount === matchLineUp.lineups.length) {
+                      resolve(true);
+                    }
                   }
                 }
+              } else {
+                const storeSinglePlayer = async (player) => {
+                  try {
+                    const roleId = await storePlayerRoleParent(
+                      player.type,
+                      connection
+                    );
+                    const storePlayers = await database(
+                      "INSERT INTO players SET ?",
+                      {
+                        playerRadarId: player.id.substr(10),
+                        playerFirstName: player.name.split(", ")[1] || "",
+                        playerLastName: player.name.split(", ")[0] || "",
+                        playerCountryCode: player.country_code || null,
+                        playerRole: roleId,
+                        playerDOB: player.date_of_birth || null,
+                        playerCountry: player.nationality || null,
+                      },
+                      connection
+                    );
+                    if (storePlayers.insertId) {
+                      const updatePlayer = await storePlayerStyle(
+                        player,
+                        connection
+                      );
+                      setTimeout(() => {
+                        storePlayer(player);
+                      }, 0);
+                    }
+                  } catch (error) {
+                    console.log(error.message, "storePlayersOfTeamsParent");
+                  }
+                };
+                const { player: playerData } = await makeRequest(
+                  `players/${player.id}/profile.json`
+                );
+                storeSinglePlayer(playerData);
               }
             } catch (error) {
-              console.log(error.message, "storeMatchLineup");
+              console.log(error.message, "storeMatchLineup1");
             }
+          };
+          lineup?.starting_lineup?.forEach((player) => {
+            storePlayer(player);
           });
         } catch (error) {
-          console.log(error.message, "storeMatchLineup");
+          console.log(error.message, "storeMatchLineup2");
         }
       });
     } catch (error) {
       resolve(false);
-      console.log(error.message, "storeMatchLineup");
+      console.log(error.message, "storeMatchLineup3");
     }
   });
 };
@@ -222,7 +378,7 @@ const fetchMatches = async () => {
   try {
     const connection = await connectToDb();
     const matches = await database(
-      `SELECT matchId, matchRadarId FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString IN ('ended', 'closed', 'abandoned', 'cancelled', 'live') ORDER BY matchId;`,
+      `SELECT matchId, matchRadarId FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString IN ('ended', 'closed', 'abandoned', 'cancelled', 'live') AND matchId > 0 ORDER BY matchId;`,
       [],
       connection
     );
@@ -230,8 +386,9 @@ const fetchMatches = async () => {
     let currentMatch = 0;
     const totalMatches = matches.length;
 
-    const preocessMatch = async (match) => {
+    const processMatch = async (match) => {
       try {
+        delay = 1200;
         const newConnection = await connectToDb();
         const [{ isExists }] = await database(
           "SELECT COUNT(matchId) AS isExists FROM `match_lineup` WHERE match_lineup.matchId = ?;",
@@ -250,8 +407,9 @@ const fetchMatches = async () => {
             if (currentMatch === totalMatches) {
               console.log("All matches processed");
             } else {
+              newConnection.release();
               setTimeout(() => {
-                preocessMatch(matches[currentMatch]);
+                processMatch(matches[currentMatch]);
               }, 0);
             }
           } else {
@@ -259,8 +417,9 @@ const fetchMatches = async () => {
             if (currentMatch === totalMatches) {
               console.log("All matches processed");
             } else {
+              newConnection.release();
               setTimeout(() => {
-                preocessMatch(matches[currentMatch]);
+                processMatch(matches[currentMatch]);
               }, 0);
             }
           }
@@ -269,8 +428,9 @@ const fetchMatches = async () => {
           if (currentMatch === totalMatches) {
             console.log("All matches processed");
           } else {
+            newConnection.release();
             setTimeout(() => {
-              preocessMatch(matches[currentMatch]);
+              processMatch(matches[currentMatch]);
             }, 0);
           }
         }
@@ -280,13 +440,14 @@ const fetchMatches = async () => {
         if (currentMatch === totalMatches) {
           console.log("All matches processed");
         } else {
+          newConnection.release();
           setTimeout(() => {
-            preocessMatch(matches[currentMatch]);
+            processMatch(matches[currentMatch]);
           }, 0);
         }
       }
     };
-    preocessMatch(matches[currentMatch]);
+    processMatch(matches[currentMatch]);
   } catch (error) {
     console.log(error.message, "fetchMatches");
   }

@@ -1,19 +1,9 @@
-// rjtrs9qr8bv3kze7qtu36a2v
 const axios = require("axios");
 const mysql = require("mysql");
 require("dotenv/config");
 let connectionForCron = null;
-const data = require("../data2.js");
 
-const api_tokens = [
-  "rjtrs9qr8bv3kze7qtu36a2v",
-  "gcqrawst8wghhv77t5fcwx6r",
-  "9qnuekfxzngcvhdjs75w5hye",
-  "gqagzs4cmkvapn8x53fab7jy",
-  "c5y6bjmfteyeux2np7sn9sne",
-  "4tgcs937ptngjtcabvyxve5e",
-  "2jws2w6zmp4gt8zn3bv56nfy",
-];
+const api_tokens = ["2jws2w6zmp4gt8zn3bv56nfy"];
 let currentSelectedToken = 0;
 
 let delay = 0;
@@ -122,10 +112,8 @@ const makeRequest = (url) => {
             })
             .catch((error) => {
               if (
-                parseInt(error.response.headers["x-plan-quota-current"]) >
-                  parseInt(error.response.headers["x-plan-quota-allotted"]) ||
-                parseInt(error.response.headers["x-plan-quota-current"]) ===
-                  parseInt(error.response.headers["x-plan-quota-allotted"])
+                parseInt(error.response.headers["x-plan-quota-current"]) >=
+                parseInt(error.response.headers["x-plan-quota-allotted"])
               ) {
                 currentSelectedToken++;
                 if (currentSelectedToken === api_tokens.length) {
@@ -408,7 +396,7 @@ const fetchData = async () => {
   try {
     let connection = await connectToDb();
     const players = await database(
-      "SELECT playerRadarId, playerId from allplayers ORDER BY playerId;",
+      "SELECT playerRadarId, playerId from allplayers WHERE playerId > 5393 ORDER BY playerId;",
       [],
       connection
     );
