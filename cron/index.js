@@ -302,7 +302,7 @@ const insertSinglePlayer = async (player, matchId, connection) => {
         {
           playerId: player.id,
           name: player.name,
-          role: player.role,
+          role: player.role || 0,
           displayName: player.dName,
           url: player.imgURL,
         },

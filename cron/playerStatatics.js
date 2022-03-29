@@ -3,7 +3,15 @@ const mysql = require("mysql");
 require("dotenv/config");
 let connectionForCron = null;
 
-const api_tokens = ["2jws2w6zmp4gt8zn3bv56nfy"];
+const api_tokens = [
+  "2jws2w6zmp4gt8zn3bv56nfy",
+  "cg85e68fxv6mzgnbe2sjbsx3",
+  "9dn2jbeu4j5ujxrxcgx6ev8k",
+  "tmhxaq4w74x7c2xyahuhfq9y",
+  "6sh4zwc43b5a8ajszjh7e79d",
+  "bme7zzhvyxkw2g2vvkpx8dwe",
+  "egb9th552ezx7ddmamtvst7w",
+];
 let currentSelectedToken = 0;
 
 let delay = 0;
@@ -396,7 +404,7 @@ const fetchData = async () => {
   try {
     let connection = await connectToDb();
     const players = await database(
-      "SELECT playerRadarId, playerId from allplayers WHERE playerId > 5393 ORDER BY playerId;",
+      "SELECT playerRadarId, playerId from allplayers WHERE playerId > 0 ORDER BY playerId;",
       [],
       connection
     );

@@ -286,7 +286,7 @@ const storePlayerRoleParent = async (role, connection) => {
           resolve(roleId);
         }
       } else {
-        resolve(null);
+        resolve(0);
       }
     } catch (error) {
       console.log(error.message, "storePlayerRoleParent");
@@ -381,7 +381,7 @@ const storePlayersOfTeamsParent = async (tournament, connection) => {
                     playerFirstName: player.name.split(", ")[1] || "",
                     playerLastName: player.name.split(", ")[0] || "",
                     playerCountryCode: player.country_code || null,
-                    playerRole: roleId,
+                    playerRole: roleId || 0,
                     playerDOB: player.date_of_birth || null,
                     playerCountry: player.nationality || null,
                   },

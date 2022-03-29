@@ -248,7 +248,7 @@ const storePlayerRoleParent = async (role, connection) => {
           resolve(roleId);
         }
       } else {
-        resolve(null);
+        resolve(0);
       }
     } catch (error) {
       console.log(error.message, "storePlayerRoleParent");
@@ -290,12 +290,13 @@ const storeMatchLineup = async (matchId, matchRadarId, connection) => {
                 connection
               );
 
-              if (isPlayerExists) {
-                const [{ competitorIdStored }] = await database(
-                  "SELECT teamId AS competitorIdStored FROM allteams WHERE teamRadarId = ?",
+              const [{ competitorIdStored, competitorRadarIdStored }] =
+                await database(
+                  "SELECT teamId AS competitorIdStored, teamRadarId AS competitorRadarIdStored FROM allteams WHERE teamRadarId = ?",
                   [competitorId.substr(14)],
                   connection
                 );
+              if (isPlayerExists) {
                 const storePlayer = await database(
                   "INSERT INTO match_lineup SET ?",
                   {
@@ -319,28 +320,36 @@ const storeMatchLineup = async (matchId, matchRadarId, connection) => {
                   }
                 }
               } else {
-                const storeSinglePlayer = async (player) => {
+                const storeSinglePlayer = async (playerData) => {
                   try {
                     const roleId = await storePlayerRoleParent(
-                      player.type,
+                      playerData.type,
                       connection
                     );
                     const storePlayers = await database(
                       "INSERT INTO players SET ?",
                       {
-                        playerRadarId: player.id.substr(10),
-                        playerFirstName: player.name.split(", ")[1] || "",
-                        playerLastName: player.name.split(", ")[0] || "",
-                        playerCountryCode: player.country_code || null,
-                        playerRole: roleId,
-                        playerDOB: player.date_of_birth || null,
-                        playerCountry: player.nationality || null,
+                        playerRadarId: playerData.id.substr(10),
+                        playerFirstName: playerData.name.split(", ")[1] || "",
+                        playerLastName: playerData.name.split(", ")[0] || "",
+                        playerCountryCode: playerData.country_code || null,
+                        playerRole: roleId || 0,
+                        playerDOB: playerData.date_of_birth || null,
+                        playerCountry: playerData.nationality || null,
                       },
                       connection
                     );
                     if (storePlayers.insertId) {
                       const updatePlayer = await storePlayerStyle(
-                        player,
+                        playerData,
+                        connection
+                      );
+                      const storeRelation = await database(
+                        "INSERT INTO tournament_competitor_player SET ?",
+                        {
+                          tournamentCompetitorId: competitorRadarIdStored,
+                          playerId: storePlayers.insertId,
+                        },
                         connection
                       );
                       setTimeout(() => {
