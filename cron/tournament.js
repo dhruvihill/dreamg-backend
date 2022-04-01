@@ -373,39 +373,21 @@ const storePlayersOfTeamsParent = async (tournament, connection) => {
                 player.type,
                 connection
               );
-              if (roleId !== 0) {
-                const storePlayers = await database(
-                  "INSERT INTO players SET ?",
-                  {
-                    playerRadarId: player.id.substr(10),
-                    playerFirstName: player.name.split(", ")[1] || "",
-                    playerLastName: player.name.split(", ")[0] || "",
-                    playerCountryCode: player.country_code || null,
-                    playerRole: roleId || 0,
-                    playerDOB: player.date_of_birth || null,
-                    playerCountry: player.nationality || null,
-                  },
-                  connection
-                );
-                player.insertId = storePlayers.insertId;
-                if (storePlayers.insertId) {
-                  playerLoopCount++;
-                  if (playerLoopCount === totalPlayers) {
-                    teamsLoopCount++;
-                    if (teamsLoopCount === totalTeams) {
-                      resolve(tournament);
-                    } else {
-                      storePlayersOfSingleTeam(
-                        tournament.teams[teamsLoopCount]
-                      );
-                    }
-                  } else {
-                    setTimeout(() => {
-                      storeSinglePlayer(team.players[playerLoopCount]);
-                    }, 0);
-                  }
-                }
-              } else {
+              const storePlayers = await database(
+                "INSERT INTO players SET ?",
+                {
+                  playerRadarId: player.id.substr(10),
+                  playerFirstName: player.name.split(", ")[1] || "",
+                  playerLastName: player.name.split(", ")[0] || "",
+                  playerCountryCode: player.country_code || null,
+                  playerRole: roleId || 0,
+                  playerDOB: player.date_of_birth || null,
+                  playerCountry: player.nationality || null,
+                },
+                connection
+              );
+              player.insertId = storePlayers.insertId;
+              if (storePlayers.insertId) {
                 playerLoopCount++;
                 if (playerLoopCount === totalPlayers) {
                   teamsLoopCount++;
@@ -1026,5 +1008,3 @@ const fetchAndStore = async () => {
     console.log(error.message, "fetchAndStore");
   }
 };
-
-fetchAndStore();

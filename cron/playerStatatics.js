@@ -414,4 +414,4 @@ const fetchData = async () => {
   }
 };
 
-fetchData();
+module.exports = { storePlayersStatics };

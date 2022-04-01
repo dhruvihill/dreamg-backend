@@ -7,6 +7,8 @@ const api_tokens = [
   "3frs3xa587s9uhfwa2wnkufu",
   "q7te6md2rf9ez7aju72bm4gz",
   "fmpwthupf2fr479np2r6dauy",
+  "8gvnuxmz6hhd6xp9srrffju7",
+  "77rga3pqmmc8a63d4qfpwdzd",
 ];
 let currentSelectedToken = 0;
 
@@ -257,7 +259,7 @@ const storePlayerRoleParent = async (role, connection) => {
 };
 
 const storeMatchLineup = async (matchId, matchRadarId, connection) => {
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async (resolve) => {
     try {
       console.log("lets store match lineup", matchId);
       const matchLineUp = await makeRequest(
@@ -377,8 +379,14 @@ const storeMatchLineup = async (matchId, matchRadarId, connection) => {
         }
       });
     } catch (error) {
-      resolve(false);
-      console.log(error.message, "storeMatchLineup3");
+      if (error.isAxiosError) {
+        if (error.response.data.message === "No lineups.") {
+          resolve(false);
+        }
+      } else {
+        console.log(error.message, "storeMatchLineup3");
+        resolve(false);
+      }
     }
   });
 };
@@ -449,7 +457,6 @@ const fetchMatches = async () => {
         if (currentMatch === totalMatches) {
           console.log("All matches processed");
         } else {
-          newConnection.release();
           setTimeout(() => {
             processMatch(matches[currentMatch]);
           }, 0);
@@ -462,4 +469,7 @@ const fetchMatches = async () => {
   }
 };
 
-fetchMatches();
+module.exports = {
+  storeMatchLineup,
+  fetchMatches,
+};

@@ -78,8 +78,9 @@ const t20Score = {
     run: 1,
     boundary: 1,
     six: 2,
-    halfCentury: 4,
-    century: 8,
+    thirtyRuns: 4,
+    halfCentury: 8,
+    century: 16,
     duck: -2,
   },
   bowl: {
@@ -166,4 +167,11 @@ const t10Score = {
     viceCaptain: "1.5x",
     inStarting11: 4,
   },
+};
+
+module.exports = {
+  testScore,
+  odiScore,
+  t20Score,
+  t10Score,
 };

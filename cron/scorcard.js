@@ -1,12 +1,12 @@
 const axios = require("axios");
 const mysql = require("mysql");
+const { storePlayersStatics } = require("./playerStatatics");
 require("dotenv/config");
 let connectionForCron = null;
 
 const api_tokens = [
-  "ttb33w8ezuyjfjp5j8868ge7",
-  "yscfx9xc8zun3uun5y4xsjpm",
   "k6bnypfa2ub5mvn8uxbc59f6",
+  // "js5u7mmxkcazf325xp9zchk4",
 ];
 let currentSelectedToken = 0;
 
@@ -125,7 +125,7 @@ const makeRequest = (url) => {
                   parseInt(error.response.headers["x-plan-quota-allotted"])
               ) {
                 currentSelectedToken++;
-                if (currentSelectedToken === api_tokens.length) {
+                if (currentSelectedToken > api_tokens.length) {
                   console.warn("API limit reached");
                 } else {
                   axiosInstance = createInstance();
@@ -157,83 +157,175 @@ player not exists then store it and re execute the function
 
 
 */
-
-const storeBatsMan = (inningId, battingTeam, connection) => {
-  return new Promise((resolve) => {
+const storePlayerRoleParent = async (role, connection) => {
+  return new Promise(async (resolve) => {
     try {
-      battingTeam?.statistics?.batting?.players?.forEach(async (player) => {
-        try {
-          let [
-            [{ isExists: isPlayerExists, playerInsertedId }],
-            bowler,
-            fielder,
-          ] = await database(
-            "SELECT COUNT(playerId) AS isExists, playerId AS playerInsertedId FROM allplayers WHERE playerRadarId = ?; SELECT playerId AS bowlerId FROM allplayers WHERE playerRadarId = ?; SELECT playerId AS fielderId FROM allplayers WHERE playerRadarId = ?;",
-            [
-              player?.id?.substr(10),
-              player?.statistics?.dismissal?.bowler_id?.substr(10),
-              player?.statistics?.dismissal?.fieldsman_id?.substr(10),
-            ],
+      if (role) {
+        let [{ isExists: isRoleExist, roleId }] = await database(
+          "SELECT COUNT(player_roles.roleId) AS isExists, player_roles.roleId AS roleId FROM player_roles WHERE player_roles.roleString = ?;",
+          [role],
+          connection
+        );
+        if (!isRoleExist) {
+          const storeRole = await database(
+            "INSERT INTO player_roles (roleString ) VALUES (?)",
+            [role],
             connection
           );
-          if (isPlayerExists) {
-            bowler.length > 0 ? (bowler = bowler[0].bowlerId) : (bowler = null);
-            fielder.length > 0
-              ? (fielder = fielder[0].fielderId)
-              : (fielder = null);
-            const store = await database(
-              "INSERT INTO inning_batsmans SET ?;",
+          resolve(storeRole.insertId);
+        } else {
+          resolve(roleId);
+        }
+      } else {
+        resolve(0);
+      }
+    } catch (error) {
+      console.log(error.message, "storePlayerRoleParent");
+    }
+  });
+};
+
+const storeSinglePlayer = async (player, connection) => {
+  return new Promise(async (resolve) => {
+    try {
+      if (player && player.id) {
+        let [{ isExists: isPlayerExist, playerId }] = await database(
+          "SELECT COUNT(playerId) AS isExists, playerId FROM players WHERE players.playerRadarId = ?;",
+          [player.id.substr(10)],
+          connection
+        );
+        if (isPlayerExist === 1) {
+          resolve(playerId);
+        } else {
+          const playerDetails = await makeRequest(
+            `players/${player.id}/profile.json`
+          );
+          if (playerDetails && playerDetails.player) {
+            const roleId = await storePlayerRoleParent(
+              playerDetails?.player?.type,
+              connection
+            );
+            const storePlayers = await database(
+              "INSERT INTO players SET ?",
               {
-                scorcardInningId: inningId,
-                playerId: playerInsertedId,
-                battingOrder: player?.statistics?.order || null,
-                runs: player?.statistics?.runs || 0,
-                strikeRate: player?.statistics?.strike_rate || 0.0,
-                isNotOut: player?.statistics?.not_out || 0,
-                isDuck: player?.statistics?.duck || 0,
-                isRetiredHurt: player?.statistics?.retired_hurt || 0,
-                ballFaced: player?.statistics?.balls_faced || 0,
-                fours: player?.statistics?.fours || 0,
-                sixes: player?.statistics?.sixes || 0,
-                attackIngShot: player?.statistics?.attacking_shots || 0,
-                semiAttackingShot: player?.statistics?.semi_attacking || 0,
-                defendingShot: player?.statistics?.defending_shots || 0,
-                leaves: player?.statistics?.left_alone || 0,
-                onSideShot: player?.statistics?.onside_shots || 0,
-                offSideShot: player?.statistics?.offside_shots || 0,
-                squreLegShot: player?.statistics?.square_leg_shots || 0,
-                fineLegShot: player?.statistics?.fine_leg_shots || 0,
-                thirdManShot: player?.statistics?.third_man_shots || 0,
-                coverShot: player?.statistics?.cover_shots || 0,
-                pointsShot: player?.statistics?.point_shots || 0,
-                midOnShot: player?.statistics?.mid_on_shots || 0,
-                midOffShot: player?.statistics?.mid_off_shots || 0,
-                midWicketShot: player?.statistics?.mid_wicket_shots || 0,
-                dismissalOverBallNumber:
-                  player?.statistics?.dismissal?.ball_number || null,
-                dismissalOverNumber:
-                  player?.statistics?.dismissal?.over_number || null,
-                dismissalBallerId: bowler || null,
-                dismissalDiliveryType:
-                  player?.statistics?.dismissal?.delivery_type || null,
-                dismissalFieldeManId: fielder || null,
-                dismissalIsOnStrike:
-                  player?.statistics?.dismissal?.on_strike | null,
-                dismissalShotType:
-                  player?.statistics?.dismissal?.shot_type || null,
-                dismissalType: player?.statistics?.dismissal?.type || null,
+                playerRadarId: player.id.substr(10),
+                playerFirstName: player.name.split(", ")[1] || "",
+                playerLastName: player.name.split(", ")[0] || "",
+                playerCountryCode: player.country_code || null,
+                playerRole: roleId || 0,
+                playerDOB: player.date_of_birth || null,
+                playerCountry: player.nationality || null,
               },
               connection
             );
-            if (store) {
-              resolve(true);
+            if (storePlayers.insertId) {
+              storePlayersStatics([
+                {
+                  playerId: storePlayers.insertId,
+                  playerRadarId: player.id.substr(10),
+                },
+              ]);
             }
+            resolve(storePlayers.insertId);
           } else {
             resolve(false);
           }
-        } catch (error) {
-          console.log(error, "storeBatsMan");
         }
+      }
+    } catch (error) {
+      console.log(error.message, "storesingleplayer");
+      resolve(false);
+    }
+  });
+};
+
+const storeBatsMan = (inningId, battingTeam, connection) => {
+  return new Promise((resolve) => {
+    const storeSingleBastMan = async (player) => {
+      try {
+        let [
+          [{ isExists: isPlayerExists, playerInsertedId }],
+          bowler,
+          fielder,
+        ] = await database(
+          "SELECT COUNT(playerId) AS isExists, playerId AS playerInsertedId FROM allplayers WHERE playerRadarId = ?; SELECT playerId AS bowlerId FROM allplayers WHERE playerRadarId = ?; SELECT playerId AS fielderId FROM allplayers WHERE playerRadarId = ?;",
+          [
+            player?.id?.substr(10),
+            player?.statistics?.dismissal?.bowler_id?.substr(10),
+            player?.statistics?.dismissal?.fieldsman_id?.substr(10),
+          ],
+          connection
+        );
+        if (isPlayerExists) {
+          bowler.length > 0 ? (bowler = bowler[0].bowlerId) : (bowler = null);
+          fielder.length > 0
+            ? (fielder = fielder[0].fielderId)
+            : (fielder = null);
+          const store = await database(
+            "INSERT INTO inning_batsmans SET ?;",
+            {
+              scorcardInningId: inningId,
+              playerId: playerInsertedId,
+              battingOrder: player?.order || null,
+              runs: player?.statistics?.runs || 0,
+              strikeRate: player?.statistics?.strike_rate || 0.0,
+              isNotOut: player?.statistics?.not_out || 0,
+              isDuck: player?.statistics?.duck || 0,
+              isRetiredHurt: player?.statistics?.retired_hurt || 0,
+              ballFaced: player?.statistics?.balls_faced || 0,
+              fours: player?.statistics?.fours || 0,
+              sixes: player?.statistics?.sixes || 0,
+              attackIngShot: player?.statistics?.attacking_shots || 0,
+              semiAttackingShot: player?.statistics?.semi_attacking || 0,
+              defendingShot: player?.statistics?.defending_shots || 0,
+              leaves: player?.statistics?.left_alone || 0,
+              onSideShot: player?.statistics?.onside_shots || 0,
+              offSideShot: player?.statistics?.offside_shots || 0,
+              squreLegShot: player?.statistics?.square_leg_shots || 0,
+              fineLegShot: player?.statistics?.fine_leg_shots || 0,
+              thirdManShot: player?.statistics?.third_man_shots || 0,
+              coverShot: player?.statistics?.cover_shots || 0,
+              pointsShot: player?.statistics?.point_shots || 0,
+              midOnShot: player?.statistics?.mid_on_shots || 0,
+              midOffShot: player?.statistics?.mid_off_shots || 0,
+              midWicketShot: player?.statistics?.mid_wicket_shots || 0,
+              dismissalOverBallNumber:
+                player?.statistics?.dismissal?.ball_number || null,
+              dismissalOverNumber:
+                player?.statistics?.dismissal?.over_number || null,
+              dismissalBallerId: bowler || null,
+              dismissalDiliveryType:
+                player?.statistics?.dismissal?.delivery_type || null,
+              dismissalFieldeManId: fielder || null,
+              dismissalIsOnStrike:
+                player?.statistics?.dismissal?.on_strike | null,
+              dismissalShotType:
+                player?.statistics?.dismissal?.shot_type || null,
+              dismissalType: player?.statistics?.dismissal?.type || null,
+            },
+            connection
+          );
+          if (store) {
+            resolve(true);
+          }
+        } else {
+          const storePlayersId = await storeSinglePlayer(player, connection);
+          if (storePlayersId) {
+            setTimeout(() => {
+              storeSingleBastMan(player);
+            }, 0);
+          } else {
+            console.log("player not found");
+            resolve(false);
+          }
+        }
+      } catch (error) {
+        console.log(error, "storeSingleBastMan");
+      }
+    };
+    try {
+      battingTeam?.statistics?.batting?.players?.forEach(async (player) => {
+        storeSingleBastMan(player);
       });
     } catch (error) {
       console.log(error.message, "storeBatsMan");
@@ -245,7 +337,7 @@ const storeBatsMan = (inningId, battingTeam, connection) => {
 const storeBowlers = (inningId, bowlingTeam, connection) => {
   return new Promise(async (resolve) => {
     try {
-      bowlingTeam?.statistics?.bowling?.players?.forEach(async (player) => {
+      const storeSingleBowler = async (player) => {
         try {
           const [{ isExists: isPlayerExists, playerInsertedId }] =
             await database(
@@ -287,11 +379,22 @@ const storeBowlers = (inningId, bowlingTeam, connection) => {
               resolve(true);
             }
           } else {
-            resolve(false);
+            const storedPlayerId = await storeSinglePlayer(player, connection);
+            if (storedPlayerId) {
+              setTimeout(() => {
+                storeSingleBowler(player);
+              }, 0);
+            } else {
+              console.log("player not found");
+              resolve(false);
+            }
           }
         } catch (error) {
           console.log(error.message, "storeBowlers");
         }
+      };
+      bowlingTeam?.statistics?.bowling?.players?.forEach(async (player) => {
+        storeSingleBowler(player);
       });
     } catch (error) {
       console.log(error.message, "storeBowlers");
@@ -439,6 +542,7 @@ const storeInnings = (
             ) {
               resolve(true);
             } else {
+              console.log("some error happended in storeInnings");
               resolve(false);
             }
             inningLoopCount++;
@@ -453,6 +557,9 @@ const storeInnings = (
           }
         });
       } else {
+        console.log(
+          "insufficient data to store innings sports radar store innings"
+        );
         resolve(false);
       }
     } catch (error) {}
@@ -462,12 +569,12 @@ const storeInnings = (
 const storeScorcard = (scoreDetails, storedMatchDetails, connection) => {
   return new Promise(async (resolve, reject) => {
     try {
+      console.log("lets store the scorecard", scoreDetails.sport_event.id);
       if (
         scoreDetails &&
         scoreDetails.sport_event_status &&
         scoreDetails.statistics
       ) {
-        console.log("lets store the scorecard", scoreDetails.sport_event.id);
         const tossWonBy =
           parseInt(
             scoreDetails?.sport_event_status?.toss_won_by?.substr(14)
@@ -517,6 +624,9 @@ const storeScorcard = (scoreDetails, storedMatchDetails, connection) => {
           resolve(false);
         }
       } else {
+        console.log(
+          "insufficient data to store innings from radar store scorecard"
+        );
         resolve(false);
       }
     } catch (error) {
@@ -531,7 +641,7 @@ const fetchMatches = async () => {
   try {
     const connection = await connectToDb();
     const matches = await database(
-      `SELECT matchId, matchRadarId, team1Id, team1RadarId, team2Id , team2RadarId FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString IN ('ended', 'closed', 'abandoned', 'cancelled') AND matchId > 0 ORDER BY matchId;`,
+      `SELECT matchId, matchRadarId, team1Id, team1RadarId, team2Id , team2RadarId FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString IN ('ended', 'closed') AND matchId > 0 ORDER BY matchId;`,
       [],
       connection
     );
@@ -580,13 +690,11 @@ const fetchMatches = async () => {
           }, 0);
         }
       } catch (error) {
-        newConnection.release();
         console.log(error.message, "preocessMatch");
         currentMatch++;
         if (currentMatch === totalMatches) {
           console.log("All matches processed");
         } else {
-          newConnection.release();
           setTimeout(() => {
             processMatch(matches[currentMatch]);
           }, 0);
@@ -598,5 +706,3 @@ const fetchMatches = async () => {
     console.log(error.message, "fetchMatches");
   }
 };
-
-fetchMatches();
