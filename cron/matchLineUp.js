@@ -146,6 +146,7 @@ const makeRequest = (url) => {
   });
 };
 
+// store batting style
 const storeBattingStyle = async (battingStyle, connection) => {
   return new Promise(async (resolve) => {
     try {
@@ -174,6 +175,7 @@ const storeBattingStyle = async (battingStyle, connection) => {
   });
 };
 
+// store bowling style
 const storeBowlingStyle = async (bowlingStyle, connection) => {
   return new Promise(async (resolve) => {
     try {
@@ -202,6 +204,7 @@ const storeBowlingStyle = async (bowlingStyle, connection) => {
   });
 };
 
+// store player style
 const storePlayerStyle = async (player, connection) => {
   return new Promise(async (resolve) => {
     try {
@@ -230,6 +233,7 @@ const storePlayerStyle = async (player, connection) => {
   });
 };
 
+// store player role
 const storePlayerRoleParent = async (role, connection) => {
   return new Promise(async (resolve) => {
     try {
@@ -262,14 +266,20 @@ const storeMatchLineup = async (matchId, matchRadarId, connection) => {
   return new Promise(async (resolve) => {
     try {
       console.log("lets store match lineup", matchId);
+
+      // getting match lineup from sportsRadar
       const matchLineUp = await makeRequest(
         `/matches/sr:match:${matchRadarId}/lineups.json`
       );
+
+      // getting away team as per response of sportsRadar
       const awayCompetitor = matchLineUp?.sport_event.competitors?.filter(
         (competitor) => {
           return competitor.qualifier === "away";
         }
       );
+
+      // getting home team as per response of sportsRadar
       const homeCompetitor = matchLineUp?.sport_event.competitors?.filter(
         (competitor) => {
           return competitor.qualifier === "home";
@@ -279,25 +289,32 @@ const storeMatchLineup = async (matchId, matchRadarId, connection) => {
       let teamsloopCount = 0;
       matchLineUp?.lineups?.forEach((lineup) => {
         try {
+          // getting team from sportsRadar home or away
           const team = lineup.team === "home" ? "home" : "away";
+
+          // getting competitor id
           const competitorId =
             team === "home" ? homeCompetitor[0].id : awayCompetitor[0].id;
 
           let playersloopCount = 0;
           const storePlayer = async (player) => {
             try {
+              // checking if player is already stored in database table players
               const [{ isExists: isPlayerExists, playerId }] = await database(
                 "SELECT COUNT(playerId) AS isExists, playerId FROM allplayers WHERE playerRadarId = ?",
                 [player.id.substr(10)],
                 connection
               );
 
+              // getting competitor id
               const [{ competitorIdStored, competitorRadarIdStored }] =
                 await database(
                   "SELECT teamId AS competitorIdStored, teamRadarId AS competitorRadarIdStored FROM allteams WHERE teamRadarId = ?",
                   [competitorId.substr(14)],
                   connection
                 );
+
+              // player exists then store it else store it in players table
               if (isPlayerExists) {
                 const storePlayer = await database(
                   "INSERT INTO match_lineup SET ?",
@@ -312,6 +329,7 @@ const storeMatchLineup = async (matchId, matchRadarId, connection) => {
                   connection
                 );
 
+                // if player stored successfully then go to next player
                 if (storePlayer) {
                   playersloopCount++;
                   if (playersloopCount === lineup.starting_lineup.length) {
@@ -372,6 +390,7 @@ const storeMatchLineup = async (matchId, matchRadarId, connection) => {
             }
           };
           lineup?.starting_lineup?.forEach((player) => {
+            // storing single player with matchId and competitor Id
             storePlayer(player);
           });
         } catch (error) {
@@ -391,11 +410,14 @@ const storeMatchLineup = async (matchId, matchRadarId, connection) => {
   });
 };
 
+// gets matchId from database whose lineup is to be stored
 const fetchMatches = async () => {
   try {
     const connection = await connectToDb();
+
+    // fetching matches which are not stored in database
     const matches = await database(
-      `SELECT matchId, matchRadarId FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString IN ('ended', 'closed', 'abandoned', 'cancelled', 'live') AND matchId > 0 ORDER BY matchId;`,
+      `SELECT matchId, matchRadarId FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString IN ('ended', 'closed', 'live') AND matchId NOT IN (SELECT DISTINCT matchId FROM match_lineup) ORDER BY fullmatchdetails.matchRadarId DESC;`,
       [],
       connection
     );
@@ -403,42 +425,30 @@ const fetchMatches = async () => {
     let currentMatch = 0;
     const totalMatches = matches.length;
 
+    // function to store match lineup
     const processMatch = async (match) => {
       try {
-        delay = 1200;
+        delay = 1200; // resetting delay to 1200
         const newConnection = await connectToDb();
-        const [{ isExists }] = await database(
-          "SELECT COUNT(matchId) AS isExists FROM `match_lineup` WHERE match_lineup.matchId = ?;",
-          [match.matchId],
+
+        // calling functio which stores match lineup
+        const lineUpRes = await storeMatchLineup(
+          match.matchId,
+          match.matchRadarId,
           newConnection
         );
-        if (!isExists) {
-          const lineUpRes = await storeMatchLineup(
-            match.matchId,
-            match.matchRadarId,
-            newConnection
-          );
-          if (lineUpRes) {
-            console.log(true);
-            currentMatch++;
-            if (currentMatch === totalMatches) {
-              console.log("All matches processed");
-            } else {
-              newConnection.release();
-              setTimeout(() => {
-                processMatch(matches[currentMatch]);
-              }, 0);
-            }
+
+        // lineup stored or not go to next match
+        if (lineUpRes) {
+          console.log(true);
+          currentMatch++;
+          if (currentMatch === totalMatches) {
+            console.log("All matches processed");
           } else {
-            currentMatch++;
-            if (currentMatch === totalMatches) {
-              console.log("All matches processed");
-            } else {
-              newConnection.release();
-              setTimeout(() => {
-                processMatch(matches[currentMatch]);
-              }, 0);
-            }
+            newConnection.release();
+            setTimeout(() => {
+              processMatch(matches[currentMatch]);
+            }, 0);
           }
         } else {
           currentMatch++;
@@ -463,12 +473,15 @@ const fetchMatches = async () => {
         }
       }
     };
+
+    // calling functio first time
     processMatch(matches[currentMatch]);
   } catch (error) {
     console.log(error.message, "fetchMatches");
   }
 };
 
+// exporting the function
 module.exports = {
   storeMatchLineup,
   fetchMatches,

@@ -641,7 +641,7 @@ const fetchMatches = async () => {
   try {
     const connection = await connectToDb();
     const matches = await database(
-      `SELECT matchId, matchRadarId, team1Id, team1RadarId, team2Id , team2RadarId FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString IN ('ended', 'closed') AND matchId > 0 ORDER BY matchId;`,
+      `SELECT matchId, matchRadarId, team1Id, team1RadarId, team2Id, team2RadarId FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString IN ('ended', 'closed') AND matchId = 1918 ORDER BY matchId;`,
       [],
       connection
     );
@@ -671,23 +671,35 @@ const fetchMatches = async () => {
             newConnection.release();
             console.log(true);
             currentMatch++;
-            setTimeout(() => {
-              processMatch(matches[currentMatch]);
-            }, 0);
+            if (currentMatch === totalMatches) {
+              console.log("All matches processed");
+            } else {
+              setTimeout(() => {
+                processMatch(matches[currentMatch]);
+              }, 0);
+            }
           } else {
             newConnection.release();
             console.log(false);
             currentMatch++;
-            setTimeout(() => {
-              processMatch(matches[currentMatch]);
-            }, 0);
+            if (currentMatch === totalMatches) {
+              console.log("All matches processed");
+            } else {
+              setTimeout(() => {
+                processMatch(matches[currentMatch]);
+              }, 0);
+            }
           }
         } else {
           newConnection.release();
           currentMatch++;
-          setTimeout(() => {
-            processMatch(matches[currentMatch]);
-          }, 0);
+          if (currentMatch === totalMatches) {
+            console.log("All matches processed");
+          } else {
+            setTimeout(() => {
+              processMatch(matches[currentMatch]);
+            }, 0);
+          }
         }
       } catch (error) {
         console.log(error.message, "preocessMatch");

@@ -1,10 +1,18 @@
 const axios = require("axios");
 const mysql = require("mysql");
-require("dotenv/config");
+const { storeCompetitors } = require("./storeTournaments/storeCompetitor");
+const { storePlayerOfTeams } = require("./storeTournaments/storePlayer");
+const { storeMacthes } = require("./storeTournaments/storeMatch");
+const {
+  storeTournamentCompetitorsPlayers,
+} = require("./storeTournaments/storeTournamentCompetitorsPlayers");
+const {
+  storeTournamentCompetitors,
+} = require("./storeTournaments/storeTournamentCompetitors");
 let connectionForCron = null;
-const data = require("../data2.js");
 
-const api_tokens = ["gej38ey64cqm4amkvcb8uezb", "86es3v3uadks3nxj4ts994z4"];
+const data = require("../data2");
+const api_tokens = ["86es3v3uadks3nxj4ts994z4", "gej38ey64cqm4amkvcb8uezb"];
 let currentSelectedToken = 0;
 
 let delay = 0;
@@ -134,7 +142,7 @@ const makeRequest = (url) => {
                 reject(error);
               }
             });
-        }, delay + 1200);
+        }, delay);
         delay += 1200;
       };
       makeCall();
@@ -196,495 +204,21 @@ const storeTypeParent = async (type, connection) => {
   });
 };
 
-const storeVenue = async (venue, connection) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      if (venue && venue.id) {
-        let [{ isExists: isVenueExist, venueId }] = await database(
-          "SELECT COUNT(venueId) AS isExists, venues.venueId AS venueId FROM venues WHERE venues.venueRadarId = ?;",
-          [venue.id.substr(9)],
-          connection
-        );
-        if (!isVenueExist) {
-          const storeVenue = await database(
-            "INSERT INTO venues SET ?;",
-            {
-              venueRadarId: venue.id.substr(9),
-              venueName: venue.name,
-              venueCity: venue.city_name,
-              venueCountry: venue.country,
-              venueCapacity: venue.capacity,
-              venueCountry: venue.country_name,
-              venueCountryCode: venue.country_code,
-              venueMapCardinalities: venue.map_coordinates || null,
-              venueEnd1: venue?.bowling_ends
-                ? venue?.bowling_ends[0]?.name || null
-                : null,
-              venueEnd2: venue?.bowling_ends
-                ? venue?.bowling_ends[1]?.name || null
-                : null,
-            },
-            connection
-          );
-          if (storeVenue.insertId) {
-            resolve(storeVenue.insertId);
-          }
-        } else {
-          resolve(venueId);
-        }
-      } else {
-        resolve(null);
-      }
-    } catch (error) {
-      console.log(error.message, "storeVenue");
-    }
-  });
-};
-
-const storeMatchStatusParent = async (status, connection) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      let [{ isExists: isStatusExist, statusId }] = await database(
-        "SELECT COUNT(match_status.statusId) AS isExists, match_status.statusId AS statusId FROM match_status WHERE match_status.statusString = ?;",
-        [status],
-        connection
-      );
-      if (!isStatusExist) {
-        const storeStatus = await database(
-          "INSERT INTO match_status (statusString ) VALUES (?);",
-          [status],
-          connection
-        );
-        resolve(storeStatus.insertId);
-      } else {
-        resolve(statusId);
-      }
-    } catch (error) {
-      console.log(error.message, "storeMatchStatusParent");
-    }
-  });
-};
-
-// store player role in player_role table
-const storePlayerRoleParent = async (role, connection) => {
-  return new Promise(async (resolve) => {
-    try {
-      if (role) {
-        let [{ isExists: isRoleExist, roleId }] = await database(
-          "SELECT COUNT(player_roles.roleId) AS isExists, player_roles.roleId AS roleId FROM player_roles WHERE player_roles.roleString = ?;",
-          [role],
-          connection
-        );
-        if (!isRoleExist) {
-          const storeRole = await database(
-            "INSERT INTO player_roles (roleString ) VALUES (?)",
-            [role],
-            connection
-          );
-          resolve(storeRole.insertId);
-        } else {
-          resolve(roleId);
-        }
-      } else {
-        resolve(0);
-      }
-    } catch (error) {
-      console.log(error.message, "storePlayerRoleParent");
-    }
-  });
-};
-
-// storing value to players, competitors table
-
-// store competitors in competitiors table
-const storeTournamentTeamsParent = async (tournament, connection) => {
-  return new Promise(async (resolve) => {
-    let teamsLoopCount = 0;
-    tournament.teams.forEach(async (team) => {
-      let [{ isExists: isTeamExist, competitorId: teamId }] = await database(
-        "SELECT COUNT(competitorId) AS isExists, competitorId FROM competitors WHERE competitors.competitorRadarId = ?;",
-        [team.id.substr(14)],
-        connection
-      );
-      if (isTeamExist) {
-        team.insertId = teamId;
-        teamsLoopCount++;
-        if (teamsLoopCount === tournament.teams.length) {
-          resolve(tournament);
-        }
-      } else {
-        const storeTournamentCompetitors = await database(
-          "INSERT INTO competitors SET ?",
-          {
-            competitorRadarId: team.id.substr(14),
-            competitorName: team.name,
-            competitorCountry: team.country,
-            competitorCountryCode: team.country_code,
-            competitorDisplayName: team.abbreviation,
-          },
-          connection
-        );
-        team.insertId = storeTournamentCompetitors.insertId;
-        if (storeTournamentCompetitors.insertId) {
-          teamsLoopCount++;
-          if (teamsLoopCount === tournament.teams.length) {
-            resolve(tournament);
-          }
-        }
-      }
-    });
-  });
-};
-
-// store players in player table
-const storePlayersOfTeamsParent = async (tournament, connection) => {
-  return new Promise(async (resolve) => {
-    let teamsLoopCount = 0;
-    const totalTeams = tournament.teams.length;
-
-    const storePlayersOfSingleTeam = async (team) => {
-      let playerLoopCount = 0;
-      const totalPlayers = team.players.length;
-      const storeSinglePlayer = async (player) => {
-        try {
-          if (player && player.id) {
-            let [{ isExists: isPlayerExist, playerId }] = await database(
-              "SELECT COUNT(playerId) AS isExists, playerId FROM players WHERE players.playerRadarId = ?;",
-              [player.id.substr(10)],
-              connection
-            );
-            if (isPlayerExist === 1) {
-              player.insertId = playerId;
-              playerLoopCount++;
-              if (playerLoopCount === totalPlayers) {
-                teamsLoopCount++;
-                if (teamsLoopCount === totalTeams) {
-                  resolve(tournament);
-                } else {
-                  storePlayersOfSingleTeam(tournament.teams[teamsLoopCount]);
-                }
-              } else {
-                setTimeout(() => {
-                  storeSinglePlayer(team.players[playerLoopCount]);
-                }, 0);
-              }
-            } else {
-              const roleId = await storePlayerRoleParent(
-                player.type,
-                connection
-              );
-              const storePlayers = await database(
-                "INSERT INTO players SET ?",
-                {
-                  playerRadarId: player.id.substr(10),
-                  playerFirstName: player.name.split(", ")[1] || "",
-                  playerLastName: player.name.split(", ")[0] || "",
-                  playerCountryCode: player.country_code || null,
-                  playerRole: roleId || 0,
-                  playerDOB: player.date_of_birth || null,
-                  playerCountry: player.nationality || null,
-                },
-                connection
-              );
-              player.insertId = storePlayers.insertId;
-              if (storePlayers.insertId) {
-                playerLoopCount++;
-                if (playerLoopCount === totalPlayers) {
-                  teamsLoopCount++;
-                  if (teamsLoopCount === totalTeams) {
-                    resolve(tournament);
-                  } else {
-                    storePlayersOfSingleTeam(tournament.teams[teamsLoopCount]);
-                  }
-                } else {
-                  setTimeout(() => {
-                    storeSinglePlayer(team.players[playerLoopCount]);
-                  }, 0);
-                }
-              }
-            }
-          } else {
-            playerLoopCount++;
-            if (playerLoopCount === totalPlayers) {
-              teamsLoopCount++;
-              if (teamsLoopCount === totalTeams) {
-                resolve(tournament);
-              } else {
-                storePlayersOfSingleTeam(tournament.teams[teamsLoopCount]);
-              }
-            } else {
-              setTimeout(() => {
-                storeSinglePlayer(team.players[playerLoopCount]);
-              }, 0);
-            }
-          }
-        } catch (error) {
-          console.log(error.message, "storePlayersOfTeamsParent");
-          playerLoopCount++;
-          if (playerLoopCount === totalPlayers) {
-            teamsLoopCount++;
-            if (teamsLoopCount === totalTeams) {
-              resolve(tournament);
-            } else {
-              storePlayersOfSingleTeam(tournament.teams[teamsLoopCount]);
-            }
-          } else {
-            setTimeout(() => {
-              storeSinglePlayer(team.players[playerLoopCount]);
-            }, 0);
-          }
-        }
-      };
-      storeSinglePlayer(team.players[playerLoopCount]);
-    };
-
-    storePlayersOfSingleTeam(tournament.teams[teamsLoopCount]);
-  });
-};
-
-// storing relationships
-
-// store data in tournament_competitors table
-const storeTournamentCompetitorsRelation = async (tournament, connection) => {
-  return new Promise((resolve) => {
-    try {
-      let teamsLoopCount = 0;
-      tournament.teams.forEach(async (team) => {
-        try {
-          const [{ isExists: isTeamExists, tournamentCompetitorId }] =
-            await database(
-              "SELECT COUNT(tournament_competitor.tournamentCompetitorId) AS isExists, tournament_competitor.tournamentCompetitorId AS tournamentCompetitorId, isPlayerArrived FROM `tournament_competitor` WHERE tournament_competitor.tournamentId = ? AND tournament_competitor.competitorId = ?;",
-              [tournament.insertId, team.insertId],
-              connection
-            );
-          if (!isTeamExists) {
-            const storeTournamentCompetitors = await database(
-              "INSERT INTO tournament_competitor SET ?",
-              {
-                tournamentId: tournament.insertId,
-                competitorId: team.insertId,
-                isPlayerArrived: team.isPlayerArrived,
-              },
-              connection
-            );
-            if (storeTournamentCompetitors.insertId) {
-              teamsLoopCount++;
-              team.tournamentCompetitorId = storeTournamentCompetitors.insertId;
-              if (teamsLoopCount === tournament.teams.length) {
-                resolve(tournament);
-              }
-            }
-          } else {
-            teamsLoopCount++;
-            team.tournamentCompetitorId = tournamentCompetitorId;
-            if (teamsLoopCount === tournament.teams.length) {
-              resolve(tournament);
-            }
-          }
-        } catch (error) {
-          console.log(error.message, "storeAllRelations");
-        }
-      });
-    } catch (error) {
-      console.log(error.message, "storeAllRelations");
-    }
-  });
-};
-
-// store data in tournament_competitors_players table
-const storeTournamentCompetitorsPlayersRelation = async (
-  tournament,
-  connection
-) => {
-  return new Promise(async (resolve) => {
-    try {
-      let teamsLoopCount = 0;
-      const totalTeams = tournament.teams.length;
-
-      const storePlayersOfSingleTeam = async (team) => {
-        let playerLoopCount = 0;
-        const totalPlayers = team.players.length;
-
-        const storeSinglePlayer = async (player) => {
-          try {
-            if (player.id && player.name && player.type) {
-              const [
-                { isExists: isPlayerExists, tournamentCompetitorPlayerId },
-              ] = await database(
-                "SELECT COUNT(tournament_competitor_player.tournamentCompetitorPlayerId) AS isExists, tournament_competitor_player.tournamentCompetitorPlayerId AS tournamentCompetitorPlayerId FROM `tournament_competitor_player` WHERE tournament_competitor_player.tournamentCompetitorId = ? AND tournament_competitor_player.playerId = ?;",
-                [team.tournamentCompetitorId, player.insertId],
-                connection
-              );
-              if (!isPlayerExists) {
-                if (player.insertId) {
-                  const storeTournamentCompetitorsPlayers = await database(
-                    "INSERT INTO tournament_competitor_player SET ?",
-                    {
-                      tournamentCompetitorId: team.tournamentCompetitorId,
-                      playerId: player.insertId,
-                    },
-                    connection
-                  );
-                  if (storeTournamentCompetitorsPlayers.insertId) {
-                    playerLoopCount++;
-                    if (playerLoopCount === totalPlayers) {
-                      teamsLoopCount++;
-                      if (teamsLoopCount === totalTeams) {
-                        resolve(tournament);
-                      } else {
-                        storePlayersOfSingleTeam(
-                          tournament.teams[teamsLoopCount]
-                        );
-                      }
-                    } else {
-                      storeSinglePlayer(team.players[playerLoopCount]);
-                    }
-                  }
-                } else {
-                  playerLoopCount++;
-                  if (playerLoopCount === team.players.length) {
-                    teamsLoopCount++;
-                    if (teamsLoopCount === tournament.teams.length) {
-                      resolve(tournament);
-                    }
-                  }
-                }
-              } else {
-                playerLoopCount++;
-                if (playerLoopCount === team.players.length) {
-                  teamsLoopCount++;
-                  if (teamsLoopCount === tournament.teams.length) {
-                    resolve(tournament);
-                  } else {
-                    storePlayersOfSingleTeam(tournament.teams[teamsLoopCount]);
-                  }
-                } else {
-                  storeSinglePlayer(team.players[playerLoopCount]);
-                }
-              }
-            } else {
-              playerLoopCount++;
-              if (playerLoopCount === team.players.length) {
-                teamsLoopCount++;
-                if (teamsLoopCount === tournament.teams.length) {
-                  resolve(tournament);
-                } else {
-                  storePlayersOfSingleTeam(tournament.teams[teamsLoopCount]);
-                }
-              } else {
-                storeSinglePlayer(team.players[playerLoopCount]);
-              }
-            }
-          } catch (error) {
-            console.log(error.message, "storeAllRelations");
-          }
-        };
-
-        storeSinglePlayer(team.players[playerLoopCount]);
-      };
-      storePlayersOfSingleTeam(tournament.teams[teamsLoopCount]);
-    } catch (error) {
-      console.log(error.message, "storeAllRelations");
-    }
-  });
-};
-
-// store data in tournament_matches table
-const storeTournamentMatchesRelation = async (tournament, connection) => {
-  return new Promise(async (resolve) => {
-    try {
-      let matchLoopCount = 0;
-      const totalMatchObject = tournament.matches.length;
-
-      const storeSingleMatch = async (match) => {
-        try {
-          const competitors = tournament.teams.filter((competitor) => {
-            return (
-              competitor.id === match.competitors[0].id ||
-              competitor.id === match.competitors[1].id
-            );
-          });
-          const [{ isExists: isMatchExists, tournamentMatchId }] =
-            await database(
-              "SELECT COUNT(tournament_matches.matchTournamentId) AS isExists, tournament_matches.matchTournamentId AS matchTournamentId FROM tournament_matches WHERE tournament_matches.matchRadarId = ?;",
-              [match.id.substr(9)],
-              connection
-            );
-          if (isMatchExists === 0) {
-            const venueId = await storeVenue(match.venue, connection);
-            const statusId = await storeMatchStatusParent(
-              match.status,
-              connection
-            );
-            if ((venueId || venueId === null) && statusId) {
-              const storeTournamentMatches = await database(
-                "INSERT INTO tournament_matches SET ?",
-                {
-                  matchRadarId: match.id.substr(9),
-                  matchTournamentId: tournament.insertId,
-                  matchStartTime: match.scheduled,
-                  competitor1: competitors[0].insertId,
-                  competitor2: competitors[1].insertId,
-                  venueId: venueId,
-                  matchStatus: statusId,
-                },
-                connection
-              );
-              if (storeTournamentMatches) {
-                matchLoopCount++;
-                if (matchLoopCount === totalMatchObject) {
-                  resolve(true);
-                } else {
-                  setTimeout(() => {
-                    storeSingleMatch(tournament.matches[matchLoopCount]);
-                  });
-                }
-              }
-            } else {
-              matchLoopCount++;
-              if (matchLoopCount === totalMatchObject) {
-                resolve(true);
-              } else {
-                setTimeout(() => {
-                  storeSingleMatch(tournament.matches[matchLoopCount]);
-                });
-              }
-            }
-          } else {
-            matchLoopCount++;
-            if (matchLoopCount === totalMatchObject) {
-              resolve(true);
-            } else {
-              setTimeout(() => {
-                storeSingleMatch(tournament.matches[matchLoopCount]);
-              });
-            }
-          }
-        } catch (error) {
-          console.log(error.message, "storeAllMatches");
-        }
-      };
-
-      storeSingleMatch(tournament.matches[matchLoopCount]);
-    } catch (error) {
-      console.log(error.message, "storeTournamentMatchesRelation");
-    }
-  });
-};
-
 // will store all relations
 const storeAllRelations = (tournament, connection) => {
   return new Promise(async (resolve) => {
     try {
-      const storeTournamentCompetitorsRes =
-        await storeTournamentCompetitorsRelation(tournament, connection);
+      const storeTournamentCompetitorsRes = await storeTournamentCompetitors(
+        tournament,
+        connection
+      );
       if (storeTournamentCompetitorsRes) {
-        const storeTournamentMatchesRes = await storeTournamentMatchesRelation(
+        const storeTournamentMatchesRes = await storeMacthes(
           tournament,
           connection
         );
         const storeTournamentCompetitorsPlayersRes =
-          await storeTournamentCompetitorsPlayersRelation(
+          await storeTournamentCompetitorsPlayers(
             storeTournamentCompetitorsRes,
             connection
           );
@@ -740,12 +274,12 @@ const storeTournaments = async (tournaments) => {
           );
           tournament.insertId = storeTournament.insertId;
           if (storeTournament) {
-            const storeTournamentTeamsRes = await storeTournamentTeamsParent(
+            const storeTournamentTeamsRes = await storeCompetitors(
               tournament,
               connection
             );
             if (storeTournamentTeamsRes) {
-              const storePlayersTournament = await storePlayersOfTeamsParent(
+              const storePlayersTournament = await storePlayerOfTeams(
                 storeTournamentTeamsRes,
                 connection
               );
@@ -833,32 +367,6 @@ const tournamentCompetitorsWithPlayers = async (groups, tournamentId) => {
           }
         };
         storePlayersInTeams(allCompetitors[competitorsCountLoop]);
-        // allCompetitors.forEach(async (competitor) => {
-        //   try {
-        //     const { players } = await makeRequest(
-        //       `/tournaments/${tournamentId}/teams/${competitor.id}/squads.json`
-        //     );
-        //     if (players && players.length >= 11) {
-        //       competitor.players = [...players];
-        //       competitor.isPlayerArrived = true;
-        //     } else {
-        //       competitor.players = [];
-        //       competitor.isPlayerArrived = false;
-        //     }
-        //     competitorsCountLoop++;
-        //     if (competitorsCountLoop === allCompetitors.length) {
-        //       resolve(allCompetitors);
-        //     }
-        //   } catch (error) {
-        //     competitor.isPlayerArrived = false;
-        //     competitor.players = [];
-        //     competitorsCountLoop++;
-        //     if (competitorsCountLoop === allCompetitors.length) {
-        //       resolve(allCompetitors);
-        //     }
-        //     console.log(error.message);
-        //   }
-        // });
       };
 
       let groupsCountLoop = 0;
@@ -890,7 +398,7 @@ const processTournaments = async (tournaments) => {
 
       const processTournament = async (tournament) => {
         try {
-          delay = 0;
+          delay = 1200;
           const connection = await connectToDb();
           const [[tournamentRes]] = await database(
             "SELECT COUNT(tournamentId) AS isExists, tournamentId, fullseriesdetails.tournamentRadarId, fullseriesdetails.isCompetitorsArrived, fullseriesdetails.isMatchesArrived FROM fullseriesdetails WHERE tournamentRadarId = ?;SELECT `tournamentCompetitorId`, `tournamentId`, `competitorId`, `isPlayerArrived` FROM `tournament_competitor` WHERE tournament_competitor.tournamentId = ?;",
@@ -919,10 +427,10 @@ const processTournaments = async (tournaments) => {
                 if (matches && matches.length > 0) {
                   tournament.matches = matches;
                   tournament.isMatchesArrived = true;
+                  storeTournaments([tournaments[currentTournament]]);
                   if (currentTournament === totalTournaments - 1) {
                     resolve(tournaments);
                   } else {
-                    storeTournaments([tournaments[currentTournament]]);
                     currentTournament++;
                     setTimeout(() => {
                       processTournament(tournaments[currentTournament]);
@@ -1001,10 +509,36 @@ const processTournaments = async (tournaments) => {
 
 const fetchAndStore = async () => {
   try {
-    delay = 0;
-    const { tournaments } = await makeRequest("/tournaments.json");
-    const newTournaments = await processTournaments(tournaments);
+    // const { tournaments } = await makeRequest("/tournaments.json");
+    // const newTournaments = await processTournaments(tournaments);
+
+    const a = await processTournaments([
+      {
+        id: "sr:tournament:2472",
+        name: "Indian Premier League",
+        sport: {
+          id: "sr:sport:21",
+          name: "Cricket",
+        },
+        category: {
+          id: "sr:category:497",
+          name: "India",
+          country_code: "IND",
+        },
+        current_season: {
+          id: "sr:season:91319",
+          name: "Indian Premier League 2022",
+          start_date: "2022-03-26",
+          end_date: "2022-05-29",
+          year: "2022",
+        },
+        type: "t20",
+        gender: "men",
+      },
+    ]);
   } catch (error) {
     console.log(error.message, "fetchAndStore");
   }
 };
+
+fetchAndStore();

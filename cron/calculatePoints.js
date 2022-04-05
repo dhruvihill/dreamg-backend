@@ -1,4 +1,5 @@
 const testScore = {
+  selectedPoint: 4,
   bat: {
     run: 1,
     boundary: 1,
@@ -27,6 +28,7 @@ const testScore = {
 };
 
 const odiScore = {
+  selectedPoint: 4,
   bat: {
     run: 1,
     boundary: 1,
@@ -74,6 +76,7 @@ const odiScore = {
 };
 
 const t20Score = {
+  selectedPoint: 4,
   bat: {
     run: 1,
     boundary: 1,
@@ -123,6 +126,7 @@ const t20Score = {
 };
 
 const t10Score = {
+  selectedPoint: 4,
   bat: {
     run: 1,
     boundary: 1,

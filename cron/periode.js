@@ -93,8 +93,32 @@ const processMatchData = async (match) => {
       connection
     );
     if (res) {
-      console.log("updated succesfully");
+      console.log("match lineup stored");
+      // updating match status
+      let matchStatus = await database(
+        "SELECT statusId FROM `match_status` WHERE statusString = ?",
+        ["live"],
+        connection
+      );
+      if (matchStatus && matchStatus.length > 0) {
+        const updateMatchStatus = await database(
+          "UPDATE tournament_matches SET matchStatus = ? WHERE matchId = ?",
+          [matchStatus[0].statusId, match.matchId],
+          connection
+        );
+        if (updateMatchStatus && updateMatchStatus.affectedRows === 1) {
+          connection.release();
+          console.log("match status updated");
+        } else {
+          connection.release();
+          console.log("match status not updated");
+        }
+      } else {
+        connection.release();
+        console.log("match status not found");
+      }
     } else {
+      connection.release();
       console.log("not updated");
       // email stuff goes here
     }
@@ -129,13 +153,13 @@ const fetchData = async () => {
           // const connection = await connectToDb();
           const matchStartTime = new Date(
             match.matchStartTimeMilliSeconds + 330 * 60 * 1000
-          );
+          ); // adding 5:30 hours to make it equal time zone
           const now = new Date();
           if (matchStartTime.getTime() > now.getTime()) {
-            if (matchStartTime.getTime() < now.getTime() + 330 * 60 * 1000) {
+            if (matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) {
               setTimeout(() => {
                 processMatchData(match);
-              }, 12 || matchStartTime.getTime() - now.getTime() - 25 * 60 * 1000);
+              }, matchStartTime.getTime() - now.getTime() - 25 * 60 * 1000);
 
               currentMatch++;
               if (currentMatch !== totalMatches) {
