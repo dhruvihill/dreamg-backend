@@ -45,6 +45,9 @@ router.get("/", verifyUser, async (req, res) => {
       } else if (match.matchStatusString === "cancelled") {
         match.matchStatusString = "CANCELED";
       }
+      match.matchStartTimeMilliSeconds = match.matchStartTimeMilliSeconds
+        ? match.matchStartTimeMilliSeconds.toString()
+        : "";
       match.team1FlagURL = imageUrl(
         __dirname,
         "../",

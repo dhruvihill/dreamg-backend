@@ -17,7 +17,7 @@ router.post("/getMatches", verifyUser, async (req, res) => {
     ) {
       let matchQuery = "";
       if (matchType === "UPCOMING") {
-        matchQuery = `SELECT (SELECT COUNT(DISTINCT userId) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors, seriesName, seriesDname, matchId, matchTypeId, UPPER(matchTyprString) AS matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE matchStatusString = 'not_started' AND fullmatchdetails.matchStartTimeMilliSeconds > (UNIX_TIMESTAMP(now()) * 1000) ORDER BY matchStartTimeMilliSeconds LIMIT ?, 10; SELECT COUNT(*) AS totalResult FROM fullmatchdetails WHERE matchStatusString = 'not_started';`;
+        matchQuery = `SELECT (SELECT COUNT(DISTINCT userId) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors, seriesName, seriesDname, matchId, matchTypeId, UPPER(matchTyprString) AS matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE matchStatusString = 'not_started' AND fullmatchdetails.matchStartTimeMilliSeconds > (UNIX_TIMESTAMP(now()) * 1000) ORDER BY matchStartTimeMilliSeconds LIMIT ?, 10; SELECT COUNT(*) AS totalResult FROM fullmatchdetails WHERE matchStatusString = 'not_started' AND fullmatchdetails.matchStartTimeMilliSeconds > (UNIX_TIMESTAMP(now()) * 1000);`;
       } else if (matchType === "LIVE") {
         matchQuery = `SELECT (SELECT COUNT(DISTINCT userId) FROM fullteamdetails WHERE fullteamdetails.matchId = fullmatchdetails.matchId) AS totalPredictors, seriesName, seriesDname, matchId, matchTypeId, UPPER(matchTyprString) AS matchTyprString, matchStartTimeMilliSeconds, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT fullteamdetails.userTeamId FROM fullteamdetails WHERE fullteamdetails.userId = ? AND fullteamdetails.matchId = fullmatchdetails.matchId AND fullteamdetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE matchStatusString = 'live' AND (UNIX_TIMESTAMP(now()) - 604800) * 1000 < matchStartTimeMilliSeconds ORDER BY matchStartTimeMilliSeconds LIMIT ?, 10; SELECT COUNT(*) AS totalResult FROM fullmatchdetails WHERE matchStatusString = 'live';`;
       } else if (matchType === "RECENT") {
@@ -48,6 +48,9 @@ router.post("/getMatches", verifyUser, async (req, res) => {
         } else if (match.matchStatusString === "cancelled") {
           match.matchStatusString = "CANCELED";
         }
+        match.matchStartTimeMilliSeconds = match.matchStartTimeMilliSeconds
+          ? match.matchStartTimeMilliSeconds.toString()
+          : "";
         match.team1FlagURL = imageUrl(
           __dirname,
           "../",
@@ -122,6 +125,9 @@ router.post("/recentPlayed", async (req, res) => {
         } else if (match.matchStatusString === "cancelled") {
           match.matchStatusString = "CANCELED";
         }
+        match.matchStartTimeMilliSeconds = match.matchStartTimeMilliSeconds
+          ? match.matchStartTimeMilliSeconds.toString()
+          : "";
         match.team1FlagURL = imageUrl(
           __dirname,
           "../",
@@ -196,6 +202,9 @@ router.post("/currentPlayed", async (req, res) => {
         } else if (match.matchStatusString === "cancelled") {
           match.matchStatusString = "CANCELED";
         }
+        match.matchStartTimeMilliSeconds = match.matchStartTimeMilliSeconds
+          ? match.matchStartTimeMilliSeconds.toString()
+          : "";
         match.team1FlagURL = imageUrl(
           __dirname,
           "../",

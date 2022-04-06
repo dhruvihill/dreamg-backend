@@ -43,31 +43,37 @@ router.post("/userProfile", verifyUser, async (req, res) => {
         delete points[0].imageStamp;
 
         // adding teamFlag image url to matches
-        recentPlayed.forEach(async (macth) => {
-          macth.team1FlagURL = imageUrl(
+        recentPlayed.forEach(async (match) => {
+          match.matchStartTimeMilliSeconds = match.matchStartTimeMilliSeconds
+            ? match.matchStartTimeMilliSeconds.toString()
+            : "";
+          match.team1FlagURL = imageUrl(
             __dirname,
             "../",
-            `${process.env.TEAM_IMAGE_URL}${macth.team1Id}.jpg`,
+            `${process.env.TEAM_IMAGE_URL}${match.team1Id}.jpg`,
             serverAddress
           );
-          macth.team2FlagURL = imageUrl(
+          match.team2FlagURL = imageUrl(
             __dirname,
             "../",
-            `${process.env.TEAM_IMAGE_URL}${macth.team2Id}.jpg`,
+            `${process.env.TEAM_IMAGE_URL}${match.team2Id}.jpg`,
             serverAddress
           );
         });
-        currentPlayed.forEach((macth) => {
-          macth.team1FlagURL = imageUrl(
+        currentPlayed.forEach((match) => {
+          match.matchStartTimeMilliSeconds = match.matchStartTimeMilliSeconds
+            ? match.matchStartTimeMilliSeconds.toString()
+            : "";
+          match.team1FlagURL = imageUrl(
             __dirname,
             "../",
-            `${process.env.TEAM_IMAGE_URL}${macth.team1Id}.jpg`,
+            `${process.env.TEAM_IMAGE_URL}${match.team1Id}.jpg`,
             serverAddress
           );
-          macth.team2FlagURL = imageUrl(
+          match.team2FlagURL = imageUrl(
             __dirname,
             "../",
-            `${process.env.TEAM_IMAGE_URL}${macth.team2Id}.jpg`,
+            `${process.env.TEAM_IMAGE_URL}${match.team2Id}.jpg`,
             serverAddress
           );
         });

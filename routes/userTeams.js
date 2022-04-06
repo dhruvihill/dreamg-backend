@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const verifyUser = require("../middleware/verifyUser");
 const { fetchData, imageUrl } = require("../database/db_connection");
-const path = require("path");
 
 // get players by match id
 router.post("/getPlayers", async (req, res) => {
@@ -1102,7 +1101,7 @@ router.post("/compareTeams", async (req, res) => {
   const allPlayersForMatch =
     "SELECT matchId, playerId, fullplayerdetails.name AS playerName, fullplayerdetails.displayName AS playerDisplayName, roleId, roleName, fullplayerdetails.teamId, allteams.name AS teamName, allteams.displayName AS teamDisplayName FROM fullplayerdetails JOIN allteams ON allteams.teamId = fullplayerdetails.teamId WHERE matchId = ?;";
   const matchDetails =
-    "SELECT matchId, matchStartTimeMilliSeconds AS matchStartTime, venue, seriesDname AS seriesDisplayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName FROM fullmatchdetails WHERE matchId = ?;";
+    "SELECT matchId, matchStartTimeMilliSeconds AS matchStartTime, matchStartDateTime, venue, seriesDname AS seriesDisplayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName FROM fullmatchdetails WHERE matchId = ?;";
 
   try {
     if (!/[^0-9]/g.test(matchId)) {
@@ -1137,6 +1136,9 @@ router.post("/compareTeams", async (req, res) => {
           `${process.env.TEAM_IMAGE_URL}${responseData[0].team2Id}.jpg`,
           serverAddress
         );
+        responseData[0].matchStartTime = responseData[0].matchStartTime
+          ? responseData[0].matchStartTime.toString()
+          : "";
       }
       res.status(200).json({
         status: true,
