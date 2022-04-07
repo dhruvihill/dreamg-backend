@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const verifyUser = require("../middleware/verifyUser");
 const { fetchData, imageUrl } = require("../database/db_connection");
+const convertTimeZone = require("../middleware/convertTimeZone");
 
 // get players by match id
 router.post("/getPlayers", async (req, res) => {
@@ -1096,14 +1097,14 @@ router.post("/getDiscussion", async (req, res) => {
 
 // comapring teams by match id
 router.post("/compareTeams", async (req, res) => {
-  const { matchId } = req.body;
-
-  const allPlayersForMatch =
-    "SELECT matchId, playerId, fullplayerdetails.name AS playerName, fullplayerdetails.displayName AS playerDisplayName, roleId, roleName, fullplayerdetails.teamId, allteams.name AS teamName, allteams.displayName AS teamDisplayName FROM fullplayerdetails JOIN allteams ON allteams.teamId = fullplayerdetails.teamId WHERE matchId = ?;";
-  const matchDetails =
-    "SELECT matchId, matchStartTimeMilliSeconds AS matchStartTime, matchStartDateTime, venue, seriesDname AS seriesDisplayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName FROM fullmatchdetails WHERE matchId = ?;";
-
   try {
+    const timeZone = req.headers.timezone;
+    const { matchId } = req.body;
+
+    const allPlayersForMatch =
+      "SELECT matchId, playerId, fullplayerdetails.name AS playerName, fullplayerdetails.displayName AS playerDisplayName, roleId, roleName, fullplayerdetails.teamId, allteams.name AS teamName, allteams.displayName AS teamDisplayName FROM fullplayerdetails JOIN allteams ON allteams.teamId = fullplayerdetails.teamId WHERE matchId = ?;";
+    const matchDetails =
+      "SELECT matchId, matchStartTimeMilliSeconds AS matchStartTime, matchStartDateTime, venue, seriesDname AS seriesDisplayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName FROM fullmatchdetails WHERE matchId = ?;";
     if (!/[^0-9]/g.test(matchId)) {
       const serverAddress = `${req.protocol}://${req.headers.host}`;
       const response = await fetchData(allPlayersForMatch, [matchId]);
@@ -1139,6 +1140,12 @@ router.post("/compareTeams", async (req, res) => {
         responseData[0].matchStartTime = responseData[0].matchStartTime
           ? responseData[0].matchStartTime.toString()
           : "";
+        // converting time zone
+        [responseData[0].matchStartDateTime, responseData[0].matchStartTime] =
+          convertTimeZone(
+            responseData[0].matchStartDateTime,
+            parseInt(timeZone)
+          );
       }
       res.status(200).json({
         status: true,

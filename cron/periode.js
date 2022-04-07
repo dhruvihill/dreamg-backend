@@ -84,7 +84,16 @@ const database = (query, options, connection) => {
   });
 };
 
-const processMatchData = async (match) => {
+const storeScorcardAndPoints = async (match) => {
+  return new Promise(async (resolve) => {
+    try {
+    } catch (error) {
+      console.log(error.message);
+    }
+  });
+};
+
+const storeMatchLineUpAndStatus = async (match) => {
   try {
     const connection = await connectToDb();
     const res = await storeMatchLineup(
@@ -93,6 +102,10 @@ const processMatchData = async (match) => {
       connection
     );
     if (res) {
+      // calling function for scorcard and points
+      const date = new Date(match.matchStartTime).getTime();
+      setTimeout(storeScorcardAndPoints, date + 5 * 60 * 1000);
+
       console.log("match lineup stored");
       // updating match status
       let matchStatus = await database(
@@ -126,7 +139,7 @@ const processMatchData = async (match) => {
     if (error.isAxiosError) {
       if (error.response.data.message === "No lineups.") {
         setTimeout(() => {
-          processMatchData(match);
+          storeMatchLineUpAndStatus(match);
         }, 2 * 60 * 1000);
       }
     } else {
@@ -139,7 +152,7 @@ const fetchData = async () => {
   try {
     const connection = await connectToDb();
     const matches = await database(
-      "SELECT matchId, matchRadarId, matchTournamentId, matchStartDateTime, matchStartTimeMilliSeconds, matchTyprString, matchStatusString FROM `fullmatchdetails` WHERE matchStatusString IN ('live', 'not_started') ORDER BY `fullmatchdetails`.`matchStartTimeMilliSeconds` DESC;",
+      "SELECT matchId, matchRadarId, matchTournamentId, matchStartDateTime, matchStartTimeMilliSeconds, matchTyprString, matchStatusString, team1Id, team2Id, team1RadarId, team2RadarId FROM `fullmatchdetails` WHERE matchStatusString IN ('live', 'not_started') ORDER BY `fullmatchdetails`.`matchStartTimeMilliSeconds` DESC;",
       [],
       connection
     );
@@ -158,7 +171,7 @@ const fetchData = async () => {
           if (matchStartTime.getTime() > now.getTime()) {
             if (matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) {
               setTimeout(() => {
-                processMatchData(match);
+                storeMatchLineUpAndStatus(match);
               }, matchStartTime.getTime() - now.getTime() - 25 * 60 * 1000);
 
               currentMatch++;
@@ -204,4 +217,6 @@ const fetchData = async () => {
   }
 };
 
-fetchData();
+module.exports = {
+  fetchData,
+};

@@ -1,7 +1,18 @@
 require("dotenv/config");
 const express = require("express");
 const bodyParser = require("body-parser");
-const fetchAndStore = require("./cron");
+const { fetchMatches: scorcard } = require("./cron/scorcard");
+const { fetchData: periode } = require("./cron/periode");
+const { fetchMatches: matchLineUp } = require("./cron/matchLineUp");
+
+// calling scorcard to store scorcard details in db
+// setTimeout(scorcard, 30 * 60 * 1000);
+
+// // calling match lineup to store match lineup details in db
+// setTimeout(matchLineUp, 30 * 60 * 1000);
+
+// // calling periode to store periode details in db
+// setInterval(periode, 1 * 60 * 60 * 1000);
 
 const app = express();
 

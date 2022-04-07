@@ -541,4 +541,7 @@ const fetchAndStore = async () => {
   }
 };
 
-fetchAndStore();
+module.exports = {
+  fetchAndStore,
+  processTournaments,
+};

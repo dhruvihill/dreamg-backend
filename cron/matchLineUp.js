@@ -262,7 +262,53 @@ const storePlayerRoleParent = async (role, connection) => {
   });
 };
 
-const storeMatchLineup = async (matchId, matchRadarId, connection) => {
+const storeTossDetails = async (matchId, matchRadarId, match, connection) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [{ tossWonBy }] = await database(
+        "SELECT tossWonBy FROM fullmatchdetails WHERE matchId = ?;",
+        [matchId],
+        connection
+      );
+      if (tossWonBy !== null && tossWonBy > 0) {
+        const tossDetails = await makeRequest(
+          `/matches/sr:match:${matchRadarId}/timeline.json`
+        );
+        if (tossDetails && tossDetails.sport_event_status) {
+          if (tossDetails.sport_event_status.toss_won_by !== null) {
+            const tossWonBy =
+              parseInt(
+                tossDetails.sport_event_status.toss_won_by.substr(14)
+              ) === match.team1RadarId
+                ? team1Id
+                : team2Id;
+            const storeTossDetails = await database(
+              "UPDATE tournament_matches SET tossWonBy = ?, tossDecision = ? WHERE matchId = ?;",
+              {
+                tossWonBy,
+                tossDecision: tossDetails.sport_event_status.toss_decision,
+                matchId,
+              },
+              connection
+            );
+            if (storeTossDetails.affectedRows) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          }
+        }
+      } else {
+        resolve(true);
+      }
+    } catch (error) {
+      resolve(false);
+      console.log(error.message);
+    }
+  });
+};
+
+const storeMatchLineup = async (matchId, matchRadarId, match, connection) => {
   return new Promise(async (resolve) => {
     try {
       console.log("lets store match lineup", matchId);
@@ -272,131 +318,145 @@ const storeMatchLineup = async (matchId, matchRadarId, connection) => {
         `/matches/sr:match:${matchRadarId}/lineups.json`
       );
 
-      // getting away team as per response of sportsRadar
-      const awayCompetitor = matchLineUp?.sport_event.competitors?.filter(
-        (competitor) => {
-          return competitor.qualifier === "away";
-        }
-      );
+      if (matchLineUp && matchLineUp.sport_event && matchLineUp.lineups) {
+        // getting away team as per response of sportsRadar
+        const awayCompetitor = matchLineUp?.sport_event.competitors?.filter(
+          (competitor) => {
+            return competitor.qualifier === "away";
+          }
+        );
 
-      // getting home team as per response of sportsRadar
-      const homeCompetitor = matchLineUp?.sport_event.competitors?.filter(
-        (competitor) => {
-          return competitor.qualifier === "home";
-        }
-      );
+        const storeTossDetailsRes = await storeTossDetails(
+          matchId,
+          matchRadarId,
+          match,
+          connection
+        );
 
-      let teamsloopCount = 0;
-      matchLineUp?.lineups?.forEach((lineup) => {
-        try {
-          // getting team from sportsRadar home or away
-          const team = lineup.team === "home" ? "home" : "away";
+        // getting home team as per response of sportsRadar
+        const homeCompetitor = matchLineUp?.sport_event.competitors?.filter(
+          (competitor) => {
+            return competitor.qualifier === "home";
+          }
+        );
 
-          // getting competitor id
-          const competitorId =
-            team === "home" ? homeCompetitor[0].id : awayCompetitor[0].id;
+        let teamsloopCount = 0;
+        matchLineUp?.lineups?.forEach((lineup) => {
+          try {
+            // getting team from sportsRadar home or away
+            const team = lineup.team === "home" ? "home" : "away";
 
-          let playersloopCount = 0;
-          const storePlayer = async (player) => {
-            try {
-              // checking if player is already stored in database table players
-              const [{ isExists: isPlayerExists, playerId }] = await database(
-                "SELECT COUNT(playerId) AS isExists, playerId FROM allplayers WHERE playerRadarId = ?",
-                [player.id.substr(10)],
-                connection
-              );
+            // getting competitor id
+            const competitorId =
+              team === "home" ? homeCompetitor[0].id : awayCompetitor[0].id;
 
-              // getting competitor id
-              const [{ competitorIdStored, competitorRadarIdStored }] =
-                await database(
-                  "SELECT teamId AS competitorIdStored, teamRadarId AS competitorRadarIdStored FROM allteams WHERE teamRadarId = ?",
-                  [competitorId.substr(14)],
+            let playersloopCount = 0;
+            const storePlayer = async (player) => {
+              try {
+                // checking if player is already stored in database table players
+                const [{ isExists: isPlayerExists, playerId }] = await database(
+                  "SELECT COUNT(playerId) AS isExists, playerId FROM allplayers WHERE playerRadarId = ?",
+                  [player.id.substr(10)],
                   connection
                 );
 
-              // player exists then store it else store it in players table
-              if (isPlayerExists) {
-                const storePlayer = await database(
-                  "INSERT INTO match_lineup SET ?",
-                  {
-                    matchId,
-                    playerId: playerId,
-                    competitorId: competitorIdStored,
-                    order: player.order,
-                    isCaptain: player.is_captain ? 1 : 0,
-                    isWicketKeeper: player.is_wicketkeeper ? 1 : 0,
-                  },
-                  connection
-                );
+                // getting competitor id
+                const [{ competitorIdStored, competitorRadarIdStored }] =
+                  await database(
+                    "SELECT teamId AS competitorIdStored, teamRadarId AS competitorRadarIdStored FROM allteams WHERE teamRadarId = ?",
+                    [competitorId.substr(14)],
+                    connection
+                  );
 
-                // if player stored successfully then go to next player
-                if (storePlayer) {
-                  playersloopCount++;
-                  if (playersloopCount === lineup.starting_lineup.length) {
-                    teamsloopCount++;
-                    if (teamsloopCount === matchLineUp.lineups.length) {
-                      resolve(true);
+                // player exists then store it else store it in players table
+                if (isPlayerExists) {
+                  const storePlayer = await database(
+                    "INSERT INTO match_lineup SET ?",
+                    {
+                      matchId,
+                      playerId: playerId,
+                      competitorId: competitorIdStored,
+                      order: player.order,
+                      isCaptain: player.is_captain ? 1 : 0,
+                      isWicketKeeper: player.is_wicketkeeper ? 1 : 0,
+                    },
+                    connection
+                  );
+
+                  // if player stored successfully then go to next player
+                  if (storePlayer) {
+                    playersloopCount++;
+                    if (playersloopCount === lineup.starting_lineup.length) {
+                      teamsloopCount++;
+                      if (
+                        teamsloopCount === matchLineUp.lineups.length &&
+                        storeTossDetailsRes
+                      ) {
+                        resolve(true);
+                      }
                     }
                   }
-                }
-              } else {
-                const storeSinglePlayer = async (playerData) => {
-                  try {
-                    const roleId = await storePlayerRoleParent(
-                      playerData.type,
-                      connection
-                    );
-                    const storePlayers = await database(
-                      "INSERT INTO players SET ?",
-                      {
-                        playerRadarId: playerData.id.substr(10),
-                        playerFirstName: playerData.name.split(", ")[1] || "",
-                        playerLastName: playerData.name.split(", ")[0] || "",
-                        playerCountryCode: playerData.country_code || null,
-                        playerRole: roleId || 0,
-                        playerDOB: playerData.date_of_birth || null,
-                        playerCountry: playerData.nationality || null,
-                      },
-                      connection
-                    );
-                    if (storePlayers.insertId) {
-                      const updatePlayer = await storePlayerStyle(
-                        playerData,
+                } else {
+                  const storeSinglePlayer = async (playerData) => {
+                    try {
+                      const roleId = await storePlayerRoleParent(
+                        playerData.type,
                         connection
                       );
-                      const storeRelation = await database(
-                        "INSERT INTO tournament_competitor_player SET ?",
+                      const storePlayers = await database(
+                        "INSERT INTO players SET ?",
                         {
-                          tournamentCompetitorId: competitorRadarIdStored,
-                          playerId: storePlayers.insertId,
+                          playerRadarId: playerData.id.substr(10),
+                          playerFirstName: playerData.name.split(", ")[1] || "",
+                          playerLastName: playerData.name.split(", ")[0] || "",
+                          playerCountryCode: playerData.country_code || null,
+                          playerRole: roleId || 0,
+                          playerDOB: playerData.date_of_birth || null,
+                          playerCountry: playerData.nationality || null,
                         },
                         connection
                       );
-                      setTimeout(() => {
-                        storePlayer(player);
-                      }, 0);
+                      if (storePlayers.insertId) {
+                        const updatePlayer = await storePlayerStyle(
+                          playerData,
+                          connection
+                        );
+                        const storeRelation = await database(
+                          "INSERT INTO tournament_competitor_player SET ?",
+                          {
+                            tournamentCompetitorId: competitorRadarIdStored,
+                            playerId: storePlayers.insertId,
+                          },
+                          connection
+                        );
+                        setTimeout(() => {
+                          storePlayer(player);
+                        }, 0);
+                      }
+                    } catch (error) {
+                      console.log(error.message, "storePlayersOfTeamsParent");
                     }
-                  } catch (error) {
-                    console.log(error.message, "storePlayersOfTeamsParent");
-                  }
-                };
-                const { player: playerData } = await makeRequest(
-                  `players/${player.id}/profile.json`
-                );
-                storeSinglePlayer(playerData);
+                  };
+                  const { player: playerData } = await makeRequest(
+                    `players/${player.id}/profile.json`
+                  );
+                  storeSinglePlayer(playerData);
+                }
+              } catch (error) {
+                console.log(error.message, "storeMatchLineup1");
               }
-            } catch (error) {
-              console.log(error.message, "storeMatchLineup1");
-            }
-          };
-          lineup?.starting_lineup?.forEach((player) => {
-            // storing single player with matchId and competitor Id
-            storePlayer(player);
-          });
-        } catch (error) {
-          console.log(error.message, "storeMatchLineup2");
-        }
-      });
+            };
+            lineup?.starting_lineup?.forEach((player) => {
+              // storing single player with matchId and competitor Id
+              storePlayer(player);
+            });
+          } catch (error) {
+            console.log(error.message, "storeMatchLineup2");
+          }
+        });
+      } else {
+        resolve(false);
+      }
     } catch (error) {
       if (error.isAxiosError) {
         if (error.response.data.message === "No lineups.") {
@@ -417,7 +477,7 @@ const fetchMatches = async () => {
 
     // fetching matches which are not stored in database
     const matches = await database(
-      `SELECT matchId, matchRadarId FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString IN ('ended', 'closed', 'live') AND matchId NOT IN (SELECT DISTINCT matchId FROM match_lineup) ORDER BY fullmatchdetails.matchRadarId DESC;`,
+      `SELECT matchId, matchRadarId, team1Id, team2Id, team1RadarId, team2RadarId FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString IN ('ended', 'closed', 'live') AND matchId NOT IN (SELECT DISTINCT matchId FROM match_lineup) ORDER BY fullmatchdetails.matchRadarId DESC;`,
       [],
       connection
     );
@@ -435,6 +495,7 @@ const fetchMatches = async () => {
         const lineUpRes = await storeMatchLineup(
           match.matchId,
           match.matchRadarId,
+          match,
           newConnection
         );
 

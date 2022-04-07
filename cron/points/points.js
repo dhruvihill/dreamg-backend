@@ -979,3 +979,8 @@ const fetchData = async () => {
     console.log(error.message, "fetchData");
   }
 };
+
+module.exports = {
+  fetchData,
+  calculatePointsOfMatch,
+};

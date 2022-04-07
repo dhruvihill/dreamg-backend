@@ -7,12 +7,14 @@ const { rename, writeFile } = require("fs/promises");
 const { existsSync, mkdirSync } = require("fs");
 const path = require("path");
 const upload = require("express-fileupload");
+const convertTimeZone = require("../middleware/convertTimeZone");
 
 // fetching user data
 router.post("/userProfile", verifyUser, async (req, res) => {
-  const { predictorId } = req.body;
-
   try {
+    const { predictorId } = req.body;
+    const timeZone = req.headers.timezone;
+
     const pointsQuery = `SELECT userId, firstName, imageStamp, lastName, phoneNumber, email, dateOfBirth, gender, address, city, pinCode, state, country,
       (SELECT COUNT(DISTINCT matchId) FROM fullteamdetails WHERE userId = ?) AS totalMatches,
       (SELECT COUNT(DISTINCT userTeamId) FROM fullteamdetails WHERE userId = ?) AS totalTeams,
@@ -44,9 +46,10 @@ router.post("/userProfile", verifyUser, async (req, res) => {
 
         // adding teamFlag image url to matches
         recentPlayed.forEach(async (match) => {
-          match.matchStartTimeMilliSeconds = match.matchStartTimeMilliSeconds
-            ? match.matchStartTimeMilliSeconds.toString()
-            : "";
+          // converting time zone
+          [match.matchStartDateTime, match.matchStartTimeMilliSeconds] =
+            convertTimeZone(match.matchStartDateTime, parseInt(timeZone));
+
           match.team1FlagURL = imageUrl(
             __dirname,
             "../",
@@ -61,9 +64,10 @@ router.post("/userProfile", verifyUser, async (req, res) => {
           );
         });
         currentPlayed.forEach((match) => {
-          match.matchStartTimeMilliSeconds = match.matchStartTimeMilliSeconds
-            ? match.matchStartTimeMilliSeconds.toString()
-            : "";
+          // converting time zone
+          [match.matchStartDateTime, match.matchStartTimeMilliSeconds] =
+            convertTimeZone(match.matchStartDateTime, parseInt(timeZone));
+
           match.team1FlagURL = imageUrl(
             __dirname,
             "../",

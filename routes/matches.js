@@ -2,13 +2,15 @@ const express = require("express");
 const router = express.Router();
 const verifyUser = require("../middleware/verifyUser");
 const { fetchData, imageUrl } = require("../database/db_connection");
+const convertTimeZone = require("../middleware/convertTimeZone");
 
 // get matches according to its status
 router.post("/getMatches", verifyUser, async (req, res) => {
-  const { userId, pageNumber } = req.body;
-  let matchType = req.body.matchType;
-
   try {
+    const { userId, pageNumber } = req.body;
+    const timeZone = req.headers.timezone;
+    let matchType = req.body.matchType;
+
     if (
       ["UPCOMING", "LIVE", "RECENT", "CANCELED"].includes(matchType) &&
       pageNumber &&
@@ -48,9 +50,11 @@ router.post("/getMatches", verifyUser, async (req, res) => {
         } else if (match.matchStatusString === "cancelled") {
           match.matchStatusString = "CANCELED";
         }
-        match.matchStartTimeMilliSeconds = match.matchStartTimeMilliSeconds
-          ? match.matchStartTimeMilliSeconds.toString()
-          : "";
+
+        // converting time zone
+        [match.matchStartDateTime, match.matchStartTimeMilliSeconds] =
+          convertTimeZone(match.matchStartDateTime, parseInt(timeZone));
+
         match.team1FlagURL = imageUrl(
           __dirname,
           "../",
@@ -87,10 +91,11 @@ router.post("/getMatches", verifyUser, async (req, res) => {
 
 // get recent matches of predictor (live, recent, cancelled)
 router.post("/recentPlayed", async (req, res) => {
-  const { predictorId, pageNumber } = req.body;
-  const serverAddress = `${req.protocol}://${req.headers.host}`;
-
   try {
+    const { predictorId, pageNumber } = req.body;
+    const timeZone = req.headers.timezone;
+    const serverAddress = `${req.protocol}://${req.headers.host}`;
+
     if (
       predictorId &&
       predictorId > 0 &&
@@ -125,9 +130,11 @@ router.post("/recentPlayed", async (req, res) => {
         } else if (match.matchStatusString === "cancelled") {
           match.matchStatusString = "CANCELED";
         }
-        match.matchStartTimeMilliSeconds = match.matchStartTimeMilliSeconds
-          ? match.matchStartTimeMilliSeconds.toString()
-          : "";
+
+        // converting time zone
+        [match.matchStartDateTime, match.matchStartTimeMilliSeconds] =
+          convertTimeZone(match.matchStartDateTime, parseInt(timeZone));
+
         match.team1FlagURL = imageUrl(
           __dirname,
           "../",
@@ -165,10 +172,11 @@ router.post("/recentPlayed", async (req, res) => {
 
 // get current matches of predictor (upcoming)
 router.post("/currentPlayed", async (req, res) => {
-  const { predictorId, pageNumber } = req.body;
-  const serverAddress = `${req.protocol}://${req.headers.host}`;
-
   try {
+    const { predictorId, pageNumber } = req.body;
+    const timeZone = req.headers.timezone;
+    const serverAddress = `${req.protocol}://${req.headers.host}`;
+
     if (
       predictorId &&
       pageNumber &&
@@ -202,9 +210,10 @@ router.post("/currentPlayed", async (req, res) => {
         } else if (match.matchStatusString === "cancelled") {
           match.matchStatusString = "CANCELED";
         }
-        match.matchStartTimeMilliSeconds = match.matchStartTimeMilliSeconds
-          ? match.matchStartTimeMilliSeconds.toString()
-          : "";
+        // converting time zone
+        [match.matchStartDateTime, match.matchStartTimeMilliSeconds] =
+          convertTimeZone(match.matchStartDateTime, parseInt(timeZone));
+
         match.team1FlagURL = imageUrl(
           __dirname,
           "../",

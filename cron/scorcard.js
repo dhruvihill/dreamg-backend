@@ -641,7 +641,7 @@ const fetchMatches = async () => {
   try {
     const connection = await connectToDb();
     const matches = await database(
-      `SELECT matchId, matchRadarId, team1Id, team1RadarId, team2Id, team2RadarId FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString IN ('ended', 'closed') AND matchId = 1918 ORDER BY matchId;`,
+      `SELECT matchId, matchRadarId, team1Id, team1RadarId, team2Id, team2RadarId FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString IN ('ended', 'closed') ORDER BY matchId;`,
       [],
       connection
     );
@@ -717,4 +717,9 @@ const fetchMatches = async () => {
   } catch (error) {
     console.log(error.message, "fetchMatches");
   }
+};
+
+module.exports = {
+  fetchMatches,
+  storeScorcard,
 };
