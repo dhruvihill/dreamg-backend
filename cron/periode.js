@@ -1,5 +1,5 @@
 const mysql = require("mysql");
-const { storeMatchLineup } = require("./matchLineup");
+const { storeMatchLineup } = require("./matchLineUp");
 
 let connectionForCron = null;
 
