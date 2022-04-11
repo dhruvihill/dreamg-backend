@@ -1,85 +1,33 @@
-const mysql = require("mysql");
 const { storeMatchLineup } = require("./matchLineUp");
+const { fetchMatches: storeScorcard } = require("./scorcard");
+const { fetchData: storePoints } = require("./points/points");
+const { makeRequest, connectToDb, database } = require("./makeRequest");
 
-let connectionForCron = null;
-
-// connectiong to database
-const connectToDb = () => {
-  // connect to database
-  return new Promise((resolve, reject) => {
+const updateMatchStatus = (status, matchId) => {
+  return new Promise(async (resolve) => {
     try {
-      if (connectionForCron) {
-        connectionForCron.getConnection((err, connection) => {
-          try {
-            if (err) throw err;
-            else {
-              // console.log("Connected Successfully for cron");
-              resolve(connection);
-            }
-          } catch (error) {
-            if (error.message.includes("ECONNREFUSED")) {
-              // some email stuff goes here
-            }
-            reject(error);
-            initializeConnection();
-          }
-        });
+      const connection = await connectToDb();
+      let matchStatus = await database(
+        "SELECT statusId FROM `match_status` WHERE statusString = ?",
+        [status],
+        connection
+      );
+      if (matchStatus && matchStatus.length > 0) {
+        const updateMatchStatus = await database(
+          "UPDATE tournament_matches SET matchStatus = ? WHERE matchId = ?",
+          [matchStatus[0].statusId, matchId],
+          connection
+        );
+        if (matchStatus.includes("ended") || matchStatus.includes("closed")) {
+        }
+        connection.release();
+        resolve(updateMatchStatus);
       } else {
-        initializeConnection();
-        connectToDb()
-          .then((connection) => {
-            resolve(connection);
-          })
-          .catch((error) => {
-            console.log(error.message, "connectToDb");
-          });
+        resolve(false);
       }
     } catch (error) {
-      console.log(error, "connectToDb");
-    }
-
-    // error handling to Database
-    connectionForCron.on("error", (err) => {
-      console.log("db error", err.code);
-      setTimeout(() => {
-        initializeConnection();
-      }, 1000);
-    });
-  });
-};
-// intializing connection
-const initializeConnection = () => {
-  try {
-    connectionForCron = mysql.createPool({
-      connectionLimit: 0,
-      host: process.env.LOCAL_DB_HOST,
-      user: process.env.LOCAL_DB_USER,
-      password: process.env.LOCAL_DB_PASSWORD,
-      database: process.env.LOCAL_DB_NAME,
-      multipleStatements: true,
-    });
-  } catch (error) {
-    console.log(error.message, "initializeConnection");
-  }
-};
-initializeConnection();
-
-// query to fetch, insert data
-const database = (query, options, connection) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      connection.query(query, options, (err, reponse) => {
-        if (err) {
-          if (err.code === "ER_DUP_ENTRY") {
-            console.log(err.message);
-            resolve(true);
-          } else {
-            reject(err);
-          }
-        } else resolve(reponse);
-      });
-    } catch (error) {
-      console.log(error.message, "cron databse function");
+      console.log(error.message);
+      resolve(false);
     }
   });
 };
@@ -87,6 +35,62 @@ const database = (query, options, connection) => {
 const storeScorcardAndPoints = async (match) => {
   return new Promise(async (resolve) => {
     try {
+      const storeScor = async () => {
+        try {
+          const scorcardDetails = await makeRequest(
+            `/matches/sr:match:${match.matchRadarId}/timeline.json`
+          );
+          if (scorcardDetails && scorcardDetails.sport_event_status) {
+            if (scorcardDetails.sport_event_status.match_status === "live") {
+              if (
+                scorcardDetails.sport_event.tournament?.type.includes("t20")
+              ) {
+                setTimeout(storeScor, 20 * 60 * 1000);
+              } else if (
+                scorcardDetails.sport_event.tournament?.includes("odi")
+              ) {
+                setTimeout(storeScor, 60 * 60 * 1000);
+              } else if (
+                scorcardDetails.sport_event.tournament?.includes("test")
+              ) {
+                setTimeout(storeScor, 180 * 60 * 1000);
+              } else if (
+                scorcardDetails.sport_event.tournament?.includes("t10")
+              ) {
+                setTimeout(storeScor, 10 * 60 * 1000);
+              }
+            } else if (
+              scorcardDetails.sport_event_status.match_status === "closed" ||
+              scorcardDetails.sport_event_status.match_status === "ended"
+            ) {
+              updateMatchStatus("ended", match.matchId);
+              const storeScorcardRes = storeScorcard(match.matchId);
+              if (storeScorcardRes) {
+                const storePointsRes = storePoints(match.matchId);
+                if (storePointsRes) {
+                  resolve(true);
+                } else {
+                  resolve(false);
+                }
+              }
+            } else if (
+              scorcardDetails.sport_event_status.match_status === "cancelled"
+            ) {
+              updateMatchStatus("cancelled", match.matchId);
+            } else if (
+              scorcardDetails.sport_event_status.match_status === "abandoned"
+            ) {
+              updateMatchStatus("abandoned", match.matchId);
+            } else if (
+              scorcardDetails.sport_event_status.match_status === "not_started"
+            ) {
+            }
+          }
+        } catch (error) {
+          console.log(error.message, "storeScor");
+        }
+      };
+      storeScor();
     } catch (error) {
       console.log(error.message);
     }
@@ -99,41 +103,31 @@ const storeMatchLineUpAndStatus = async (match) => {
     const res = await storeMatchLineup(
       match.matchId,
       match.matchRadarId,
+      match,
       connection
     );
     if (res) {
       // calling function for scorcard and points
       const date = new Date(match.matchStartTime).getTime();
-      setTimeout(storeScorcardAndPoints, date + 5 * 60 * 1000);
+      setTimeout(() => {
+        storeScorcardAndPoints(match);
+      }, date + 5 * 60 * 1000);
 
       console.log("match lineup stored");
-      // updating match status
-      let matchStatus = await database(
-        "SELECT statusId FROM `match_status` WHERE statusString = ?",
-        ["live"],
-        connection
+      const updateMatchStatusRes = await updateMatchStatus(
+        "live",
+        match.matchId
       );
-      if (matchStatus && matchStatus.length > 0) {
-        const updateMatchStatus = await database(
-          "UPDATE tournament_matches SET matchStatus = ? WHERE matchId = ?",
-          [matchStatus[0].statusId, match.matchId],
-          connection
-        );
-        if (updateMatchStatus && updateMatchStatus.affectedRows === 1) {
-          connection.release();
-          console.log("match status updated");
-        } else {
-          connection.release();
-          console.log("match status not updated");
-        }
+      if (updateMatchStatusRes && updateMatchStatusRes.affectedRows === 1) {
+        connection.release();
+        console.log("match status updated");
       } else {
         connection.release();
-        console.log("match status not found");
+        console.log("match status not updated");
       }
     } else {
       connection.release();
-      console.log("not updated");
-      // email stuff goes here
+      console.log("match status not found");
     }
   } catch (error) {
     if (error.isAxiosError) {
@@ -165,14 +159,15 @@ const fetchData = async () => {
         try {
           // const connection = await connectToDb();
           const matchStartTime = new Date(
-            match.matchStartTimeMilliSeconds + 330 * 60 * 1000
+            parseInt(match.matchStartTimeMilliSeconds)
           ); // adding 5:30 hours to make it equal time zone
           const now = new Date();
-          if (matchStartTime.getTime() > now.getTime()) {
+          if (matchStartTime.getTime() + 15 * 60 * 1000 > now.getTime()) {
             if (matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) {
               setTimeout(() => {
+                console.log("hii");
                 storeMatchLineUpAndStatus(match);
-              }, matchStartTime.getTime() - now.getTime() - 25 * 60 * 1000);
+              }, matchStartTime.getTime() - 25 * 60 * 1000);
 
               currentMatch++;
               if (currentMatch !== totalMatches) {

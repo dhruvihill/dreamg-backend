@@ -1,5 +1,4 @@
 const axios = require("axios");
-const mysql = require("mysql");
 const { storeCompetitors } = require("./storeTournaments/storeCompetitor");
 const { storePlayerOfTeams } = require("./storeTournaments/storePlayer");
 const { storeMacthes } = require("./storeTournaments/storeMatch");
@@ -9,148 +8,7 @@ const {
 const {
   storeTournamentCompetitors,
 } = require("./storeTournaments/storeTournamentCompetitors");
-let connectionForCron = null;
-
-const data = require("../data2");
-const api_tokens = ["86es3v3uadks3nxj4ts994z4", "gej38ey64cqm4amkvcb8uezb"];
-let currentSelectedToken = 0;
-
-let delay = 0;
-
-// connectiong to database
-const connectToDb = () => {
-  // connect to database
-  return new Promise((resolve, reject) => {
-    try {
-      if (connectionForCron) {
-        connectionForCron.getConnection((err, connection) => {
-          try {
-            if (err) throw err;
-            else {
-              // console.log("Connected Successfully for cron");
-              resolve(connection);
-            }
-          } catch (error) {
-            if (error.message.includes("ECONNREFUSED")) {
-              // some email stuff goes here
-            }
-            reject(error);
-            initializeConnection();
-          }
-        });
-      } else {
-        initializeConnection();
-        connectToDb()
-          .then((connection) => {
-            resolve(connection);
-          })
-          .catch((error) => {
-            console.log(error.message, "connectToDb");
-          });
-      }
-    } catch (error) {
-      console.log(error, "connectToDb");
-    }
-
-    // error handling to Database
-    connectionForCron.on("error", (err) => {
-      console.log("db error", err.code);
-      setTimeout(() => {
-        initializeConnection();
-      }, 1000);
-    });
-  });
-};
-// intializing connection
-const initializeConnection = () => {
-  try {
-    connectionForCron = mysql.createPool({
-      connectionLimit: 0,
-      host: process.env.LOCAL_DB_HOST,
-      user: process.env.LOCAL_DB_USER,
-      password: process.env.LOCAL_DB_PASSWORD,
-      database: process.env.LOCAL_DB_NAME,
-      multipleStatements: true,
-    });
-  } catch (error) {
-    console.log(error.message, "initializeConnection");
-  }
-};
-initializeConnection();
-
-// query to fetch, insert data
-const database = (query, options, connection) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      connection.query(query, options, (err, reponse) => {
-        if (err) {
-          if (err.code === "ER_DUP_ENTRY") {
-            console.log(err.message);
-            resolve(true);
-          } else {
-            reject(err);
-          }
-        } else resolve(reponse);
-      });
-    } catch (error) {
-      console.log(error.message, "cron databse function");
-    }
-  });
-};
-
-const createInstance = () => {
-  return axios.create({
-    baseURL: "https://api.sportradar.us/cricket-t2/en/",
-    params: {
-      api_key: api_tokens[currentSelectedToken],
-    },
-  });
-};
-let axiosInstance = createInstance();
-
-// Axios request
-const makeRequest = (url) => {
-  return new Promise((resolve, reject) => {
-    try {
-      const makeCall = () => {
-        setTimeout(() => {
-          axiosInstance
-            .get(url)
-            .then((data) => {
-              resolve(data.data);
-            })
-            .catch((error) => {
-              if (
-                (error.response &&
-                  parseInt(error.response.headers["x-plan-quota-current"]) >
-                    parseInt(
-                      error.response.headers["x-plan-quota-allotted"]
-                    )) ||
-                parseInt(error.response.headers["x-plan-quota-current"]) ===
-                  parseInt(error.response.headers["x-plan-quota-allotted"])
-              ) {
-                currentSelectedToken++;
-                if (currentSelectedToken === api_tokens.length) {
-                  console.warn("API limit reached");
-                } else {
-                  axiosInstance = createInstance();
-                  makeCall();
-                }
-              } else {
-                console.log(error.response.data, "error");
-                console.log(error.message, "makeRequest");
-                reject(error);
-              }
-            });
-        }, delay);
-        delay += 1200;
-      };
-      makeCall();
-    } catch (error) {
-      console.log(error.message, "makeRequest");
-    }
-  });
-};
+const { connectToDb, database, makeRequest } = require("./makeRequest");
 
 // storing values in parent table in relation (category, role, type, venue)
 
@@ -398,7 +256,6 @@ const processTournaments = async (tournaments) => {
 
       const processTournament = async (tournament) => {
         try {
-          delay = 1200;
           const connection = await connectToDb();
           const [[tournamentRes]] = await database(
             "SELECT COUNT(tournamentId) AS isExists, tournamentId, fullseriesdetails.tournamentRadarId, fullseriesdetails.isCompetitorsArrived, fullseriesdetails.isMatchesArrived FROM fullseriesdetails WHERE tournamentRadarId = ?;SELECT `tournamentCompetitorId`, `tournamentId`, `competitorId`, `isPlayerArrived` FROM `tournament_competitor` WHERE tournament_competitor.tournamentId = ?;",

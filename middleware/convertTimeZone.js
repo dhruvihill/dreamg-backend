@@ -5,6 +5,10 @@ const convertTimeZone = (time, timeZone) => {
   // timeZone will be timeZone of user ex: 330
 
   if (time && (timeZone || timeZone === 0) && typeof timeZone === "number") {
+    if (timeZone === 0) {
+      const newTime = moment(time).utc(timeZone).format();
+      return [newTime, new Date(newTime).getTime().toString()];
+    }
     const newTime = moment(time).utcOffset(timeZone).format();
     return [newTime, new Date(newTime).getTime().toString()];
   } else {

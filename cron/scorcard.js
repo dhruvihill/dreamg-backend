@@ -1,161 +1,9 @@
 const axios = require("axios");
-const mysql = require("mysql");
 const { storePlayersStatics } = require("./playerStatatics");
+const { connectToDb, database, makeRequest } = require("./makeRequest");
 require("dotenv/config");
-let connectionForCron = null;
-
-const api_tokens = [
-  "k6bnypfa2ub5mvn8uxbc59f6",
-  // "js5u7mmxkcazf325xp9zchk4",
-];
-let currentSelectedToken = 0;
-
-let delay = 0;
-
-// connectiong to database
-const connectToDb = () => {
-  // connect to database
-  return new Promise((resolve, reject) => {
-    try {
-      if (connectionForCron) {
-        connectionForCron.getConnection((err, connection) => {
-          try {
-            if (err) throw err;
-            else {
-              // console.log("Connected Successfully for cron");
-              resolve(connection);
-            }
-          } catch (error) {
-            if (error.message.includes("ECONNREFUSED")) {
-              // some email stuff goes here
-            }
-            reject(error);
-            initializeConnection();
-          }
-        });
-      } else {
-        initializeConnection();
-        connectToDb()
-          .then((connection) => {
-            resolve(connection);
-          })
-          .catch((error) => {
-            console.log(error.message, "connectToDb");
-          });
-      }
-    } catch (error) {
-      console.log(error, "connectToDb");
-    }
-
-    // error handling to Database
-    connectionForCron.on("error", (err) => {
-      console.log("db error", err.code);
-      setTimeout(() => {
-        initializeConnection();
-      }, 1000);
-    });
-  });
-};
-// intializing connection
-const initializeConnection = () => {
-  try {
-    connectionForCron = mysql.createPool({
-      connectionLimit: 0,
-      host: process.env.LOCAL_DB_HOST,
-      user: process.env.LOCAL_DB_USER,
-      password: process.env.LOCAL_DB_PASSWORD,
-      database: process.env.LOCAL_DB_NAME,
-      multipleStatements: true,
-    });
-  } catch (error) {
-    console.log(error.message, "initializeConnection");
-  }
-};
-initializeConnection();
-
-// query to fetch, insert data
-const database = (query, options, connection) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      connection.query(query, options, (err, reponse) => {
-        if (err) {
-          if (err.code === "ER_DUP_ENTRY") {
-            console.log(err.message);
-            resolve(true);
-          } else {
-            reject(err);
-          }
-        } else resolve(reponse);
-      });
-    } catch (error) {
-      console.log(error.message, "cron databse function");
-    }
-  });
-};
-
-const createInstance = () => {
-  return axios.create({
-    baseURL: "https://api.sportradar.us/cricket-t2/en/",
-    params: {
-      api_key: api_tokens[currentSelectedToken],
-    },
-  });
-};
-let axiosInstance = createInstance();
-
-// Axios request
-const makeRequest = (url) => {
-  return new Promise((resolve, reject) => {
-    try {
-      const makeCall = () => {
-        setTimeout(() => {
-          axiosInstance
-            .get(url)
-            .then((data) => {
-              resolve(data.data);
-            })
-            .catch((error) => {
-              if (
-                (error.response &&
-                  parseInt(error.response.headers["x-plan-quota-current"]) >
-                    parseInt(
-                      error.response.headers["x-plan-quota-allotted"]
-                    )) ||
-                parseInt(error.response.headers["x-plan-quota-current"]) ===
-                  parseInt(error.response.headers["x-plan-quota-allotted"])
-              ) {
-                currentSelectedToken++;
-                if (currentSelectedToken > api_tokens.length) {
-                  console.warn("API limit reached");
-                } else {
-                  axiosInstance = createInstance();
-                  makeCall();
-                }
-              } else {
-                console.log(error.response.data, "error");
-                console.log(error.message, "makeRequest");
-                reject(error);
-              }
-            });
-        }, delay + 1200);
-        delay += 1200;
-      };
-      makeCall();
-    } catch (error) {
-      console.log(error.message, "makeRequest");
-    }
-  });
-};
-
 /*
-
-
-
 player not exists then store it and re execute the function
-
-
-
-
 */
 const storePlayerRoleParent = async (role, connection) => {
   return new Promise(async (resolve) => {
@@ -637,50 +485,72 @@ const storeScorcard = (scoreDetails, storedMatchDetails, connection) => {
   });
 };
 
-const fetchMatches = async () => {
-  try {
-    const connection = await connectToDb();
-    const matches = await database(
-      `SELECT matchId, matchRadarId, team1Id, team1RadarId, team2Id, team2RadarId FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString IN ('ended', 'closed') ORDER BY matchId;`,
-      [],
-      connection
-    );
-    connection.release();
-    let currentMatch = 0;
-    const totalMatches = matches.length;
-
-    const processMatch = async (match) => {
-      try {
-        delay = 1200;
-        const newConnection = await connectToDb();
-        const [{ isExists }] = await database(
-          "SELECT COUNT(matchId) AS isExists FROM `scorcard_details` WHERE scorcard_details.matchId = ?;",
-          [match.matchId],
-          newConnection
+const fetchMatches = async (matchId) => {
+  return new Promise(async (resolve) => {
+    try {
+      const connection = await connectToDb();
+      let matches;
+      if (matchId) {
+        matches = await database(
+          `SELECT matchId, matchRadarId, team1Id, team1RadarId, team2Id, team2RadarId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?;`,
+          [matchId],
+          connection
         );
-        if (!isExists) {
-          const matchScorCard = await makeRequest(
-            `matches/sr:match:${match.matchRadarId}/summary.json`
-          );
-          const storeScorcardRes = await storeScorcard(
-            matchScorCard,
-            match,
+      } else {
+        matches = await database(
+          `SELECT matchId, matchRadarId, team1Id, team1RadarId, team2Id, team2RadarId FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString IN ('ended', 'closed') ORDER BY matchId;`,
+          [],
+          connection
+        );
+      }
+      connection.release();
+      let currentMatch = 0;
+      const totalMatches = matches.length;
+
+      const processMatch = async (match) => {
+        try {
+          const newConnection = await connectToDb();
+          const [{ isExists }] = await database(
+            "SELECT COUNT(matchId) AS isExists FROM `scorcard_details` WHERE scorcard_details.matchId = ?;",
+            [match.matchId],
             newConnection
           );
-          if (storeScorcardRes) {
-            newConnection.release();
-            console.log(true);
-            currentMatch++;
-            if (currentMatch === totalMatches) {
-              console.log("All matches processed");
+          if (!isExists) {
+            const matchScorCard = await makeRequest(
+              `matches/sr:match:${match.matchRadarId}/summary.json`
+            );
+            const storeScorcardRes = await storeScorcard(
+              matchScorCard,
+              match,
+              newConnection
+            );
+            if (storeScorcardRes) {
+              newConnection.release();
+              console.log(true);
+              currentMatch++;
+              if (currentMatch === totalMatches) {
+                console.log("All matches processed");
+                resolve(true);
+              } else {
+                setTimeout(() => {
+                  processMatch(matches[currentMatch]);
+                }, 0);
+              }
             } else {
-              setTimeout(() => {
-                processMatch(matches[currentMatch]);
-              }, 0);
+              newConnection.release();
+              console.log(false);
+              currentMatch++;
+              if (currentMatch === totalMatches) {
+                console.log("All matches processed");
+                resolve(false);
+              } else {
+                setTimeout(() => {
+                  processMatch(matches[currentMatch]);
+                }, 0);
+              }
             }
           } else {
             newConnection.release();
-            console.log(false);
             currentMatch++;
             if (currentMatch === totalMatches) {
               console.log("All matches processed");
@@ -690,8 +560,8 @@ const fetchMatches = async () => {
               }, 0);
             }
           }
-        } else {
-          newConnection.release();
+        } catch (error) {
+          console.log(error.message, "preocessMatch");
           currentMatch++;
           if (currentMatch === totalMatches) {
             console.log("All matches processed");
@@ -701,22 +571,12 @@ const fetchMatches = async () => {
             }, 0);
           }
         }
-      } catch (error) {
-        console.log(error.message, "preocessMatch");
-        currentMatch++;
-        if (currentMatch === totalMatches) {
-          console.log("All matches processed");
-        } else {
-          setTimeout(() => {
-            processMatch(matches[currentMatch]);
-          }, 0);
-        }
-      }
-    };
-    processMatch(matches[currentMatch]);
-  } catch (error) {
-    console.log(error.message, "fetchMatches");
-  }
+      };
+      processMatch(matches[currentMatch]);
+    } catch (error) {
+      console.log(error.message, "fetchMatches");
+    }
+  });
 };
 
 module.exports = {

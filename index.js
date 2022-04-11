@@ -1,18 +1,111 @@
 require("dotenv/config");
 const express = require("express");
 const bodyParser = require("body-parser");
-const { fetchMatches: scorcard } = require("./cron/scorcard");
 const { fetchData: periode } = require("./cron/periode");
-const { fetchMatches: matchLineUp } = require("./cron/matchLineUp");
 
-// calling scorcard to store scorcard details in db
-// setTimeout(scorcard, 30 * 60 * 1000);
+const apiTokens = [
+  {
+    token: "3frs3xa587s9uhfwa2wnkufu",
+    isUsed: false,
+    totalCallMade: 0,
+    isDeveloperInactive: false,
+  },
+  {
+    token: "q7te6md2rf9ez7aju72bm4gz",
+    isUsed: false,
+    totalCallMade: 0,
+    isDeveloperInactive: false,
+  },
+  {
+    token: "fmpwthupf2fr479np2r6dauy",
+    isUsed: false,
+    totalCallMade: 0,
+    isDeveloperInactive: false,
+  },
+  {
+    token: "8gvnuxmz6hhd6xp9srrffju7",
+    isUsed: false,
+    totalCallMade: 0,
+    isDeveloperInactive: false,
+  },
+  {
+    token: "77rga3pqmmc8a63d4qfpwdzd",
+    isUsed: false,
+    totalCallMade: 0,
+    isDeveloperInactive: false,
+  },
+  {
+    token: "k6bnypfa2ub5mvn8uxbc59f6",
+    isUsed: false,
+    totalCallMade: 0,
+    isDeveloperInactive: false,
+  },
+  {
+    token: "2jws2w6zmp4gt8zn3bv56nfy",
+    isUsed: false,
+    totalCallMade: 0,
+    isDeveloperInactive: false,
+  },
+  {
+    token: "cg85e68fxv6mzgnbe2sjbsx3",
+    isUsed: false,
+    totalCallMade: 0,
+    isDeveloperInactive: false,
+  },
+  {
+    token: "9dn2jbeu4j5ujxrxcgx6ev8k",
+    isUsed: false,
+    totalCallMade: 0,
+    isDeveloperInactive: false,
+  },
+  {
+    token: "tmhxaq4w74x7c2xyahuhfq9y",
+    isUsed: false,
+    totalCallMade: 0,
+    isDeveloperInactive: false,
+  },
+  {
+    token: "6sh4zwc43b5a8ajszjh7e79d",
+    isUsed: false,
+    totalCallMade: 0,
+    isDeveloperInactive: false,
+  },
+  {
+    token: "bme7zzhvyxkw2g2vvkpx8dwe",
+    isUsed: false,
+    totalCallMade: 0,
+    isDeveloperInactive: false,
+  },
+  {
+    token: "egb9th552ezx7ddmamtvst7w",
+    isUsed: false,
+    totalCallMade: 0,
+    isDeveloperInactive: false,
+  },
+  {
+    token: "js5u7mmxkcazf325xp9zchk4",
+    isUsed: false,
+    totalCallMade: 0,
+    isDeveloperInactive: false,
+  },
+  {
+    token: "86es3v3uadks3nxj4ts994z4",
+    isUsed: false,
+    totalCallMade: 0,
+    isDeveloperInactive: false,
+  },
+  {
+    token: "gej38ey64cqm4amkvcb8uezb",
+    isUsed: false,
+    totalCallMade: 0,
+    isDeveloperInactive: false,
+  },
+];
 
-// // calling match lineup to store match lineup details in db
-// setTimeout(matchLineUp, 30 * 60 * 1000);
-
-// // calling periode to store periode details in db
-// setInterval(periode, 1 * 60 * 60 * 1000);
+// calling periode to store periode details in db
+setInterval(() => {
+  periode();
+}, 90 * 60 * 1000);
 
 const app = express();
 
@@ -54,4 +147,4 @@ try {
   console.log(error.message);
 }
 
-module.exports = app;
+module.exports = { apiTokens };

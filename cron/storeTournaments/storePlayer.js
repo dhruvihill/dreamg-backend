@@ -1,24 +1,5 @@
 const { storePlayersStatics } = require("../playerStatatics");
-
-// query to fetch, insert data
-const database = (query, options, connection) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      connection.query(query, options, (err, reponse) => {
-        if (err) {
-          if (err.code === "ER_DUP_ENTRY") {
-            console.log(err.message);
-            resolve(true);
-          } else {
-            reject(err);
-          }
-        } else resolve(reponse);
-      });
-    } catch (error) {
-      console.log(error.message, "cron databse function");
-    }
-  });
-};
+const { database } = require("../makeRequest");
 
 // store player role in player_role table
 const storePlayerRole = async (role, connection) => {
