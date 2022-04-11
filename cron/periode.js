@@ -162,7 +162,7 @@ const fetchData = async () => {
             parseInt(match.matchStartTimeMilliSeconds)
           ); // adding 5:30 hours to make it equal time zone
           const now = new Date();
-          if (matchStartTime.getTime() + 15 * 60 * 1000 > now.getTime()) {
+          if (matchStartTime.getTime() > now.getTime()) {
             if (matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) {
               setTimeout(() => {
                 console.log("hii");
