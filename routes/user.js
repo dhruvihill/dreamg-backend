@@ -48,7 +48,7 @@ router.post("/userProfile", verifyUser, async (req, res) => {
         recentPlayed.forEach(async (match) => {
           // converting time zone
           [match.matchStartDateTime, match.matchStartTimeMilliSeconds] =
-            convertTimeZone(match.matchStartDateTime, parseInt(timeZone));
+            convertTimeZone(match.matchStartDateTime, timeZone);
 
           match.team1FlagURL = imageUrl(
             __dirname,
@@ -66,7 +66,7 @@ router.post("/userProfile", verifyUser, async (req, res) => {
         currentPlayed.forEach((match) => {
           // converting time zone
           [match.matchStartDateTime, match.matchStartTimeMilliSeconds] =
-            convertTimeZone(match.matchStartDateTime, parseInt(timeZone));
+            convertTimeZone(match.matchStartDateTime, timeZone);
 
           match.team1FlagURL = imageUrl(
             __dirname,

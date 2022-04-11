@@ -1142,10 +1142,7 @@ router.post("/compareTeams", async (req, res) => {
           : "";
         // converting time zone
         [responseData[0].matchStartDateTime, responseData[0].matchStartTime] =
-          convertTimeZone(
-            responseData[0].matchStartDateTime,
-            parseInt(timeZone)
-          );
+          convertTimeZone(responseData[0].matchStartDateTime, timeZone);
       }
       res.status(200).json({
         status: true,

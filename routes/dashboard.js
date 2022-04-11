@@ -49,7 +49,7 @@ router.get("/", verifyUser, async (req, res) => {
 
       // converting time zone
       [match.matchStartDateTime, match.matchStartTimeMilliSeconds] =
-        convertTimeZone(match.matchStartDateTime, parseInt(timeZone));
+        convertTimeZone(match.matchStartDateTime, timeZone);
 
       match.team1FlagURL = imageUrl(
         __dirname,

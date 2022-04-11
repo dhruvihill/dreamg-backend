@@ -53,7 +53,7 @@ router.post("/getMatches", verifyUser, async (req, res) => {
 
         // converting time zone
         [match.matchStartDateTime, match.matchStartTimeMilliSeconds] =
-          convertTimeZone(match.matchStartDateTime, parseInt(timeZone));
+          convertTimeZone(match.matchStartDateTime, timeZone);
 
         match.team1FlagURL = imageUrl(
           __dirname,
@@ -133,7 +133,7 @@ router.post("/recentPlayed", async (req, res) => {
 
         // converting time zone
         [match.matchStartDateTime, match.matchStartTimeMilliSeconds] =
-          convertTimeZone(match.matchStartDateTime, parseInt(timeZone));
+          convertTimeZone(match.matchStartDateTime, timeZone);
 
         match.team1FlagURL = imageUrl(
           __dirname,
@@ -212,7 +212,7 @@ router.post("/currentPlayed", async (req, res) => {
         }
         // converting time zone
         [match.matchStartDateTime, match.matchStartTimeMilliSeconds] =
-          convertTimeZone(match.matchStartDateTime, parseInt(timeZone));
+          convertTimeZone(match.matchStartDateTime, timeZone);
 
         match.team1FlagURL = imageUrl(
           __dirname,
