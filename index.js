@@ -1,8 +1,6 @@
 require("dotenv/config");
 const express = require("express");
 const bodyParser = require("body-parser");
-const { fetchData: periode } = require("./cron/periode");
-
 const apiTokens = [
   {
     token: "3frs3xa587s9uhfwa2wnkufu",
@@ -104,6 +102,7 @@ const apiTokens = [
 
 // calling periode to store periode details in db
 setInterval(() => {
+  const { fetchData: periode } = require("./cron/periode");
   periode();
 }, 90 * 60 * 1000);
 
