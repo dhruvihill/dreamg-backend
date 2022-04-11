@@ -9,12 +9,11 @@ const convertTimeZone = (time, timeZone) => {
 
     if (timeZone.includes("00:00") || timeZone === "") {
       const newTime = moment(time).utc().format();
-      const newTime2 = newTime.replace("Z", "");
+      const newTime2 = newTime.replace("Z", "+00:00");
       return [newTime2, new Date(newTime).getTime().toString()];
     }
     const newTime = moment(time).utcOffset(timeZone).format();
-    const newTime2 = newTime.replace(timeZone, "");
-    return [newTime2, new Date(newTime).getTime().toString()];
+    return [newTime, new Date(newTime).getTime().toString()];
   } else {
     return [null, null];
   }
