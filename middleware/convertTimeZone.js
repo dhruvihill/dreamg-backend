@@ -15,7 +15,7 @@ const convertTimeZone = (time, timeZone) => {
     const newTime = moment(time).utcOffset(timeZone).format();
     return [newTime, new Date(newTime).getTime().toString()];
   } else {
-    return [time, new Date(time).getTime().toString()];
+    return [null, null];
   }
 };
 
