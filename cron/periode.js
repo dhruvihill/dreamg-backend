@@ -97,117 +97,121 @@ const storeScorcardAndPoints = async (match) => {
 };
 
 const storeMatchLineUpAndStatus = async (match) => {
-  try {
-    const connection = await connectToDb();
-    const res = await storeMatchLineup(
-      match.matchId,
-      match.matchRadarId,
-      match,
-      connection
-    );
-    if (res) {
-      // calling function for scorcard and points
-      const matchStartTime = new Date(match.matchStartTime).getTime();
-      setTimeout(() => {
-        storeScorcardAndPoints(match);
-      }, matchStartTime - Date.now() + 5 * 60 * 1000);
-
-      console.log("match lineup stored");
-      const updateMatchStatusRes = await updateMatchStatus(
-        "live",
-        match.matchId
+  return new Promise(async (resolve, reject) => {
+    try {
+      const connection = await connectToDb();
+      const res = await storeMatchLineup(
+        match.matchId,
+        match.matchRadarId,
+        match,
+        connection
       );
-      if (updateMatchStatusRes && updateMatchStatusRes.affectedRows === 1) {
-        connection.release();
-        console.log("match status updated");
+      if (res) {
+        // calling function for scorcard and points
+        const matchStartTime = new Date(match.matchStartTime).getTime();
+        setTimeout(() => {
+          storeScorcardAndPoints(match);
+        }, matchStartTime - Date.now() + 5 * 60 * 1000);
+
+        const updateMatchStatusRes = await updateMatchStatus(
+          "live",
+          match.matchId
+        );
+        if (updateMatchStatusRes && updateMatchStatusRes.affectedRows === 1) {
+          connection.release();
+          resolve(true);
+        } else {
+          connection.release();
+          resolve(false);
+        }
       } else {
         connection.release();
-        console.log("match status not updated");
+        resolve(false);
       }
-    } else {
-      connection.release();
-      console.log("match status not found");
-    }
-  } catch (error) {
-    if (error.isAxiosError) {
-      if (error.response.data.message === "No lineups.") {
-        setTimeout(() => {
-          storeMatchLineUpAndStatus(match);
-        }, 2 * 60 * 1000);
+    } catch (error) {
+      if (error.isAxiosError) {
+        if (error.response.data.message === "No lineups.") {
+          setTimeout(() => {
+            storeMatchLineUpAndStatus(match);
+          }, 2 * 60 * 1000);
+        }
+      } else {
+        console.log(error);
+        resolve(false);
       }
-    } else {
-      console.log(error);
     }
-  }
+  });
 };
 
 const fetchData = async () => {
-  try {
-    const connection = await connectToDb();
-    const matches = await database(
-      "SELECT matchId, matchRadarId, matchTournamentId, matchStartDateTime, matchStartTimeMilliSeconds, matchTyprString, matchStatusString, team1Id, team2Id, team1RadarId, team2RadarId FROM `fullmatchdetails` WHERE matchStatusString IN ('ended') ORDER BY `fullmatchdetails`.`matchStartTimeMilliSeconds` DESC;",
-      [],
-      connection
-    );
-    connection.release();
-    if (matches.length > 0) {
-      const totalMatches = matches.length;
-      let currentMatch = 0;
+  return new Promise(async (resolve) => {
+    try {
+      const connection = await connectToDb();
+      const matches = await database(
+        "SELECT matchId, matchRadarId, matchTournamentId, matchStartDateTime, matchStartTimeMilliSeconds, matchTyprString, matchStatusString, team1Id, team2Id, team1RadarId, team2RadarId FROM `fullmatchdetails` WHERE matchStatusString IN ('ended') ORDER BY `fullmatchdetails`.`matchStartTimeMilliSeconds` DESC;",
+        [],
+        connection
+      );
+      connection.release();
+      if (matches.length > 0) {
+        const totalMatches = matches.length;
+        let currentMatch = 0;
 
-      const setTimeoutForMatches = async (match) => {
-        try {
-          // const connection = await connectToDb();
-          const matchStartTime = new Date(
-            parseInt(match.matchStartTimeMilliSeconds)
-          );
-          const now = new Date();
-          // if (matchStartTime.getTime() > now.getTime()) {
-          if (matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) {
-            setTimeout(() => {
-              storeMatchLineUpAndStatus(match);
-            }, matchStartTime.getTime() - now.getTime() - 25 * 60 * 1000);
+        const setTimeoutForMatches = async (match) => {
+          try {
+            // const connection = await connectToDb();
+            const matchStartTime = new Date(
+              parseInt(match.matchStartTimeMilliSeconds)
+            );
+            const now = new Date();
+            // if (matchStartTime.getTime() > now.getTime()) {
+            if (matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) {
+              setTimeout(() => {
+                storeMatchLineUpAndStatus(match);
+              }, matchStartTime.getTime() - now.getTime() - 25 * 60 * 1000);
 
-            currentMatch++;
-            if (currentMatch !== totalMatches) {
-              setTimeout(() => {
-                setTimeoutForMatches(matches[currentMatch]);
-              }, 0);
+              currentMatch++;
+              if (currentMatch !== totalMatches) {
+                setTimeout(() => {
+                  setTimeoutForMatches(matches[currentMatch]);
+                }, 0);
+              } else {
+                resolve(true);
+              }
             } else {
-              console.log("done");
+              currentMatch++;
+              if (currentMatch !== totalMatches) {
+                setTimeout(() => {
+                  setTimeoutForMatches(matches[currentMatch]);
+                }, 0);
+              } else {
+                resolve(true);
+              }
             }
-          } else {
-            currentMatch++;
-            if (currentMatch !== totalMatches) {
-              setTimeout(() => {
-                setTimeoutForMatches(matches[currentMatch]);
-              }, 0);
-            } else {
-              console.log("done");
-            }
+            // } else {
+            //   // do it right now
+            //   currentMatch++;
+            //   if (currentMatch !== totalMatches) {
+            //     setTimeout(() => {
+            //       setTimeoutForMatches(matches[currentMatch]);
+            //     }, 0);
+            //   } else {
+            //     console.log("done");
+            //   }
+            // }
+          } catch (error) {
+            console.log(error.message, "processMatch");
           }
-          // } else {
-          //   // do it right now
-          //   currentMatch++;
-          //   if (currentMatch !== totalMatches) {
-          //     setTimeout(() => {
-          //       setTimeoutForMatches(matches[currentMatch]);
-          //     }, 0);
-          //   } else {
-          //     console.log("done");
-          //   }
-          // }
-        } catch (error) {
-          console.log(error.message, "processMatch");
-        }
-      };
-      setTimeoutForMatches(matches[currentMatch]);
-      //   console.log(matches);
-    } else {
-      console.log("No matches to fetch");
+        };
+        setTimeoutForMatches(matches[currentMatch]);
+        //   console.log(matches);
+      } else {
+        console.log("No matches to fetch");
+      }
+    } catch (error) {
+      console.log(error.message, "fetchData");
     }
-  } catch (error) {
-    console.log(error.message, "fetchData");
-  }
+  });
 };
 
 module.exports = {

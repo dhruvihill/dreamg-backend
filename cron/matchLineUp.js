@@ -293,82 +293,82 @@ const storeMatchLineup = async (matchId, matchRadarId, match, connection) => {
 
 // gets matchId from database whose lineup is to be stored
 const fetchMatches = async (matchId) => {
-  try {
-    const connection = await connectToDb();
+  return new Promise(async (resolve, reject) => {
+    try {
+      const connection = await connectToDb();
 
-    // fetching matches which are not stored in database
-    let matches;
-    if (matchId) {
-      matches = await database(
-        `SELECT matchId, matchRadarId, team1Id, team2Id, team1RadarId, team2RadarId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?;`,
-        [matchId],
-        connection
-      );
-    } else {
-      matches = await database(
-        `SELECT matchId, matchRadarId, team1Id, team2Id, team1RadarId, team2RadarId FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString IN ('ended', 'closed', 'live') AND matchId NOT IN (SELECT DISTINCT matchId FROM match_lineup) ORDER BY fullmatchdetails.matchRadarId DESC;`,
-        [],
-        connection
-      );
-    }
-
-    let currentMatch = 0;
-    const totalMatches = matches.length;
-
-    // function to store match lineup
-    const processMatch = async (match) => {
-      try {
-        const newConnection = await connectToDb();
-
-        // calling functio which stores match lineup
-        const lineUpRes = await storeMatchLineup(
-          match.matchId,
-          match.matchRadarId,
-          match,
-          newConnection
+      // fetching matches which are not stored in database
+      let matches;
+      if (matchId) {
+        matches = await database(
+          `SELECT matchId, matchRadarId, team1Id, team2Id, team1RadarId, team2RadarId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?;`,
+          [matchId],
+          connection
         );
-
-        // lineup stored or not go to next match
-        if (lineUpRes) {
-          console.log(true);
-          currentMatch++;
-          if (currentMatch === totalMatches) {
-            console.log("All matches processed");
-          } else {
-            newConnection.release();
-            setTimeout(() => {
-              processMatch(matches[currentMatch]);
-            }, 0);
-          }
-        } else {
-          currentMatch++;
-          if (currentMatch === totalMatches) {
-            console.log("All matches processed");
-          } else {
-            newConnection.release();
-            setTimeout(() => {
-              processMatch(matches[currentMatch]);
-            }, 0);
-          }
-        }
-      } catch (error) {
-        console.log(error.message, "preocessMatch");
-        currentMatch++;
-        if (currentMatch === totalMatches) {
-          console.log("All matches processed");
-        } else {
-          setTimeout(() => {
-            processMatch(matches[currentMatch]);
-          }, 0);
-        }
+      } else {
+        matches = await database(
+          `SELECT matchId, matchRadarId, team1Id, team2Id, team1RadarId, team2RadarId FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString IN ('ended', 'closed', 'live') AND matchId NOT IN (SELECT DISTINCT matchId FROM match_lineup) ORDER BY fullmatchdetails.matchRadarId DESC;`,
+          [],
+          connection
+        );
       }
-    };
 
-    // calling functio first time
-    processMatch(matches[currentMatch]);
-  } catch (error) {
-    console.log(error.message, "fetchMatches");
-  }
+      let currentMatch = 0;
+      const totalMatches = matches.length;
+
+      // function to store match lineup
+      const processMatch = async (match) => {
+        try {
+          const newConnection = await connectToDb();
+
+          // calling functio which stores match lineup
+          const lineUpRes = await storeMatchLineup(
+            match.matchId,
+            match.matchRadarId,
+            match,
+            newConnection
+          );
+
+          // lineup stored or not go to next match
+          if (lineUpRes) {
+            currentMatch++;
+            if (currentMatch === totalMatches) {
+            } else {
+              newConnection.release();
+              setTimeout(() => {
+                processMatch(matches[currentMatch]);
+              }, 0);
+            }
+          } else {
+            currentMatch++;
+            if (currentMatch === totalMatches) {
+              resolve(true);
+            } else {
+              newConnection.release();
+              setTimeout(() => {
+                processMatch(matches[currentMatch]);
+              }, 0);
+            }
+          }
+        } catch (error) {
+          console.log(error.message, "preocessMatch");
+          currentMatch++;
+          if (currentMatch === totalMatches) {
+            resolve(true);
+          } else {
+            setTimeout(() => {
+              processMatch(matches[currentMatch]);
+            }, 0);
+          }
+        }
+      };
+
+      // calling functio first time
+      processMatch(matches[currentMatch]);
+    } catch (error) {
+      console.log(error.message, "fetchMatches");
+    }
+  });
 };
 
 // exporting the function

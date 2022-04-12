@@ -161,7 +161,6 @@ const storeBatsMan = (inningId, battingTeam, connection) => {
               storeSingleBastMan(player);
             }, 0);
           } else {
-            console.log("player not found");
             resolve(false);
           }
         }
@@ -231,7 +230,6 @@ const storeBowlers = (inningId, bowlingTeam, connection) => {
                 storeSingleBowler(player);
               }, 0);
             } else {
-              console.log("player not found");
               resolve(false);
             }
           }
@@ -388,7 +386,6 @@ const storeInnings = (
             ) {
               resolve(true);
             } else {
-              console.log("some error happended in storeInnings");
               resolve(false);
             }
             inningLoopCount++;
@@ -403,9 +400,6 @@ const storeInnings = (
           }
         });
       } else {
-        console.log(
-          "insufficient data to store innings sports radar store innings"
-        );
         resolve(false);
       }
     } catch (error) {}
@@ -524,10 +518,8 @@ const fetchMatches = async (matchId) => {
             );
             if (storeScorcardRes) {
               newConnection.release();
-              console.log(true);
               currentMatch++;
               if (currentMatch === totalMatches) {
-                console.log("All matches processed");
                 resolve(true);
               } else {
                 setTimeout(() => {
@@ -536,10 +528,8 @@ const fetchMatches = async (matchId) => {
               }
             } else {
               newConnection.release();
-              console.log(false);
               currentMatch++;
               if (currentMatch === totalMatches) {
-                console.log("All matches processed");
                 resolve(false);
               } else {
                 setTimeout(() => {
@@ -551,7 +541,6 @@ const fetchMatches = async (matchId) => {
             newConnection.release();
             currentMatch++;
             if (currentMatch === totalMatches) {
-              console.log("All matches processed");
             } else {
               setTimeout(() => {
                 processMatch(matches[currentMatch]);
@@ -562,7 +551,6 @@ const fetchMatches = async (matchId) => {
           console.log(error.message, "preocessMatch");
           currentMatch++;
           if (currentMatch === totalMatches) {
-            console.log("All matches processed");
           } else {
             setTimeout(() => {
               processMatch(matches[currentMatch]);

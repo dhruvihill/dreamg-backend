@@ -184,7 +184,6 @@ const storePlayersStatics = async (players) => {
           );
 
           if (playerData && playerData.player && playerData.statistics) {
-            console.log("lests store player " + player.playerRadarId);
             const updatePlayer = await storePlayerStyle(
               playerData.player,
               connection
@@ -196,7 +195,6 @@ const storePlayersStatics = async (players) => {
             );
             if (updatePlayer && storePlayerStaticsRes) {
               connection.release();
-              console.log(true);
               playerCount++;
               if (playerCount === totalPlayers) {
                 resolve(true);
@@ -206,7 +204,6 @@ const storePlayersStatics = async (players) => {
                 }, 0);
               }
             } else {
-              console.log(true);
               playerCount++;
               if (playerCount === totalPlayers) {
                 resolve(true);

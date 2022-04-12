@@ -101,10 +101,17 @@ const apiTokens = [
 ];
 
 // calling periode to store periode details in db
-setInterval(() => {
-  const { fetchData: periode } = require("./cron/periode");
-  periode();
-}, 90 * 60 * 1000);
+const setIntervalImmediate = () => {
+  setInterval(() => {
+    const { fetchData: periode } = require("./cron/periode");
+    periode();
+  }, 90 * 60 * 1000);
+  setTimeout(() => {
+    const { fetchData: periode } = require("./cron/periode");
+    periode();
+  }, 2000);
+};
+setIntervalImmediate();
 
 const app = express();
 

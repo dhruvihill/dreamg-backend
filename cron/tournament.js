@@ -148,7 +148,6 @@ const storeTournaments = async (tournaments) => {
                 if (res) {
                   connection.release();
                 }
-                console.log(res);
               }
             }
           }
@@ -171,7 +170,6 @@ const storeTournaments = async (tournaments) => {
               if (res) {
                 connection.release();
               }
-              console.log(res);
             }
           }
         }
@@ -263,7 +261,6 @@ const processTournaments = async (tournaments) => {
           );
           connection.release();
           if (!tournamentRes?.isExists) {
-            console.log("lets store tournament", tournament.id);
             const {
               groups,
               tournament: { type: typeRes },
@@ -334,7 +331,6 @@ const processTournaments = async (tournaments) => {
               }
             }
           } else {
-            console.log("stored already");
             if (currentTournament === totalTournaments - 1) {
               resolve(tournaments);
             } else {
