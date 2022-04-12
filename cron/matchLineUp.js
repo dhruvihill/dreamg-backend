@@ -158,7 +158,7 @@ const storeTossDetails = async (matchId, matchRadarId, match, connection) => {
       }
     } catch (error) {
       resolve(false);
-      console.log(error.message);
+      console.log(error.message.error);
     }
   });
 };
