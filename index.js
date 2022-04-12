@@ -105,10 +105,6 @@ setInterval(() => {
   const { fetchData: periode } = require("./cron/periode");
   periode();
 }, 90 * 60 * 1000);
-setTimeout(() => {
-  const { fetchData: periode } = require("./cron/periode");
-  periode();
-}, 1000);
 
 const app = express();
 
