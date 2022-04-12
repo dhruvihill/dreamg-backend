@@ -144,7 +144,7 @@ const fetchData = async () => {
   try {
     const connection = await connectToDb();
     const matches = await database(
-      "SELECT matchId, matchRadarId, matchTournamentId, matchStartDateTime, matchStartTimeMilliSeconds, matchTyprString, matchStatusString, team1Id, team2Id, team1RadarId, team2RadarId FROM `fullmatchdetails` WHERE matchStatusString IN ('live', 'not_started') ORDER BY `fullmatchdetails`.`matchStartTimeMilliSeconds` DESC;",
+      "SELECT matchId, matchRadarId, matchTournamentId, matchStartDateTime, matchStartTimeMilliSeconds, matchTyprString, matchStatusString, team1Id, team2Id, team1RadarId, team2RadarId FROM `fullmatchdetails` WHERE matchStatusString IN ('ended') ORDER BY `fullmatchdetails`.`matchStartTimeMilliSeconds` DESC;",
       [],
       connection
     );
