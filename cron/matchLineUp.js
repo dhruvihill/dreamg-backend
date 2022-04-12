@@ -213,8 +213,8 @@ const storeMatchLineup = async (matchId, matchRadarId, match, connection) => {
                   const storeMatchPlayersRes = await database(
                     "UPDATE match_players SET isSelected = 1, isCaptain = ?, isWicketKeeper = ? WHERE playerId = ? AND matchId = ?;",
                     [
-                      player.is_captain,
-                      player.is_wicketkeeper,
+                      player.is_captain || 0,
+                      player.is_wicketkeeper || 0,
                       playerId,
                       matchId,
                     ],
