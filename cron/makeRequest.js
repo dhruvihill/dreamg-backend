@@ -1,7 +1,9 @@
 const axios = require("axios");
 const mysql = require("mysql");
 let connectionForCron = null;
-const { apiTokens: api_tokens } = require("../index");
+const {
+  tokens: { apiTokens: api_tokens },
+} = require("../index");
 
 const createInstance = () => {
   return axios.create({

@@ -44,6 +44,7 @@ const storeScorcardAndPoints = async (match) => {
                 scorcardDetails.sport_event.tournament?.type.includes("t20")
               ) {
                 updateMatchStatus("live", match.matchId);
+                console.log("t20");
                 setTimeout(storeScor, 20 * 60 * 1000);
               } else if (
                 scorcardDetails.sport_event.tournament?.includes("odi")
