@@ -172,27 +172,6 @@ const calculatePointsOfMatch = async (
           });
           setTimeout(async () => {
             const storePoints = await database(
-              "UPDATE match_lineup SET points = ?, `runsPoints` = ?, `foursPoints` = ?, `sixesPoints` = ?, `numberRunsPoints` = ?, `numberWicketPoints` = ?, `wicketPoints` = ?, `maidenOverPoints` = ?, `lbwOrBowledPoints` = ?, `catchesPoints` = ?, `runOutPoints` = ?, `economyPoints` = ?, `strikeRatePoints` = ? WHERE matchId = ? AND playerId = ?;",
-              [
-                totalPoints,
-                points.runsPoints,
-                points.foursPoints,
-                points.sixesPoints,
-                points["duck/50/100Points"],
-                points["4/5WicketsPoints"],
-                points.wicketsPoints,
-                points.maidenOversPoints,
-                points.lbwOrBowledPoints,
-                points.catchesPoints,
-                points.runOutPoints,
-                null,
-                points.strikeRatePoints,
-                matchId,
-                player.playerId,
-              ],
-              connection
-            );
-            const abc = await database(
               "UPDATE `match_players` SET `isSelected` = ?, `points` = ?, `runsPoints` = ?, `foursPoints` = ?, `sixesPoints` = ?, `numberRunsPoints` = ?, `numberWicketPoints` = ?, `wicketPoints` = ?, `maidenOverPoints` = ?, `lbwOrBowledPoints` = ?, `catchesPoints` = ?, `runOutPoints` = ?, `economyPoints` = ?, `strikeRatePoints` = ? WHERE matchId = ? AND playerId = ?;",
               [
                 true,
@@ -436,27 +415,6 @@ const calculatePointsOfMatch = async (
           });
           setTimeout(async () => {
             const storePoints = await database(
-              "UPDATE match_lineup SET points = ?, `runsPoints` = ?, `foursPoints` = ?, `sixesPoints` = ?, `numberRunsPoints` = ?, `numberWicketPoints` = ?, `wicketPoints` = ?, `maidenOverPoints` = ?, `lbwOrBowledPoints` = ?, `catchesPoints` = ?, `runOutPoints` = ?, `economyPoints` = ?, `strikeRatePoints` = ? WHERE matchId = ? AND playerId = ?;",
-              [
-                totalPoints,
-                points.runsPoints,
-                points.foursPoints,
-                points.sixesPoints,
-                points["duck/50/100Points"],
-                points["4/5WicketsPoints"],
-                points.wicketsPoints,
-                points.maidenOversPoints,
-                points.lbwOrBowledPoints,
-                points.catchesPoints,
-                points.runOutPoints,
-                points.economyPoints,
-                points.strikeRatePoints,
-                matchId,
-                player.playerId,
-              ],
-              connection
-            );
-            const abc = await database(
               "UPDATE `match_players` SET `isSelected` = ?, `points` = ?, `runsPoints` = ?, `foursPoints` = ?, `sixesPoints` = ?, `numberRunsPoints` = ?, `numberWicketPoints` = ?, `wicketPoints` = ?, `maidenOverPoints` = ?, `lbwOrBowledPoints` = ?, `catchesPoints` = ?, `runOutPoints` = ?, `economyPoints` = ?, `strikeRatePoints` = ? WHERE matchId = ? AND playerId = ?;",
               [
                 true,
@@ -705,27 +663,6 @@ const calculatePointsOfMatch = async (
           });
           setTimeout(async () => {
             const storePoints = await database(
-              "UPDATE match_lineup SET points = ?, `runsPoints` = ?, `foursPoints` = ?, `sixesPoints` = ?, `numberRunsPoints` = ?, `numberWicketPoints` = ?, `wicketPoints` = ?, `maidenOverPoints` = ?, `lbwOrBowledPoints` = ?, `catchesPoints` = ?, `runOutPoints` = ?, `economyPoints` = ?, `strikeRatePoints` = ? WHERE matchId = ? AND playerId = ?;",
-              [
-                totalPoints,
-                points.runsPoints,
-                points.foursPoints,
-                points.sixesPoints,
-                points["duck/30/50/100Points"],
-                points["3/4/5WicketPoints"],
-                points.wicketsPoints,
-                points.maidenOversPoints,
-                points.lbwOrBowledPoints,
-                points.catchesPoints,
-                points.runOutPoints,
-                points.economyPoints,
-                points.strikeRatePoints,
-                matchId,
-                player.playerId,
-              ],
-              connection
-            );
-            const abc = await database(
               "UPDATE `match_players` SET `isSelected` = ?, `points` = ?, `runsPoints` = ?, `foursPoints` = ?, `sixesPoints` = ?, `numberRunsPoints` = ?, `numberWicketPoints` = ?, `wicketPoints` = ?, `maidenOverPoints` = ?, `lbwOrBowledPoints` = ?, `catchesPoints` = ?, `runOutPoints` = ?, `economyPoints` = ?, `strikeRatePoints` = ? WHERE matchId = ? AND playerId = ?;",
               [
                 true,
@@ -971,27 +908,6 @@ const calculatePointsOfMatch = async (
           });
           setTimeout(async () => {
             const storePoints = await database(
-              "UPDATE match_lineup SET points = ?, `runsPoints` = ?, `foursPoints` = ?, `sixesPoints` = ?, `numberRunsPoints` = ?, `numberWicketPoints` = ?, `wicketPoints` = ?, `maidenOverPoints` = ?, `lbwOrBowledPoints` = ?, `catchesPoints` = ?, `runOutPoints` = ?, `economyPoints` = ?, `strikeRatePoints` = ? WHERE matchId = ? AND playerId = ?;",
-              [
-                totalPoints,
-                points.runsPoints,
-                points.foursPoints,
-                points.sixesPoints,
-                points["duck/50/100Points"],
-                points["2/3WicketPoints"],
-                points.wicketsPoints,
-                points.maidenOversPoints,
-                points.lbwOrBowledPoints,
-                points.catchesPoints,
-                points.runOutPoints,
-                points.economyPoints,
-                points.strikeRatePoints,
-                matchId,
-                player.playerId,
-              ],
-              connection
-            );
-            const abc = await database(
               "UPDATE `match_players` SET `isSelected` = ?, `points` = ?, `runsPoints` = ?, `foursPoints` = ?, `sixesPoints` = ?, `numberRunsPoints` = ?, `numberWicketPoints` = ?, `wicketPoints` = ?, `maidenOverPoints` = ?, `lbwOrBowledPoints` = ?, `catchesPoints` = ?, `runOutPoints` = ?, `economyPoints` = ?, `strikeRatePoints` = ? WHERE matchId = ? AND playerId = ?;",
               [
                 true,
