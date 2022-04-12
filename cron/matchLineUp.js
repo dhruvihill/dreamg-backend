@@ -1,4 +1,3 @@
-require("dotenv/config");
 const { connectToDb, database, makeRequest } = require("./makeRequest");
 
 // store batting style
@@ -125,7 +124,7 @@ const storeTossDetails = async (matchId, matchRadarId, match, connection) => {
         [matchId],
         connection
       );
-      if (tossWonBy !== null && tossWonBy > 0) {
+      if (tossWonBy === null || tossWonBy <= 0) {
         const tossDetails = await makeRequest(
           `/matches/sr:match:${matchRadarId}/timeline.json`
         );
@@ -174,25 +173,11 @@ const storeMatchLineup = async (matchId, matchRadarId, match, connection) => {
       );
 
       if (matchLineUp && matchLineUp.sport_event && matchLineUp.lineups) {
-        // getting away team as per response of sportsRadar
-        const awayCompetitor = matchLineUp?.sport_event.competitors?.filter(
-          (competitor) => {
-            return competitor.qualifier === "away";
-          }
-        );
-
         const storeTossDetailsRes = await storeTossDetails(
           matchId,
           matchRadarId,
           match,
           connection
-        );
-
-        // getting home team as per response of sportsRadar
-        const homeCompetitor = matchLineUp?.sport_event.competitors?.filter(
-          (competitor) => {
-            return competitor.qualifier === "home";
-          }
         );
 
         let teamsloopCount = 0;

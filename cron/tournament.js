@@ -1,4 +1,3 @@
-const axios = require("axios");
 const { storeCompetitors } = require("./storeTournaments/storeCompetitor");
 const { storePlayerOfTeams } = require("./storeTournaments/storePlayer");
 const { storeMacthes } = require("./storeTournaments/storeMatch");

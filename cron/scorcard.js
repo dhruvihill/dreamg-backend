@@ -1,7 +1,5 @@
-const axios = require("axios");
 const { storePlayersStatics } = require("./playerStatatics");
 const { connectToDb, database, makeRequest } = require("./makeRequest");
-require("dotenv/config");
 /*
 player not exists then store it and re execute the function
 */

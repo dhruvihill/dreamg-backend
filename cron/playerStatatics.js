@@ -1,5 +1,3 @@
-const axios = require("axios");
-require("dotenv/config");
 const { connectToDb, database, makeRequest } = require("./makeRequest");
 
 const storeBattingStyle = async (battingStyle, connection) => {
