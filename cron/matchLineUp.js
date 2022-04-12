@@ -198,13 +198,6 @@ const storeMatchLineup = async (matchId, matchRadarId, match, connection) => {
         let teamsloopCount = 0;
         matchLineUp?.lineups?.forEach((lineup) => {
           try {
-            // getting team from sportsRadar home or away
-            const team = lineup.team === "home" ? "home" : "away";
-
-            // getting competitor id
-            const competitorId =
-              team === "home" ? homeCompetitor[0].id : awayCompetitor[0].id;
-
             let playersloopCount = 0;
             const storePlayer = async (player) => {
               try {
@@ -215,28 +208,8 @@ const storeMatchLineup = async (matchId, matchRadarId, match, connection) => {
                   connection
                 );
 
-                // getting competitor id
-                const [{ competitorIdStored, competitorRadarIdStored }] =
-                  await database(
-                    "SELECT teamId AS competitorIdStored, teamRadarId AS competitorRadarIdStored FROM allteams WHERE teamRadarId = ?",
-                    [competitorId.substr(14)],
-                    connection
-                  );
-
                 // player exists then store it else store it in players table
                 if (isPlayerExists) {
-                  const storePlayer = await database(
-                    "INSERT INTO match_lineup SET ?",
-                    {
-                      matchId,
-                      playerId: playerId,
-                      competitorId: competitorIdStored,
-                      order: player.order,
-                      isCaptain: player.is_captain ? 1 : 0,
-                      isWicketKeeper: player.is_wicketkeeper ? 1 : 0,
-                    },
-                    connection
-                  );
                   const storeMatchPlayersRes = await database(
                     "UPDATE match_players SET isSelected = 1, isCaptain = ?, isWicketKeeper = ? WHERE playerId = ? AND matchId = ?;",
                     [
@@ -249,7 +222,7 @@ const storeMatchLineup = async (matchId, matchRadarId, match, connection) => {
                   );
 
                   // if player stored successfully then go to next player
-                  if (storePlayer) {
+                  if (storeMatchPlayersRes) {
                     playersloopCount++;
                     if (playersloopCount === lineup.starting_lineup.length) {
                       teamsloopCount++;
