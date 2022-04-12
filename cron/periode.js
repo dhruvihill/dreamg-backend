@@ -43,6 +43,7 @@ const storeScorcardAndPoints = async (match) => {
               if (
                 scorcardDetails.sport_event.tournament?.type.includes("t20")
               ) {
+                updateMatchStatus("live", match.matchId);
                 setTimeout(storeScor, 20 * 60 * 1000);
               } else if (
                 scorcardDetails.sport_event.tournament?.includes("odi")
@@ -82,7 +83,7 @@ const storeScorcardAndPoints = async (match) => {
             } else if (
               scorcardDetails.sport_event_status.match_status === "not_started"
             ) {
-              setTimeout(storeScor, 20 * 60 * 1000);
+              setTimeout(storeScor, 2 * 60 * 1000);
             }
           }
         } catch (error) {
@@ -116,12 +117,7 @@ const storeMatchLineUpAndStatus = async (match) => {
           } else {
             resolve(false);
           }
-        }, matchStartTime - Date.now() + 5 * 60 * 1000);
-
-        const updateMatchStatusRes = await updateMatchStatus(
-          "live",
-          match.matchId
-        );
+        }, matchStartTime - Date.now());
         if (updateMatchStatusRes && updateMatchStatusRes.affectedRows === 1) {
           connection.release();
           resolve(true);
