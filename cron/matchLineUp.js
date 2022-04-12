@@ -131,20 +131,20 @@ const storeTossDetails = async (matchId, matchRadarId, match, connection) => {
         if (tossDetails && tossDetails.sport_event_status) {
           if (tossDetails.sport_event_status.toss_won_by !== null) {
             console.log(match);
-            const tossWonBy =
+            console.log(tossWonBy);
+            const tossWonByStoredId =
               parseInt(
                 tossDetails.sport_event_status.toss_won_by.substr(14)
               ) === match.team1RadarId
                 ? match.team1Id
                 : match.team2Id;
-            console.log(tossWonBy);
             const storeTossDetails = await database(
               "UPDATE tournament_matches SET tossWonBy = ?, tossDecision = ? WHERE matchId = ?;",
-              {
-                tossWonBy,
-                tossDecision: tossDetails.sport_event_status.toss_decision,
+              [
+                tossWonByStoredId,
+                tossDetails.sport_event_status.toss_decision,
                 matchId,
-              },
+              ],
               connection
             );
             if (storeTossDetails.affectedRows) {
