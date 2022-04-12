@@ -97,7 +97,7 @@ const storeScorcardAndPoints = async (match) => {
 };
 
 const storeMatchLineUpAndStatus = async (match) => {
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async (resolve) => {
     try {
       const connection = await connectToDb();
       const res = await storeMatchLineup(
@@ -109,8 +109,13 @@ const storeMatchLineUpAndStatus = async (match) => {
       if (res) {
         // calling function for scorcard and points
         const matchStartTime = new Date(match.matchStartTime).getTime();
-        setTimeout(() => {
-          storeScorcardAndPoints(match);
+        setTimeout(async () => {
+          const storeScorcardAndPointsRes = await storeScorcardAndPoints(match);
+          if (storeScorcardAndPointsRes) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
         }, matchStartTime - Date.now() + 5 * 60 * 1000);
 
         const updateMatchStatusRes = await updateMatchStatus(
@@ -131,8 +136,14 @@ const storeMatchLineUpAndStatus = async (match) => {
     } catch (error) {
       if (error.isAxiosError) {
         if (error.response.data.message === "No lineups.") {
-          setTimeout(() => {
-            storeMatchLineUpAndStatus(match);
+          setTimeout(async () => {
+            const storeMatchLineUpAndStatusRes =
+              await storeMatchLineUpAndStatus(match);
+            if (storeMatchLineUpAndStatusRes) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
           }, 2 * 60 * 1000);
         }
       } else {
@@ -148,7 +159,7 @@ const fetchData = async () => {
     try {
       const connection = await connectToDb();
       const matches = await database(
-        "SELECT matchId, matchRadarId, matchTournamentId, matchStartDateTime, matchStartTimeMilliSeconds, matchTyprString, matchStatusString, team1Id, team2Id, team1RadarId, team2RadarId FROM `fullmatchdetails` WHERE matchStatusString IN ('ended') ORDER BY `fullmatchdetails`.`matchStartTimeMilliSeconds` DESC;",
+        "SELECT matchId, matchRadarId, matchTournamentId, matchStartDateTime, matchStartTimeMilliSeconds, matchTyprString, matchStatusString, team1Id, team2Id, team1RadarId, team2RadarId FROM `fullmatchdetails` WHERE matchStatusString IN ('not_started', 'live') ORDER BY `fullmatchdetails`.`matchStartTimeMilliSeconds` DESC;",
         [],
         connection
       );
@@ -164,41 +175,47 @@ const fetchData = async () => {
               parseInt(match.matchStartTimeMilliSeconds)
             );
             const now = new Date();
-            // if (matchStartTime.getTime() > now.getTime()) {
-            if (matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) {
-              setTimeout(() => {
-                storeMatchLineUpAndStatus(match);
-              }, matchStartTime.getTime() - now.getTime() - 25 * 60 * 1000);
+            if (matchStartTime.getTime() > now.getTime()) {
+              if (matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) {
+                setTimeout(async () => {
+                  const storeMatchLineUpAndStatusRes =
+                    await storeMatchLineUpAndStatus(match);
+                  if (storeMatchLineUpAndStatusRes) {
+                    console.log(true);
+                  } else {
+                    console.log(false);
+                  }
+                }, matchStartTime.getTime() - now.getTime() - 25 * 60 * 1000);
 
-              currentMatch++;
-              if (currentMatch !== totalMatches) {
-                setTimeout(() => {
-                  setTimeoutForMatches(matches[currentMatch]);
-                }, 0);
+                currentMatch++;
+                if (currentMatch !== totalMatches) {
+                  setTimeout(() => {
+                    setTimeoutForMatches(matches[currentMatch]);
+                  }, 0);
+                } else {
+                  resolve(true);
+                }
               } else {
-                resolve(true);
+                currentMatch++;
+                if (currentMatch !== totalMatches) {
+                  setTimeout(() => {
+                    setTimeoutForMatches(matches[currentMatch]);
+                  }, 0);
+                } else {
+                  resolve(true);
+                }
               }
             } else {
+              // do it right now
               currentMatch++;
               if (currentMatch !== totalMatches) {
                 setTimeout(() => {
                   setTimeoutForMatches(matches[currentMatch]);
                 }, 0);
               } else {
-                resolve(true);
+                console.log("done");
               }
             }
-            // } else {
-            //   // do it right now
-            //   currentMatch++;
-            //   if (currentMatch !== totalMatches) {
-            //     setTimeout(() => {
-            //       setTimeoutForMatches(matches[currentMatch]);
-            //     }, 0);
-            //   } else {
-            //     console.log("done");
-            //   }
-            // }
           } catch (error) {
             console.log(error.message, "processMatch");
           }
