@@ -136,6 +136,7 @@ const storeTossDetails = async (matchId, matchRadarId, match, connection) => {
               ) === match.team1RadarId
                 ? match.team1Id
                 : match.team2Id;
+            console.log("storing toss details");
             const storeTossDetails = await database(
               "UPDATE tournament_matches SET tossWonBy = ?, tossDecision = ? WHERE matchId = ?;",
               {
@@ -195,6 +196,7 @@ const storeMatchLineup = async (matchId, matchRadarId, match, connection) => {
 
                 // player exists then store it else store it in players table
                 if (isPlayerExists) {
+                  console.log("stroing lineup details");
                   const storeMatchPlayersRes = await database(
                     "UPDATE match_players SET isSelected = 1, isCaptain = ?, isWicketKeeper = ? WHERE playerId = ? AND matchId = ?;",
                     [

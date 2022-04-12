@@ -82,6 +82,7 @@ const storeScorcardAndPoints = async (match) => {
             } else if (
               scorcardDetails.sport_event_status.match_status === "not_started"
             ) {
+              setTimeout(storeScor, 20 * 60 * 1000);
             }
           }
         } catch (error) {
