@@ -3,7 +3,7 @@ const { fetchMatches: storeScorcard } = require("./scorcard");
 const { fetchData: storePoints } = require("./points/points");
 const { makeRequest, connectToDb, database } = require("./makeRequest");
 
-const updateMatchStatus = (status, matchId) => {
+function updateMatchStatus(status, matchId) {
   return new Promise(async (resolve) => {
     try {
       const connection = await connectToDb();
@@ -18,8 +18,6 @@ const updateMatchStatus = (status, matchId) => {
           [matchStatus[0].statusId, matchId],
           connection
         );
-        if (matchStatus.includes("ended") || matchStatus.includes("closed")) {
-        }
         connection.release();
         resolve(updateMatchStatus);
       } else {
@@ -30,7 +28,7 @@ const updateMatchStatus = (status, matchId) => {
       resolve(false);
     }
   });
-};
+}
 
 const storeScorcardAndPoints = async (match) => {
   return new Promise(async (resolve) => {
@@ -57,16 +55,16 @@ const storeScorcardAndPoints = async (match) => {
               } else if (
                 scorcardDetails.sport_event.tournament?.includes("t10")
               ) {
-                setTimeout(storeScor, 10 * 60 * 1000);
+                setTimeout(storeScor, 15 * 60 * 1000);
               }
             } else if (
               scorcardDetails.sport_event_status.match_status === "closed" ||
               scorcardDetails.sport_event_status.match_status === "ended"
             ) {
               updateMatchStatus("ended", match.matchId);
-              const storeScorcardRes = storeScorcard(match.matchId);
+              const storeScorcardRes = await storeScorcard(match.matchId);
               if (storeScorcardRes) {
-                const storePointsRes = storePoints(match.matchId);
+                const storePointsRes = await storePoints(match.matchId);
                 if (storePointsRes) {
                   resolve(true);
                 } else {
@@ -108,10 +106,10 @@ const storeMatchLineUpAndStatus = async (match) => {
     );
     if (res) {
       // calling function for scorcard and points
-      const date = new Date(match.matchStartTime).getTime();
+      const matchStartTime = new Date(match.matchStartTime).getTime();
       setTimeout(() => {
         storeScorcardAndPoints(match);
-      }, date + 5 * 60 * 1000);
+      }, matchStartTime - Date.now() + 5 * 60 * 1000);
 
       console.log("match lineup stored");
       const updateMatchStatusRes = await updateMatchStatus(
@@ -160,14 +158,13 @@ const fetchData = async () => {
           // const connection = await connectToDb();
           const matchStartTime = new Date(
             parseInt(match.matchStartTimeMilliSeconds)
-          ); // adding 5:30 hours to make it equal time zone
+          );
           const now = new Date();
           if (matchStartTime.getTime() > now.getTime()) {
             if (matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) {
               setTimeout(() => {
-                console.log("hii");
                 storeMatchLineUpAndStatus(match);
-              }, matchStartTime.getTime() - 25 * 60 * 1000);
+              }, matchStartTime.getTime() - now.getTime() - 25 * 60 * 1000);
 
               currentMatch++;
               if (currentMatch !== totalMatches) {

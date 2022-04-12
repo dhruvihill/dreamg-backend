@@ -3,6 +3,9 @@ const { database } = require("../makeRequest");
 const storeMatchStatus = async (status, connection) => {
   return new Promise(async (resolve) => {
     try {
+      if (status === "closed") {
+        status = "ended";
+      }
       let [{ isExists: isStatusExist, statusId }] = await database(
         "SELECT COUNT(match_status.statusId) AS isExists, match_status.statusId AS statusId FROM match_status WHERE match_status.statusString = ?;",
         [status],

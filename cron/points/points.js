@@ -33,7 +33,7 @@ const calculatePointsOfMatch = async (
   { matchType, matchId },
   connection
 ) => {
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async (resolve) => {
     try {
       let currentPlayer = 0;
       const totalPlayers = lineUp.length;
@@ -112,7 +112,7 @@ const calculatePointsOfMatch = async (
               } else if (batsMan.runs >= 50) {
                 totalPoints += pointsPerHalfCentury;
                 points["duck/50/100Points"] += pointsPerHalfCentury;
-              } else if (batsMan.isDuck) {
+              } else if (batsMan.isDuck && batsMan.roleName !== "BOWLER") {
                 totalPoints += pointsPerDuck;
                 points["duck/50/100Points"] += pointsPerDuck;
               }
@@ -306,36 +306,41 @@ const calculatePointsOfMatch = async (
               } else if (batsMan.runs >= 50) {
                 totalPoints += pointsPerHalfCentury;
                 points["duck/50/100Points"] += pointsPerHalfCentury;
-              } else if (batsMan.isDuck) {
+              } else if (batsMan.isDuck && batsMan.roleName !== "BOWLER") {
                 totalPoints += pointsPerDuck;
                 points["duck/50/100Points"] += pointsPerDuck;
               }
 
               // conditions for strike rate
-              if (batsMan.strikeRate > 140) {
-                totalPoints += srOver140;
-                points.strikeRatePoints += srOver140;
-              } else if (
-                batsMan.strikeRate > 120.01 &&
-                batsMan.strikeRate <= 140
-              ) {
-                totalPoints += srBetween120And140;
-                points.strikeRatePoints += srBetween120And140;
-              } else if (
-                batsMan.strikeRate > 100 &&
-                batsMan.strikeRate <= 120
-              ) {
-                totalPoints += srBetween100And120;
-                points.strikeRatePoints += srBetween100And120;
-              } else if (batsMan.strikeRate >= 40 && batsMan.strikeRate <= 50) {
-                totalPoints += srBetween40And50;
-                points.strikeRatePoints += srBetween40And50;
-              } else if (
-                batsMan.strikeRate > 30 &&
-                batsMan.strikeRate <= 39.99
-              ) {
-                totalPoints += srBetween30And40;
-                points.strikeRatePoints += srBetween30And40;
+              if (batsMan.ballFaced >= 20) {
+                if (batsMan.strikeRate > 140) {
+                  totalPoints += srOver140;
+                  points.strikeRatePoints += srOver140;
+                } else if (
+                  batsMan.strikeRate > 120.01 &&
+                  batsMan.strikeRate <= 140
+                ) {
+                  totalPoints += srBetween120And140;
+                  points.strikeRatePoints += srBetween120And140;
+                } else if (
+                  batsMan.strikeRate > 100 &&
+                  batsMan.strikeRate <= 120
+                ) {
+                  totalPoints += srBetween100And120;
+                  points.strikeRatePoints += srBetween100And120;
+                } else if (
+                  batsMan.strikeRate >= 40 &&
+                  batsMan.strikeRate <= 50
+                ) {
+                  totalPoints += srBetween40And50;
+                  points.strikeRatePoints += srBetween40And50;
+                } else if (
+                  batsMan.strikeRate > 30 &&
+                  batsMan.strikeRate <= 39.99
+                ) {
+                  totalPoints += srBetween30And40;
+                  points.strikeRatePoints += srBetween30And40;
+                }
               }
             } catch (error) {
               console.log(error.message);
@@ -570,39 +575,44 @@ const calculatePointsOfMatch = async (
               } else if (batsMan.runs >= 30) {
                 totalPoints += pointsPerThirty;
                 points["duck/30/50/100Points"] += pointsPerThirty;
-              } else if (batsMan.isDuck) {
+              } else if (batsMan.isDuck && batsMan.roleName !== "BOWLER") {
                 totalPoints += pointsPerDuck;
                 points["duck/30/50/100Points"] += pointsPerDuck;
               }
 
               // conditions for strike rate
-              if (batsMan.strikeRate > 170) {
-                totalPoints += srOver170;
-                points.strikeRatePoints += srOver170;
-              } else if (
-                batsMan.strikeRate > 150.01 &&
-                batsMan.strikeRate <= 170
-              ) {
-                totalPoints += srBetween150And170;
-                points.strikeRatePoints += srBetween150And170;
-              } else if (
-                batsMan.strikeRate > 130 &&
-                batsMan.strikeRate <= 150
-              ) {
-                totalPoints += srBetween130And150;
-                points.strikeRatePoints += srBetween130And150;
-              } else if (batsMan.strikeRate > 60 && batsMan.strikeRate <= 70) {
-                totalPoints += srBetween60And70;
-                points.strikeRatePoints += srBetween60And70;
-              } else if (
-                batsMan.strikeRate > 50 &&
-                batsMan.strikeRate <= 59.99
-              ) {
-                totalPoints += srBetween50And59;
-                points.strikeRatePoints += srBetween50And59;
-              } else if (batsMan.strikeRate <= 50) {
-                totalPoints += srBelow50;
-                points.strikeRatePoints += srBelow50;
+              if (batsMan.ballFaced >= 10) {
+                if (batsMan.strikeRate > 170) {
+                  totalPoints += srOver170;
+                  points.strikeRatePoints += srOver170;
+                } else if (
+                  batsMan.strikeRate > 150.01 &&
+                  batsMan.strikeRate <= 170
+                ) {
+                  totalPoints += srBetween150And170;
+                  points.strikeRatePoints += srBetween150And170;
+                } else if (
+                  batsMan.strikeRate > 130 &&
+                  batsMan.strikeRate <= 150
+                ) {
+                  totalPoints += srBetween130And150;
+                  points.strikeRatePoints += srBetween130And150;
+                } else if (
+                  batsMan.strikeRate > 60 &&
+                  batsMan.strikeRate <= 70
+                ) {
+                  totalPoints += srBetween60And70;
+                  points.strikeRatePoints += srBetween60And70;
+                } else if (
+                  batsMan.strikeRate > 50 &&
+                  batsMan.strikeRate <= 59.99
+                ) {
+                  totalPoints += srBetween50And59;
+                  points.strikeRatePoints += srBetween50And59;
+                } else if (batsMan.strikeRate <= 50) {
+                  totalPoints += srBelow50;
+                  points.strikeRatePoints += srBelow50;
+                }
               }
             } catch (error) {
               console.log(error.message);
@@ -832,39 +842,44 @@ const calculatePointsOfMatch = async (
               } else if (batsMan.runs >= 30) {
                 totalPoints += pointsPerThirtyRuns;
                 points["duck/30/50/100Points"] += pointsPerThirtyRuns;
-              } else if (batsMan.isDuck) {
+              } else if (batsMan.isDuck && batsMan.roleName !== "BOWLER") {
                 totalPoints += pointsPerDuck;
                 points["duck/30/50/100Points"] += pointsPerDuck;
               }
 
               // conditions for strike rate
-              if (batsMan.strikeRate > 190) {
-                totalPoints += srOver190;
-                points.strikeRatePoints += srOver190;
-              } else if (
-                batsMan.strikeRate > 170.01 &&
-                batsMan.strikeRate <= 190
-              ) {
-                totalPoints += srBetween170And190;
-                points.strikeRatePoints += srBetween170And190;
-              } else if (
-                batsMan.strikeRate > 150 &&
-                batsMan.strikeRate <= 170
-              ) {
-                totalPoints += srBetween150And170;
-                points.strikeRatePoints += srBetween150And170;
-              } else if (batsMan.strikeRate > 70 && batsMan.strikeRate <= 80) {
-                totalPoints += srBetween70And80;
-                points.strikeRatePoints += srBetween70And80;
-              } else if (
-                batsMan.strikeRate > 60 &&
-                batsMan.strikeRate <= 69.99
-              ) {
-                totalPoints += srBetween60And69;
-                points.strikeRatePoints += srBetween60And69;
-              } else if (batsMan.strikeRate <= 60) {
-                totalPoints += srBelow60;
-                points.strikeRatePoints += srBelow60;
+              if (batsMan.ballFaced >= 5) {
+                if (batsMan.strikeRate > 190) {
+                  totalPoints += srOver190;
+                  points.strikeRatePoints += srOver190;
+                } else if (
+                  batsMan.strikeRate > 170.01 &&
+                  batsMan.strikeRate <= 190
+                ) {
+                  totalPoints += srBetween170And190;
+                  points.strikeRatePoints += srBetween170And190;
+                } else if (
+                  batsMan.strikeRate > 150 &&
+                  batsMan.strikeRate <= 170
+                ) {
+                  totalPoints += srBetween150And170;
+                  points.strikeRatePoints += srBetween150And170;
+                } else if (
+                  batsMan.strikeRate > 70 &&
+                  batsMan.strikeRate <= 80
+                ) {
+                  totalPoints += srBetween70And80;
+                  points.strikeRatePoints += srBetween70And80;
+                } else if (
+                  batsMan.strikeRate > 60 &&
+                  batsMan.strikeRate <= 69.99
+                ) {
+                  totalPoints += srBetween60And69;
+                  points.strikeRatePoints += srBetween60And69;
+                } else if (batsMan.strikeRate <= 60) {
+                  totalPoints += srBelow60;
+                  points.strikeRatePoints += srBelow60;
+                }
               }
             } catch (error) {
               console.log(error.message);
@@ -1031,11 +1046,12 @@ const fetchData = async (matchId) => {
           connection
         );
       }
-      let a = 1;
+      const totalMatches = fetchMatches.length;
+      let currentMatch = 0;
       const pr = async (match) => {
         try {
           const [batting, bowling] = await database(
-            "SELECT 'batting' AS playerRole, fullmatchdetails.matchTyprString, scorcard_details.`matchId`, UPPER(fullmatchdetails.matchStatusString) AS matchStatusString, fullmatchdetails.matchRadarId, scorcard_innings.scorcardInningId, `inning_batsmans`.`playerId`, `inning_batsmans`.`battingOrder` AS 'order', `inning_batsmans`.`runs`, `inning_batsmans`.`strikeRate`, `inning_batsmans`.`isNotOut`, `inning_batsmans`.`isDuck`, `inning_batsmans`.`isRetiredHurt`, `inning_batsmans`.`ballFaced`, `inning_batsmans`.`fours`,`inning_batsmans`.`sixes`, `inning_batsmans`.`dismissalBallerId`, `inning_batsmans`.`dismissalFieldeManId`, UPPER(`inning_batsmans`.`dismissalType`) AS dismissalType FROM fullmatchdetails JOIN scorcard_details ON scorcard_details.matchId = fullmatchdetails.matchId JOIN scorcard_innings ON scorcard_innings.scorcardId = scorcard_details.scorcardId JOIN inning_batsmans ON inning_batsmans.scorcardInningId = scorcard_innings.scorcardInningId WHERE fullmatchdetails.matchId = ? ORDER BY `scorcard_details`.`matchId` ASC;SELECT 'bowling' AS playerRole, fullmatchdetails.matchTyprString, UPPER(fullmatchdetails.matchStatusString) AS matchStatusString, scorcard_details.`matchId`, scorcard_innings.scorcardInningId, `inning_bowlers`.`playerId`, `inning_bowlers`.`runsConceded`, `inning_bowlers`.`wickets`, `inning_bowlers`.`overBowled`, `inning_bowlers`.`maidensOvers`, `inning_bowlers`.`dotBalls`, `inning_bowlers`.`fourConceded`, `inning_bowlers`.`sixConceded`, `inning_bowlers`.`noBalls`, `inning_bowlers`.`wides`, `inning_bowlers`.`economyRate` FROM fullmatchdetails JOIN scorcard_details ON scorcard_details.matchId = fullmatchdetails.matchId JOIN scorcard_innings ON scorcard_innings.scorcardId = scorcard_details.scorcardId JOIN inning_bowlers ON inning_bowlers.scorcardInningId = scorcard_innings.scorcardInningId WHERE fullmatchdetails.matchId = ? ORDER BY `scorcard_innings`.`scorcardInningId` ASC;",
+            "SELECT 'batting' AS playerRole, fullmatchdetails.matchTyprString, scorcard_details.`matchId`, UPPER(fullmatchdetails.matchStatusString) AS matchStatusString, fullmatchdetails.matchRadarId, scorcard_innings.scorcardInningId, `inning_batsmans`.`playerId`, allplayers.roleName, `inning_batsmans`.`battingOrder` AS 'order', `inning_batsmans`.`runs`, `inning_batsmans`.`strikeRate`, `inning_batsmans`.`isNotOut`, `inning_batsmans`.`isDuck`, `inning_batsmans`.`isRetiredHurt`, `inning_batsmans`.`ballFaced`, `inning_batsmans`.`fours`,`inning_batsmans`.`sixes`, `inning_batsmans`.`dismissalBallerId`, `inning_batsmans`.`dismissalFieldeManId`, UPPER(`inning_batsmans`.`dismissalType`) AS dismissalType FROM fullmatchdetails JOIN scorcard_details ON scorcard_details.matchId = fullmatchdetails.matchId JOIN scorcard_innings ON scorcard_innings.scorcardId = scorcard_details.scorcardId JOIN inning_batsmans ON inning_batsmans.scorcardInningId = scorcard_innings.scorcardInningId JOIN allplayers ON allplayers.playerId = inning_batsmans.playerId WHERE fullmatchdetails.matchId = ? ORDER BY `scorcard_details`.`matchId` ASC;SELECT 'bowling' AS playerRole, fullmatchdetails.matchTyprString, UPPER(fullmatchdetails.matchStatusString) AS matchStatusString, scorcard_details.`matchId`, scorcard_innings.scorcardInningId, `inning_bowlers`.`playerId`, `inning_bowlers`.`runsConceded`, `inning_bowlers`.`wickets`, `inning_bowlers`.`overBowled`, `inning_bowlers`.`maidensOvers`, `inning_bowlers`.`dotBalls`, `inning_bowlers`.`fourConceded`, `inning_bowlers`.`sixConceded`, `inning_bowlers`.`noBalls`, `inning_bowlers`.`wides`, `inning_bowlers`.`economyRate` FROM fullmatchdetails JOIN scorcard_details ON scorcard_details.matchId = fullmatchdetails.matchId JOIN scorcard_innings ON scorcard_innings.scorcardId = scorcard_details.scorcardId JOIN inning_bowlers ON inning_bowlers.scorcardInningId = scorcard_innings.scorcardInningId WHERE fullmatchdetails.matchId = ? ORDER BY `scorcard_innings`.`scorcardInningId` ASC;",
             [match.matchId, match.matchId],
             connection
           );
@@ -1045,16 +1061,28 @@ const fetchData = async (matchId) => {
             connection
           );
           if (batting?.length > 0 && bowling.length > 0 && lineUp.length > 0) {
-            if (a === 1) {
-              calculatePointsOfMatch(
-                lineUp,
-                batting,
-                bowling,
-                match,
-                connection
-              );
+            const calculatePoints = await calculatePointsOfMatch(
+              lineUp,
+              batting,
+              bowling,
+              match,
+              connection
+            );
+            if (calculatePoints) {
+              currentMatch++;
+              if (currentMatch === totalMatches) {
+                resolve(true);
+              } else {
+                pr(fetchMatches[currentMatch]);
+              }
+            } else {
+              currentMatch++;
+              if (currentMatch === totalMatches) {
+                resolve(true);
+              } else {
+                pr(fetchMatches[currentMatch]);
+              }
             }
-            a++;
           }
         } catch (error) {
           console.log(error.message);
