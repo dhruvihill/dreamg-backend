@@ -130,13 +130,14 @@ const storeTossDetails = async (matchId, matchRadarId, match, connection) => {
         );
         if (tossDetails && tossDetails.sport_event_status) {
           if (tossDetails.sport_event_status.toss_won_by !== null) {
+            console.log(match);
             const tossWonBy =
               parseInt(
                 tossDetails.sport_event_status.toss_won_by.substr(14)
               ) === match.team1RadarId
                 ? match.team1Id
                 : match.team2Id;
-            console.log("storing toss details");
+            console.log(tossWonBy);
             const storeTossDetails = await database(
               "UPDATE tournament_matches SET tossWonBy = ?, tossDecision = ? WHERE matchId = ?;",
               {
@@ -158,7 +159,7 @@ const storeTossDetails = async (matchId, matchRadarId, match, connection) => {
       }
     } catch (error) {
       resolve(false);
-      console.log(error.message.error);
+      console.log(error.message, error);
     }
   });
 };
@@ -166,8 +167,6 @@ const storeTossDetails = async (matchId, matchRadarId, match, connection) => {
 const storeMatchLineup = async (matchId, matchRadarId, match, connection) => {
   return new Promise(async (resolve) => {
     try {
-      console.log("lets store match lineup", matchId);
-
       // getting match lineup from sportsRadar
       const matchLineUp = await makeRequest(
         `/matches/sr:match:${matchRadarId}/lineups.json`
@@ -196,7 +195,6 @@ const storeMatchLineup = async (matchId, matchRadarId, match, connection) => {
 
                 // player exists then store it else store it in players table
                 if (isPlayerExists) {
-                  console.log("stroing lineup details");
                   const storeMatchPlayersRes = await database(
                     "UPDATE match_players SET isSelected = 1, isCaptain = ?, isWicketKeeper = ? WHERE playerId = ? AND matchId = ?;",
                     [
