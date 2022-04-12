@@ -130,8 +130,6 @@ const storeTossDetails = async (matchId, matchRadarId, match, connection) => {
         );
         if (tossDetails && tossDetails.sport_event_status) {
           if (tossDetails.sport_event_status.toss_won_by !== null) {
-            console.log(match);
-            console.log(tossWonBy);
             const tossWonByStoredId =
               parseInt(
                 tossDetails.sport_event_status.toss_won_by.substr(14)
