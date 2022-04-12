@@ -134,8 +134,8 @@ const storeTossDetails = async (matchId, matchRadarId, match, connection) => {
               parseInt(
                 tossDetails.sport_event_status.toss_won_by.substr(14)
               ) === match.team1RadarId
-                ? team1Id
-                : team2Id;
+                ? match.team1Id
+                : match.team2Id;
             const storeTossDetails = await database(
               "UPDATE tournament_matches SET tossWonBy = ?, tossDecision = ? WHERE matchId = ?;",
               {
