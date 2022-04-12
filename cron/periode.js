@@ -160,32 +160,21 @@ const fetchData = async () => {
             parseInt(match.matchStartTimeMilliSeconds)
           );
           const now = new Date();
-          if (matchStartTime.getTime() > now.getTime()) {
-            if (matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) {
-              setTimeout(() => {
-                storeMatchLineUpAndStatus(match);
-              }, matchStartTime.getTime() - now.getTime() - 25 * 60 * 1000);
+          // if (matchStartTime.getTime() > now.getTime()) {
+          if (matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) {
+            setTimeout(() => {
+              storeMatchLineUpAndStatus(match);
+            }, matchStartTime.getTime() - now.getTime() - 25 * 60 * 1000);
 
-              currentMatch++;
-              if (currentMatch !== totalMatches) {
-                setTimeout(() => {
-                  setTimeoutForMatches(matches[currentMatch]);
-                }, 0);
-              } else {
-                console.log("done");
-              }
+            currentMatch++;
+            if (currentMatch !== totalMatches) {
+              setTimeout(() => {
+                setTimeoutForMatches(matches[currentMatch]);
+              }, 0);
             } else {
-              currentMatch++;
-              if (currentMatch !== totalMatches) {
-                setTimeout(() => {
-                  setTimeoutForMatches(matches[currentMatch]);
-                }, 0);
-              } else {
-                console.log("done");
-              }
+              console.log("done");
             }
           } else {
-            // do it right now
             currentMatch++;
             if (currentMatch !== totalMatches) {
               setTimeout(() => {
@@ -195,6 +184,17 @@ const fetchData = async () => {
               console.log("done");
             }
           }
+          // } else {
+          //   // do it right now
+          //   currentMatch++;
+          //   if (currentMatch !== totalMatches) {
+          //     setTimeout(() => {
+          //       setTimeoutForMatches(matches[currentMatch]);
+          //     }, 0);
+          //   } else {
+          //     console.log("done");
+          //   }
+          // }
         } catch (error) {
           console.log(error.message, "processMatch");
         }
@@ -208,6 +208,8 @@ const fetchData = async () => {
     console.log(error.message, "fetchData");
   }
 };
+
+fetchData();
 
 module.exports = {
   fetchData,
