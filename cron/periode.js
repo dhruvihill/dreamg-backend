@@ -118,13 +118,8 @@ const storeMatchLineUpAndStatus = async (match) => {
             resolve(false);
           }
         }, matchStartTime - Date.now());
-        if (updateMatchStatusRes && updateMatchStatusRes.affectedRows === 1) {
-          connection.release();
-          resolve(true);
-        } else {
-          connection.release();
-          resolve(false);
-        }
+        connection.release();
+        resolve(true);
       } else {
         connection.release();
         resolve(false);
@@ -171,7 +166,10 @@ const fetchData = async () => {
               parseInt(match.matchStartTimeMilliSeconds)
             );
             const now = new Date();
-            if (matchStartTime.getTime() > now.getTime()) {
+            if (
+              matchStartTime.getTime() > now.getTime() ||
+              match.matchStatusString === "live"
+            ) {
               if (matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) {
                 setTimeout(async () => {
                   const storeMatchLineUpAndStatusRes =
