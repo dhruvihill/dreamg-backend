@@ -5,10 +5,10 @@ const convertTimeZone = (time, timeZone) => {
     const newTime = momentTimeZone
       .tz(time, timeZone)
       .format("DD/MM/YYYY, HH:mm:ss");
-    return [newTime, new Date(newTime).getTime().toString()];
+    return [newTime, new Date(time).getTime().toString()];
   }
   const newTime = momentTimeZone(time).utc().format("DD/MM/YYYY, HH:mm:ss");
-  return [newTime, new Date(newTime).getTime().toString()];
+  return [newTime, new Date(time).getTime().toString()];
 };
 
 module.exports = convertTimeZone;
