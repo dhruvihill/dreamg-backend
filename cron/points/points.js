@@ -196,7 +196,13 @@ const calculatePointsOfMatch = async (
             if (storePoints) {
               currentPlayer++;
               if (currentPlayer === totalPlayers) {
-                resolve(true);
+                const storeIsPointsCalculatedFlag = await database("UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?;", 
+                [matchId],
+                connection
+                );
+                if (storeIsPointsCalculatedFlag) {
+                  resolve(true);
+                }
               }
             }
           }, 200);
@@ -439,7 +445,13 @@ const calculatePointsOfMatch = async (
             if (storePoints) {
               currentPlayer++;
               if (currentPlayer === totalPlayers) {
-                resolve(true);
+                const storeIsPointsCalculatedFlag = await database("UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?;", 
+                [matchId],
+                connection
+                );
+                if (storeIsPointsCalculatedFlag) {
+                  resolve(true);
+                };
               }
             }
           }, 200);
@@ -687,7 +699,13 @@ const calculatePointsOfMatch = async (
             if (storePoints) {
               currentPlayer++;
               if (currentPlayer === totalPlayers) {
-                resolve(true);
+                const storeIsPointsCalculatedFlag = await database("UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?;", 
+                [matchId],
+                connection
+                );
+                if (storeIsPointsCalculatedFlag) {
+                  resolve(true);
+                };
               }
             }
           }, 200);
@@ -932,7 +950,13 @@ const calculatePointsOfMatch = async (
             if (storePoints) {
               currentPlayer++;
               if (currentPlayer === totalPlayers) {
-                resolve(true);
+                const storeIsPointsCalculatedFlag = await database("UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?;", 
+                [matchId],
+                connection
+                );
+                if (storeIsPointsCalculatedFlag) {
+                  resolve(true);
+                };
               }
             }
           }, 200);
