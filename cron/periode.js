@@ -40,9 +40,9 @@ const storeScorcardAndPoints = async (match) => {
             `/matches/sr:match:${match.matchRadarId}/timeline.json`
           );
           console.log("storeScor called");
+          console.log(scorcardDetails);
           if (scorcardDetails && scorcardDetails.sport_event_status) {
             if (scorcardDetails.sport_event_status.match_status === "live") {
-              console.log(scorcardDetails);
               if (
                 scorcardDetails.sport_event.tournament?.type.includes("t20")
               ) {
