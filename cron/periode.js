@@ -6,7 +6,6 @@ const { makeRequest, connectToDb, database } = require("./makeRequest");
 const updateMatchStatus = (status, matchId) => {
   return new Promise(async (resolve) => {
     try {
-      console.log("updating match status to " + status + " in matchId: " + matchId);
       const connection = await connectToDb();
       let matchStatus = await database(
         "SELECT statusId FROM `match_status` WHERE statusString = ?",
@@ -39,10 +38,8 @@ const storeScorcardAndPoints = async (match) => {
           const scorcardDetails = await makeRequest(
             `/matches/sr:match:${match.matchRadarId}/timeline.json`
           );
-          console.log("storeScor called");
-          console.log(scorcardDetails);
           if (scorcardDetails && scorcardDetails.sport_event_status) {
-            if (scorcardDetails.sport_event_status.match_status === "live") {
+            if (scorcardDetails.sport_event_status.status === "live") {
               if (
                 scorcardDetails.sport_event.tournament?.type.includes("t20")
               ) {
@@ -62,8 +59,8 @@ const storeScorcardAndPoints = async (match) => {
                 setTimeout(storeScor, 15 * 60 * 1000);
               }
             } else if (
-              scorcardDetails.sport_event_status.match_status === "closed" ||
-              scorcardDetails.sport_event_status.match_status === "ended"
+              scorcardDetails.sport_event_status.status === "closed" ||
+              scorcardDetails.sport_event_status.status === "ended"
             ) {
               updateMatchStatus("ended", match.matchId);
               const storeScorcardRes = await storeScorcard(match.matchId);
@@ -76,15 +73,15 @@ const storeScorcardAndPoints = async (match) => {
                 }
               }
             } else if (
-              scorcardDetails.sport_event_status.match_status === "cancelled"
+              scorcardDetails.sport_event_status.status === "cancelled"
             ) {
               updateMatchStatus("cancelled", match.matchId);
             } else if (
-              scorcardDetails.sport_event_status.match_status === "abandoned"
+              scorcardDetails.sport_event_status.status === "abandoned"
             ) {
               updateMatchStatus("abandoned", match.matchId);
             } else if (
-              scorcardDetails.sport_event_status.match_status === "not_started"
+              scorcardDetails.sport_event_status.status === "not_started"
             ) {
               setTimeout(storeScor, 2 * 60 * 1000);
             }
@@ -103,7 +100,6 @@ const storeScorcardAndPoints = async (match) => {
 const storeMatchLineUpAndStatus = async (match) => {
   return new Promise(async (resolve) => {
     try {
-      console.log("storing match lineup for match: "+ match.matchId);
       const connection = await connectToDb();
       const res = await storeMatchLineup(
         match.matchId,
@@ -176,7 +172,6 @@ const fetchData = async () => {
               match.matchId === 23
             ) {
               if (matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) {
-                console.log("Setting timeout for match" + match.matchId);
                 setTimeout(async () => {
                   const storeMatchLineUpAndStatusRes =
                     await storeMatchLineUpAndStatus(match);
