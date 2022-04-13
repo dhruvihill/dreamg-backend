@@ -3,7 +3,7 @@ const { fetchMatches: storeScorcard } = require("./scorcard");
 const { fetchData: storePoints } = require("./points/points");
 const { makeRequest, connectToDb, database } = require("./makeRequest");
 
-function updateMatchStatus(status, matchId) {
+const updateMatchStatus = (status, matchId) => {
   return new Promise(async (resolve) => {
     try {
       const connection = await connectToDb();
@@ -101,6 +101,7 @@ const storeScorcardAndPoints = async (match) => {
 const storeMatchLineUpAndStatus = async (match) => {
   return new Promise(async (resolve) => {
     try {
+      console.log("storing match lineup for match: "+ match.matchId);
       const connection = await connectToDb();
       const res = await storeMatchLineup(
         match.matchId,
@@ -110,7 +111,7 @@ const storeMatchLineUpAndStatus = async (match) => {
       );
       if (res) {
         // calling function for scorcard and points
-        const matchStartTime = new Date(match.matchStartTime).getTime();
+        const matchStartTime = new Date(match.matchStartTimeMilliSeconds).getTime();
         setTimeout(async () => {
           const storeScorcardAndPointsRes = await storeScorcardAndPoints(match);
           if (storeScorcardAndPointsRes) {
@@ -169,9 +170,11 @@ const fetchData = async () => {
             const now = new Date();
             if (
               matchStartTime.getTime() > now.getTime() ||
-              match.matchStatusString === "live"
+              match.matchStatusString === "live" ||
+              match.matchId === 23
             ) {
               if (matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) {
+                console.log("Setting timeout for match" + match.matchId);
                 setTimeout(async () => {
                   const storeMatchLineUpAndStatusRes =
                     await storeMatchLineUpAndStatus(match);
