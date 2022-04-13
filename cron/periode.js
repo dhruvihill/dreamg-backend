@@ -42,6 +42,7 @@ const storeScorcardAndPoints = async (match) => {
           console.log("storeScor called");
           if (scorcardDetails && scorcardDetails.sport_event_status) {
             if (scorcardDetails.sport_event_status.match_status === "live") {
+              console.log(scorcardDetails);
               if (
                 scorcardDetails.sport_event.tournament?.type.includes("t20")
               ) {
