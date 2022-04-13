@@ -409,7 +409,7 @@ const storeInnings = (
 const storeScorcard = (scoreDetails, storedMatchDetails, connection) => {
   return new Promise(async (resolve, reject) => {
     try {
-      console.log("lets store the scorecard", scoreDetails.sport_event.id);
+      console.log("lets store the scorecard: ", scoreDetails.sport_event.id);
       if (
         scoreDetails &&
         scoreDetails.sport_event_status &&

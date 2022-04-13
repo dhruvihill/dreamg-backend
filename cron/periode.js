@@ -6,6 +6,7 @@ const { makeRequest, connectToDb, database } = require("./makeRequest");
 const updateMatchStatus = (status, matchId) => {
   return new Promise(async (resolve) => {
     try {
+      console.log("updating match status to " + status + " in matchId: " + matchId);
       const connection = await connectToDb();
       let matchStatus = await database(
         "SELECT statusId FROM `match_status` WHERE statusString = ?",
@@ -38,13 +39,13 @@ const storeScorcardAndPoints = async (match) => {
           const scorcardDetails = await makeRequest(
             `/matches/sr:match:${match.matchRadarId}/timeline.json`
           );
+          console.log("storeScor called");
           if (scorcardDetails && scorcardDetails.sport_event_status) {
             if (scorcardDetails.sport_event_status.match_status === "live") {
               if (
                 scorcardDetails.sport_event.tournament?.type.includes("t20")
               ) {
                 updateMatchStatus("live", match.matchId);
-                console.log("t20");
                 setTimeout(storeScor, 20 * 60 * 1000);
               } else if (
                 scorcardDetails.sport_event.tournament?.includes("odi")
