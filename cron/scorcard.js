@@ -409,7 +409,6 @@ const storeInnings = (
 const storeScorcard = (scoreDetails, storedMatchDetails, connection) => {
   return new Promise(async (resolve, reject) => {
     try {
-      console.log("lets store the scorecard: ", scoreDetails.sport_event.id);
       if (
         scoreDetails &&
         scoreDetails.sport_event_status &&
@@ -541,6 +540,7 @@ const fetchMatches = async (matchId) => {
             newConnection.release();
             currentMatch++;
             if (currentMatch === totalMatches) {
+              resolve(true);
             } else {
               setTimeout(() => {
                 processMatch(matches[currentMatch]);
@@ -551,6 +551,7 @@ const fetchMatches = async (matchId) => {
           console.log(error.message, "preocessMatch");
           currentMatch++;
           if (currentMatch === totalMatches) {
+            resolve(false);
           } else {
             setTimeout(() => {
               processMatch(matches[currentMatch]);

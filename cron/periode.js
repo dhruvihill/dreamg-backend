@@ -71,6 +71,8 @@ const storeScorcardAndPoints = async (match) => {
                 } else {
                   resolve(false);
                 }
+              } else {
+                resolve(false);
               }
             } else if (
               scorcardDetails.sport_event_status.status === "cancelled"
@@ -168,8 +170,7 @@ const fetchData = async () => {
             const now = new Date();
             if (
               matchStartTime.getTime() > now.getTime() ||
-              match.matchStatusString === "live" ||
-              match.matchId === 23
+              match.matchId === 24
             ) {
               if (matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) {
                 setTimeout(async () => {
