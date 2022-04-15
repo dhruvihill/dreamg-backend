@@ -28,7 +28,7 @@ const updateMatchStatus = (status, matchId) => {
       resolve(false);
     }
   });
-}
+};
 
 const storeScorcardAndPoints = async (match) => {
   return new Promise(async (resolve) => {
@@ -63,15 +63,22 @@ const storeScorcardAndPoints = async (match) => {
               scorcardDetails.sport_event_status.status === "ended"
             ) {
               updateMatchStatus("ended", match.matchId);
+              console.log("Going to store scorcard");
               const storeScorcardRes = await storeScorcard(match.matchId);
               if (storeScorcardRes) {
+                console.log(
+                  "Rsponse of storeScorcard come and Going to store points"
+                );
                 const storePointsRes = await storePoints(match.matchId);
                 if (storePointsRes) {
+                  console.log("Points stored");
                   resolve(true);
                 } else {
+                  console.log("Points not stored");
                   resolve(false);
                 }
               } else {
+                console.log("Scorcard not stored");
                 resolve(false);
               }
             } else if (
@@ -111,7 +118,9 @@ const storeMatchLineUpAndStatus = async (match) => {
       );
       if (res) {
         // calling function for scorcard and points
-        const matchStartTime = new Date(match.matchStartTimeMilliSeconds).getTime();
+        const matchStartTime = new Date(
+          match.matchStartTimeMilliSeconds
+        ).getTime();
         setTimeout(async () => {
           const storeScorcardAndPointsRes = await storeScorcardAndPoints(match);
           if (storeScorcardAndPointsRes) {
@@ -168,10 +177,7 @@ const fetchData = async () => {
               parseInt(match.matchStartTimeMilliSeconds)
             );
             const now = new Date();
-            if (
-              matchStartTime.getTime() > now.getTime() ||
-              match.matchId === 24
-            ) {
+            if (matchStartTime.getTime() > now.getTime()) {
               if (matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) {
                 setTimeout(async () => {
                   const storeMatchLineUpAndStatusRes =

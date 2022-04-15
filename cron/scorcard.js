@@ -87,6 +87,9 @@ const storeSinglePlayer = async (player, connection) => {
 
 const storeBatsMan = (inningId, battingTeam, connection) => {
   return new Promise((resolve) => {
+    const totalBatsman = battingTeam?.statistics?.batting?.players?.length;
+    let currentBatsman = 0;
+
     const storeSingleBastMan = async (player) => {
       try {
         let [
@@ -152,7 +155,10 @@ const storeBatsMan = (inningId, battingTeam, connection) => {
             connection
           );
           if (store) {
-            resolve(true);
+            currentBatsman++;
+            if (currentBatsman === totalBatsman) {
+              resolve(true);
+            }
           }
         } else {
           const storePlayersId = await storeSinglePlayer(player, connection);
@@ -182,6 +188,9 @@ const storeBatsMan = (inningId, battingTeam, connection) => {
 const storeBowlers = (inningId, bowlingTeam, connection) => {
   return new Promise(async (resolve) => {
     try {
+      const totalBowlers = bowlingTeam?.statistics?.bowling?.players?.length;
+      let currentBowler = 0;
+
       const storeSingleBowler = async (player) => {
         try {
           const [{ isExists: isPlayerExists, playerInsertedId }] =
@@ -221,7 +230,10 @@ const storeBowlers = (inningId, bowlingTeam, connection) => {
               connection
             );
             if (store) {
-              resolve(true);
+              currentBowler++;
+              if (currentBowler === totalBowlers) {
+                resolve(true);
+              }
             }
           } else {
             const storedPlayerId = await storeSinglePlayer(player, connection);
@@ -407,7 +419,7 @@ const storeInnings = (
 };
 
 const storeScorcard = (scoreDetails, storedMatchDetails, connection) => {
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async (resolve) => {
     try {
       if (
         scoreDetails &&

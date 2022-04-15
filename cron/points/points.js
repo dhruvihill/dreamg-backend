@@ -196,9 +196,10 @@ const calculatePointsOfMatch = async (
             if (storePoints) {
               currentPlayer++;
               if (currentPlayer === totalPlayers) {
-                const storeIsPointsCalculatedFlag = await database("UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?;", 
-                [matchId],
-                connection
+                const storeIsPointsCalculatedFlag = await database(
+                  "UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?;",
+                  [matchId],
+                  connection
                 );
                 if (storeIsPointsCalculatedFlag) {
                   resolve(true);
@@ -445,13 +446,14 @@ const calculatePointsOfMatch = async (
             if (storePoints) {
               currentPlayer++;
               if (currentPlayer === totalPlayers) {
-                const storeIsPointsCalculatedFlag = await database("UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?;", 
-                [matchId],
-                connection
+                const storeIsPointsCalculatedFlag = await database(
+                  "UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?;",
+                  [matchId],
+                  connection
                 );
                 if (storeIsPointsCalculatedFlag) {
                   resolve(true);
-                };
+                }
               }
             }
           }, 200);
@@ -699,13 +701,14 @@ const calculatePointsOfMatch = async (
             if (storePoints) {
               currentPlayer++;
               if (currentPlayer === totalPlayers) {
-                const storeIsPointsCalculatedFlag = await database("UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?;", 
-                [matchId],
-                connection
+                const storeIsPointsCalculatedFlag = await database(
+                  "UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?;",
+                  [matchId],
+                  connection
                 );
                 if (storeIsPointsCalculatedFlag) {
                   resolve(true);
-                };
+                }
               }
             }
           }, 200);
@@ -950,13 +953,14 @@ const calculatePointsOfMatch = async (
             if (storePoints) {
               currentPlayer++;
               if (currentPlayer === totalPlayers) {
-                const storeIsPointsCalculatedFlag = await database("UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?;", 
-                [matchId],
-                connection
+                const storeIsPointsCalculatedFlag = await database(
+                  "UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?;",
+                  [matchId],
+                  connection
                 );
                 if (storeIsPointsCalculatedFlag) {
                   resolve(true);
-                };
+                }
               }
             }
           }, 200);
@@ -996,7 +1000,7 @@ const fetchData = async (matchId) => {
             connection
           );
           const lineUp = await database(
-            "SELECT matchId, competitorId, playerId, isCaptain, isWicketKeeper FROM `match_lineup` WHERE matchId = ?;",
+            "SELECT matchId, competitorId, playerId, isCaptain, isWicketKeeper FROM `match_players` WHERE matchId = ? AND isSelected = 1;",
             [match.matchId],
             connection
           );
@@ -1028,7 +1032,7 @@ const fetchData = async (matchId) => {
           console.log(error.message);
         }
       };
-      pr(fetchMatches[0]);
+      pr(fetchMatches[currentMatch]);
       // fetchMatches.forEach(async (match) => {
       // });
     } catch (error) {
