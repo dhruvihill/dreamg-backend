@@ -108,7 +108,7 @@ const setIntervalImmediate = () => {
   setInterval(() => {
     const { fetchData: periode } = require("./cron/periode");
     periode();
-  }, 90 * 60 * 1000);
+  }, 60 * 60 * 1000);
   setTimeout(() => {
     const { fetchData: periode } = require("./cron/periode");
     periode();
