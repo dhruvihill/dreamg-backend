@@ -161,7 +161,7 @@ const fetchData = async () => {
     try {
       const connection = await connectToDb();
       const matches = await database(
-        "SELECT matchId, matchRadarId, matchTournamentId, matchStartDateTime, matchStartTimeMilliSeconds, matchTyprString, matchStatusString, team1Id, team2Id, team1RadarId, team2RadarId FROM `fullmatchdetails` WHERE matchStatusString IN ('not_started', 'live') ORDER BY `fullmatchdetails`.`matchStartTimeMilliSeconds` DESC;",
+        "SELECT matchId, matchRadarId, matchTournamentId, matchStartDateTime, matchStartTimeMilliSeconds, matchTyprString, matchStatusString, team1Id, team2Id, team1RadarId, team2RadarId FROM `fullmatchdetails` WHERE matchStatusString IN ('not_started', 'live', 'closed', 'ended') ORDER BY `fullmatchdetails`.`matchStartTimeMilliSeconds` DESC;",
         [],
         connection
       );
@@ -177,7 +177,11 @@ const fetchData = async () => {
               parseInt(match.matchStartTimeMilliSeconds)
             );
             const now = new Date();
-            if (matchStartTime.getTime() > now.getTime()) {
+            if (
+              matchStartTime.getTime() > now.getTime() ||
+              match.matchId === 29 ||
+              match.matchId === 30
+            ) {
               if (matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) {
                 setTimeout(async () => {
                   const storeMatchLineUpAndStatusRes =
