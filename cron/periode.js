@@ -119,7 +119,7 @@ const storeMatchLineUpAndStatus = async (match) => {
       if (res) {
         // calling function for scorcard and points
         const matchStartTime = new Date(
-          match.matchStartTimeMilliSeconds
+          parseInt(match.matchStartTimeMilliSeconds)
         ).getTime();
         setTimeout(async () => {
           const storeScorcardAndPointsRes = await storeScorcardAndPoints(match);
