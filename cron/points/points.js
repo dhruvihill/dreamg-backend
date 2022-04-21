@@ -41,6 +41,7 @@ const calculatePointsOfMatch = async (
         lineUp.forEach((player) => {
           let totalPoints = 4;
           const points = {
+            order: null,
             runsPoints: 0,
             foursPoints: 0,
             sixesPoints: 0,
@@ -84,6 +85,9 @@ const calculatePointsOfMatch = async (
           // calculating points for player
           playerBattingStats.forEach(async (batsMan) => {
             try {
+              // order of player
+              points.order = batsMan.order;
+
               // constant for runs and bountry
               const pointsPerRun = testScore.bat.run;
               const pointsPerFour = testScore.bat.boundary;
@@ -172,10 +176,11 @@ const calculatePointsOfMatch = async (
           });
           setTimeout(async () => {
             const storePoints = await database(
-              "UPDATE `match_players` SET `isSelected` = ?, `points` = ?, `runsPoints` = ?, `foursPoints` = ?, `sixesPoints` = ?, `numberRunsPoints` = ?, `numberWicketPoints` = ?, `wicketPoints` = ?, `maidenOverPoints` = ?, `lbwOrBowledPoints` = ?, `catchesPoints` = ?, `runOutPoints` = ?, `economyPoints` = ?, `strikeRatePoints` = ? WHERE matchId = ? AND playerId = ?;",
+              "UPDATE `match_players` SET `isSelected` = ?, `points` = ?, `order` = ?, `runsPoints` = ?, `foursPoints` = ?, `sixesPoints` = ?, `numberRunsPoints` = ?, `numberWicketPoints` = ?, `wicketPoints` = ?, `maidenOverPoints` = ?, `lbwOrBowledPoints` = ?, `catchesPoints` = ?, `runOutPoints` = ?, `economyPoints` = ?, `strikeRatePoints` = ? WHERE matchId = ? AND playerId = ?;",
               [
                 true,
                 totalPoints,
+                points.order,
                 points.runsPoints,
                 points.foursPoints,
                 points.sixesPoints,
@@ -507,6 +512,9 @@ const calculatePointsOfMatch = async (
           // calculating points for player
           playerBattingStats.forEach(async (batsMan) => {
             try {
+              // storing order
+              points.order = batsMan.order || null;
+
               // constant for runs and bountry
               const pointsPerRun = t20Score.bat.run;
               const pointsPerFour = t20Score.bat.boundary;
@@ -676,40 +684,45 @@ const calculatePointsOfMatch = async (
             }
           });
           setTimeout(async () => {
-            const storePoints = await database(
-              "UPDATE `match_players` SET `isSelected` = ?, `points` = ?, `runsPoints` = ?, `foursPoints` = ?, `sixesPoints` = ?, `numberRunsPoints` = ?, `numberWicketPoints` = ?, `wicketPoints` = ?, `maidenOverPoints` = ?, `lbwOrBowledPoints` = ?, `catchesPoints` = ?, `runOutPoints` = ?, `economyPoints` = ?, `strikeRatePoints` = ? WHERE matchId = ? AND playerId = ?;",
-              [
-                true,
-                totalPoints,
-                points.runsPoints,
-                points.foursPoints,
-                points.sixesPoints,
-                points["duck/30/50/100Points"],
-                points["3/4/5WicketPoints"],
-                points.wicketsPoints,
-                points.maidenOversPoints,
-                points.lbwOrBowledPoints,
-                points.catchesPoints,
-                points.runOutPoints,
-                points.economyPoints,
-                points.strikeRatePoints,
-                matchId,
-                player.playerId,
-              ],
-              connection
-            );
-            if (storePoints) {
-              currentPlayer++;
-              if (currentPlayer === totalPlayers) {
-                const storeIsPointsCalculatedFlag = await database(
-                  "UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?;",
-                  [matchId],
-                  connection
-                );
-                if (storeIsPointsCalculatedFlag) {
-                  resolve(true);
+            try {
+              const storePoints = await database(
+                "UPDATE `match_players` SET `isSelected` = ?, `points` = ?,`order` = ?, `runsPoints` = ?, `foursPoints` = ?, `sixesPoints` = ?, `numberRunsPoints` = ?, `numberWicketPoints` = ?, `wicketPoints` = ?, `maidenOverPoints` = ?, `lbwOrBowledPoints` = ?, `catchesPoints` = ?, `runOutPoints` = ?, `economyPoints` = ?, `strikeRatePoints` = ? WHERE matchId = ? AND playerId = ?;",
+                [
+                  true,
+                  totalPoints,
+                  points.order || null,
+                  points.runsPoints,
+                  points.foursPoints,
+                  points.sixesPoints,
+                  points["duck/30/50/100Points"],
+                  points["3/4/5WicketPoints"],
+                  points.wicketsPoints,
+                  points.maidenOversPoints,
+                  points.lbwOrBowledPoints,
+                  points.catchesPoints,
+                  points.runOutPoints,
+                  points.economyPoints,
+                  points.strikeRatePoints,
+                  matchId,
+                  player.playerId,
+                ],
+                connection
+              );
+              if (storePoints) {
+                currentPlayer++;
+                if (currentPlayer === totalPlayers) {
+                  const storeIsPointsCalculatedFlag = await database(
+                    "UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?;",
+                    [matchId],
+                    connection
+                  );
+                  if (storeIsPointsCalculatedFlag) {
+                    resolve(true);
+                  }
                 }
               }
+            } catch (error) {
+              console.log(error);
             }
           }, 200);
         });
