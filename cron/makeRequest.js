@@ -28,49 +28,58 @@ const makeRequest = (url) => {
   return new Promise((resolve, reject) => {
     try {
       const makeCall = (apiToken) => {
-        axiosInstance
-          .get(url, {
-            params: {
-              api_key: apiToken,
-            },
-          })
-          .then((data) => {
-            generateTimeOut(
-              apiToken,
-              parseInt(data.headers["x-plan-quota-current"]),
-              1100
-            );
-            resolve(data.data);
-          })
-          .catch((error) => {
-            if (
-              (error.response &&
-                parseInt(error.response.headers["x-plan-quota-current"]) >
-                  parseInt(error.response.headers["x-plan-quota-allotted"])) ||
-              parseInt(error.response.headers["x-plan-quota-current"]) ===
-                parseInt(error.response.headers["x-plan-quota-allotted"])
-            ) {
-              api_tokens.forEach((token) => {
-                if (token.token === apiToken) {
-                  token.totalCallMade = parseInt(
-                    error.response.headers["x-plan-quota-current"]
-                  );
-                }
-              });
-              selectTokenAndCall();
-            } else {
-              console.log(error.response.data, "error");
-              console.log(error.message, "makeRequest");
-              if (error.response.data.includes("Developer Inactive")) {
+        try {
+          axiosInstance
+            .get(url, {
+              params: {
+                api_key: apiToken,
+              },
+            })
+            .then((data) => {
+              generateTimeOut(
+                apiToken,
+                parseInt(data.headers["x-plan-quota-current"]),
+                1100
+              );
+              resolve(data.data);
+            })
+            .catch((error) => {
+              if (
+                (error.response &&
+                  parseInt(error.response.headers["x-plan-quota-current"]) >
+                    parseInt(
+                      error.response.headers["x-plan-quota-allotted"]
+                    )) ||
+                parseInt(error.response.headers["x-plan-quota-current"]) ===
+                  parseInt(error.response.headers["x-plan-quota-allotted"])
+              ) {
                 api_tokens.forEach((token) => {
                   if (token.token === apiToken) {
-                    token.isDeveloperInactive = true;
+                    token.totalCallMade = parseInt(
+                      error.response.headers["x-plan-quota-current"]
+                    );
                   }
                 });
+                selectTokenAndCall();
+              } else {
+                console.log(error.response.data, "error");
+                if (
+                  error?.response?.data
+                    ?.toString()
+                    .includes("Developer Inactive")
+                ) {
+                  api_tokens.forEach((token) => {
+                    if (token.token === apiToken) {
+                      token.isDeveloperInactive = true;
+                    }
+                  });
+                }
+                selectTokenAndCall();
               }
-              selectTokenAndCall();
-            }
-          });
+            });
+        } catch (error) {
+          console.log(error.message, "makeRequest");
+        }
       };
 
       const selectTokenAndCall = () => {

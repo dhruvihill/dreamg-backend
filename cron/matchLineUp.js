@@ -162,10 +162,11 @@ const storeTossDetails = async (matchId, matchRadarId, match, connection) => {
   });
 };
 
-const storeMatchLineup = async (matchId, matchRadarId, match, connection) => {
+const storeMatchLineup = async (matchId, matchRadarId, match) => {
   return new Promise(async (resolve) => {
     try {
       // getting match lineup from sportsRadar
+      const connection = await connectToDb();
       const matchLineUp = await makeRequest(
         `/matches/sr:match:${matchRadarId}/lineups.json`
       );
@@ -213,6 +214,7 @@ const storeMatchLineup = async (matchId, matchRadarId, match, connection) => {
                         teamsloopCount === matchLineUp.lineups.length &&
                         storeTossDetailsRes
                       ) {
+                        connection.release();
                         resolve(true);
                       }
                     }
@@ -276,6 +278,7 @@ const storeMatchLineup = async (matchId, matchRadarId, match, connection) => {
           }
         });
       } else {
+        connection.release();
         resolve(false);
       }
     } catch (error) {
@@ -319,14 +322,11 @@ const fetchMatches = async (matchId) => {
       // function to store match lineup
       const processMatch = async (match) => {
         try {
-          const newConnection = await connectToDb();
-
           // calling functio which stores match lineup
           const lineUpRes = await storeMatchLineup(
             match.matchId,
             match.matchRadarId,
-            match,
-            newConnection
+            match
           );
 
           // lineup stored or not go to next match
@@ -334,7 +334,6 @@ const fetchMatches = async (matchId) => {
             currentMatch++;
             if (currentMatch === totalMatches) {
             } else {
-              newConnection.release();
               setTimeout(() => {
                 processMatch(matches[currentMatch]);
               }, 0);
@@ -344,7 +343,6 @@ const fetchMatches = async (matchId) => {
             if (currentMatch === totalMatches) {
               resolve(true);
             } else {
-              newConnection.release();
               setTimeout(() => {
                 processMatch(matches[currentMatch]);
               }, 0);
