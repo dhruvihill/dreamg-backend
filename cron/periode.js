@@ -235,7 +235,10 @@ const fetchData = async () => {
               parseInt(match.matchStartTimeMilliSeconds)
             );
             const now = new Date();
-            if (matchStartTime.getTime() > now.getTime()) {
+            if (
+              matchStartTime.getTime() > now.getTime() ||
+              match.matchId === 33
+            ) {
               if (matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) {
                 log(
                   `Started to proceed match for scorcard, lineups and points for ${match.matchId}`
