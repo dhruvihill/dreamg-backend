@@ -3,6 +3,8 @@ const { fetchMatches: storeScorcard } = require("./scorcard");
 const { fetchData: storePoints } = require("./points/points");
 const { makeRequest, connectToDb, database } = require("./makeRequest");
 
+// hello there
+
 const updateMatchStatus = (status, matchId) => {
   return new Promise(async (resolve) => {
     try {
