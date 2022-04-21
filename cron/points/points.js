@@ -217,6 +217,7 @@ const calculatePointsOfMatch = async (
         lineUp.forEach((player) => {
           let totalPoints = 4;
           const points = {
+            order: null,
             runsPoints: 0,
             foursPoints: 0,
             sixesPoints: 0,
@@ -261,6 +262,9 @@ const calculatePointsOfMatch = async (
           // calculating points for player
           playerBattingStats.forEach(async (batsMan) => {
             try {
+              // order of player
+              points.order = batsMan.order;
+
               // constant for runs and bountry
               const pointsPerRun = odiScore.bat.run;
               const pointsPerFour = odiScore.bat.boundary;
@@ -427,10 +431,11 @@ const calculatePointsOfMatch = async (
           });
           setTimeout(async () => {
             const storePoints = await database(
-              "UPDATE `match_players` SET `isSelected` = ?, `points` = ?, `runsPoints` = ?, `foursPoints` = ?, `sixesPoints` = ?, `numberRunsPoints` = ?, `numberWicketPoints` = ?, `wicketPoints` = ?, `maidenOverPoints` = ?, `lbwOrBowledPoints` = ?, `catchesPoints` = ?, `runOutPoints` = ?, `economyPoints` = ?, `strikeRatePoints` = ? WHERE matchId = ? AND playerId = ?;",
+              "UPDATE `match_players` SET `isSelected` = ?, `points` = ?, `order` = ?, `runsPoints` = ?, `foursPoints` = ?, `sixesPoints` = ?, `numberRunsPoints` = ?, `numberWicketPoints` = ?, `wicketPoints` = ?, `maidenOverPoints` = ?, `lbwOrBowledPoints` = ?, `catchesPoints` = ?, `runOutPoints` = ?, `economyPoints` = ?, `strikeRatePoints` = ? WHERE matchId = ? AND playerId = ?;",
               [
                 true,
                 totalPoints,
+                points.order || null,
                 points.runsPoints,
                 points.foursPoints,
                 points.sixesPoints,
@@ -730,6 +735,7 @@ const calculatePointsOfMatch = async (
         lineUp.forEach((player) => {
           let totalPoints = 4;
           const points = {
+            order: null,
             runsPoints: 0,
             foursPoints: 0,
             sixesPoints: 0,
@@ -774,6 +780,9 @@ const calculatePointsOfMatch = async (
           // calculating points for player
           playerBattingStats.forEach(async (batsMan) => {
             try {
+              // order of player
+              points.order = batsMan.order;
+
               // constant for runs and bountry
               const pointsPerRun = t10Score.bat.run;
               const pointsPerFour = t10Score.bat.boundary;
@@ -942,10 +951,11 @@ const calculatePointsOfMatch = async (
           });
           setTimeout(async () => {
             const storePoints = await database(
-              "UPDATE `match_players` SET `isSelected` = ?, `points` = ?, `runsPoints` = ?, `foursPoints` = ?, `sixesPoints` = ?, `numberRunsPoints` = ?, `numberWicketPoints` = ?, `wicketPoints` = ?, `maidenOverPoints` = ?, `lbwOrBowledPoints` = ?, `catchesPoints` = ?, `runOutPoints` = ?, `economyPoints` = ?, `strikeRatePoints` = ? WHERE matchId = ? AND playerId = ?;",
+              "UPDATE `match_players` SET `isSelected` = ?, `points` = ?, `order` = ?, `runsPoints` = ?, `foursPoints` = ?, `sixesPoints` = ?, `numberRunsPoints` = ?, `numberWicketPoints` = ?, `wicketPoints` = ?, `maidenOverPoints` = ?, `lbwOrBowledPoints` = ?, `catchesPoints` = ?, `runOutPoints` = ?, `economyPoints` = ?, `strikeRatePoints` = ? WHERE matchId = ? AND playerId = ?;",
               [
                 true,
                 totalPoints,
+                points.order || null,
                 points.runsPoints,
                 points.foursPoints,
                 points.sixesPoints,

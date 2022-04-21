@@ -235,51 +235,51 @@ const fetchData = async () => {
               parseInt(match.matchStartTimeMilliSeconds)
             );
             const now = new Date();
-            // if (matchStartTime.getTime() > now.getTime()) {
-            //   if (matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) {
-            log(
-              `Started to proceed match for scorcard, lineups and points for ${match.matchId}`
-            );
+            if (matchStartTime.getTime() > now.getTime()) {
+              if (matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) {
+                log(
+                  `Started to proceed match for scorcard, lineups and points for ${match.matchId}`
+                );
 
-            // need to check that object does not pushed in array second time
-            onGoingMatches.push(match);
-            setTimeout(async () => {
-              log(`match lineup function called for ${match.matchId}`);
-              handleMatchLineUp(match);
-            }, matchStartTime.getTime() - now.getTime() - 25 * 60 * 1000);
-            setTimeout(async () => {
-              log(`match scorcard function called for ${match.matchId}`);
-              storeScorcardAndPoints(match);
-            }, matchStartTime.getTime() - now.getTime());
+                // need to check that object does not pushed in array second time
+                onGoingMatches.push(match);
+                setTimeout(async () => {
+                  log(`match lineup function called for ${match.matchId}`);
+                  handleMatchLineUp(match);
+                }, matchStartTime.getTime() - now.getTime() - 25 * 60 * 1000);
+                setTimeout(async () => {
+                  log(`match scorcard function called for ${match.matchId}`);
+                  storeScorcardAndPoints(match);
+                }, matchStartTime.getTime() - now.getTime());
 
-            currentMatch++;
-            if (currentMatch !== totalMatches) {
-              setTimeout(() => {
-                setTimeoutForMatches(matches[currentMatch]);
-              }, 0);
+                currentMatch++;
+                if (currentMatch !== totalMatches) {
+                  setTimeout(() => {
+                    setTimeoutForMatches(matches[currentMatch]);
+                  }, 0);
+                } else {
+                  resolve(true);
+                }
+              } else {
+                currentMatch++;
+                if (currentMatch !== totalMatches) {
+                  setTimeout(() => {
+                    setTimeoutForMatches(matches[currentMatch]);
+                  }, 0);
+                } else {
+                  resolve(true);
+                }
+              }
             } else {
-              resolve(true);
+              // do it right now
+              currentMatch++;
+              if (currentMatch !== totalMatches) {
+                setTimeout(() => {
+                  setTimeoutForMatches(matches[currentMatch]);
+                }, 0);
+              } else {
+              }
             }
-            //   } else {
-            //     currentMatch++;
-            //     if (currentMatch !== totalMatches) {
-            //       setTimeout(() => {
-            //         setTimeoutForMatches(matches[currentMatch]);
-            //       }, 0);
-            //     } else {
-            //       resolve(true);
-            //     }
-            //   }
-            // } else {
-            //   // do it right now
-            //   currentMatch++;
-            //   if (currentMatch !== totalMatches) {
-            //     setTimeout(() => {
-            //       setTimeoutForMatches(matches[currentMatch]);
-            //     }, 0);
-            //   } else {
-            //   }
-            // }
           } catch (error) {
             console.log(error.message, "processMatch");
             currentMatch++;
