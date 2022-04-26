@@ -90,91 +90,91 @@ const storeBatsMan = (inningId, battingTeam, connection) => {
     const totalBatsman = battingTeam?.statistics?.batting?.players?.length;
     let currentBatsman = 0;
 
-    const storeSingleBastMan = async (player) => {
-      try {
-        let [
-          [{ isExists: isPlayerExists, playerInsertedId }],
-          bowler,
-          fielder,
-        ] = await database(
-          "SELECT COUNT(playerId) AS isExists, playerId AS playerInsertedId FROM allplayers WHERE playerRadarId = ?; SELECT playerId AS bowlerId FROM allplayers WHERE playerRadarId = ?; SELECT playerId AS fielderId FROM allplayers WHERE playerRadarId = ?;",
-          [
-            player?.id?.substr(10),
-            player?.statistics?.dismissal?.bowler_id?.substr(10),
-            player?.statistics?.dismissal?.fieldsman_id?.substr(10),
-          ],
-          connection
-        );
-        if (isPlayerExists) {
-          bowler.length > 0 ? (bowler = bowler[0].bowlerId) : (bowler = null);
-          fielder.length > 0
-            ? (fielder = fielder[0].fielderId)
-            : (fielder = null);
-          const store = await database(
-            "INSERT INTO inning_batsmans SET ?;",
-            {
-              scorcardInningId: inningId,
-              playerId: playerInsertedId,
-              battingOrder: player?.order || null,
-              runs: player?.statistics?.runs || 0,
-              strikeRate: player?.statistics?.strike_rate || 0.0,
-              isNotOut: player?.statistics?.not_out || 0,
-              isDuck: player?.statistics?.duck || 0,
-              isRetiredHurt: player?.statistics?.retired_hurt || 0,
-              ballFaced: player?.statistics?.balls_faced || 0,
-              fours: player?.statistics?.fours || 0,
-              sixes: player?.statistics?.sixes || 0,
-              attackIngShot: player?.statistics?.attacking_shots || 0,
-              semiAttackingShot: player?.statistics?.semi_attacking || 0,
-              defendingShot: player?.statistics?.defending_shots || 0,
-              leaves: player?.statistics?.left_alone || 0,
-              onSideShot: player?.statistics?.onside_shots || 0,
-              offSideShot: player?.statistics?.offside_shots || 0,
-              squreLegShot: player?.statistics?.square_leg_shots || 0,
-              fineLegShot: player?.statistics?.fine_leg_shots || 0,
-              thirdManShot: player?.statistics?.third_man_shots || 0,
-              coverShot: player?.statistics?.cover_shots || 0,
-              pointsShot: player?.statistics?.point_shots || 0,
-              midOnShot: player?.statistics?.mid_on_shots || 0,
-              midOffShot: player?.statistics?.mid_off_shots || 0,
-              midWicketShot: player?.statistics?.mid_wicket_shots || 0,
-              dismissalOverBallNumber:
-                player?.statistics?.dismissal?.ball_number || null,
-              dismissalOverNumber:
-                player?.statistics?.dismissal?.over_number || null,
-              dismissalBallerId: bowler || null,
-              dismissalDiliveryType:
-                player?.statistics?.dismissal?.delivery_type || null,
-              dismissalFieldeManId: fielder || null,
-              dismissalIsOnStrike:
-                player?.statistics?.dismissal?.on_strike | null,
-              dismissalShotType:
-                player?.statistics?.dismissal?.shot_type || null,
-              dismissalType: player?.statistics?.dismissal?.type || null,
-            },
+    try {
+      const storeSingleBastMan = async (player) => {
+        try {
+          let [
+            [{ isExists: isPlayerExists, playerInsertedId }],
+            bowler,
+            fielder,
+          ] = await database(
+            "SELECT COUNT(playerId) AS isExists, playerId AS playerInsertedId FROM allplayers WHERE playerRadarId = ?; SELECT playerId AS bowlerId FROM allplayers WHERE playerRadarId = ?; SELECT playerId AS fielderId FROM allplayers WHERE playerRadarId = ?;",
+            [
+              player?.id?.substr(10),
+              player?.statistics?.dismissal?.bowler_id?.substr(10),
+              player?.statistics?.dismissal?.fieldsman_id?.substr(10),
+            ],
             connection
           );
-          if (store) {
-            currentBatsman++;
-            if (currentBatsman === totalBatsman) {
-              resolve(true);
+          if (isPlayerExists) {
+            bowler.length > 0 ? (bowler = bowler[0].bowlerId) : (bowler = null);
+            fielder.length > 0
+              ? (fielder = fielder[0].fielderId)
+              : (fielder = null);
+            const store = await database(
+              "INSERT INTO inning_batsmans SET ?;",
+              {
+                scorcardInningId: inningId,
+                playerId: playerInsertedId,
+                battingOrder: player?.order || null,
+                runs: player?.statistics?.runs || 0,
+                strikeRate: player?.statistics?.strike_rate || 0.0,
+                isNotOut: player?.statistics?.not_out || 0,
+                isDuck: player?.statistics?.duck || 0,
+                isRetiredHurt: player?.statistics?.retired_hurt || 0,
+                ballFaced: player?.statistics?.balls_faced || 0,
+                fours: player?.statistics?.fours || 0,
+                sixes: player?.statistics?.sixes || 0,
+                attackIngShot: player?.statistics?.attacking_shots || 0,
+                semiAttackingShot: player?.statistics?.semi_attacking || 0,
+                defendingShot: player?.statistics?.defending_shots || 0,
+                leaves: player?.statistics?.left_alone || 0,
+                onSideShot: player?.statistics?.onside_shots || 0,
+                offSideShot: player?.statistics?.offside_shots || 0,
+                squreLegShot: player?.statistics?.square_leg_shots || 0,
+                fineLegShot: player?.statistics?.fine_leg_shots || 0,
+                thirdManShot: player?.statistics?.third_man_shots || 0,
+                coverShot: player?.statistics?.cover_shots || 0,
+                pointsShot: player?.statistics?.point_shots || 0,
+                midOnShot: player?.statistics?.mid_on_shots || 0,
+                midOffShot: player?.statistics?.mid_off_shots || 0,
+                midWicketShot: player?.statistics?.mid_wicket_shots || 0,
+                dismissalOverBallNumber:
+                  player?.statistics?.dismissal?.ball_number || null,
+                dismissalOverNumber:
+                  player?.statistics?.dismissal?.over_number || null,
+                dismissalBallerId: bowler || null,
+                dismissalDiliveryType:
+                  player?.statistics?.dismissal?.delivery_type || null,
+                dismissalFieldeManId: fielder || null,
+                dismissalIsOnStrike:
+                  player?.statistics?.dismissal?.on_strike | null,
+                dismissalShotType:
+                  player?.statistics?.dismissal?.shot_type || null,
+                dismissalType: player?.statistics?.dismissal?.type || null,
+              },
+              connection
+            );
+            if (store) {
+              currentBatsman++;
+              if (currentBatsman === totalBatsman) {
+                resolve(true);
+              }
+            }
+          } else {
+            const storePlayersId = await storeSinglePlayer(player, connection);
+            if (storePlayersId) {
+              setTimeout(() => {
+                storeSingleBastMan(player);
+              }, 0);
+            } else {
+              resolve(false);
             }
           }
-        } else {
-          const storePlayersId = await storeSinglePlayer(player, connection);
-          if (storePlayersId) {
-            setTimeout(() => {
-              storeSingleBastMan(player);
-            }, 0);
-          } else {
-            resolve(false);
-          }
+        } catch (error) {
+          console.log(error, "storeSingleBastMan");
         }
-      } catch (error) {
-        console.log(error, "storeSingleBastMan");
-      }
-    };
-    try {
+      };
       battingTeam?.statistics?.batting?.players?.forEach(async (player) => {
         storeSingleBastMan(player);
       });

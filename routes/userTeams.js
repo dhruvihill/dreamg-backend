@@ -1202,3 +1202,7 @@ LEFT JOIN inningBowlers ON inningBowlers.scorcardInningId = scorcardInning.scorc
 WHERE
     userTeamDetails.matchId = 1 AND userTeamDetails.userId = 9;
 */
+
+/*
+SELECT COALESCE(SUM(match_players.points), 0) AS points FROM match_players WHERE match_players.matchId IN (SELECT tournament_matches.matchId FROM tournament_matches WHERE tournament_matches.matchTournamentId IN (SELECT fullmatchdetails.matchTournamentId FROM fullmatchdetails WHERE fullmatchdetails.matchId = 31)) AND match_players.playerId = 45;
+ */

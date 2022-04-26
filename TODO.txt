@@ -70,3 +70,5 @@ get_user_teams_predictor
 /api/v1/prediction/set_discussion --> /api/v1/userTeams/setDiscussion
 /api/v1/prediction/get_discussion --> /api/v1/userTeams/getDiscussion
 /api/v1/prediction/compare_teams --> /api/v1/userTeams/compareTeams
+
+// To be remove views

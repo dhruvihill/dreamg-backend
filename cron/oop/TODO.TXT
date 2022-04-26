@@ -1,0 +1,5 @@
+MAKE CONSTRUCTORS WORK ON ONLY ID
+
+everything work on foreach make it work on recursive function.
+
+works only resolve promise never reject
