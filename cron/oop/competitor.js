@@ -140,7 +140,7 @@ class Competitor {
 
             await newPlayer.storePlayer();
             await newPlayer.storePlayerRelation(this.tournamentCompetitorId);
-            // await newPlayer.getPlayerStatesAndStore();
+            await newPlayer.getPlayerStatesAndStore();
             player.insertId = newPlayer.id;
 
             currentPlayer++;

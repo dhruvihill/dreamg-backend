@@ -17,8 +17,8 @@ class Scorcard {
 
   constructor(id, radarId, competitors) {
     this.id = id;
-    this.radarId = radarId;
-    this.competitors = competitors;
+    this.#radarId = radarId;
+    this.#competitors = competitors;
   }
 
   #fetchScorcard = () => {
@@ -29,17 +29,24 @@ class Scorcard {
           sport_event_status: sportEventStatus,
           statistics,
         } = await makeRequest(
-          `/matches/sr:matche:${this.#radarId}/summary.json`
+          `/matches/sr:match:${this.#radarId}/summary.json`
         );
 
         if (sportEvent && sportEventStatus && statistics) {
-          this.#scorcardDetails.sportEvent = sportEvent;
-          this.#scorcardDetails.sportEventStatus = sportEventStatus;
-          this.#scorcardDetails.statistics = statistics;
+          if (
+            sportEventStatus.match_status === "ended" ||
+            sportEventStatus.match_status === "closed"
+          ) {
+            this.#scorcardDetails.sportEvent = sportEvent;
+            this.#scorcardDetails.sportEventStatus = sportEventStatus;
+            this.#scorcardDetails.statistics = statistics;
+          } else {
+            throw new Error("Match is not ended");
+          }
 
           resolve();
         } else {
-          reject();
+          throw new Error("Scorcard details not found");
         }
       } catch (error) {
         console.log(error.message);
@@ -53,8 +60,8 @@ class Scorcard {
       try {
         const connection = await connectToDb();
         const [{ playerId }] = await database(
-          "SELECT playerId FROM allplayers WHERE radarId = ?",
-          [this.#scorcardDetails.statistics.man_of_the_match.id.substr(10)],
+          "SELECT playerId FROM allplayers WHERE playerRadarId = ?;",
+          [this.#scorcardDetails.statistics.man_of_the_match[0].id.substr(10)],
           connection
         );
 
@@ -75,6 +82,7 @@ class Scorcard {
         this.#scorcardDetails.manOfMatch = playerId;
         this.#scorcardDetails.winner = winner.id;
         this.#scorcardDetails.tossWonBy = tossWonBy.id;
+        resolve();
       } catch (error) {
         console.log(error.message);
         reject(error);
@@ -100,7 +108,7 @@ class Scorcard {
         );
         if (store) {
           connection.release();
-          resolve();
+          resolve(true);
         }
       } catch (error) {
         console.log(error.message);
@@ -130,7 +138,7 @@ class Scorcard {
         );
         if (store) {
           connection.release();
-          resolve();
+          resolve(true);
         }
       } catch (error) {
         console.log(error.message);
@@ -215,7 +223,7 @@ class Scorcard {
               if (store) {
                 currentBatsman++;
                 if (currentBatsman === totalBatsman) {
-                  resolve();
+                  resolve(true);
                 }
               }
             } else {
@@ -246,6 +254,7 @@ class Scorcard {
         const totalBowlers = bowlingTeam?.statistics?.bowling?.players?.length;
         let currentBowler = 0;
 
+        const connection = await connectToDb();
         const storeSingleBowler = async (player) => {
           try {
             const [{ isExists: isPlayerExists, playerInsertedId }] =
@@ -287,10 +296,12 @@ class Scorcard {
               if (store) {
                 currentBowler++;
                 if (currentBowler === totalBowlers) {
+                  connection.release();
                   resolve(true);
                 }
               }
             } else {
+              connection.release();
               const newPlayer = new Player(player);
               await newPlayer.getPlayerStatesAndStore();
               setTimeout(() => {
@@ -326,10 +337,10 @@ class Scorcard {
           this.#scorcardDetails.statistics.innings.forEach(async (inning) => {
             try {
               const battingTeamId = this.#competitors.filter((competitor) => {
-                return competitor.radarId == inning.batting_team_id.substr(14);
+                return competitor.radarId == inning.batting_team.substr(14);
               })[0].id;
               const bowlingTeamId = this.#competitors.filter((competitor) => {
-                return competitor.radarId == inning.bowling_team_id.substr(14);
+                return competitor.radarId == inning.bowling_team.substr(14);
               })[0].id;
               const [inningPeriod] =
                 this.#scorcardDetails.sportEventStatus.period_scores.filter(
@@ -420,13 +431,12 @@ class Scorcard {
           [this.id],
           connection
         );
-
         if (!isExist) {
           await this.#fetchScorcard();
           await this.#fetchWinnerManOfMatch();
 
           const storeScorcardDetailsRes = await database(
-            "INSERT INTO `scorcard_details`(`matchId`, `tossWonBy`, `tossDecision`, `winnerId`, `manOfMatch`, `isPointsCalculated`, `matchResultString`) VALUES (?, ?, ?, ?, ?, ?);",
+            "INSERT INTO `scorcard_details`(`matchId`, `tossWonBy`, `tossDecision`, `winnerId`, `manOfMatch`, `isPointsCalculated`, `matchResultString`) VALUES (?, ?, ?, ?, ?, ?, ?);",
             [
               this.id,
               this.#scorcardDetails.tossWonBy || null,
@@ -440,15 +450,18 @@ class Scorcard {
           );
 
           if (storeScorcardDetailsRes.insertId) {
+            connection.release();
             this.#scorcardId = storeScorcardDetailsRes.insertId;
 
             await this.#storeInning();
 
             resolve();
           } else {
+            connection.release();
             reject();
           }
         } else {
+          connection.release();
           resolve();
         }
       } catch (error) {

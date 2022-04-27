@@ -106,11 +106,11 @@ const tokens = {
 // calling periode to store periode details in db
 const setIntervalImmediate = () => {
   setInterval(() => {
-    const { fetchData: periode } = require("./cron/periode");
+    const { fetchData: periode } = require("./cron/oop/periode");
     periode();
   }, 60 * 60 * 1000);
   setTimeout(() => {
-    const { fetchData: periode } = require("./cron/periode");
+    const { fetchData: periode } = require("./cron/oop/periode");
     periode();
   }, 2000);
 };

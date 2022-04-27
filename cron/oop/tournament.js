@@ -308,7 +308,7 @@ class Tournament {
               (competitor) => competitor.id === match.competitors[1].id
             );
             const newMatch = new Match(
-              match.id.substr(10),
+              match.id.substr(9),
               match.status,
               this.id,
               match.scheduled,
@@ -348,35 +348,4 @@ class Tournament {
   }
 }
 
-const c = async () => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const connection = await connectToDb();
-      const o = await database(
-        "TRUNCATE TABLE `tournament_competitor_player`;TRUNCATE TABLE `tournament_competitor`;TRUNCATE TABLE `competitors`;TRUNCATE TABLE `players`;TRUNCATE TABLE `tournament_information`;",
-        [],
-        connection
-      );
-      connection.release();
-      resolve();
-    } catch (error) {
-      console.log(error.message);
-      reject(error);
-    }
-  });
-};
-const a = async () => {
-  try {
-    // await c();
-    const newTournament = new Tournament(2472);
-    await newTournament.storeTournament();
-    await newTournament.storeCompetitors();
-    await newTournament.storeMatches();
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-a();
-
-// module.exports = Tournament;
+module.exports = Tournament;

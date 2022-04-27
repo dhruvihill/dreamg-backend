@@ -3,3 +3,8 @@ MAKE CONSTRUCTORS WORK ON ONLY ID
 everything work on foreach make it work on recursive function.
 
 works only resolve promise never reject
+
+
+CONSERN
+
+at time of match lineup if player is  not stored in database and player will be added in players table bus player will be not in match_players table

@@ -176,7 +176,7 @@ class PlayerStatistics extends Player {
     country,
     countryCode,
     dateOfBirth,
-    PlayerStatistics,
+    playerStatistics,
     battingStyle,
     bowlingStyle
   ) {
@@ -269,8 +269,8 @@ class PlayerStatistics extends Player {
         await this.#storeBowlingStyle(this.#bowlingStyle, connection);
 
         const updatePlayer = await database(
-          "UPDATE players SET playerBattingStyleId = ?, playerBowlingStyleId = ? WHERE playerRadarId = ?;",
-          [this.#battingStyleId, this.#bowlingStyleId, super.id],
+          "UPDATE players SET playerBattingStyleId = ?, playerBowlingStyleId = ? WHERE playerId = ?;",
+          [this.#battingStyleId, this.#bowlingStyleId, this.id],
           connection
         );
         if (updatePlayer.affectedRows) {
@@ -296,7 +296,7 @@ class PlayerStatistics extends Player {
           const storeStatisticsBatting = await database(
             "INSERT INTO player_statistics_batting SET ?;",
             {
-              playerId: super.id,
+              playerId: this.id,
               type: statistics.type,
               matches: statistics.batting.matches,
               innings: statistics.batting.innings,
@@ -316,7 +316,7 @@ class PlayerStatistics extends Player {
           const storeStatisticsBowling = await database(
             "INSERT INTO player_statistics_bowling SET ?;",
             {
-              playerId: super.id,
+              playerId: this.id,
               type: statistics.type,
               matches: statistics.bowling.matches,
               innings: statistics.bowling.innings,
@@ -382,14 +382,29 @@ class PlayerStatistics extends Player {
           connection
         );
         if (!isStateExist) {
-          const playerData = await makeRequest(
-            `players/sr:player:${this.radarId}/profile.json`
-          );
-          if (playerData && playerData.player && playerData.statistics) {
-            this.#battingStyle = playerData.player.batting_style;
-            this.#bowlingStyle = playerData.player.bowling_style;
-            this.#playerStatistics = playerData.statistics.tournaments;
+          if (!this.#playerStatistics?.length > 0) {
+            const playerData = await makeRequest(
+              `players/sr:player:${this.radarId}/profile.json`
+            );
+            if (playerData && playerData.player && playerData.statistics) {
+              this.#battingStyle = playerData.player.batting_style;
+              this.#bowlingStyle = playerData.player.bowling_style;
+              this.#playerStatistics = playerData.statistics.tournaments;
 
+              const updatePlayer = await this.#storePlayerStyle();
+              const storePlayerStaticsRes = await this.#storePlayerStatistics();
+              if (updatePlayer && storePlayerStaticsRes) {
+                connection.release();
+                resolve();
+              } else {
+                connection.release();
+                resolve();
+              }
+            } else {
+              connection.release();
+              resolve();
+            }
+          } else {
             const updatePlayer = await this.#storePlayerStyle();
             const storePlayerStaticsRes = await this.#storePlayerStatistics();
             if (updatePlayer && storePlayerStaticsRes) {
@@ -399,9 +414,6 @@ class PlayerStatistics extends Player {
               connection.release();
               resolve();
             }
-          } else {
-            connection.release();
-            resolve();
           }
         } else {
           connection.release();

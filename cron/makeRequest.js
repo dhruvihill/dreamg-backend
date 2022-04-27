@@ -62,7 +62,6 @@ const makeRequest = (url) => {
                 });
                 selectTokenAndCall();
               } else {
-                console.log(error.response.data, "error");
                 if (
                   error?.response?.data
                     ?.toString()
