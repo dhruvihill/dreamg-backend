@@ -156,7 +156,7 @@ const setIntervalImmediate = () => {
     periode();
   }, 2000);
 };
-setIntervalImmediate();
+// setIntervalImmediate();
 
 const app = express();
 
