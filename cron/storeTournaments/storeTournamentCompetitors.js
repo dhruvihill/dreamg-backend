@@ -37,11 +37,11 @@ const storeTournamentCompetitors = async (tournament, connection) => {
             }
           }
         } catch (error) {
-          console.log(error.message, "storeAllRelations");
+          console.log(error, "storeAllRelations");
         }
       });
     } catch (error) {
-      console.log(error.message, "storeAllRelations");
+      console.log(error, "storeAllRelations");
     }
   });
 };

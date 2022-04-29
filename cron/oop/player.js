@@ -9,7 +9,7 @@ class Role {
   }
 
   storeRole() {
-    return new Promise(async (resolve) => {
+    return new Promise(async (resolve, reject) => {
       try {
         if (this.#roleName) {
           const connection = await connectToDb();
@@ -38,7 +38,7 @@ class Role {
         }
       } catch (error) {
         this.roleId = null;
-        console.log(error.message, "storePlayerRole");
+        console.log(error, "storePlayerRole");
         resolve(null);
       }
     });
@@ -73,7 +73,7 @@ class Player extends Role {
   }
 
   storePlayer() {
-    return new Promise(async (resolve) => {
+    return new Promise(async (resolve, reject) => {
       try {
         if (this.radarId) {
           const connection = await connectToDb();
@@ -126,7 +126,7 @@ class Player extends Role {
   }
 
   storePlayerRelation(tournamentCompetitorId) {
-    return new Promise(async (resolve) => {
+    return new Promise(async (resolve, reject) => {
       try {
         const connection = await connectToDb();
         const [{ isExists, tournamentCompetitorPlayerId }] = await database(
@@ -154,7 +154,7 @@ class Player extends Role {
           resolve();
         }
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         resolve();
       }
     });
@@ -193,7 +193,7 @@ class PlayerStatistics extends Player {
   }
 
   async #storeBattingStyle() {
-    return new Promise(async (resolve) => {
+    return new Promise(async (resolve, reject) => {
       try {
         if (this.#battingStyle) {
           const connection = await connectToDb();
@@ -221,14 +221,14 @@ class PlayerStatistics extends Player {
           resolve(null);
         }
       } catch (error) {
-        console.log(error.message, "storeBattingStyle");
+        console.log(error, "storeBattingStyle");
         resolve(null);
       }
     });
   }
 
   async #storeBowlingStyle() {
-    return new Promise(async (resolve) => {
+    return new Promise(async (resolve, reject) => {
       try {
         if (this.#bowlingStyle) {
           const connection = await connectToDb();
@@ -255,14 +255,14 @@ class PlayerStatistics extends Player {
           resolve(null);
         }
       } catch (error) {
-        console.log(error.message, "storeBattingStyle");
+        console.log(error, "storeBattingStyle");
         this.#bowlingStyleId = null;
       }
     });
   }
 
   async #storePlayerStyle() {
-    return new Promise(async (resolve) => {
+    return new Promise(async (resolve, reject) => {
       try {
         const connection = await connectToDb();
         await this.#storeBattingStyle(this.#battingStyle, connection);
@@ -281,66 +281,31 @@ class PlayerStatistics extends Player {
           resolve(false);
         }
       } catch (error) {
-        console.log(error.message, "storePlayerStyle");
+        console.log(error, "storePlayerStyle");
       }
     });
   }
 
   async #storePlayerStatistics() {
-    return new Promise(async (resolve) => {
+    return new Promise(async (resolve, reject) => {
       try {
         const connection = await connectToDb();
         let statsCount = 0;
         const totalStats = this.#playerStatistics.length;
         const storeSingleState = async (statistics) => {
-          const storeStatisticsBatting = await database(
-            "INSERT INTO player_statistics_batting SET ?;",
-            {
-              playerId: this.id,
-              type: statistics.type,
-              matches: statistics.batting.matches,
-              innings: statistics.batting.innings,
-              notOuts: statistics.batting.not_outs,
-              runs: statistics.batting.runs,
-              highestScore: statistics.batting.highest_score,
-              average: statistics.batting.average,
-              hundreds: statistics.batting.hundreds,
-              fifties: statistics.batting.fifties,
-              fours: statistics.batting.fours,
-              sixes: statistics.batting.sixes,
-              strikeRate: statistics.batting.strike_rate,
-              ballFaced: statistics.batting.balls_faced,
-            },
+          const [playerBattingStats] = await database(
+            "SELECT COUNT(*) AS isExists FROM player_statistics_batting WHERE player_statistics_batting.playerId = ? AND player_statistics_batting.type = ?;",
+            [this.id, statistics.type],
             connection
           );
-          const storeStatisticsBowling = await database(
-            "INSERT INTO player_statistics_bowling SET ?;",
-            {
-              playerId: this.id,
-              type: statistics.type,
-              matches: statistics.bowling.matches,
-              innings: statistics.bowling.innings,
-              overs: statistics.bowling.overs,
-              maidens: statistics.bowling.maidens,
-              runs: statistics.bowling.runs,
-              wickets: statistics.bowling.wickets,
-              economy: statistics.bowling.economy,
-              average: statistics.bowling.average,
-              strikeRate: statistics.bowling.strike_rate,
-              bestBowling: statistics.bowling.best_bowling,
-              ballsBalled: statistics.bowling.balls_bowled,
-              fourWicketHauls: statistics.bowling.four_wicket_hauls,
-              fiverWicketHauls: statistics.bowling.five_wicket_hauls,
-              tenWicketHauls: statistics.bowling.ten_wicket_hauls,
-              catches: statistics.fielding.catches,
-              stumping: statistics.fielding.stumpings,
-              runOuts: statistics.fielding.runouts,
-            },
+          const [playerBowlingStats] = await database(
+            "SELECT COUNT(*) AS isExists FROM player_statistics_bowling WHERE player_statistics_bowling.playerId = ? AND player_statistics_bowling.type = ?;",
+            [this.id, statistics.type],
             connection
           );
           if (
-            storeStatisticsBatting.affectedRows &&
-            storeStatisticsBowling.affectedRows
+            playerBattingStats.isExists > 0 &&
+            playerBowlingStats.isExists > 0
           ) {
             statsCount++;
             if (statsCount === totalStats) {
@@ -351,7 +316,135 @@ class PlayerStatistics extends Player {
                 storeSingleState(this.#playerStatistics[statsCount]);
               }, 0);
             }
-          } else {
+          } else if (
+            playerBattingStats.isExists <= 0 &&
+            playerBowlingStats.isExists <= 0
+          ) {
+            const storeStatisticsBatting = await database(
+              "INSERT INTO player_statistics_batting SET ?;",
+              {
+                playerId: this.id,
+                type: statistics.type,
+                matches: statistics.batting.matches,
+                innings: statistics.batting.innings,
+                notOuts: statistics.batting.not_outs,
+                runs: statistics.batting.runs,
+                highestScore: statistics.batting.highest_score,
+                average: statistics.batting.average,
+                hundreds: statistics.batting.hundreds,
+                fifties: statistics.batting.fifties,
+                fours: statistics.batting.fours,
+                sixes: statistics.batting.sixes,
+                strikeRate: statistics.batting.strike_rate,
+                ballFaced: statistics.batting.balls_faced,
+              },
+              connection
+            );
+            const storeStatisticsBowling = await database(
+              "INSERT INTO player_statistics_bowling SET ?;",
+              {
+                playerId: this.id,
+                type: statistics.type,
+                matches: statistics.bowling.matches,
+                innings: statistics.bowling.innings,
+                overs: statistics.bowling.overs,
+                maidens: statistics.bowling.maidens,
+                runs: statistics.bowling.runs,
+                wickets: statistics.bowling.wickets,
+                economy: statistics.bowling.economy,
+                average: statistics.bowling.average,
+                strikeRate: statistics.bowling.strike_rate,
+                bestBowling: statistics.bowling.best_bowling,
+                ballsBalled: statistics.bowling.balls_bowled,
+                fourWicketHauls: statistics.bowling.four_wicket_hauls,
+                fiverWicketHauls: statistics.bowling.five_wicket_hauls,
+                tenWicketHauls: statistics.bowling.ten_wicket_hauls,
+                catches: statistics.fielding.catches,
+                stumping: statistics.fielding.stumpings,
+                runOuts: statistics.fielding.runouts,
+              },
+              connection
+            );
+            if (
+              storeStatisticsBatting.affectedRows &&
+              storeStatisticsBowling.affectedRows
+            ) {
+              statsCount++;
+              if (statsCount === totalStats) {
+                connection.release();
+                resolve(true);
+              } else {
+                setTimeout(() => {
+                  storeSingleState(this.#playerStatistics[statsCount]);
+                }, 0);
+              }
+            } else {
+              statsCount++;
+              if (statsCount === totalStats) {
+                connection.release();
+                resolve(true);
+              } else {
+                setTimeout(() => {
+                  storeSingleState(this.#playerStatistics[statsCount]);
+                }, 0);
+              }
+            }
+          } else if (playerBattingStats.isExists > 0) {
+            const storeStatisticsBatting = await database(
+              "INSERT INTO player_statistics_batting SET ?;",
+              {
+                playerId: this.id,
+                type: statistics.type,
+                matches: statistics.batting.matches,
+                innings: statistics.batting.innings,
+                notOuts: statistics.batting.not_outs,
+                runs: statistics.batting.runs,
+                highestScore: statistics.batting.highest_score,
+                average: statistics.batting.average,
+                hundreds: statistics.batting.hundreds,
+                fifties: statistics.batting.fifties,
+                fours: statistics.batting.fours,
+                sixes: statistics.batting.sixes,
+                strikeRate: statistics.batting.strike_rate,
+                ballFaced: statistics.batting.balls_faced,
+              },
+              connection
+            );
+            statsCount++;
+            if (statsCount === totalStats) {
+              connection.release();
+              resolve(true);
+            } else {
+              setTimeout(() => {
+                storeSingleState(this.#playerStatistics[statsCount]);
+              }, 0);
+            }
+          } else if (playerBowlingStats.isExists > 0) {
+            const storeStatisticsBowling = await database(
+              "INSERT INTO player_statistics_bowling SET ?;",
+              {
+                playerId: this.id,
+                type: statistics.type,
+                matches: statistics.bowling.matches,
+                innings: statistics.bowling.innings,
+                overs: statistics.bowling.overs,
+                maidens: statistics.bowling.maidens,
+                runs: statistics.bowling.runs,
+                wickets: statistics.bowling.wickets,
+                economy: statistics.bowling.economy,
+                average: statistics.bowling.average,
+                strikeRate: statistics.bowling.strike_rate,
+                bestBowling: statistics.bowling.best_bowling,
+                ballsBalled: statistics.bowling.balls_bowled,
+                fourWicketHauls: statistics.bowling.four_wicket_hauls,
+                fiverWicketHauls: statistics.bowling.five_wicket_hauls,
+                tenWicketHauls: statistics.bowling.ten_wicket_hauls,
+                catches: statistics.fielding.catches,
+                stumping: statistics.fielding.stumpings,
+                runOuts: statistics.fielding.runouts,
+              },
+              connection
+            );
             statsCount++;
             if (statsCount === totalStats) {
               connection.release();
@@ -365,8 +458,8 @@ class PlayerStatistics extends Player {
         };
         storeSingleState(this.#playerStatistics[statsCount]);
       } catch (error) {
-        console.log(error.message, "storeSinglePlayerStatics");
-        resolve(false);
+        console.log(error, "storeSinglePlayerStatics");
+        reject(error);
       }
     });
   }
@@ -420,8 +513,8 @@ class PlayerStatistics extends Player {
           resolve();
         }
       } catch (error) {
-        console.log(error.message);
-        reject();
+        console.log(error);
+        reject(error);
       }
     });
   }

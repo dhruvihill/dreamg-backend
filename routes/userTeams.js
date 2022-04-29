@@ -12,12 +12,12 @@ router.post("/getPlayers", async (req, res) => {
     if (!/[^0-9]/g.test(matchId)) {
       let data;
       if (userTeamId && !/[^0-9]/g.test(userTeamId) && userTeamId > 0) {
-        [data] = await fetchData("CALL get_players(?, ?);", [
+        [data] = await fetchData("CALL getPlayers(?, ?);", [
           matchId,
           userTeamId,
         ]);
       } else {
-        [data] = await fetchData("CALL get_players(?, ?);", [matchId, 0]);
+        [data] = await fetchData("CALL getPlayers(?, ?);", [matchId, 0]);
       }
       const serverAddress = `${req.protocol}://${req.headers.host}`;
 
@@ -55,7 +55,7 @@ router.post("/getPlayers", async (req, res) => {
 
 // set team of matchId, userId, teamType
 router.post("/setTeam", verifyUser, async (req, res) => {
-  const {
+  let {
     userTeamType,
     matchId,
     players,
@@ -81,7 +81,7 @@ router.post("/setTeam", verifyUser, async (req, res) => {
     ) {
       let message;
       if (userTeamId && !regx.test(userTeamId) && userTeamId > 0) {
-        [[{ message }]] = await fetchData("CALL set_team(?, ?, ?, ?, ?, ?,?)", [
+        message = await fetchData("CALL set_team(?, ?, ?, ?, ?, ?, ?);", [
           userTeamType,
           matchId,
           userId,
@@ -91,7 +91,7 @@ router.post("/setTeam", verifyUser, async (req, res) => {
           [...players],
         ]);
       } else {
-        [[{ message }]] = await fetchData("CALL set_team(?, ?, ?, ?, ?, ?,?)", [
+        message = await fetchData("CALL set_team(?, ?, ?, ?, ?, ?, ?);", [
           userTeamType,
           matchId,
           userId,
@@ -101,6 +101,7 @@ router.post("/setTeam", verifyUser, async (req, res) => {
           [...players],
         ]);
       }
+      console.log(message);
       if (message === "success") {
         res.status(200).json({
           status: true,
@@ -112,6 +113,7 @@ router.post("/setTeam", verifyUser, async (req, res) => {
       throw { message: "invalid input" };
     }
   } catch (error) {
+    console.log(error);
     res.status(400).json({
       status: false,
       message: error.sqlMessage ? error.sqlMessage : error.message,
@@ -137,22 +139,22 @@ router.post("/getPredictions", async (req, res) => {
         throw { message: "invalid input" };
       }
       totalPredictorsQuery =
-        "SELECT COUNT(*) AS totalPredictors FROM fullteamdetails WHERE matchId = ?;";
+        "SELECT COUNT(*) AS totalPredictors FROM userTeamDetails WHERE matchId = ?;";
       query =
         filter === "MOST_VIEWED"
-          ? "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamViews) AS totalViews, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalViews DESC LIMIT ?, 20;"
+          ? "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(userTeamDetails.userTeamViews) AS totalViews, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE userTeamDetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalViews DESC LIMIT ?, 20;"
           : filter === "MOST_LIKED"
-          ? "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamLikes) AS totalLikes, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalLikes DESC LIMIT ?, 20;"
-          : "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamPoints) AS totalPoints, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId WHERE fullteamdetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT ?, 20;";
+          ? "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, fullmatchdetails.displayName, SUM(userTeamDetails.userTeamLikes) AS totalLikes, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE userTeamDetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalLikes DESC LIMIT ?, 20;"
+          : "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, fullmatchdetails.displayName, SUM(userTeamDetails.userTeamPoints) AS totalPoints, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE userTeamDetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT ?, 20;";
     } else {
       totalPredictorsQuery =
-        "SELECT COUNT(*) AS totalPredictors FROM fullteamdetails;";
+        "SELECT COUNT(*) AS totalPredictors FROM userTeamDetails;";
       query =
         filter === "MOST_VIEWED"
-          ? "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamViews) AS totalViews, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId GROUP BY userdetails.userId ORDER BY totalViews DESC LIMIT ?, 20;"
+          ? "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, fullmatchdetails.displayName, SUM(userTeamDetails.userTeamViews) AS totalViews, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId GROUP BY userdetails.userId ORDER BY totalViews DESC LIMIT ?, 20;"
           : filter === "MOST_LIKED"
-          ? "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamLikes) AS totalLikes, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId GROUP BY userdetails.userId ORDER BY totalLikes DESC LIMIT ?, 20;"
-          : "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, fullmatchdetails.displayName, SUM(fullteamdetails.userTeamPoints) AS totalPoints, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN fullteamdetails ON fullteamdetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = fullteamdetails.matchId GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT ?, 20;";
+          ? "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, fullmatchdetails.displayName, SUM(userTeamDetails.userTeamLikes) AS totalLikes, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId GROUP BY userdetails.userId ORDER BY totalLikes DESC LIMIT ?, 20;"
+          : "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, fullmatchdetails.displayName, SUM(userTeamDetails.userTeamPoints) AS totalPoints, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT ?, 20;";
     }
     if (
       validMatchId &&
@@ -383,43 +385,43 @@ router.post("/getExpertPredictor", async (req, res) => {
 });
 
 // getting trending predictors by points
-router.get("/getTrendingPredictors", async (req, res) => {
-  const recentMatchesQuery =
-    "SELECT DISTINCT fullmatchdetails.matchId FROM fullmatchdetails JOIN fullteamdetails ON fullteamdetails.matchId = fullmatchdetails.matchId WHERE (fullmatchdetails.matchStartTimeMilliSeconds < unix_timestamp(now()) * 1000 AND fullmatchdetails.matchStatus != 3) ORDER BY matchStartTimeMilliSeconds DESC LIMIT 5";
-  const topPredictorsQuery =
-    "SELECT userdetails.userId, userdetails.imageStamp, firstName, lastName, SUM(fullteamdetails.userTeamPoints) AS totalPoints FROM fullteamdetails JOIN userdetails ON userdetails.userId = fullteamdetails.userId WHERE matchId IN (30100, 30096,30030) GROUP BY fullteamdetails.userId ORDER BY totalPoints DESC LIMIT 10";
+// router.get("/getTrendingPredictors", async (req, res) => {
+//   const recentMatchesQuery =
+//     "SELECT DISTINCT fullmatchdetails.matchId FROM fullmatchdetails JOIN userTeamDetails ON userTeamDetails.matchId = fullmatchdetails.matchId WHERE (parseInt(fullmatchdetails.matchStartDateTime) < unix_timestamp(now()) * 1000 AND fullmatchdetails.matchStatus != 3) ORDER BY matchStartDateTime DESC LIMIT 5";
+//   const topPredictorsQuery =
+//     "SELECT userdetails.userId, userdetails.imageStamp, firstName, lastName, SUM(userTeamDetails.userTeamPoints) AS totalPoints FROM userTeamDetails JOIN userdetails ON userdetails.userId = userTeamDetails.userId WHERE matchId IN (30100, 30096,30030) GROUP BY userTeamDetails.userId ORDER BY totalPoints DESC LIMIT 10";
 
-  try {
-    const serverAddress = `${req.protocol}://${req.headers.host}`;
-    const recentMatches = await fetchData(recentMatchesQuery);
-    const matchIds = recentMatches.map(({ matchId }) => matchId);
-    const predictor = await fetchData(topPredictorsQuery, [matchIds.join(",")]);
+//   try {
+//     const serverAddress = `${req.protocol}://${req.headers.host}`;
+//     const recentMatches = await fetchData(recentMatchesQuery);
+//     const matchIds = recentMatches.map(({ matchId }) => matchId);
+//     const predictor = await fetchData(topPredictorsQuery, [matchIds.join(",")]);
 
-    // replace server address
-    predictor.forEach((trending) => {
-      trending.displayPicture = imageUrl(
-        __dirname,
-        "../",
-        `${process.env.USER_IMAGE_URL}${trending.imageStamp}.jpg`,
-        serverAddress
-      );
-      delete trending.imageStamp;
-    });
-    res.status(200).json({
-      status: true,
-      message: "success",
-      data: {
-        trendingPredictors: predictor,
-      },
-    });
-  } catch (error) {
-    res.status(200).json({
-      status: false,
-      message: error.sqlMessage || error.message,
-      data: {},
-    });
-  }
-});
+//     // replace server address
+//     predictor.forEach((trending) => {
+//       trending.displayPicture = imageUrl(
+//         __dirname,
+//         "../",
+//         `${process.env.USER_IMAGE_URL}${trending.imageStamp}.jpg`,
+//         serverAddress
+//       );
+//       delete trending.imageStamp;
+//     });
+//     res.status(200).json({
+//       status: true,
+//       message: "success",
+//       data: {
+//         trendingPredictors: predictor,
+//       },
+//     });
+//   } catch (error) {
+//     res.status(200).json({
+//       status: false,
+//       message: error.sqlMessage || error.message,
+//       data: {},
+//     });
+//   }
+// });
 
 // getting teams by match id and user id
 router.post("/getUserTeamsByMatch", async (req, res) => {
@@ -804,7 +806,7 @@ router.post("/getUserTeamPlayers", verifyUser, async (req, res) => {
 
   // queries to fetch data
   const fetchPlayerIdQuery =
-    "SELECT EXISTS(SELECT userId FROM fulllikesdetails WHERE userTeamId = ? AND userId = ?) AS isUserLiked, matchId, userTeamId, teamTypeString, captain, userTeamLikes AS likes, viceCaptain, player1, player2, player3, player4, player5, player6, player7, player8, player9, player10, player11 FROM fullteamdetails WHERE userTeamId = ?;";
+    "SELECT EXISTS(SELECT userId FROM fulllikesdetails WHERE userTeamId = ? AND userId = ?) AS isUserLiked, matchId, userTeamId, teamTypeString, captain, userTeamLikes AS likes, viceCaptain, player1, player2, player3, player4, player5, player6, player7, player8, player9, player10, player11 FROM userTeamDetails WHERE userTeamId = ?;";
   const teamQuery =
     "SELECT team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName FROM fullmatchdetails WHERE matchId = ?;";
   const playerQuery =
@@ -1104,7 +1106,7 @@ router.post("/compareTeams", async (req, res) => {
     const allPlayersForMatch =
       "SELECT matchId, playerId, fullplayerdetails.name AS playerName, fullplayerdetails.displayName AS playerDisplayName, roleId, roleName, fullplayerdetails.teamId, allteams.name AS teamName, allteams.displayName AS teamDisplayName FROM fullplayerdetails JOIN allteams ON allteams.teamId = fullplayerdetails.teamId WHERE matchId = ?;";
     const matchDetails =
-      "SELECT matchId, matchStartTimeMilliSeconds AS matchStartTime, matchStartDateTime, venue, seriesDname AS seriesDisplayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName FROM fullmatchdetails WHERE matchId = ?;";
+      "SELECT matchId, matchStartDateTime, venue, seriesDname AS seriesDisplayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName FROM fullmatchdetails WHERE matchId = ?;";
     if (!/[^0-9]/g.test(matchId)) {
       const serverAddress = `${req.protocol}://${req.headers.host}`;
       const response = await fetchData(allPlayersForMatch, [matchId]);
@@ -1137,9 +1139,6 @@ router.post("/compareTeams", async (req, res) => {
           `${process.env.TEAM_IMAGE_URL}${responseData[0].team2Id}.jpg`,
           serverAddress
         );
-        responseData[0].matchStartTime = responseData[0].matchStartTime
-          ? responseData[0].matchStartTime.toString()
-          : "";
         // converting time zone
         [responseData[0].matchStartDateTime, responseData[0].matchStartTime] =
           convertTimeZone(responseData[0].matchStartDateTime, timeZone);

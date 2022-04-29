@@ -1,7 +1,7 @@
 const { connectToDb, database, makeRequest } = require("./makeRequest");
 
 const storeBattingStyle = async (battingStyle, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       if (battingStyle) {
         let [{ isExists: isStyleExist, styleId }] = await database(
@@ -23,13 +23,13 @@ const storeBattingStyle = async (battingStyle, connection) => {
         resolve(null);
       }
     } catch (error) {
-      console.log(error.message, "storeBattingStyle");
+      console.log(error, "storeBattingStyle");
     }
   });
 };
 
 const storeBowlingStyle = async (bowlingStyle, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       if (bowlingStyle) {
         let [{ isExists: isStyleExist, styleId }] = await database(
@@ -51,13 +51,13 @@ const storeBowlingStyle = async (bowlingStyle, connection) => {
         resolve(null);
       }
     } catch (error) {
-      console.log(error.message, "storeBattingStyle");
+      console.log(error, "storeBattingStyle");
     }
   });
 };
 
 const storePlayerStyle = async (player, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const battingStyleId = await storeBattingStyle(
         player.batting_style,
@@ -79,13 +79,13 @@ const storePlayerStyle = async (player, connection) => {
         resolve(false);
       }
     } catch (error) {
-      console.log(error.message, "storePlayerStyle");
+      console.log(error, "storePlayerStyle");
     }
   });
 };
 
 const storeSinglePlayerDb = (player, storedPlayerId, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       let statsCount = 0;
       const totalStats = player.statistics.tournaments.length;
@@ -160,13 +160,13 @@ const storeSinglePlayerDb = (player, storedPlayerId, connection) => {
       };
       storeSingleState(player.statistics.tournaments[statsCount]);
     } catch (error) {
-      console.log(error.message, "storeSinglePlayerStatics");
+      console.log(error, "storeSinglePlayerStatics");
     }
   });
 };
 
 const storePlayersStatics = async (players) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     let playerCount = 0;
     const totalPlayers = players.length;
 
@@ -260,7 +260,7 @@ const fetchData = async () => {
     );
     storePlayersStatics(players);
   } catch (error) {
-    console.log(error.message, "fetchData");
+    console.log(error, "fetchData");
   }
 };
 

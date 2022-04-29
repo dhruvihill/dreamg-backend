@@ -7,7 +7,7 @@ const log = require("log-to-file");
 const onGoingMatches = [];
 
 const updateMatchStatus = (status, matchId) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const connection = await connectToDb();
       let matchStatus = await database(
@@ -27,7 +27,7 @@ const updateMatchStatus = (status, matchId) => {
         resolve(false);
       }
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
       resolve(false);
     }
   });
@@ -107,17 +107,17 @@ const storeScorcardAndPoints = async (match) => {
           }
         }
       } catch (error) {
-        console.log(error.message, "storeScor");
+        console.log(error, "storeScor");
       }
     };
     storeScor();
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
   }
 };
 
 // const storeMatchLineUpAndStatus = async (match) => {
-//   return new Promise(async (resolve) => {
+//   return new Promise(async (resolve, reject) => {
 //     try {
 //       const connection = await connectToDb();
 //       const res = await storeMatchLineup(
@@ -209,13 +209,13 @@ const handleMatchLineUp = async (match) => {
     };
     handleMatchLineUpStore();
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
     resolve(false);
   }
 };
 
 const fetchData = async () => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const connection = await connectToDb();
       const matches = await database(
@@ -281,7 +281,7 @@ const fetchData = async () => {
               }
             }
           } catch (error) {
-            console.log(error.message, "processMatch");
+            console.log(error, "processMatch");
             currentMatch++;
             if (currentMatch !== totalMatches) {
               setTimeout(() => {
@@ -298,7 +298,7 @@ const fetchData = async () => {
         console.log("No matches to fetch");
       }
     } catch (error) {
-      console.log(error.message, "fetchData");
+      console.log(error, "fetchData");
     }
   });
 };

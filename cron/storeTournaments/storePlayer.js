@@ -3,7 +3,7 @@ const { database } = require("../makeRequest");
 
 // store player role in player_role table
 const storePlayerRole = async (role, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       if (role) {
         let [{ isExists: isRoleExist, roleId }] = await database(
@@ -25,13 +25,13 @@ const storePlayerRole = async (role, connection) => {
         resolve(0);
       }
     } catch (error) {
-      console.log(error.message, "storePlayerRole");
+      console.log(error, "storePlayerRole");
     }
   });
 };
 
 const storeSinglePlayer = async (player, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       if (player && player.id) {
         let [{ isExists: isPlayerExist, playerId }] = await database(
@@ -74,7 +74,7 @@ const storeSinglePlayer = async (player, connection) => {
 };
 
 const storePlayerOfTeams = async (tournament, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     let teamsLoopCount = 0;
     const totalTeams = tournament.teams.length;
 
@@ -102,7 +102,7 @@ const storePlayerOfTeams = async (tournament, connection) => {
             }, 0);
           }
         } catch (error) {
-          console.log(error.message, "storePlayersOfTeamsParent");
+          console.log(error, "storePlayersOfTeamsParent");
           playerLoopCount++;
           if (playerLoopCount === totalPlayers) {
             teamsLoopCount++;

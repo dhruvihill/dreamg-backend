@@ -51,14 +51,14 @@ class Competitor {
         }
       } catch (error) {
         error.sqlMessage ? (this.id = null) : null;
-        console.log(error.message);
-        reject();
+        console.log(error);
+        reject(error);
       }
     });
   }
 
   storeCompetitorRelation(tournamentStoredId) {
-    return new Promise(async (resolve) => {
+    return new Promise(async (resolve, reject) => {
       try {
         const connection = await connectToDb();
         const [{ isExists, id }] = await database(
@@ -84,7 +84,7 @@ class Competitor {
           resolve();
         }
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         if (error.sqlMessage) {
           this.tournamentCompetitorId = null;
         }
@@ -94,7 +94,7 @@ class Competitor {
   }
 
   #fetchPlayers(tournamentRadarId) {
-    return new Promise(async (resolve) => {
+    return new Promise(async (resolve, reject) => {
       const { players } = await makeRequest(
         `/tournaments/sr:tournament:${tournamentRadarId}/teams/sr:competitor:${
           this.#radarId
@@ -150,13 +150,13 @@ class Competitor {
               storeSinglePlayer(this.players[currentPlayer]);
             }
           } catch (error) {
-            console.log(error.message);
-            reject();
+            console.log(error);
+            reject(error);
           }
         };
         storeSinglePlayer(this.players[currentPlayer]);
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         resolve(false);
       }
     });

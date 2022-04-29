@@ -49,7 +49,7 @@ class Scorcard {
           throw new Error("Scorcard details not found");
         }
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         reject(error);
       }
     });
@@ -84,7 +84,7 @@ class Scorcard {
         this.#scorcardDetails.tossWonBy = tossWonBy.id;
         resolve();
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         reject(error);
       }
     });
@@ -111,7 +111,7 @@ class Scorcard {
           resolve(true);
         }
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         reject(error);
       }
     });
@@ -141,7 +141,7 @@ class Scorcard {
           resolve(true);
         }
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         reject(error);
       }
     });
@@ -242,7 +242,7 @@ class Scorcard {
           storeSingleBastMan(player);
         });
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         reject(error);
       }
     });
@@ -309,14 +309,14 @@ class Scorcard {
               }, 0);
             }
           } catch (error) {
-            console.log(error.message, "storeBowlers");
+            console.log(error, "storeBowlers");
           }
         };
         bowlingTeam?.statistics?.bowling?.players?.forEach(async (player) => {
           storeSingleBowler(player);
         });
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         reject(error);
       }
     });
@@ -402,21 +402,21 @@ class Scorcard {
                 ) {
                   resolve();
                 } else {
-                  reject();
+                  throw new Error("something went wrong");
                 }
               } else {
-                reject();
+                throw new Error("Insufficient data");
               }
             } catch (error) {
-              console.log(error.message);
+              console.log(error);
               reject(error);
             }
           });
         } else {
-          reject();
+          throw new Error("Insufficient data");
         }
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         reject(error);
       }
     });
@@ -458,14 +458,14 @@ class Scorcard {
             resolve();
           } else {
             connection.release();
-            reject();
+            throw new Error("something went wrong");
           }
         } else {
           connection.release();
           resolve();
         }
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         reject(error);
       }
     });

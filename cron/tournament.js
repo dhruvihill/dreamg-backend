@@ -13,7 +13,7 @@ const { connectToDb, database, makeRequest } = require("./makeRequest");
 
 // store category in tournament_category table
 const storeCategoryParent = async (category, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       let [{ isExists: isCategoryExist, categoryId }] = await database(
         "SELECT COUNT(tournament_category.categoryId ) AS isExists, tournament_category.categoryId AS categoryId FROM tournament_category WHERE tournament_category.categoryRadarId = ?;",
@@ -31,7 +31,7 @@ const storeCategoryParent = async (category, connection) => {
         resolve(categoryId);
       }
     } catch (error) {
-      console.log(error.message, "storeCategoryAndTyprParent");
+      console.log(error, "storeCategoryAndTyprParent");
     }
   });
 };
@@ -56,14 +56,14 @@ const storeTypeParent = async (type, connection) => {
         resolve(typeId);
       }
     } catch (error) {
-      console.log(error.message, "storeTypeParent");
+      console.log(error, "storeTypeParent");
     }
   });
 };
 
 // will store all relations
 const storeAllRelations = (tournament, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const storeTournamentCompetitorsRes = await storeTournamentCompetitors(
         tournament,
@@ -84,7 +84,7 @@ const storeAllRelations = (tournament, connection) => {
         }
       }
     } catch (error) {
-      console.log(error.message, "storeAllRelations");
+      console.log(error, "storeAllRelations");
     }
   });
 };
@@ -178,7 +178,7 @@ const storeTournaments = async (tournaments) => {
       }
     });
   } catch (error) {
-    console.log(error.message, "storeTournaments");
+    console.log(error, "storeTournaments");
   }
 };
 
@@ -218,7 +218,7 @@ const tournamentCompetitorsWithPlayers = async (groups, tournamentId) => {
             } else {
               storePlayersInTeams(allCompetitors[competitorsCountLoop]);
             }
-            console.log(error.message);
+            console.log(error);
           }
         };
         storePlayersInTeams(allCompetitors[competitorsCountLoop]);
@@ -234,11 +234,11 @@ const tournamentCompetitorsWithPlayers = async (groups, tournamentId) => {
             storePlayersInTeams();
           }
         } catch (error) {
-          console.log(error.message, "tournamentCompetitorsWithPlayers");
+          console.log(error, "tournamentCompetitorsWithPlayers");
         }
       });
     } catch (error) {
-      console.log(error.message, "tournamentCompetitorsWithPlayers");
+      console.log(error, "tournamentCompetitorsWithPlayers");
       reject([]);
     }
   });
@@ -246,7 +246,7 @@ const tournamentCompetitorsWithPlayers = async (groups, tournamentId) => {
 
 // will make tournament object with team details
 const processTournaments = async (tournaments) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       let currentTournament = 0;
       const totalTournaments = tournaments.length;
@@ -349,12 +349,12 @@ const processTournaments = async (tournaments) => {
             currentTournament++;
             processTournament(tournaments[currentTournament]);
           }
-          console.log(error.message, "processTournaments");
+          console.log(error, "processTournaments");
         }
       };
       processTournament(tournaments[currentTournament]);
     } catch (error) {
-      console.log(error.message, "processTournaments");
+      console.log(error, "processTournaments");
     }
   });
 };
@@ -389,7 +389,7 @@ const fetchAndStore = async () => {
       },
     ]);
   } catch (error) {
-    console.log(error.message, "fetchAndStore");
+    console.log(error, "fetchAndStore");
   }
 };
 

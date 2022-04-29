@@ -2,7 +2,7 @@ const { connectToDb, database, makeRequest } = require("./makeRequest");
 
 // store batting style
 const storeBattingStyle = async (battingStyle, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       if (battingStyle) {
         let [{ isExists: isStyleExist, styleId }] = await database(
@@ -24,14 +24,14 @@ const storeBattingStyle = async (battingStyle, connection) => {
         resolve(null);
       }
     } catch (error) {
-      console.log(error.message, "storeBattingStyle");
+      console.log(error, "storeBattingStyle");
     }
   });
 };
 
 // store bowling style
 const storeBowlingStyle = async (bowlingStyle, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       if (bowlingStyle) {
         let [{ isExists: isStyleExist, styleId }] = await database(
@@ -53,14 +53,14 @@ const storeBowlingStyle = async (bowlingStyle, connection) => {
         resolve(null);
       }
     } catch (error) {
-      console.log(error.message, "storeBattingStyle");
+      console.log(error, "storeBattingStyle");
     }
   });
 };
 
 // store player style
 const storePlayerStyle = async (player, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const battingStyleId = await storeBattingStyle(
         player.batting_style,
@@ -82,14 +82,14 @@ const storePlayerStyle = async (player, connection) => {
         resolve(false);
       }
     } catch (error) {
-      console.log(error.message, "storePlayerStyle");
+      console.log(error, "storePlayerStyle");
     }
   });
 };
 
 // store player role
 const storePlayerRoleParent = async (role, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       if (role) {
         let [{ isExists: isRoleExist, roleId }] = await database(
@@ -111,13 +111,13 @@ const storePlayerRoleParent = async (role, connection) => {
         resolve(0);
       }
     } catch (error) {
-      console.log(error.message, "storePlayerRoleParent");
+      console.log(error, "storePlayerRoleParent");
     }
   });
 };
 
 const storeTossDetails = async (matchId, matchRadarId, match, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const [{ tossWonBy }] = await database(
         "SELECT tossWonBy FROM fullmatchdetails WHERE matchId = ?;",
@@ -157,13 +157,13 @@ const storeTossDetails = async (matchId, matchRadarId, match, connection) => {
       }
     } catch (error) {
       resolve(false);
-      console.log(error.message, error);
+      console.log(error, error);
     }
   });
 };
 
 const storeMatchLineup = async (matchId, matchRadarId, match) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       // getting match lineup from sportsRadar
       const connection = await connectToDb();
@@ -257,7 +257,7 @@ const storeMatchLineup = async (matchId, matchRadarId, match) => {
                         }, 0);
                       }
                     } catch (error) {
-                      console.log(error.message, "storePlayersOfTeamsParent");
+                      console.log(error, "storePlayersOfTeamsParent");
                     }
                   };
                   const { player: playerData } = await makeRequest(
@@ -266,7 +266,7 @@ const storeMatchLineup = async (matchId, matchRadarId, match) => {
                   storeSinglePlayer(playerData);
                 }
               } catch (error) {
-                console.log(error.message, "storeMatchLineup1");
+                console.log(error, "storeMatchLineup1");
               }
             };
             lineup?.starting_lineup?.forEach((player) => {
@@ -274,7 +274,7 @@ const storeMatchLineup = async (matchId, matchRadarId, match) => {
               storePlayer(player);
             });
           } catch (error) {
-            console.log(error.message, "storeMatchLineup2");
+            console.log(error, "storeMatchLineup2");
           }
         });
       } else {
@@ -287,7 +287,7 @@ const storeMatchLineup = async (matchId, matchRadarId, match) => {
           resolve(false);
         }
       } else {
-        console.log(error.message, "storeMatchLineup3");
+        console.log(error, "storeMatchLineup3");
         resolve(false);
       }
     }
@@ -349,7 +349,7 @@ const fetchMatches = async (matchId) => {
             }
           }
         } catch (error) {
-          console.log(error.message, "preocessMatch");
+          console.log(error, "preocessMatch");
           currentMatch++;
           if (currentMatch === totalMatches) {
             resolve(true);
@@ -364,7 +364,7 @@ const fetchMatches = async (matchId) => {
       // calling functio first time
       processMatch(matches[currentMatch]);
     } catch (error) {
-      console.log(error.message, "fetchMatches");
+      console.log(error, "fetchMatches");
     }
   });
 };

@@ -2,7 +2,7 @@ const { database } = require("../makeRequest");
 
 // store data in tournament_competitors_players table
 const storeTournamentCompetitorsPlayers = async (tournament, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       let teamsLoopCount = 0;
       const totalTeams = tournament.teams.length;
@@ -82,7 +82,7 @@ const storeTournamentCompetitorsPlayers = async (tournament, connection) => {
               }
             }
           } catch (error) {
-            console.log(error.message, "storeAllRelations");
+            console.log(error, "storeAllRelations");
           }
         };
 
@@ -90,7 +90,7 @@ const storeTournamentCompetitorsPlayers = async (tournament, connection) => {
       };
       storePlayersOfSingleTeam(tournament.teams[teamsLoopCount]);
     } catch (error) {
-      console.log(error.message, "storeAllRelations");
+      console.log(error, "storeAllRelations");
     }
   });
 };

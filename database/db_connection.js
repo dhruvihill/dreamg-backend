@@ -16,7 +16,7 @@ const connectToDb = () => {
           resolve(connection);
         }
       } catch (error) {
-        console.log(error.message, "normal");
+        console.log(error, "normal");
         initializeConnection();
         if (error.message.includes("ECONNREFUSED")) {
           // some email stuff goes here
@@ -46,7 +46,7 @@ const initializeConnection = () => {
       multipleStatements: true,
     });
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
   }
 };
 

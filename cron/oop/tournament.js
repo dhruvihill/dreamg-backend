@@ -13,7 +13,7 @@ class Category {
   }
 
   storeCategory() {
-    return new Promise(async (resolve) => {
+    return new Promise(async (resolve, reject) => {
       try {
         const connection = await connectToDb();
         let [{ isExists: isCategoryExist, categoryId }] = await database(
@@ -37,7 +37,7 @@ class Category {
         }
       } catch (error) {
         this.categoryId = null;
-        console.log(error.message, "storeCategoryAndTyprParent");
+        console.log(error, "storeCategoryAndTyprParent");
       }
     });
   }
@@ -52,7 +52,7 @@ class Type {
   }
 
   storeType() {
-    return new Promise(async (resolve) => {
+    return new Promise(async (resolve, reject) => {
       try {
         const connection = await connectToDb();
         let [{ isExists: isTypeExist, typeId }] = await database(
@@ -76,7 +76,7 @@ class Type {
         }
       } catch (error) {
         this.typeId = null;
-        console.log(error.message, "storeTypeParent");
+        console.log(error, "storeTypeParent");
         resolve();
       }
     });
@@ -186,14 +186,14 @@ class Tournament {
           throw new Error("tournament is null");
         }
       } catch (error) {
-        console.log(error.message);
-        reject();
+        console.log(error);
+        reject(error);
       }
     });
   }
 
   storeTournament() {
-    return new Promise(async (resolve) => {
+    return new Promise(async (resolve, reject) => {
       try {
         const connection = await connectToDb();
         const [{ isExists, id: tournamentStoredId }] = await database(
@@ -246,7 +246,7 @@ class Tournament {
         if (error.sqlMessage) {
           this.id = null;
         }
-        console.log(error.message);
+        console.log(error);
         resolve();
       }
     });
@@ -282,13 +282,13 @@ class Tournament {
             }
           } catch (error) {
             console.log(error);
-            reject();
+            reject(error);
           }
         };
         storeSingleCompetitor(this.#competitors[currentCompetitor]);
       } catch (error) {
-        console.log(error.message);
-        resolve(false);
+        console.log(error);
+        reject(error);
       }
     });
   }
@@ -334,18 +334,18 @@ class Tournament {
               storeSingleMatch(this.#matches[currentMatch]);
             }
           } catch (error) {
-            console.log(error.message);
-            reject();
+            console.log(error);
+            reject(error);
           }
         };
 
         storeSingleMatch(this.#matches[currentMatch]);
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         reject(error);
       }
     });
   }
 }
 
-module.exports = Tournament;
+// module.exports = Tournament;

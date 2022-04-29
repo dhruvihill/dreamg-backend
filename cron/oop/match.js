@@ -43,7 +43,7 @@ class Venue {
   }
 
   storeVenue() {
-    return new Promise(async (resolve) => {
+    return new Promise(async (resolve, reject) => {
       try {
         const connection = await connectToDb();
         const [{ isExists, id }] = await database(
@@ -80,7 +80,7 @@ class Venue {
           resolve();
         }
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         this.venueId = null;
         resolve();
       }
@@ -97,7 +97,7 @@ class Status {
   }
 
   storeStatus() {
-    return new Promise(async (resolve) => {
+    return new Promise(async (resolve, reject) => {
       try {
         const connection = await connectToDb();
         const [{ isExists, id }] = await database(
@@ -124,7 +124,7 @@ class Status {
           resolve();
         }
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         this.statusId = null;
         resolve();
       }
@@ -132,7 +132,7 @@ class Status {
   }
 
   updateStatus(matchId, status) {
-    return new Promise(async (resolve) => {
+    return new Promise(async (resolve, reject) => {
       try {
         this.status = status;
         await this.storeStatus();
@@ -152,7 +152,7 @@ class Status {
           resolve(false);
         }
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         resolve(false);
       }
     });
@@ -164,7 +164,7 @@ class RowMatch extends Venue {
   #radarId = 0;
   #status = "";
   #tournamentId = 0;
-  #startTime = "";
+  #startTime = ""; // must be converted to milliseconds before inserting into db
   #competitor1 = {};
   #competitor2 = {};
 
@@ -223,14 +223,15 @@ class RowMatch extends Venue {
           await status.storeStatus();
 
           const storeMatch = await database(
-            "INSERT INTO `tournament_matches`(`matchRadarId`, `matchTournamentId`, `competitor1`, `competitor2`, `venueId`, `matchStatus`) VALUES (?, ?, ?, ?, ?, ?);",
+            "INSERT INTO `tournament_matches`(`matchRadarId`, `matchTournamentId`, `matchStartTime`, `competitor1`, `competitor2`, `venueId`, `matchStatus`) VALUES (?, ?, ?, ?, ?, ?, ?);",
             [
               this.#radarId,
               this.#tournamentId,
+              new Date(this.#startTime).getTime(),
               this.#competitor1.insertId,
               this.#competitor2.insertId,
               this.venueId,
-              status.id,
+              status.statusId,
             ],
             connection
           );
@@ -247,7 +248,7 @@ class RowMatch extends Venue {
         }
       } catch (error) {
         console.log(error);
-        reject();
+        reject(error);
       }
     });
   }
@@ -294,14 +295,14 @@ class RowMatch extends Venue {
                 }
               }
             } catch (error) {
-              console.log(error.message);
-              reject();
+              console.log(error);
+              reject(error);
             }
           });
         });
       } catch (error) {
-        console.log(error.message);
-        reject();
+        console.log(error);
+        reject(error);
       }
     });
   }
@@ -310,18 +311,20 @@ class RowMatch extends Venue {
 class MatchDaily extends Status {
   id = 0;
   #radarId = 0;
+  #tournamentId = 0;
   #competitors = [];
   #isLineUpStored = false;
   #matchStartTime = null;
   #tossWinner = null;
   #tossDecision = null;
 
-  constructor(id, radarId, status, competitors, matchStartTime) {
+  constructor(id, radarId, status, competitors, matchStartTime, tournamentId) {
     super(status);
     this.id = id;
     this.#radarId = radarId;
     this.#competitors = competitors;
     this.#matchStartTime = matchStartTime;
+    this.#tournamentId = tournamentId;
   }
 
   #updateStatus(status) {
@@ -330,8 +333,8 @@ class MatchDaily extends Status {
         await super.updateStatus(this.id, status);
         resolve();
       } catch (error) {
-        console.log(error.message);
-        reject();
+        console.log(error);
+        reject(error);
       }
     });
   }
@@ -352,7 +355,7 @@ class MatchDaily extends Status {
           resolve();
         }
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         reject(error);
       }
     });
@@ -448,7 +451,7 @@ class MatchDaily extends Status {
                   points["duck/50/100Points"] += pointsPerDuck;
                 }
               } catch (error) {
-                console.log(error.message);
+                console.log(error);
               }
             });
             playerBowlingStats.forEach(async (bowler) => {
@@ -474,7 +477,7 @@ class MatchDaily extends Status {
                   points["4/5WicketsPoints"] += pointsPerFourWickets;
                 }
               } catch (error) {
-                console.log(error.message);
+                console.log(error);
               }
             });
             playerCatches.forEach(() => {
@@ -482,7 +485,7 @@ class MatchDaily extends Status {
                 totalPoints += testScore.field.catch;
                 points.catchesPoints += testScore.field.catch;
               } catch (error) {
-                console.log(error.message);
+                console.log(error);
               }
             });
             playerRunOuts.forEach(() => {
@@ -490,7 +493,7 @@ class MatchDaily extends Status {
                 totalPoints += testScore.field.runOut;
                 points.runOutPoints += testScore.field.runOut;
               } catch (error) {
-                console.log(error.message);
+                console.log(error);
               }
             });
             playerBowledAndLBW.forEach(() => {
@@ -498,7 +501,7 @@ class MatchDaily extends Status {
                 totalPoints += testScore.bowl.lbwOrBowled;
                 points.lbwOrBowledPoints += testScore.bowl.lbwOrBowled;
               } catch (error) {
-                console.log(error.message);
+                console.log(error);
               }
             });
             setTimeout(async () => {
@@ -667,7 +670,7 @@ class MatchDaily extends Status {
                   }
                 }
               } catch (error) {
-                console.log(error.message);
+                console.log(error);
               }
             });
             playerBowlingStats.forEach(async (bowler) => {
@@ -735,7 +738,7 @@ class MatchDaily extends Status {
                   points.economyPoints += eBelow2_5;
                 }
               } catch (error) {
-                console.log(error.message);
+                console.log(error);
               }
             });
             playerCatches.forEach(() => {
@@ -743,7 +746,7 @@ class MatchDaily extends Status {
                 totalPoints += odiScore.field.catch;
                 points.catchesPoints += odiScore.field.catch;
               } catch (error) {
-                console.log(error.message);
+                console.log(error);
               }
             });
             playerRunOuts.forEach(() => {
@@ -751,7 +754,7 @@ class MatchDaily extends Status {
                 totalPoints += odiScore.field.runOut;
                 points.runOutPoints += odiScore.field.runOut;
               } catch (error) {
-                console.log(error.message);
+                console.log(error);
               }
             });
             playerBowledAndLBW.forEach(() => {
@@ -759,7 +762,7 @@ class MatchDaily extends Status {
                 totalPoints += odiScore.bowl.lbwOrBowled;
                 points.lbwOrBowledPoints += odiScore.bowl.lbwOrBowled;
               } catch (error) {
-                console.log(error.message);
+                console.log(error);
               }
             });
             setTimeout(async () => {
@@ -935,7 +938,7 @@ class MatchDaily extends Status {
                   }
                 }
               } catch (error) {
-                console.log(error.message);
+                console.log(error);
               }
             });
             playerBowlingStats.forEach(async (bowler) => {
@@ -1006,7 +1009,7 @@ class MatchDaily extends Status {
                   points.economyPoints += eBelow5;
                 }
               } catch (error) {
-                console.log(error.message);
+                console.log(error);
               }
             });
             playerCatches.forEach(() => {
@@ -1014,7 +1017,7 @@ class MatchDaily extends Status {
                 totalPoints += t20Score.field.catch;
                 points.catchesPoints += t20Score.field.catch;
               } catch (error) {
-                console.log(error.message);
+                console.log(error);
               }
             });
             playerRunOuts.forEach(() => {
@@ -1022,7 +1025,7 @@ class MatchDaily extends Status {
                 totalPoints += t20Score.field.runOut;
                 points.runOutPoints += t20Score.field.runOut;
               } catch (error) {
-                console.log(error.message);
+                console.log(error);
               }
             });
             playerBowledAndLBW.forEach(() => {
@@ -1030,7 +1033,7 @@ class MatchDaily extends Status {
                 totalPoints += t20Score.bowl.lbwOrBowled;
                 points.lbwOrBowledPoints += t20Score.bowl.lbwOrBowled;
               } catch (error) {
-                console.log(error.message);
+                console.log(error);
               }
             });
             setTimeout(async () => {
@@ -1209,7 +1212,7 @@ class MatchDaily extends Status {
                   }
                 }
               } catch (error) {
-                console.log(error.message);
+                console.log(error);
               }
             });
             playerBowlingStats.forEach(async (bowler) => {
@@ -1276,7 +1279,7 @@ class MatchDaily extends Status {
                   points.economyPoints += eBelow7;
                 }
               } catch (error) {
-                console.log(error.message);
+                console.log(error);
               }
             });
             playerCatches.forEach(() => {
@@ -1284,7 +1287,7 @@ class MatchDaily extends Status {
                 totalPoints += t10Score.field.catch;
                 points.catchesPoints += t10Score.field.catch;
               } catch (error) {
-                console.log(error.message);
+                console.log(error);
               }
             });
             playerRunOuts.forEach(() => {
@@ -1292,7 +1295,7 @@ class MatchDaily extends Status {
                 totalPoints += t10Score.field.runOut;
                 points.runOutPoints += t10Score.field.runOut;
               } catch (error) {
-                console.log(error.message);
+                console.log(error);
               }
             });
             playerBowledAndLBW.forEach(() => {
@@ -1300,7 +1303,7 @@ class MatchDaily extends Status {
                 totalPoints += t10Score.bowl.lbwOrBowled;
                 points.lbwOrBowledPoints += t10Score.bowl.lbwOrBowled;
               } catch (error) {
-                console.log(error.message);
+                console.log(error);
               }
             });
             setTimeout(async () => {
@@ -1345,7 +1348,7 @@ class MatchDaily extends Status {
           });
         }
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         reject(error);
       }
     });
@@ -1371,6 +1374,90 @@ class MatchDaily extends Status {
 
             const storePlayer = async (player) => {
               try {
+                // used when player does not exists in database and then to store player details in database and to store player in tournament_competitions_players table and to store player in matches_players table
+                const storePlayerAndMatchPlayer = async ({
+                  isPlayerExists,
+                }) => {
+                  return new Promise(async (resolve, reject) => {
+                    try {
+                      const { player: playerDetails, statistics } =
+                        await makeRequest(
+                          `/players/sr:player:${player.id.substr(
+                            10
+                          )}/profile.json`
+                        );
+                      if (playerDetails) {
+                        const newPlayer = new Player(
+                          playerDetails.type,
+                          playerDetails.id.substr(10),
+                          playerDetails.name.split(", ")[1],
+                          playerDetails.name.split(", ")[0],
+                          playerDetails.nationality,
+                          playerDetails.country_code,
+                          playerDetails.date_of_birth,
+                          statistics || null,
+                          playerDetails.batting_style || null,
+                          playerDetails.bowling_style || null
+                        );
+                        await newPlayer.getPlayerStatesAndStore();
+
+                        // storing player in tournament_competitors_player table
+                        const team = lineup.team;
+                        const competitor =
+                          matchLineUp.sport_event.competitors.find(
+                            (competitor) => competitor.qualifier === team
+                          );
+                        const tournamentCompetitorIdRes = await database(
+                          "SELECT tournamentCompetitorId, competitorId FROM allteams2 WHERE allteams2.tournamentId = ? AND allteams2.competitorRadarId = ?;",
+                          [this.#tournamentId, competitor.id.substr(14)],
+                          connection
+                        );
+                        if (
+                          tournamentCompetitorIdRes.length > 0 &&
+                          tournamentCompetitorIdRes[0].tournamentCompetitorId
+                        ) {
+                          await newPlayer.storePlayerRelation(
+                            tournamentCompetitorIdRes[0].tournamentCompetitorId
+                          );
+                          // storing player in match_players table
+                          const storeMatchPlayersRes = await database(
+                            "INSERT INTO match_players (matchId, competitorId, playerId, isSelected, isCaptain, isWicketKeeper) VALUES (?, ?, ?, ?, ?, ?);",
+                            [
+                              this.id,
+                              tournamentCompetitorIdRes[0].competitorId,
+                              newPlayer.id,
+                              true,
+                              player.is_captain || 0,
+                              player.is_wicketkeeper || 0,
+                            ],
+                            connection
+                          );
+                          if (storeMatchPlayersRes) {
+                            currentPlayer++;
+                            if (currentPlayer === totalPlayers) {
+                              currentLineUp++;
+                              if (currentLineUp === totalLineUps) {
+                                connection.release();
+                                this.#isLineUpStored = true;
+                                resolve();
+                              }
+                            }
+                          } else {
+                            connection.release();
+                            throw new Error("Error while storing lineup");
+                          }
+                        }
+                      } else {
+                        connection.release();
+                        throw new Error("Player not found");
+                      }
+                    } catch (error) {
+                      console.log(error.message);
+                      reject(error);
+                    }
+                  });
+                };
+
                 // checking if player is already stored in database table players
                 const [{ isExists: isPlayerExists, playerId }] = await database(
                   "SELECT COUNT(playerId) AS isExists, playerId FROM allplayers WHERE playerRadarId = ?;",
@@ -1392,7 +1479,10 @@ class MatchDaily extends Status {
                   );
 
                   // if player stored successfully then go to next player
-                  if (storeMatchPlayersRes) {
+                  if (
+                    storeMatchPlayersRes &&
+                    storeMatchPlayersRes.affectedRows > 0
+                  ) {
                     currentPlayer++;
                     if (currentPlayer === totalPlayers) {
                       currentLineUp++;
@@ -1402,34 +1492,15 @@ class MatchDaily extends Status {
                         resolve();
                       }
                     }
+                  } else {
+                    storePlayerAndMatchPlayer({ isPlayerExists: 1 });
                   }
                 } else {
-                  const { player: playerDetails, statistics } =
-                    await makeRequest(
-                      `/players/sr:player:${player.id.substr(10)}/profile.json`
-                    );
-                  if (playerDetails) {
-                    const newPlayer = new Player(
-                      playerDetails.type,
-                      playerDetails.id.substr(10),
-                      playerDetails.name.split(", ")[1],
-                      playerDetails.name.split(", ")[0],
-                      playerDetails.nationality,
-                      playerDetails.country_code,
-                      playerDetails.date_of_birth,
-                      statistics || null,
-                      playerDetails.batting_style || null,
-                      playerDetails.bowling_style || null
-                    );
-                    await newPlayer.getPlayerStatesAndStore();
-                    storePlayer(player);
-                  } else {
-                    reject();
-                  }
+                  storePlayerAndMatchPlayer({ isPlayerExists: 1 });
                 }
               } catch (error) {
                 console.log(error, "storeMatchLineup1");
-                reject();
+                reject(error);
               }
             };
 
@@ -1439,7 +1510,7 @@ class MatchDaily extends Status {
           });
         }
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         reject(error);
       }
     });
@@ -1456,7 +1527,7 @@ class MatchDaily extends Status {
         await newScoreCard.storeScorcard();
         resolve();
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         reject(error);
       }
     });
@@ -1500,7 +1571,7 @@ class MatchDaily extends Status {
           throw new Error("can't calculate points");
         }
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         reject(error);
       }
     });
@@ -1528,7 +1599,7 @@ class MatchDaily extends Status {
           throw new Error("can't get match toss details");
         }
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         reject(error);
       }
     });
@@ -1537,7 +1608,7 @@ class MatchDaily extends Status {
   handleLineUpStore() {
     return new Promise(async (resolve, reject) => {
       try {
-        const matchStartTime = new Date(this.#matchStartTime);
+        const matchStartTime = new Date(parseInt(this.#matchStartTime));
         const now = new Date();
 
         setTimeout(async () => {
@@ -1550,7 +1621,7 @@ class MatchDaily extends Status {
           }
         }, matchStartTime.getTime() - now.getTime() - 25 * 60 * 1000);
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         reject(error);
       }
     });
@@ -1559,34 +1630,49 @@ class MatchDaily extends Status {
   handleScorcardAndPoints() {
     return new Promise(async (resolve, reject) => {
       try {
-        const intervalId = setInterval(async () => {
-          try {
-            if (this.#isLineUpStored) {
-              await this.storeScoreCard();
-              await this.#updateStatus("ended");
-              await this.storePoints();
-
-              resolveInterval();
-            } else {
-              await this.handleLineUpStore();
-              await this.storeScoreCard();
-              await this.#updateStatus("ended");
-              await this.storePoints();
-              resolveInterval();
+        const handleStore = () => {
+          return new Promise(async (resolve, reject) => {
+            try {
+              if (this.#isLineUpStored) {
+                await this.storeScoreCard();
+                await this.#updateStatus("ended");
+                await this.storePoints();
+                resolve(true);
+              } else {
+                await this.handleLineUpStore();
+                await this.storeScoreCard();
+                await this.#updateStatus("ended");
+                await this.storePoints();
+                resolve(true);
+              }
+            } catch (error) {
+              console.log(error);
+              if (!error.message === "Match is not ended") {
+                reject(error);
+              } else {
+                resolve(false);
+              }
             }
-          } catch (error) {
-            if (!error.message === "Match is not ended") {
-              reject(error);
-            }
-            console.log(error.message);
-          }
-        }, 30 * 60 * 1000);
-        const resolveInterval = () => {
-          clearInterval(intervalId);
-          resolve();
+          });
         };
+        if (this.status === "ended" || this.status === "closed") {
+          await handleStore();
+          resolve();
+        } else {
+          const intervalId = setInterval(async () => {
+            const res = await handleStore();
+            if (res) {
+              resolveInterval();
+              resolve();
+            }
+          }, 30 * 60 * 1000);
+          const resolveInterval = () => {
+            clearInterval(intervalId);
+            resolve();
+          };
+        }
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         reject(error);
       }
     });
@@ -1619,9 +1705,9 @@ class MatchDaily extends Status {
           } else {
             throw new Error("can't update status");
           }
-        }, this.#matchStartTime - new Date().getTime() + 2 * 60 * 1000);
+        }, parseInt(this.#matchStartTime) - new Date().getTime() + 2 * 60 * 1000);
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         reject(error);
       }
     });

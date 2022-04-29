@@ -70,6 +70,7 @@ const makeRequest = (url) => {
                   api_tokens.forEach((token) => {
                     if (token.token === apiToken) {
                       token.isDeveloperInactive = true;
+                      token.isUsed = false;
                     }
                   });
                 }
@@ -77,7 +78,7 @@ const makeRequest = (url) => {
               }
             });
         } catch (error) {
-          console.log(error.message, "makeRequest");
+          console.log(error, "makeRequest");
         }
       };
 
@@ -101,7 +102,7 @@ const makeRequest = (url) => {
       };
       selectTokenAndCall();
     } catch (error) {
-      console.log(error.message, "makeRequest");
+      console.log(error, "makeRequest");
     }
   });
 };
@@ -136,7 +137,7 @@ setInterval(() => {
               );
             } else {
               console.log(error.response.data, "error");
-              console.log(error.message, "makeRequest");
+              console.log(error, "makeRequest");
               if (error.response.data.includes("Developer Inactive")) {
                 token.isDeveloperInactive = true;
               }
@@ -175,7 +176,7 @@ const connectToDb = () => {
             resolve(connection);
           })
           .catch((error) => {
-            console.log(error.message, "connectToDb");
+            console.log(error, "connectToDb");
           });
       }
     } catch (error) {
@@ -199,11 +200,11 @@ const initializeConnection = () => {
       host: process.env.CLEVER_CLOUD_HOST || "localhost",
       user: process.env.CLEVER_CLOUD_USER || "root",
       password: process.env.CLEVER_CLOUD_PASSWORD || "",
-      database: process.env.CLEVER_CLOUD_DATABASE_NAME || "dreamg",
+      database: process.env.CLEVER_CLOUD_DATABASE_NAME || "dreamg-test-cron",
       multipleStatements: true,
     });
   } catch (error) {
-    console.log(error.message, "initializeConnection");
+    console.log(error, "initializeConnection");
   }
 };
 initializeConnection();
@@ -223,7 +224,7 @@ const database = (query, options, connection) => {
         } else resolve(reponse);
       });
     } catch (error) {
-      console.log(error.message, "cron databse function");
+      console.log(error, "cron databse function");
     }
   });
 };

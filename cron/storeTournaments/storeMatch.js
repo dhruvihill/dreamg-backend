@@ -1,7 +1,7 @@
 const { database } = require("../makeRequest");
 
 const storeMatchStatus = async (status, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       if (status === "closed") {
         status = "ended";
@@ -22,13 +22,13 @@ const storeMatchStatus = async (status, connection) => {
         resolve(statusId);
       }
     } catch (error) {
-      console.log(error.message, "storeMatchStatus");
+      console.log(error, "storeMatchStatus");
     }
   });
 };
 
 const storeVenue = async (venue, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       if (venue && venue.id) {
         let [{ isExists: isVenueExist, venueId }] = await database(
@@ -67,13 +67,13 @@ const storeVenue = async (venue, connection) => {
         resolve(null);
       }
     } catch (error) {
-      console.log(error.message, "storeVenue");
+      console.log(error, "storeVenue");
     }
   });
 };
 
 const storeSingleMatch = async (match, tournament, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const competitors = tournament.teams.filter((competitor) => {
         return (
@@ -120,7 +120,7 @@ const storeSingleMatch = async (match, tournament, connection) => {
                     );
                   }
                 } catch (error) {
-                  console.log(error.message, "storeMatchPlayers");
+                  console.log(error, "storeMatchPlayers");
                 }
               });
             });
@@ -139,7 +139,7 @@ const storeSingleMatch = async (match, tournament, connection) => {
 };
 
 const storeMacthes = async (tournament, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       let matchLoopCount = 0;
       const totalMatchObject = tournament.matches.length;
@@ -171,7 +171,7 @@ const storeMacthes = async (tournament, connection) => {
             }
           }
         } catch (error) {
-          console.log(error.message, "storeAllMatches");
+          console.log(error, "storeAllMatches");
           matchLoopCount++;
           if (matchLoopCount === totalMatchObject) {
             resolve(true);
@@ -185,7 +185,7 @@ const storeMacthes = async (tournament, connection) => {
 
       storeSingleMatchCall(tournament.matches[matchLoopCount]);
     } catch (error) {
-      console.log(error.message, "storeTournamentMatchesRelation");
+      console.log(error, "storeTournamentMatchesRelation");
     }
   });
 };

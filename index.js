@@ -5,6 +5,24 @@ const bodyParser = require("body-parser");
 const tokens = {
   apiTokens: [
     {
+      token: "j3n4sedpgnvd5tx3mg6ye4v8",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "mknqt7rrrfwxqa5hevqav99q",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "fqb5sqmztc79ucjfkr83snmz",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
       token: "3frs3xa587s9uhfwa2wnkufu",
       isUsed: false,
       totalCallMade: 0,
@@ -144,7 +162,7 @@ try {
     console.log(`Listening on ports ${process.env.PORT || 3000}`);
   });
 } catch (error) {
-  console.log(error.message);
+  console.log(error);
 }
 
 module.exports = { tokens };

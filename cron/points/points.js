@@ -21,7 +21,7 @@ const database = (query, options, connection) => {
         } else resolve(reponse);
       });
     } catch (error) {
-      console.log(error.message, "cron databse function");
+      console.log(error, "cron databse function");
     }
   });
 };
@@ -33,7 +33,7 @@ const calculatePointsOfMatch = async (
   { matchType, matchId },
   connection
 ) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       let currentPlayer = 0;
       const totalPlayers = lineUp.length;
@@ -121,7 +121,7 @@ const calculatePointsOfMatch = async (
                 points["duck/50/100Points"] += pointsPerDuck;
               }
             } catch (error) {
-              console.log(error.message);
+              console.log(error);
             }
           });
           playerBowlingStats.forEach(async (bowler) => {
@@ -147,7 +147,7 @@ const calculatePointsOfMatch = async (
                 points["4/5WicketsPoints"] += pointsPerFourWickets;
               }
             } catch (error) {
-              console.log(error.message);
+              console.log(error);
             }
           });
           playerCatches.forEach(() => {
@@ -155,7 +155,7 @@ const calculatePointsOfMatch = async (
               totalPoints += testScore.field.catch;
               points.catchesPoints += testScore.field.catch;
             } catch (error) {
-              console.log(error.message);
+              console.log(error);
             }
           });
           playerRunOuts.forEach(() => {
@@ -163,7 +163,7 @@ const calculatePointsOfMatch = async (
               totalPoints += testScore.field.runOut;
               points.runOutPoints += testScore.field.runOut;
             } catch (error) {
-              console.log(error.message);
+              console.log(error);
             }
           });
           playerBowledAndLBW.forEach(() => {
@@ -171,7 +171,7 @@ const calculatePointsOfMatch = async (
               totalPoints += testScore.bowl.lbwOrBowled;
               points.lbwOrBowledPoints += testScore.bowl.lbwOrBowled;
             } catch (error) {
-              console.log(error.message);
+              console.log(error);
             }
           });
           setTimeout(async () => {
@@ -338,7 +338,7 @@ const calculatePointsOfMatch = async (
                 }
               }
             } catch (error) {
-              console.log(error.message);
+              console.log(error);
             }
           });
           playerBowlingStats.forEach(async (bowler) => {
@@ -402,7 +402,7 @@ const calculatePointsOfMatch = async (
                 points.economyPoints += eBelow2_5;
               }
             } catch (error) {
-              console.log(error.message);
+              console.log(error);
             }
           });
           playerCatches.forEach(() => {
@@ -410,7 +410,7 @@ const calculatePointsOfMatch = async (
               totalPoints += odiScore.field.catch;
               points.catchesPoints += odiScore.field.catch;
             } catch (error) {
-              console.log(error.message);
+              console.log(error);
             }
           });
           playerRunOuts.forEach(() => {
@@ -418,7 +418,7 @@ const calculatePointsOfMatch = async (
               totalPoints += odiScore.field.runOut;
               points.runOutPoints += odiScore.field.runOut;
             } catch (error) {
-              console.log(error.message);
+              console.log(error);
             }
           });
           playerBowledAndLBW.forEach(() => {
@@ -426,7 +426,7 @@ const calculatePointsOfMatch = async (
               totalPoints += odiScore.bowl.lbwOrBowled;
               points.lbwOrBowledPoints += odiScore.bowl.lbwOrBowled;
             } catch (error) {
-              console.log(error.message);
+              console.log(error);
             }
           });
           setTimeout(async () => {
@@ -600,7 +600,7 @@ const calculatePointsOfMatch = async (
                 }
               }
             } catch (error) {
-              console.log(error.message);
+              console.log(error);
             }
           });
           playerBowlingStats.forEach(async (bowler) => {
@@ -661,7 +661,7 @@ const calculatePointsOfMatch = async (
                 points.economyPoints += eBelow5;
               }
             } catch (error) {
-              console.log(error.message);
+              console.log(error);
             }
           });
           playerCatches.forEach(() => {
@@ -669,7 +669,7 @@ const calculatePointsOfMatch = async (
               totalPoints += t20Score.field.catch;
               points.catchesPoints += t20Score.field.catch;
             } catch (error) {
-              console.log(error.message);
+              console.log(error);
             }
           });
           playerRunOuts.forEach(() => {
@@ -677,7 +677,7 @@ const calculatePointsOfMatch = async (
               totalPoints += t20Score.field.runOut;
               points.runOutPoints += t20Score.field.runOut;
             } catch (error) {
-              console.log(error.message);
+              console.log(error);
             }
           });
           playerBowledAndLBW.forEach(() => {
@@ -685,7 +685,7 @@ const calculatePointsOfMatch = async (
               totalPoints += t20Score.bowl.lbwOrBowled;
               points.lbwOrBowledPoints += t20Score.bowl.lbwOrBowled;
             } catch (error) {
-              console.log(error.message);
+              console.log(error);
             }
           });
           setTimeout(async () => {
@@ -862,7 +862,7 @@ const calculatePointsOfMatch = async (
                 }
               }
             } catch (error) {
-              console.log(error.message);
+              console.log(error);
             }
           });
           playerBowlingStats.forEach(async (bowler) => {
@@ -922,7 +922,7 @@ const calculatePointsOfMatch = async (
                 points.economyPoints += eBelow7;
               }
             } catch (error) {
-              console.log(error.message);
+              console.log(error);
             }
           });
           playerCatches.forEach(() => {
@@ -930,7 +930,7 @@ const calculatePointsOfMatch = async (
               totalPoints += t10Score.field.catch;
               points.catchesPoints += t10Score.field.catch;
             } catch (error) {
-              console.log(error.message);
+              console.log(error);
             }
           });
           playerRunOuts.forEach(() => {
@@ -938,7 +938,7 @@ const calculatePointsOfMatch = async (
               totalPoints += t10Score.field.runOut;
               points.runOutPoints += t10Score.field.runOut;
             } catch (error) {
-              console.log(error.message);
+              console.log(error);
             }
           });
           playerBowledAndLBW.forEach(() => {
@@ -946,7 +946,7 @@ const calculatePointsOfMatch = async (
               totalPoints += t10Score.bowl.lbwOrBowled;
               points.lbwOrBowledPoints += t10Score.bowl.lbwOrBowled;
             } catch (error) {
-              console.log(error.message);
+              console.log(error);
             }
           });
           setTimeout(async () => {
@@ -990,7 +990,7 @@ const calculatePointsOfMatch = async (
         });
       }
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
     }
   });
 };
@@ -1052,14 +1052,14 @@ const fetchData = async (matchId) => {
             }
           }
         } catch (error) {
-          console.log(error.message);
+          console.log(error);
         }
       };
       pr(fetchMatches[currentMatch]);
       // fetchMatches.forEach(async (match) => {
       // });
     } catch (error) {
-      console.log(error.message, "fetchData");
+      console.log(error, "fetchData");
     }
   });
 };

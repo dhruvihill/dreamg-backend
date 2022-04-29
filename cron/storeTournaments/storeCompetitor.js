@@ -1,7 +1,7 @@
 const { database } = require("../makeRequest");
 
 const storeCompetitor = async (team, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       let [{ isExists: isTeamExist, competitorId: teamId }] = await database(
         "SELECT COUNT(competitorId) AS isExists, competitorId FROM competitors WHERE competitors.competitorRadarId = ?;",
@@ -29,7 +29,7 @@ const storeCompetitor = async (team, connection) => {
 };
 
 const storeCompetitors = async (tournament, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     let teamsLoopCount = 0;
     tournament.teams.forEach(async (team) => {
       const storeSingleCompetitorRes = await storeCompetitor(team, connection);

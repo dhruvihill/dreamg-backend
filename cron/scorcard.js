@@ -4,7 +4,7 @@ const { connectToDb, database, makeRequest } = require("./makeRequest");
 player not exists then store it and re execute the function
 */
 const storePlayerRoleParent = async (role, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       if (role) {
         let [{ isExists: isRoleExist, roleId }] = await database(
@@ -26,13 +26,13 @@ const storePlayerRoleParent = async (role, connection) => {
         resolve(0);
       }
     } catch (error) {
-      console.log(error.message, "storePlayerRoleParent");
+      console.log(error, "storePlayerRoleParent");
     }
   });
 };
 
 const storeSinglePlayer = async (player, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       if (player && player.id) {
         let [{ isExists: isPlayerExist, playerId }] = await database(
@@ -79,7 +79,7 @@ const storeSinglePlayer = async (player, connection) => {
         }
       }
     } catch (error) {
-      console.log(error.message, "storesingleplayer");
+      console.log(error, "storesingleplayer");
       resolve(false);
     }
   });
@@ -179,14 +179,14 @@ const storeBatsMan = (inningId, battingTeam, connection) => {
         storeSingleBastMan(player);
       });
     } catch (error) {
-      console.log(error.message, "storeBatsMan");
+      console.log(error, "storeBatsMan");
       resolve(false);
     }
   });
 };
 
 const storeBowlers = (inningId, bowlingTeam, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const totalBowlers = bowlingTeam?.statistics?.bowling?.players?.length;
       let currentBowler = 0;
@@ -246,21 +246,21 @@ const storeBowlers = (inningId, bowlingTeam, connection) => {
             }
           }
         } catch (error) {
-          console.log(error.message, "storeBowlers");
+          console.log(error, "storeBowlers");
         }
       };
       bowlingTeam?.statistics?.bowling?.players?.forEach(async (player) => {
         storeSingleBowler(player);
       });
     } catch (error) {
-      console.log(error.message, "storeBowlers");
+      console.log(error, "storeBowlers");
       resolve(false);
     }
   });
 };
 
 const storeInningBatting = (inningId, battingTeam, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const store = await database(
         "INSERT INTO inning_batting SET ?;",
@@ -278,14 +278,14 @@ const storeInningBatting = (inningId, battingTeam, connection) => {
         resolve(true);
       }
     } catch (error) {
-      console.log(error.message, "storeInningBatting");
+      console.log(error, "storeInningBatting");
       resolve(false);
     }
   });
 };
 
 const storeInningBowling = (inningId, bowlingTeam, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const store = await database(
         "INSERT INTO inning_bowling SET ?;",
@@ -306,7 +306,7 @@ const storeInningBowling = (inningId, bowlingTeam, connection) => {
         resolve(true);
       }
     } catch (error) {
-      console.log(error.message, "storeInningBowling");
+      console.log(error, "storeInningBowling");
       resolve(false);
     }
   });
@@ -318,7 +318,7 @@ const storeInnings = (
   storedMatchDetails,
   connection
 ) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       let inningLoopCount = 0;
       if (
@@ -407,7 +407,7 @@ const storeInnings = (
               resolve(true);
             }
           } catch (error) {
-            console.log(error.message, "storeInnings");
+            console.log(error, "storeInnings");
             resolve(false);
           }
         });
@@ -419,7 +419,7 @@ const storeInnings = (
 };
 
 const storeScorcard = (scoreDetails, storedMatchDetails, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       if (
         scoreDetails &&
@@ -482,14 +482,14 @@ const storeScorcard = (scoreDetails, storedMatchDetails, connection) => {
       }
     } catch (error) {
       console.log(error);
-      console.log(error.message, "storeScorcardRes");
+      console.log(error, "storeScorcardRes");
       resolve(false);
     }
   });
 };
 
 const fetchMatches = async (matchId) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const connection = await connectToDb();
       let matches;
@@ -560,7 +560,7 @@ const fetchMatches = async (matchId) => {
             }
           }
         } catch (error) {
-          console.log(error.message, "preocessMatch");
+          console.log(error, "preocessMatch");
           currentMatch++;
           if (currentMatch === totalMatches) {
             resolve(false);
@@ -573,7 +573,7 @@ const fetchMatches = async (matchId) => {
       };
       processMatch(matches[currentMatch]);
     } catch (error) {
-      console.log(error.message, "fetchMatches");
+      console.log(error, "fetchMatches");
     }
   });
 };

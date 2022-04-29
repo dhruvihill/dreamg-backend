@@ -67,7 +67,7 @@ const connectToDb = () => {
             resolve(connection);
           })
           .catch((error) => {
-            console.log(error.message, "connectToDb");
+            console.log(error, "connectToDb");
           });
       }
     } catch (error) {
@@ -95,7 +95,7 @@ const initializeConnection = () => {
       multipleStatements: true,
     });
   } catch (error) {
-    console.log(error.message, "initializeConnection");
+    console.log(error, "initializeConnection");
   }
 };
 
@@ -108,7 +108,7 @@ const database = (query, options, connection) => {
         else resolve(reponse);
       });
     } catch (error) {
-      console.log(error.message, "cron databse function");
+      console.log(error, "cron databse function");
     }
   });
 };
@@ -129,7 +129,7 @@ const makeRequest = (url, method, data) => {
         resolve(data.data);
       })
       .catch((error) => {
-        console.log(error.message, "makeRequest");
+        console.log(error, "makeRequest");
         reject(error);
       });
   });
@@ -172,7 +172,7 @@ const insertTeamsOfMatch = async (match, connection) => {
             resolve();
           }
         } else {
-          console.log(error.message, "insertTeamsOfMatch");
+          console.log(error, "insertTeamsOfMatch");
         }
       }
     });
@@ -180,7 +180,7 @@ const insertTeamsOfMatch = async (match, connection) => {
 };
 
 const insertSingleSeries = async (match, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const series = await database(
         "INSERT INTO all_series SET ?",
@@ -200,14 +200,14 @@ const insertSingleSeries = async (match, connection) => {
         allStatistics.seriesStatistics.duplicatedIds.push(match.seriesId);
         resolve();
       } else {
-        console.log(error.message, "insertSingleSeries");
+        console.log(error, "insertSingleSeries");
       }
     }
   });
 };
 
 const insertSingleMatch = async (match, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     const matchStatistics = {
       insertedIds: [],
       duplicateIds: [],
@@ -253,14 +253,14 @@ const insertSingleMatch = async (match, connection) => {
         allStatistics.matchesStatistics.duplicatedIds.push(match.matchId);
         resolve(matchStatistics);
       } else {
-        console.log(error.message, "insertSingleMatch");
+        console.log(error, "insertSingleMatch");
       }
     }
   });
 };
 
 const insertPlayersOfMatch = async (matchId, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const { players } = await makeRequest(
         "https://www.my11circle.com/api/lobbyApi/matches/v1/getMatchSquad",
@@ -282,14 +282,14 @@ const insertPlayersOfMatch = async (matchId, connection) => {
               }
             })
             .catch((error) => {
-              console.log(error.message, "insertPlayersOfMatch");
+              console.log(error, "insertPlayersOfMatch");
             });
         } catch (error) {
-          console.log(error.message, "insertPlayersOfMatch");
+          console.log(error, "insertPlayersOfMatch");
         }
       });
     } catch (error) {
-      console.log(error.message, "insertPlayersOfMatch");
+      console.log(error, "insertPlayersOfMatch");
     }
   });
 };
@@ -336,7 +336,7 @@ const insertSinglePlayer = async (player, matchId, connection) => {
           }
         );
       } else {
-        console.log(error.message, "single player error");
+        console.log(error, "single player error");
         reject(error);
       }
     }
@@ -344,7 +344,7 @@ const insertSinglePlayer = async (player, matchId, connection) => {
 };
 
 const insertSingleMatchPlayerRelation = async (player, matchId, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const insertedRelation = await database(
         "INSERT INTO match_player_relation SET ?",
@@ -372,7 +372,7 @@ const insertSingleMatchPlayerRelation = async (player, matchId, connection) => {
         allStatistics.relationStatistics.duplicatedIds.push(player.id);
         resolve();
       } else {
-        console.log(error.message, "insertSingleMatchPlayerRelation");
+        console.log(error, "insertSingleMatchPlayerRelation");
       }
     }
   });
@@ -384,7 +384,7 @@ const insertPlayerStatistics = async (
   playerId,
   connection
 ) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const insertedStatistics = await database(
         "INSERT INTO playerlastnmatchstatistics SET ?",
@@ -412,7 +412,7 @@ const insertPlayerStatistics = async (
     } catch (error) {
       allStatistics.playerPerformanceStatistics.duplicatedIds.push(playerId);
       resolve(false);
-      console.log(error.message, "insertPlayerStatistics");
+      console.log(error, "insertPlayerStatistics");
     }
   });
 };
@@ -429,12 +429,12 @@ const downloadImage = async (url, filePath, id, isTeam = false) => {
       allStatistics.playerImagesStatistics.insertedIds.push(id);
     }
   } catch (error) {
-    console.log(error.message, "downloadImage");
+    console.log(error, "downloadImage");
   }
 };
 
 const deleteMatch = async (matchId, connection) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const [deleted, deletedRelation] = await database(
         "DELETE FROM all_matches WHERE matchId = ?;DELETE FROM match_player_relation WHERE matchId = ?;",
@@ -446,7 +446,7 @@ const deleteMatch = async (matchId, connection) => {
         resolve();
       }
     } catch (error) {
-      console.log(error.message, "deleteMatch");
+      console.log(error, "deleteMatch");
     }
   });
 };
@@ -494,7 +494,7 @@ const fetchAndStore = async () => {
       { sportsType: 1 }
     );
     const storeData = (connection) => {
-      return new Promise(async (resolve) => {
+      return new Promise(async (resolve, reject) => {
         try {
           let loopCount = 0;
           const allMatches = [...matches[1], ...matches[2], ...matches[3]];
@@ -528,7 +528,7 @@ const fetchAndStore = async () => {
                             })
                             .catch((error) => {
                               console.log(
-                                error.message,
+                                error,
                                 "calling insertPlayersOfMatch"
                               );
                             });
@@ -540,25 +540,22 @@ const fetchAndStore = async () => {
                           // }
                         })
                         .catch((error) => {
-                          console.log(
-                            error.message,
-                            "calling insertSingleMatch"
-                          );
+                          console.log(error, "calling insertSingleMatch");
                         });
                     })
                     .catch((error) => {
-                      console.log(error.message, "calling insertSingleSeries");
+                      console.log(error, "calling insertSingleSeries");
                     });
                 })
                 .catch((error) => {
-                  console.log(error.message, "calling insertTeamsOfMatch");
+                  console.log(error, "calling insertTeamsOfMatch");
                 });
             } catch (error) {
-              console.log(error.message, "calling loop");
+              console.log(error, "calling loop");
             }
           });
         } catch (error) {
-          console.log(error.message, "calling");
+          console.log(error, "calling");
         }
       });
     };
@@ -667,10 +664,10 @@ const fetchAndStore = async () => {
       })
       .catch((error) => {
         connection.release();
-        console.log(error.message, "calling storeData");
+        console.log(error, "calling storeData");
       });
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
   }
 };
 
