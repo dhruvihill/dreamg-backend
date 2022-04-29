@@ -385,43 +385,43 @@ router.post("/getExpertPredictor", async (req, res) => {
 });
 
 // getting trending predictors by points
-// router.get("/getTrendingPredictors", async (req, res) => {
-//   const recentMatchesQuery =
-//     "SELECT DISTINCT fullmatchdetails.matchId FROM fullmatchdetails JOIN userTeamDetails ON userTeamDetails.matchId = fullmatchdetails.matchId WHERE (parseInt(fullmatchdetails.matchStartDateTime) < unix_timestamp(now()) * 1000 AND fullmatchdetails.matchStatus != 3) ORDER BY matchStartDateTime DESC LIMIT 5";
-//   const topPredictorsQuery =
-//     "SELECT userdetails.userId, userdetails.imageStamp, firstName, lastName, SUM(userTeamDetails.userTeamPoints) AS totalPoints FROM userTeamDetails JOIN userdetails ON userdetails.userId = userTeamDetails.userId WHERE matchId IN (30100, 30096,30030) GROUP BY userTeamDetails.userId ORDER BY totalPoints DESC LIMIT 10";
+router.get("/getTrendingPredictors", async (req, res) => {
+  const recentMatchesQuery =
+    "SELECT DISTINCT fullmatchdetails.matchId FROM fullmatchdetails JOIN userTeamDetails ON userTeamDetails.matchId = fullmatchdetails.matchId WHERE (parseInt(fullmatchdetails.matchStartDateTime) < unix_timestamp(now()) * 1000 AND fullmatchdetails.matchStatus != 3) ORDER BY matchStartDateTime DESC LIMIT 5";
+  const topPredictorsQuery =
+    "SELECT userdetails.userId, userdetails.imageStamp, firstName, lastName, SUM(userTeamDetails.userTeamPoints) AS totalPoints FROM userTeamDetails JOIN userdetails ON userdetails.userId = userTeamDetails.userId WHERE matchId IN (30100, 30096,30030) GROUP BY userTeamDetails.userId ORDER BY totalPoints DESC LIMIT 10";
 
-//   try {
-//     const serverAddress = `${req.protocol}://${req.headers.host}`;
-//     const recentMatches = await fetchData(recentMatchesQuery);
-//     const matchIds = recentMatches.map(({ matchId }) => matchId);
-//     const predictor = await fetchData(topPredictorsQuery, [matchIds.join(",")]);
+  try {
+    const serverAddress = `${req.protocol}://${req.headers.host}`;
+    const recentMatches = await fetchData(recentMatchesQuery);
+    const matchIds = recentMatches.map(({ matchId }) => matchId);
+    const predictor = await fetchData(topPredictorsQuery, [matchIds.join(",")]);
 
-//     // replace server address
-//     predictor.forEach((trending) => {
-//       trending.displayPicture = imageUrl(
-//         __dirname,
-//         "../",
-//         `${process.env.USER_IMAGE_URL}${trending.imageStamp}.jpg`,
-//         serverAddress
-//       );
-//       delete trending.imageStamp;
-//     });
-//     res.status(200).json({
-//       status: true,
-//       message: "success",
-//       data: {
-//         trendingPredictors: predictor,
-//       },
-//     });
-//   } catch (error) {
-//     res.status(200).json({
-//       status: false,
-//       message: error.sqlMessage || error.message,
-//       data: {},
-//     });
-//   }
-// });
+    // replace server address
+    predictor.forEach((trending) => {
+      trending.displayPicture = imageUrl(
+        __dirname,
+        "../",
+        `${process.env.USER_IMAGE_URL}${trending.imageStamp}.jpg`,
+        serverAddress
+      );
+      delete trending.imageStamp;
+    });
+    res.status(200).json({
+      status: true,
+      message: "success",
+      data: {
+        trendingPredictors: predictor,
+      },
+    });
+  } catch (error) {
+    res.status(200).json({
+      status: false,
+      message: error.sqlMessage || error.message,
+      data: {},
+    });
+  }
+});
 
 // getting teams by match id and user id
 router.post("/getUserTeamsByMatch", async (req, res) => {
@@ -607,198 +607,198 @@ router.post("/getUserTeamsByMatch", async (req, res) => {
 });
 
 // getting teams with user id
-// router.post("/getUserTeamsAll", async (req, res) => {
-//   const { createrId, pageNumber } = req.body;
+router.post("/getUserTeamsAll", async (req, res) => {
+  const { createrId, pageNumber } = req.body;
 
-//   try {
-//     const regx = /[^0-9]/g;
+  try {
+    const regx = /[^0-9]/g;
 
-//     if (
-//       !createrId ||
-//       regx.test(createrId) ||
-//       regx.test(pageNumber) ||
-//       pageNumber < 1 ||
-//       !pageNumber
-//     ) {
-//       throw { message: "invalid input" };
-//     }
+    if (
+      !createrId ||
+      regx.test(createrId) ||
+      regx.test(pageNumber) ||
+      pageNumber < 1 ||
+      !pageNumber
+    ) {
+      throw { message: "invalid input" };
+    }
 
-//     const fetchUserTeamDetails = () => {
-//       return new Promise(async (resolve, reject) => {
-//         try {
-//           const serverAddress = `${req.protocol}://${req.headers.host}`;
-//           const [[userDetails], userTeamDetails, [{ totalUserTeams }]] =
-//             await fetchData("CALL get_user_team(?, ?, ?);", [
-//               0,
-//               createrId,
-//               (pageNumber - 1) * 20,
-//             ]);
+    const fetchUserTeamDetails = () => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const serverAddress = `${req.protocol}://${req.headers.host}`;
+          const [[userDetails], userTeamDetails, [{ totalUserTeams }]] =
+            await fetchData("CALL get_user_team(?, ?, ?);", [
+              0,
+              createrId,
+              (pageNumber - 1) * 20,
+            ]);
 
-//           const totalPages = Math.ceil(totalUserTeams / 20);
+          const totalPages = Math.ceil(totalUserTeams / 20);
 
-//           if (userDetails && userTeamDetails.length) {
-//             // change server address
-//             userDetails.displayPicture = imageUrl(
-//               __dirname,
-//               "../",
-//               `${process.env.USER_IMAGE_URL}${userDetails.imageStamp}.jpg`,
-//               serverAddress
-//             );
-//           }
-//           let userTeams = [];
-//           if (userTeamDetails && userTeamDetails.length) {
-//             let counter = 0;
-//             userTeamDetails.forEach(async (team) => {
-//               try {
-//                 // changing server url
-//                 team.team1FlagURL = imageUrl(
-//                   __dirname,
-//                   "../",
-//                   `${process.env.TEAM_IMAGE_URL}${team.team1Id}.jpg`,
-//                   serverAddress
-//                 );
-//                 team.team2FlagURL = imageUrl(
-//                   __dirname,
-//                   "../",
-//                   `${process.env.TEAM_IMAGE_URL}${team.team2Id}.jpg`,
-//                   serverAddress
-//                 );
+          if (userDetails && userTeamDetails.length) {
+            // change server address
+            userDetails.displayPicture = imageUrl(
+              __dirname,
+              "../",
+              `${process.env.USER_IMAGE_URL}${userDetails.imageStamp}.jpg`,
+              serverAddress
+            );
+          }
+          let userTeams = [];
+          if (userTeamDetails && userTeamDetails.length) {
+            let counter = 0;
+            userTeamDetails.forEach(async (team) => {
+              try {
+                // changing server url
+                team.team1FlagURL = imageUrl(
+                  __dirname,
+                  "../",
+                  `${process.env.TEAM_IMAGE_URL}${team.team1Id}.jpg`,
+                  serverAddress
+                );
+                team.team2FlagURL = imageUrl(
+                  __dirname,
+                  "../",
+                  `${process.env.TEAM_IMAGE_URL}${team.team2Id}.jpg`,
+                  serverAddress
+                );
 
-//                 // creating instance of user team
-//                 let userTeamInstance = {
-//                   teams: [
-//                     {
-//                       teamTotalPlayers: 0,
-//                       teamId: team.team1Id,
-//                       teamName: team.team1Name,
-//                       teamDisplayName: team.team1DisplayName,
-//                       teamFlagURL: team.team1FlagURL,
-//                     },
-//                     {
-//                       teamTotalPlayers: 0,
-//                       teamId: team.team2Id,
-//                       teamName: team.team2Name,
-//                       teamDisplayName: team.team2DisplayName,
-//                       teamFlagURL: team.team2FlagURL,
-//                     },
-//                   ],
-//                   teamsDetails: {
-//                     userTeamId: team.userTeamId,
-//                     creditUsed: 0,
-//                     teamType: team.teamTypeString,
-//                     totalBatsman: 0,
-//                     totalBowlers: 0,
-//                     totalWicketKeeper: 0,
-//                     totalAllrounders: 0,
-//                     captain: {},
-//                     viceCaptain: {},
-//                   },
-//                 };
+                // creating instance of user team
+                let userTeamInstance = {
+                  teams: [
+                    {
+                      teamTotalPlayers: 0,
+                      teamId: team.team1Id,
+                      teamName: team.team1Name,
+                      teamDisplayName: team.team1DisplayName,
+                      teamFlagURL: team.team1FlagURL,
+                    },
+                    {
+                      teamTotalPlayers: 0,
+                      teamId: team.team2Id,
+                      teamName: team.team2Name,
+                      teamDisplayName: team.team2DisplayName,
+                      teamFlagURL: team.team2FlagURL,
+                    },
+                  ],
+                  teamsDetails: {
+                    userTeamId: team.userTeamId,
+                    creditUsed: 0,
+                    teamType: team.teamTypeString,
+                    totalBatsman: 0,
+                    totalBowlers: 0,
+                    totalWicketKeeper: 0,
+                    totalAllrounders: 0,
+                    captain: {},
+                    viceCaptain: {},
+                  },
+                };
 
-//                 // feching all players
-//                 const [players] = await fetchData(
-//                   "CALL get_userteam_details(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
-//                   [
-//                     team.matchId,
-//                     team.player1,
-//                     team.player2,
-//                     team.player3,
-//                     team.player4,
-//                     team.player5,
-//                     team.player6,
-//                     team.player7,
-//                     team.player8,
-//                     team.player9,
-//                     team.player10,
-//                     team.player11,
-//                   ]
-//                 );
+                // feching all players
+                const [players] = await fetchData(
+                  "CALL get_userteam_details(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                  [
+                    team.matchId,
+                    team.player1,
+                    team.player2,
+                    team.player3,
+                    team.player4,
+                    team.player5,
+                    team.player6,
+                    team.player7,
+                    team.player8,
+                    team.player9,
+                    team.player10,
+                    team.player11,
+                  ]
+                );
 
-//                 // loop through all players
-//                 players.forEach((player) => {
-//                   // changing server url
-//                   player.URL = imageUrl(
-//                     __dirname,
-//                     "../",
-//                     `${process.env.PLAYER_IMAGE_URL}${player.playerId}.jpg`,
-//                     serverAddress
-//                   );
+                // loop through all players
+                players.forEach((player) => {
+                  // changing server url
+                  player.URL = imageUrl(
+                    __dirname,
+                    "../",
+                    `${process.env.PLAYER_IMAGE_URL}${player.playerId}.jpg`,
+                    serverAddress
+                  );
 
-//                   // incrementing total players
-//                   if (player.teamId === userTeamInstance.teams[0].teamId)
-//                     userTeamInstance.teams[0].teamTotalPlayers++;
-//                   else if (player.teamId === userTeamInstance.teams[1].teamId)
-//                     userTeamInstance.teams[1].teamTotalPlayers++;
+                  // incrementing total players
+                  if (player.teamId === userTeamInstance.teams[0].teamId)
+                    userTeamInstance.teams[0].teamTotalPlayers++;
+                  else if (player.teamId === userTeamInstance.teams[1].teamId)
+                    userTeamInstance.teams[1].teamTotalPlayers++;
 
-//                   // incrementing players roles
-//                   if (player.roleId === 1) {
-//                     userTeamInstance.teamsDetails.totalBatsman++;
-//                   } else if (player.roleId === 2) {
-//                     userTeamInstance.teamsDetails.totalBowlers++;
-//                   } else if (player.roleId === 3) {
-//                     userTeamInstance.teamsDetails.totalWicketKeeper++;
-//                   } else if (player.roleId === 4) {
-//                     userTeamInstance.teamsDetails.totalAllrounders++;
-//                   }
+                  // incrementing players roles
+                  if (player.roleId === 1) {
+                    userTeamInstance.teamsDetails.totalBatsman++;
+                  } else if (player.roleId === 2) {
+                    userTeamInstance.teamsDetails.totalBowlers++;
+                  } else if (player.roleId === 3) {
+                    userTeamInstance.teamsDetails.totalWicketKeeper++;
+                  } else if (player.roleId === 4) {
+                    userTeamInstance.teamsDetails.totalAllrounders++;
+                  }
 
-//                   // total credits used
-//                   userTeamInstance.teamsDetails.creditUsed += player.credits;
-//                 });
+                  // total credits used
+                  userTeamInstance.teamsDetails.creditUsed += player.credits;
+                });
 
-//                 // stroing captain and vice captain
-//                 [userTeamInstance.teamsDetails.captain] = players.filter(
-//                   (player) => {
-//                     return player.playerId === team.captain;
-//                   }
-//                 );
-//                 [userTeamInstance.teamsDetails.viceCaptain] = players.filter(
-//                   (player) => {
-//                     return player.playerId === team.viceCaptain;
-//                   }
-//                 );
+                // stroing captain and vice captain
+                [userTeamInstance.teamsDetails.captain] = players.filter(
+                  (player) => {
+                    return player.playerId === team.captain;
+                  }
+                );
+                [userTeamInstance.teamsDetails.viceCaptain] = players.filter(
+                  (player) => {
+                    return player.playerId === team.viceCaptain;
+                  }
+                );
 
-//                 // pushing teams into user teams
-//                 userTeams.push(userTeamInstance);
+                // pushing teams into user teams
+                userTeams.push(userTeamInstance);
 
-//                 counter++;
+                counter++;
 
-//                 // resolving promise
-//                 if (counter === userTeamDetails.length) {
-//                   resolve([userTeams, userDetails, totalPages]);
-//                 }
-//               } catch (error) {
-//                 reject(error);
-//               }
-//             });
-//           } else {
-//             resolve([userTeams, userDetails, totalPages]);
-//           }
-//         } catch (error) {
-//           reject(error);
-//         }
-//       });
-//     };
+                // resolving promise
+                if (counter === userTeamDetails.length) {
+                  resolve([userTeams, userDetails, totalPages]);
+                }
+              } catch (error) {
+                reject(error);
+              }
+            });
+          } else {
+            resolve([userTeams, userDetails, totalPages]);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      });
+    };
 
-//     const [userTeams, userDetails, totalPages] = await fetchUserTeamDetails();
+    const [userTeams, userDetails, totalPages] = await fetchUserTeamDetails();
 
-//     res.status(200).json({
-//       status: true,
-//       message: "success",
-//       data: {
-//         userTeams: userTeams,
-//         userDetails: userDetails || [],
-//         totalPages,
-//         currentPage: pageNumber,
-//       },
-//     });
-//   } catch (error) {
-//     res.status(400).json({
-//       status: false,
-//       message: error.sqlMessage || error.message,
-//       data: {},
-//     });
-//   }
-// });
+    res.status(200).json({
+      status: true,
+      message: "success",
+      data: {
+        userTeams: userTeams,
+        userDetails: userDetails || [],
+        totalPages,
+        currentPage: pageNumber,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.sqlMessage || error.message,
+      data: {},
+    });
+  }
+});
 
 // getting team data of team
 router.post("/getUserTeamPlayers", verifyUser, async (req, res) => {
