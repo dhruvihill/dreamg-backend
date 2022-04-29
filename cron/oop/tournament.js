@@ -348,4 +348,16 @@ class Tournament {
   }
 }
 
+const a = async () => {
+  try {
+    const tournament = new Tournament("2472");
+    await tournament.storeTournament();
+    await tournament.storeCompetitors();
+    await tournament.storeMatches();
+  } catch (error) {
+    console.log(error);
+  }
+};
+a();
+
 module.exports = Tournament;

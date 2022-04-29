@@ -5,6 +5,30 @@ const bodyParser = require("body-parser");
 const tokens = {
   apiTokens: [
     {
+      token: "b6behgkrrnjy48cua23amf89",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "tq3kk7yp6cxgwmdyh77pzwhy",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "wknczdyhsnbs7frfvp9qse4c",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "y6ym7b596he4gft3zuzrencb",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
       token: "j3n4sedpgnvd5tx3mg6ye4v8",
       isUsed: false,
       totalCallMade: 0,
