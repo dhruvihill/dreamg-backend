@@ -348,4 +348,4 @@ class Tournament {
   }
 }
 
-// module.exports = Tournament;
+module.exports = Tournament;
