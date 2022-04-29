@@ -358,6 +358,6 @@ const a = async () => {
     console.log(error);
   }
 };
-a();
+// a();
 
 module.exports = Tournament;

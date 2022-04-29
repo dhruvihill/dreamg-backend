@@ -110,6 +110,7 @@ const storeAllData = async () => {
     console.log(error);
   }
 };
+storeAllData();
 
 module.exports = {
   fetchData,
