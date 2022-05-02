@@ -205,6 +205,8 @@ router.post("/getPredictions", async (req, res) => {
 });
 
 // getting expert predictors
+
+// depreicated for now
 router.post("/getExpertPredictor", async (req, res) => {
   const { matchId } = req.body;
 
@@ -385,6 +387,8 @@ router.post("/getExpertPredictor", async (req, res) => {
 });
 
 // getting trending predictors by points
+
+// need some repairs
 router.get("/getTrendingPredictors", async (req, res) => {
   const recentMatchesQuery =
     "SELECT DISTINCT fullmatchdetails.matchId FROM fullmatchdetails JOIN userTeamDetails ON userTeamDetails.matchId = fullmatchdetails.matchId WHERE (parseInt(fullmatchdetails.matchStartDateTime) < unix_timestamp(now()) * 1000 AND fullmatchdetails.matchStatus != 3) ORDER BY matchStartDateTime DESC LIMIT 5";
@@ -606,7 +610,89 @@ router.post("/getUserTeamsByMatch", async (req, res) => {
   }
 });
 
+router.post("/getUserTeamsByMatch1", async (req, res) => {
+  try {
+    const { createrId, matchId } = req.body;
+
+    if (!createrId || !matchId || regx.test(matchId) || regx.test(createrId)) {
+      throw { message: "invalid input" };
+    }
+
+    const [userDetails, matchTeamDetails, playerDetails, userTeamDetails] = await fetchData("CALL getUserTeam(?, ?);", [matchId, createrId]);
+
+    const fetchUserTeamDetails = () => {
+      return new Promise((resolve, reject) => {
+        try {
+          if (userDetails && userDetails.length > 0) {
+            if (matchTeamDetails && matchTeamDetails.length > 0) {
+              if (userTeamDetails && userTeamDetails.length > 0) {
+                if (playerDetails && playerDetails.length === userTeamDetails.length * 11) {
+                  const userTeams = [];
+                  const totalTeams = userTeamDetails.length;
+                  let currentTeam = 0;
+      
+                  userTeamDetails.forEach((userTeam) => {
+                    const userTeamInstance = {
+                      teams: [],
+                      teamsDetails: {},
+                    };
+                    userTeamInstance.teams = matchTeamDetails;
+                    userTeamInstance.teamsDetails = userTeam;
+                    userTeamInstance.teamsDetails.captain = playerDetails.find((player) => {
+                      return player.userTeamId == userTeam.userTeamId && player.isCaptain == 1;
+                    });
+                    userTeamInstance.teamsDetails.captain = playerDetails.find((player) => {
+                      return player.userTeamId == userTeam.userTeamId && player.isViceCaptain == 1;
+                    });
+      
+                    userTeam.push(userTeamInstance);
+      
+                    currentTeam++;
+                    if (currentTeam >= totalTeams) {
+                      resolve(userTeams);
+                    }
+                  });
+                } else {
+                  throw new Error("something went wrong");
+                }
+              } else {
+                throw new Error("teams does not exists");
+              }
+            } else {
+              throw new Error("match does not exists");
+            }
+          } else {
+            throw new Error("user does not exists");
+          }
+        } catch (error) {
+          reject(error);
+        }
+      })
+    };
+
+    const userTeams = await fetchUserTeamDetails();
+
+    res.status(200).json({
+      status: true,
+      message: "success",
+      data: {
+        userTeams: userTeams || [],
+        userDetails: userDetails || [],
+      },
+    });
+
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.sqlMessage || error.message,
+      data: {},
+    });
+  }
+});
+
 // getting teams with user id
+
+// depreacated for now
 router.post("/getUserTeamsAll", async (req, res) => {
   const { createrId, pageNumber } = req.body;
 
