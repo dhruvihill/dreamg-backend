@@ -754,9 +754,9 @@ router.post("getMatchStatistsics", async (req, res) => {
     const fetchData = async () => {
       return new Promise(async (resolve, reject) => {
         try {
-          const fetchLineUp = await fetchData(
-            "SELECT * FROM fullplayerdetails WHERE matchId = ? AND fullplayerdetails.isSelected = 1;",
-            [matchId]
+          const [matchTeamDetails, lineUp] = await fetchData(
+            "SELECT allteams.teamId, allteams.teamRadarId, allteams.name, allteams.countryName, allteams.countryCode, allteams.displayName FROM `fullmatchdetails` JOIN allteams ON allteams.teamId IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id) WHERE fullmatchdetails.matchId = ?;SELECT fullplayerdetails.playerId, fullplayerdetails.teamId, fullplayerdetails.credits, fullplayerdetails.isSelected, fullplayerdetails.points, fullplayerdetails.name AS playerName, fullplayerdetails.displayName AS playerDisplayName, fullplayerdetails.roleId As roleId, fullplayerdetails.roleName AS roleName FROM fullplayerdetails WHERE fullplayerdetails.matchId = ? AND fullplayerdetails.isSelected = 1;",
+            [matchId, matchId]
           );
         } catch (error) {
           console.log(error.message);
