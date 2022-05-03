@@ -12,12 +12,15 @@ router.post("/getPlayers", async (req, res) => {
     if (!/[^0-9]/g.test(matchId)) {
       let data;
       if (userTeamId && !/[^0-9]/g.test(userTeamId) && userTeamId > 0) {
-        [data] = await fetchData("CALL getPlayers(?, ?);", [
+        [data, matchDetails] = await fetchData("CALL getPlayers(?, ?);", [
           matchId,
           userTeamId,
         ]);
       } else {
-        [data] = await fetchData("CALL getPlayers(?, ?);", [matchId, 0]);
+        [data, matchDetails] = await fetchData("CALL getPlayers(?, ?);", [
+          matchId,
+          0,
+        ]);
       }
       const serverAddress = `${req.protocol}://${req.headers.host}`;
 
@@ -39,6 +42,7 @@ router.post("/getPlayers", async (req, res) => {
         message: "success",
         data: {
           players: data,
+          matchDetails: matchDetails[0],
         },
       });
     } else {
@@ -631,7 +635,6 @@ router.post("/getUserTeamsByMatch", async (req, res) => {
         try {
           if (userDetails && userDetails.length > 0) {
             // adding image url in user
-            userDetails[0].userId = userDetails[0].userId.toString();
             userDetails[0].displayPicture = imageUrl(
               __dirname,
               "../",

@@ -1443,7 +1443,21 @@ class MatchDaily extends Status {
                               if (currentLineUp === totalLineUps) {
                                 connection.release();
                                 this.#isLineUpStored = true;
-                                resolve();
+                                const setLineUpFlag = await database(
+                                  "UPDATE tournament_matches SET isLineUpStored = 1 WHERE matchId = ?;",
+                                  [this.id],
+                                  connection
+                                );
+                                if (
+                                  setLineUpFlag &&
+                                  setLineUpFlag.affectedRows > 0
+                                ) {
+                                  resolve();
+                                } else {
+                                  throw new Error(
+                                    "Error while updating lineup flag"
+                                  );
+                                }
                               }
                             }
                           } else {
