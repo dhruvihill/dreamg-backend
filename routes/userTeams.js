@@ -631,6 +631,7 @@ router.post("/getUserTeamsByMatch", async (req, res) => {
         try {
           if (userDetails && userDetails.length > 0) {
             // adding image url in user
+            userDetails[0].userId = userDetails[0].userId.toString();
             userDetails[0].displayPicture = imageUrl(
               __dirname,
               "../",
