@@ -726,7 +726,52 @@ router.post("/getUserTeamsByMatch", async (req, res) => {
       message: "success",
       data: {
         userTeams: userTeams || [],
-        userDetails: userDetails || [],
+        userDetails: userDetails[0] || [],
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.sqlMessage || error.message,
+      data: {},
+    });
+  }
+});
+
+router.post("getMatchStatistsics", async (req, res) => {
+  try {
+    const { matchId } = req.body;
+
+    const regx = /[^0-9]/g;
+
+    if (!matchId || regx.test(matchId)) {
+      throw new Error("invalid input");
+    }
+
+    const fetchData = async () => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const fetchLineUp = await fetchData(
+            "SELECT * FROM fullplayerdetails WHERE matchId = ? AND fullplayerdetails.isSelected = 1;",
+            [matchId]
+          );
+        } catch (error) {
+          console.log(error.message);
+          reject(error);
+        }
+      });
+    };
+
+    res.status(200).json({
+      status: true,
+      message: "success",
+      data: {
+        pitchReport: {},
+        teamComparison: {},
+        fantsyPoints: {},
+        playerPerformance: {},
+        statistics: {},
+        lineUp: {},
       },
     });
   } catch (error) {
