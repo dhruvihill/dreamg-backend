@@ -944,137 +944,137 @@ router.post("/getUserTeamsAll", async (req, res) => {
   }
 });
 
-// getting team data of team
+// getting team data of team --> older version
+// router.post("/getUserTeamPlayers", verifyUser, async (req, res) => {
+//   const { userId, teamId } = req.body;
+
+//   // queries to fetch data
+//   const fetchPlayerIdQuery =
+//     "SELECT EXISTS(SELECT userId FROM fulllikesdetails WHERE userTeamId = ? AND userId = ?) AS isUserLiked, matchId, userTeamId, teamTypeString, captain, userTeamLikes AS likes, viceCaptain, player1, player2, player3, player4, player5, player6, player7, player8, player9, player10, player11 FROM userTeamDetails WHERE userTeamId = ?;";
+//   const teamQuery =
+//     "SELECT team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName FROM fullmatchdetails WHERE matchId = ?;";
+//   const playerQuery =
+//     "SELECT DISTINCT playerId, fullplayerdetails.name AS playerName, fullplayerdetails.displayName AS playerDisplayName, roleId, roleName, COALESCE(points, 0) AS points, credits, fullplayerdetails.teamId, allteams.displayName AS teamDisplayName FROM fullplayerdetails JOIN allteams ON allteams.teamId = fullplayerdetails.teamId WHERE playerId = ? AND matchId = ?;";
+
+//   try {
+//     if (!/[^0-9]/g.test(teamId)) {
+//       const serverAddress = `${req.protocol}://${req.headers.host}`;
+//       const playersIds = await fetchData(fetchPlayerIdQuery, [
+//         teamId,
+//         userId,
+//         teamId,
+//       ]);
+//       const teamData = await fetchData(teamQuery, [playersIds[0]?.matchId]);
+
+//       if (teamData.length > 0) {
+//         teamData[0].team1FlagURL = imageUrl(
+//           __dirname,
+//           "../",
+//           `${process.env.TEAM_IMAGE_URL}${teamData[0].team1Id}.jpg`,
+//           serverAddress
+//         );
+//         teamData[0].team2FlagURL = imageUrl(
+//           __dirname,
+//           "../",
+//           `${process.env.TEAM_IMAGE_URL}${teamData[0].team2Id}.jpg`,
+//           serverAddress
+//         );
+//       }
+
+//       // checking if playerids exists or not
+//       let newAllTeams = [];
+
+//       // function to fetch all the users
+//       if (playersIds && playersIds.length > 0) {
+//         let counter = 0;
+//         playersIds.forEach(async (team) => {
+//           // creating data structure for team
+//           let singleTeam = {
+//             players: [],
+//             teamsDetails: {
+//               ...teamData[0],
+//               userTeamId: team["userTeamId"],
+//               likes: team["likes"],
+//               isUserLiked: team["isUserLiked"],
+//               teamType: team.teamTypeString,
+//               captain: {},
+//               viceCaptain: {},
+//             },
+//           };
+//           let i = 0;
+//           const ignoreKeys = [
+//             "captain",
+//             "viceCaptain",
+//             "teamTypeString",
+//             "likes",
+//             "views",
+//             "userTeamId",
+//             "isUserLiked",
+//             "matchId",
+//           ];
+
+//           // looping througth playerid to get all players details
+//           for (const key in team) {
+//             if (!ignoreKeys.includes(key)) {
+//               const player = await fetchData(playerQuery, [
+//                 team[key],
+//                 team.matchId,
+//               ]);
+
+//               // changing server address
+//               player[0].URL = imageUrl(
+//                 __dirname,
+//                 "../",
+//                 `${process.env.PLAYER_IMAGE_URL}${player[0].playerId}.jpg`,
+//                 serverAddress
+//               );
+
+//               if (team[key] === team["captain"])
+//                 singleTeam.teamsDetails.captain = player[0];
+//               else if (team[key] === team["viceCaptain"])
+//                 singleTeam.teamsDetails.viceCaptain = player[0];
+
+//               singleTeam.players.push(player[0]);
+//               i++;
+
+//               if (i === 11) {
+//                 newAllTeams.push(singleTeam);
+//                 counter++;
+//                 if (playersIds.length === counter) {
+//                   res.status(200).json({
+//                     status: true,
+//                     message: "success",
+//                     data: {
+//                       teams: newAllTeams,
+//                     },
+//                   });
+//                 }
+//               }
+//             }
+//           }
+//         });
+//       } else {
+//         res.status(200).json({
+//           status: true,
+//           message: "success",
+//           data: {
+//             teams: [],
+//           },
+//         });
+//       }
+//     } else {
+//       throw { message: "invalid input" };
+//     }
+//   } catch (error) {
+//     res.status(400).json({
+//       status: false,
+//       message: error.sqlMessage || error.message,
+//       data: {},
+//     });
+//   }
+// });
+
 router.post("/getUserTeamPlayers", verifyUser, async (req, res) => {
-  const { userId, teamId } = req.body;
-
-  // queries to fetch data
-  const fetchPlayerIdQuery =
-    "SELECT EXISTS(SELECT userId FROM fulllikesdetails WHERE userTeamId = ? AND userId = ?) AS isUserLiked, matchId, userTeamId, teamTypeString, captain, userTeamLikes AS likes, viceCaptain, player1, player2, player3, player4, player5, player6, player7, player8, player9, player10, player11 FROM userTeamDetails WHERE userTeamId = ?;";
-  const teamQuery =
-    "SELECT team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName FROM fullmatchdetails WHERE matchId = ?;";
-  const playerQuery =
-    "SELECT DISTINCT playerId, fullplayerdetails.name AS playerName, fullplayerdetails.displayName AS playerDisplayName, roleId, roleName, COALESCE(points, 0) AS points, credits, fullplayerdetails.teamId, allteams.displayName AS teamDisplayName FROM fullplayerdetails JOIN allteams ON allteams.teamId = fullplayerdetails.teamId WHERE playerId = ? AND matchId = ?;";
-
-  try {
-    if (!/[^0-9]/g.test(teamId)) {
-      const serverAddress = `${req.protocol}://${req.headers.host}`;
-      const playersIds = await fetchData(fetchPlayerIdQuery, [
-        teamId,
-        userId,
-        teamId,
-      ]);
-      const teamData = await fetchData(teamQuery, [playersIds[0]?.matchId]);
-
-      if (teamData.length > 0) {
-        teamData[0].team1FlagURL = imageUrl(
-          __dirname,
-          "../",
-          `${process.env.TEAM_IMAGE_URL}${teamData[0].team1Id}.jpg`,
-          serverAddress
-        );
-        teamData[0].team2FlagURL = imageUrl(
-          __dirname,
-          "../",
-          `${process.env.TEAM_IMAGE_URL}${teamData[0].team2Id}.jpg`,
-          serverAddress
-        );
-      }
-
-      // checking if playerids exists or not
-      let newAllTeams = [];
-
-      // function to fetch all the users
-      if (playersIds && playersIds.length > 0) {
-        let counter = 0;
-        playersIds.forEach(async (team) => {
-          // creating data structure for team
-          let singleTeam = {
-            players: [],
-            teamsDetails: {
-              ...teamData[0],
-              userTeamId: team["userTeamId"],
-              likes: team["likes"],
-              isUserLiked: team["isUserLiked"],
-              teamType: team.teamTypeString,
-              captain: {},
-              viceCaptain: {},
-            },
-          };
-          let i = 0;
-          const ignoreKeys = [
-            "captain",
-            "viceCaptain",
-            "teamTypeString",
-            "likes",
-            "views",
-            "userTeamId",
-            "isUserLiked",
-            "matchId",
-          ];
-
-          // looping througth playerid to get all players details
-          for (const key in team) {
-            if (!ignoreKeys.includes(key)) {
-              const player = await fetchData(playerQuery, [
-                team[key],
-                team.matchId,
-              ]);
-
-              // changing server address
-              player[0].URL = imageUrl(
-                __dirname,
-                "../",
-                `${process.env.PLAYER_IMAGE_URL}${player[0].playerId}.jpg`,
-                serverAddress
-              );
-
-              if (team[key] === team["captain"])
-                singleTeam.teamsDetails.captain = player[0];
-              else if (team[key] === team["viceCaptain"])
-                singleTeam.teamsDetails.viceCaptain = player[0];
-
-              singleTeam.players.push(player[0]);
-              i++;
-
-              if (i === 11) {
-                newAllTeams.push(singleTeam);
-                counter++;
-                if (playersIds.length === counter) {
-                  res.status(200).json({
-                    status: true,
-                    message: "success",
-                    data: {
-                      teams: newAllTeams,
-                    },
-                  });
-                }
-              }
-            }
-          }
-        });
-      } else {
-        res.status(200).json({
-          status: true,
-          message: "success",
-          data: {
-            teams: [],
-          },
-        });
-      }
-    } else {
-      throw { message: "invalid input" };
-    }
-  } catch (error) {
-    res.status(400).json({
-      status: false,
-      message: error.sqlMessage || error.message,
-      data: {},
-    });
-  }
-});
-
-router.post("/getUserTeamPlayers2", verifyUser, async (req, res) => {
   try {
     const { userId, teamId } = req.body;
 
