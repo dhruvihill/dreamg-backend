@@ -80,40 +80,44 @@ router.post("/setTeam", verifyUser, async (req, res) => {
       players.includes(viceCaptain)
     ) {
       let message;
+
+      players.splice(players.indexOf(captain), 1);
+      players.splice(players.indexOf(viceCaptain), 1);
+
       if (userTeamId && !regx.test(userTeamId) && userTeamId > 0) {
-        message = await fetchData("CALL set_team(?, ?, ?, ?, ?, ?, ?);", [
-          userTeamType,
+        message = await fetchData("CALL setUserTeam(?, ?, ?, ?, ?, ?, ?);", [
           matchId,
           userId,
+          userTeamId,
+          userTeamType,
           captain,
           viceCaptain,
-          userTeamId,
           [...players],
         ]);
       } else {
-        message = await fetchData("CALL set_team(?, ?, ?, ?, ?, ?, ?);", [
-          userTeamType,
+        message = await fetchData("CALL setUserTeam(?, ?, ?, ?, ?, ?, ?);", [
           matchId,
           userId,
+          0,
+          userTeamType,
           captain,
           viceCaptain,
-          0,
           [...players],
         ]);
       }
-      console.log(message);
-      if (message === "success") {
+      if (message && message[0] && message[0][0]?.message === "success") {
         res.status(200).json({
           status: true,
           message: "success",
           data: {},
         });
+      } else {
+        throw new Error("something went wrong");
       }
     } else {
       throw { message: "invalid input" };
     }
   } catch (error) {
-    console.log(error);
     res.status(400).json({
       status: false,
       message: error.sqlMessage ? error.sqlMessage : error.message,
@@ -142,10 +146,10 @@ router.post("/getPredictions", async (req, res) => {
         "SELECT COUNT(*) AS totalPredictors FROM userTeamDetails WHERE matchId = ?;";
       query =
         filter === "MOST_VIEWED"
-          ? "SELECT userdetails.userId, fullmatchdetails.displayName, SUM(userTeamDetails.userTeamViews) AS totalViews, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE userTeamDetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalViews DESC LIMIT ?, 20;"
+          ? "SELECT userdetails.userId, SUM(userTeamDetails.userTeamViews) AS totalViews, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE userTeamDetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalViews DESC LIMIT ?, 20;"
           : filter === "MOST_LIKED"
-          ? "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, fullmatchdetails.displayName, SUM(userTeamDetails.userTeamLikes) AS totalLikes, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE userTeamDetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalLikes DESC LIMIT ?, 20;"
-          : "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, fullmatchdetails.displayName, SUM(userTeamDetails.userTeamPoints) AS totalPoints, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE userTeamDetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT ?, 20;";
+          ? "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, SUM(userTeamDetails.userTeamLikes) AS totalLikes, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE userTeamDetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalLikes DESC LIMIT ?, 20;"
+          : "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, SUM(userTeamDetails.userTeamPoints) AS totalPoints, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE userTeamDetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT ?, 20;";
     } else {
       totalPredictorsQuery =
         "SELECT COUNT(*) AS totalPredictors FROM userTeamDetails;";
@@ -427,210 +431,233 @@ router.get("/getTrendingPredictors", async (req, res) => {
   }
 });
 
-// getting teams by match id and user id
-router.post("/getUserTeamsByMatch", async (req, res) => {
-  const { createrId, matchId } = req.body;
+// getting teams by match id and user id --> older verison
+// router.post("/getUserTeamsByMatchOlder", async (req, res) => {
+//   const { createrId, matchId } = req.body;
 
+//   try {
+//     const regx = /[^0-9]/g;
+
+//     if (!createrId || !matchId || regx.test(matchId) || regx.test(createrId)) {
+//       throw { message: "invalid input" };
+//     }
+
+//     const fetchUserTeamDetails = () => {
+//       return new Promise(async (resolve, reject) => {
+//         try {
+//           const serverAddress = `${req.protocol}://${req.headers.host}`;
+//           const [[userDetails], userTeamDetails] = await fetchData(
+//             "CALL get_user_team(?, ?, ?);",
+//             [matchId, createrId, 0]
+//           );
+
+//           if (userDetails) {
+//             // change server address
+//             userDetails.displayPicture = imageUrl(
+//               __dirname,
+//               "../",
+//               `${process.env.USER_IMAGE_URL}${userDetails.imageStamp}.jpg`,
+//               serverAddress
+//             );
+//             delete userDetails.imageStamp;
+//           }
+
+//           let userTeams = [];
+//           let counter = 0;
+//           if (userTeamDetails && userTeamDetails.length) {
+//             userTeamDetails?.forEach(async (team) => {
+//               try {
+//                 // changing server url
+//                 team.team1FlagURL = imageUrl(
+//                   __dirname,
+//                   "../",
+//                   `${process.env.TEAM_IMAGE_URL}${team.team1Id}.jpg`,
+//                   serverAddress
+//                 );
+//                 team.team2FlagURL = imageUrl(
+//                   __dirname,
+//                   "../",
+//                   `${process.env.TEAM_IMAGE_URL}${team.team2Id}.jpg`,
+//                   serverAddress
+//                 );
+
+//                 // creating instance of user team
+//                 let userTeamInstance = {
+//                   teams: [
+//                     {
+//                       teamTotalPlayers: 0,
+//                       teamId: team.team1Id,
+//                       teamName: team.team1Name,
+//                       teamDisplayName: team.team1DisplayName,
+//                       teamFlagURL: team.team1FlagURL,
+//                     },
+//                     {
+//                       teamTotalPlayers: 0,
+//                       teamId: team.team2Id,
+//                       teamName: team.team2Name,
+//                       teamDisplayName: team.team2DisplayName,
+//                       teamFlagURL: team.team2FlagURL,
+//                     },
+//                   ],
+//                   teamsDetails: {
+//                     userTeamId: team.userTeamId,
+//                     creditUsed: 0,
+//                     teamType: team.teamTypeString,
+//                     totalBatsman: 0,
+//                     totalBowlers: 0,
+//                     totalWicketKeeper: 0,
+//                     totalAllrounders: 0,
+//                     captain: {},
+//                     viceCaptain: {},
+//                   },
+//                 };
+
+//                 // feching all players
+//                 const [players] = await fetchData(
+//                   "CALL get_userteam_details(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+//                   [
+//                     team.matchId,
+//                     team.player1,
+//                     team.player2,
+//                     team.player3,
+//                     team.player4,
+//                     team.player5,
+//                     team.player6,
+//                     team.player7,
+//                     team.player8,
+//                     team.player9,
+//                     team.player10,
+//                     team.player11,
+//                   ]
+//                 );
+
+//                 // loop through all players
+//                 players.forEach((player) => {
+//                   // changing server url
+//                   player.URL = imageUrl(
+//                     __dirname,
+//                     "../",
+//                     `${process.env.PLAYER_IMAGE_URL}${player.playerId}.jpg`,
+//                     serverAddress
+//                   );
+
+//                   // incrementing total players
+//                   if (player.teamId === userTeamInstance.teams[0].teamId)
+//                     userTeamInstance.teams[0].teamTotalPlayers++;
+//                   else if (player.teamId === userTeamInstance.teams[1].teamId)
+//                     userTeamInstance.teams[1].teamTotalPlayers++;
+
+//                   // incrementing players roles
+//                   if (player.roleId === 1) {
+//                     userTeamInstance.teamsDetails.totalBatsman++;
+//                   } else if (player.roleId === 2) {
+//                     userTeamInstance.teamsDetails.totalBowlers++;
+//                   } else if (player.roleId === 3) {
+//                     userTeamInstance.teamsDetails.totalWicketKeeper++;
+//                   } else if (player.roleId === 4) {
+//                     userTeamInstance.teamsDetails.totalAllrounders++;
+//                   }
+
+//                   // total credits used
+//                   userTeamInstance.teamsDetails.creditUsed += player.credits;
+//                 });
+
+//                 // stroing captain and vice captain
+//                 [userTeamInstance.teamsDetails.captain] = players.filter(
+//                   (player) => {
+//                     return player.playerId === team.captain;
+//                   }
+//                 );
+//                 [userTeamInstance.teamsDetails.viceCaptain] = players.filter(
+//                   (player) => {
+//                     return player.playerId === team.viceCaptain;
+//                   }
+//                 );
+
+//                 // pushing teams into user teams
+//                 userTeams.push(userTeamInstance);
+//                 counter++;
+
+//                 // resolving promise
+//                 if (counter === userTeamDetails.length) {
+//                   resolve([userTeams, userDetails]);
+//                 }
+//               } catch (error) {
+//                 reject(error);
+//               }
+//             });
+//           } else {
+//             resolve([userTeams, userDetails]);
+//           }
+//         } catch (error) {
+//           reject(error);
+//         }
+//       });
+//     };
+
+//     const [userTeams, userDetails] = await fetchUserTeamDetails();
+
+//     res.status(200).json({
+//       status: true,
+//       message: "success",
+//       data: {
+//         userTeams,
+//         userDetails: userDetails || [],
+//       },
+//     });
+//   } catch (error) {
+//     res.status(400).json({
+//       status: false,
+//       message: error.sqlMessage || error.message,
+//       data: {},
+//     });
+//   }
+// });
+
+router.post("/getUserTeamsByMatch", async (req, res) => {
   try {
+    const { createrId, matchId } = req.body;
     const regx = /[^0-9]/g;
 
     if (!createrId || !matchId || regx.test(matchId) || regx.test(createrId)) {
       throw { message: "invalid input" };
     }
-
-    const fetchUserTeamDetails = () => {
-      return new Promise(async (resolve, reject) => {
-        try {
-          const serverAddress = `${req.protocol}://${req.headers.host}`;
-          const [[userDetails], userTeamDetails] = await fetchData(
-            "CALL get_user_team(?, ?, ?);",
-            [matchId, createrId, 0]
-          );
-
-          if (userDetails) {
-            // change server address
-            userDetails.displayPicture = imageUrl(
-              __dirname,
-              "../",
-              `${process.env.USER_IMAGE_URL}${userDetails.imageStamp}.jpg`,
-              serverAddress
-            );
-            delete userDetails.imageStamp;
-          }
-
-          let userTeams = [];
-          let counter = 0;
-          if (userTeamDetails && userTeamDetails.length) {
-            userTeamDetails?.forEach(async (team) => {
-              try {
-                // changing server url
-                team.team1FlagURL = imageUrl(
-                  __dirname,
-                  "../",
-                  `${process.env.TEAM_IMAGE_URL}${team.team1Id}.jpg`,
-                  serverAddress
-                );
-                team.team2FlagURL = imageUrl(
-                  __dirname,
-                  "../",
-                  `${process.env.TEAM_IMAGE_URL}${team.team2Id}.jpg`,
-                  serverAddress
-                );
-
-                // creating instance of user team
-                let userTeamInstance = {
-                  teams: [
-                    {
-                      teamTotalPlayers: 0,
-                      teamId: team.team1Id,
-                      teamName: team.team1Name,
-                      teamDisplayName: team.team1DisplayName,
-                      teamFlagURL: team.team1FlagURL,
-                    },
-                    {
-                      teamTotalPlayers: 0,
-                      teamId: team.team2Id,
-                      teamName: team.team2Name,
-                      teamDisplayName: team.team2DisplayName,
-                      teamFlagURL: team.team2FlagURL,
-                    },
-                  ],
-                  teamsDetails: {
-                    userTeamId: team.userTeamId,
-                    creditUsed: 0,
-                    teamType: team.teamTypeString,
-                    totalBatsman: 0,
-                    totalBowlers: 0,
-                    totalWicketKeeper: 0,
-                    totalAllrounders: 0,
-                    captain: {},
-                    viceCaptain: {},
-                  },
-                };
-
-                // feching all players
-                const [players] = await fetchData(
-                  "CALL get_userteam_details(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
-                  [
-                    team.matchId,
-                    team.player1,
-                    team.player2,
-                    team.player3,
-                    team.player4,
-                    team.player5,
-                    team.player6,
-                    team.player7,
-                    team.player8,
-                    team.player9,
-                    team.player10,
-                    team.player11,
-                  ]
-                );
-
-                // loop through all players
-                players.forEach((player) => {
-                  // changing server url
-                  player.URL = imageUrl(
-                    __dirname,
-                    "../",
-                    `${process.env.PLAYER_IMAGE_URL}${player.playerId}.jpg`,
-                    serverAddress
-                  );
-
-                  // incrementing total players
-                  if (player.teamId === userTeamInstance.teams[0].teamId)
-                    userTeamInstance.teams[0].teamTotalPlayers++;
-                  else if (player.teamId === userTeamInstance.teams[1].teamId)
-                    userTeamInstance.teams[1].teamTotalPlayers++;
-
-                  // incrementing players roles
-                  if (player.roleId === 1) {
-                    userTeamInstance.teamsDetails.totalBatsman++;
-                  } else if (player.roleId === 2) {
-                    userTeamInstance.teamsDetails.totalBowlers++;
-                  } else if (player.roleId === 3) {
-                    userTeamInstance.teamsDetails.totalWicketKeeper++;
-                  } else if (player.roleId === 4) {
-                    userTeamInstance.teamsDetails.totalAllrounders++;
-                  }
-
-                  // total credits used
-                  userTeamInstance.teamsDetails.creditUsed += player.credits;
-                });
-
-                // stroing captain and vice captain
-                [userTeamInstance.teamsDetails.captain] = players.filter(
-                  (player) => {
-                    return player.playerId === team.captain;
-                  }
-                );
-                [userTeamInstance.teamsDetails.viceCaptain] = players.filter(
-                  (player) => {
-                    return player.playerId === team.viceCaptain;
-                  }
-                );
-
-                // pushing teams into user teams
-                userTeams.push(userTeamInstance);
-                counter++;
-
-                // resolving promise
-                if (counter === userTeamDetails.length) {
-                  resolve([userTeams, userDetails]);
-                }
-              } catch (error) {
-                reject(error);
-              }
-            });
-          } else {
-            resolve([userTeams, userDetails]);
-          }
-        } catch (error) {
-          reject(error);
-        }
-      });
-    };
-
-    const [userTeams, userDetails] = await fetchUserTeamDetails();
-
-    res.status(200).json({
-      status: true,
-      message: "success",
-      data: {
-        userTeams,
-        userDetails: userDetails || [],
-      },
-    });
-  } catch (error) {
-    res.status(400).json({
-      status: false,
-      message: error.sqlMessage || error.message,
-      data: {},
-    });
-  }
-});
-
-router.post("/getUserTeamsByMatch1", async (req, res) => {
-  try {
-    const { createrId, matchId } = req.body;
-
-    if (!createrId || !matchId || regx.test(matchId) || regx.test(createrId)) {
-      throw { message: "invalid input" };
-    }
-
-    const [userDetails, matchTeamDetails, playerDetails, userTeamDetails] = await fetchData("CALL getUserTeam(?, ?);", [matchId, createrId]);
+    const serverAddress = `${req.protocol}://${req.headers.host}`;
+    const [userDetails, matchTeamDetails, playerDetails, userTeamDetails] =
+      await fetchData("CALL getUserTeam(?, ?);", [matchId, createrId]);
 
     const fetchUserTeamDetails = () => {
       return new Promise((resolve, reject) => {
         try {
           if (userDetails && userDetails.length > 0) {
+            // adding image url in user
+            userDetails[0].displayPicture = imageUrl(
+              __dirname,
+              "../",
+              `${process.env.USER_IMAGE_URL}${userDetails[0].imageStamp}.jpg`,
+              serverAddress
+            );
+            delete userDetails[0].imageStamp;
+
             if (matchTeamDetails && matchTeamDetails.length > 0) {
+              matchTeamDetails.forEach((team) => {
+                team.teamFlagURL = imageUrl(
+                  __dirname,
+                  "../",
+                  `${process.env.TEAM_IMAGE_URL}${team.teamId}.jpg`,
+                  serverAddress
+                );
+              });
+
               if (userTeamDetails && userTeamDetails.length > 0) {
-                if (playerDetails && playerDetails.length === userTeamDetails.length * 11) {
+                if (
+                  playerDetails &&
+                  playerDetails.length === userTeamDetails.length * 11
+                ) {
                   const userTeams = [];
                   const totalTeams = userTeamDetails.length;
                   let currentTeam = 0;
-      
+
                   userTeamDetails.forEach((userTeam) => {
                     const userTeamInstance = {
                       teams: [],
@@ -638,15 +665,47 @@ router.post("/getUserTeamsByMatch1", async (req, res) => {
                     };
                     userTeamInstance.teams = matchTeamDetails;
                     userTeamInstance.teamsDetails = userTeam;
-                    userTeamInstance.teamsDetails.captain = playerDetails.find((player) => {
-                      return player.userTeamId == userTeam.userTeamId && player.isCaptain == 1;
-                    });
-                    userTeamInstance.teamsDetails.captain = playerDetails.find((player) => {
-                      return player.userTeamId == userTeam.userTeamId && player.isViceCaptain == 1;
-                    });
-      
-                    userTeam.push(userTeamInstance);
-      
+                    userTeamInstance.teamsDetails.captain = playerDetails.find(
+                      (player) => {
+                        player.URL = imageUrl(
+                          __dirname,
+                          "../",
+                          `${process.env.PLAYER_IMAGE_URL}${player.playerId}.jpg`,
+                          serverAddress
+                        );
+                        if (player.isCaptain == 1) {
+                          userTeamInstance.teamsDetails.points -= player.points;
+                          player.points *= 2;
+                          userTeamInstance.teamsDetails.points += player.points;
+                        }
+
+                        return (
+                          player.userTeamId == userTeam.userTeamId &&
+                          player.isCaptain == 1
+                        );
+                      }
+                    );
+                    userTeamInstance.teamsDetails.viceCaptain =
+                      playerDetails.find((player) => {
+                        player.URL = imageUrl(
+                          __dirname,
+                          "../",
+                          `${process.env.PLAYER_IMAGE_URL}${player.playerId}.jpg`,
+                          serverAddress
+                        );
+                        if (player.isViceCaptain == 1) {
+                          userTeamInstance.teamsDetails.points -= player.points;
+                          player.points *= 1.5;
+                          userTeamInstance.teamsDetails.points += player.points;
+                        }
+                        return (
+                          player.userTeamId == userTeam.userTeamId &&
+                          player.isViceCaptain == 1
+                        );
+                      });
+
+                    userTeams.push(userTeamInstance);
+
                     currentTeam++;
                     if (currentTeam >= totalTeams) {
                       resolve(userTeams);
@@ -667,7 +726,7 @@ router.post("/getUserTeamsByMatch1", async (req, res) => {
         } catch (error) {
           reject(error);
         }
-      })
+      });
     };
 
     const userTeams = await fetchUserTeamDetails();
@@ -680,7 +739,6 @@ router.post("/getUserTeamsByMatch1", async (req, res) => {
         userDetails: userDetails || [],
       },
     });
-
   } catch (error) {
     res.status(400).json({
       status: false,
@@ -1016,6 +1074,110 @@ router.post("/getUserTeamPlayers", verifyUser, async (req, res) => {
   }
 });
 
+router.post("/getUserTeamPlayers2", verifyUser, async (req, res) => {
+  try {
+    const { userId, teamId } = req.body;
+
+    const matchTeamQuery =
+      "SELECT team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName FROM userTeamDetails JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE userTeamDetails.userTeamId = ?;";
+
+    const userTeamDetailsQuery =
+      "SELECT userTeamId, teamTypeString, EXISTS(SELECT * FROM fulllikesdetails WHERE fulllikesdetails.userTeamId = userTeamDetails.userTeamId AND fulllikesdetails.userId = ?) AS isUserLiked, (SELECT COUNT(*) FROM fulllikesdetails WHERE fulllikesdetails.userTeamId = userTeamDetails.userTeamId) AS likes FROM userTeamDetails WHERE userTeamDetails.userTeamId = ?;";
+
+    const userTeamPlayers =
+      "SELECT fullplayerdetails.playerId AS playerId, userTeamPlayersDetails.isCaptain, userTeamPlayersDetails.isViceCaptain, fullplayerdetails.name AS playerName, fullplayerdetails.displayName AS playerDisplayName, roleId, roleName, COALESCE(points, 0) AS points, COALESCE(credits, 0) As credits, fullplayerdetails.teamId, allteams.displayName AS teamDisplayName FROM userTeamDetails JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId JOIN fullplayerdetails ON fullplayerdetails.playerId = userTeamPlayersDetails.playerId AND fullplayerdetails.matchId = userTeamDetails.matchId JOIN allteams ON allteams.teamId = fullplayerdetails.teamId WHERE userTeamDetails.userTeamId = ?;";
+
+    if (!/[^0-9]/g.test(teamId)) {
+      const serverAddress = `${req.protocol}://${req.headers.host}`;
+
+      const [matchTeamDetails, userTeamPlayersDetails, userTeamDetails] =
+        await fetchData(
+          `${matchTeamQuery}${userTeamPlayers}${userTeamDetailsQuery}`,
+          [teamId, teamId, userId, teamId]
+        );
+
+      if (matchTeamDetails && matchTeamDetails.length > 0) {
+        if (userTeamPlayersDetails && userTeamPlayersDetails.length > 0) {
+          // adding team flag
+          matchTeamDetails[0].team1FlagURL = imageUrl(
+            __dirname,
+            "../",
+            `${process.env.TEAM_IMAGE_URL}${matchTeamDetails[0].team1Id}.jpg`,
+            serverAddress
+          );
+          matchTeamDetails[0].team2FlagURL = imageUrl(
+            __dirname,
+            "../",
+            `${process.env.TEAM_IMAGE_URL}${matchTeamDetails[0].team2Id}.jpg`,
+            serverAddress
+          );
+
+          userTeamPlayersDetails.forEach((player) => {
+            player.URL = imageUrl(
+              __dirname,
+              "../",
+              `${process.env.TEAM_IMAGE_URL}${player.playerId}.jpg`,
+              serverAddress
+            );
+          });
+
+          const teamInstance = [
+            {
+              players: userTeamPlayersDetails,
+              teamsDetails: {
+                ...matchTeamDetails[0],
+                userTeamId: userTeamDetails["userTeamId"],
+                likes: userTeamDetails["likes"],
+                isUserLiked: userTeamDetails["isUserLiked"],
+                teamType: userTeamDetails.teamTypeString,
+                captain: userTeamPlayersDetails.find(
+                  (player) => player.isCaptain === 1
+                ),
+                viceCaptain: userTeamPlayersDetails.find(
+                  (player) => player.isViceCaptain === 1
+                ),
+              },
+            },
+          ];
+
+          res.status(200).json({
+            status: true,
+            message: "success",
+            data: {
+              teams: teamInstance,
+            },
+          });
+        } else {
+          throw new Error("team not found");
+        }
+      } else {
+        throw new Error("team not found");
+      }
+
+      // if (matchTeamDetails.length > 0) {
+      //   matchTeamDetails[0].team1FlagURL = imageUrl(
+      //     __dirname,
+      //     "../",
+      //     `${process.env.TEAM_IMAGE_URL}${teamData[0].team1Id}.jpg`,
+      //     serverAddress
+      //   );
+      //   matchTeamDetails[0].team2FlagURL = imageUrl(
+      //     __dirname,
+      //     "../",
+      //     `${process.env.TEAM_IMAGE_URL}${teamData[0].team2Id}.jpg`,
+      //     serverAddress
+      //   );
+      // }
+    }
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.sqlMessage || error.message,
+      data: {},
+    });
+  }
+});
+
 // update likes of team
 router.post("/updateUserTeamLikes", verifyUser, async (req, res) => {
   let { userId, teamId } = req.body;
@@ -1251,43 +1413,3 @@ router.post("/compareTeams", async (req, res) => {
 
 // exporting module
 module.exports = router;
-
-/*
-SELECT
-    scorcardDetails.scorcardId,
-    scorcardInning.scorcardInningId,
-    userTeamDetails.userTeamId,
-    userTeamPlayersDetails.playerId,
-    userTeamPlayersDetails.isCaptain,
-    userTeamPlayersDetails.isViceCaptain,
-    fullplayerdetails.credits,
-    fullplayerdetails.points,
-    fullplayerdetails.name,
-    fullplayerdetails.displayName,
-    fullplayerdetails.roleId,
-    fullplayerdetails.teamId,
-    `battingOrder`,
-    inningBatsmans.`runs`,
-    `strikeRate`,
-    `isNotOut`,
-    `isDuck`,
-    `isRetiredHurt`,
-    `ballFaced`,
-    `fours`,
-    `sixes`,
-    fullplayerdetails.roleName
-FROM
-    userTeamDetails
-JOIN userTeamPlayersDetails ON userTeamDetails.userTeamId = userTeamPlayersDetails.userTeamId
-JOIN fullplayerdetails ON fullplayerdetails.playerId = userTeamPlayersDetails.playerId AND fullplayerdetails.matchId = userTeamDetails.matchId
-JOIN scorcardDetails ON scorcardDetails.matchId = 1
-JOIN scorcardInning ON scorcardDetails.scorcardId = scorcardInning.scorcardId
-LEFT JOIN inningBatsmans ON inningBatsmans.scorcardInningId = scorcardInning.scorcardInningId AND userTeamPlayersDetails.playerId = inningBatsmans.playerId
-LEFT JOIN inningBowlers ON inningBowlers.scorcardInningId = scorcardInning.scorcardInningId AND userTeamPlayersDetails.playerId = inningBowlers.playerId
-WHERE
-    userTeamDetails.matchId = 1 AND userTeamDetails.userId = 9;
-*/
-
-/*
-SELECT COALESCE(SUM(match_players.points), 0) AS points FROM match_players WHERE match_players.matchId IN (SELECT tournament_matches.matchId FROM tournament_matches WHERE tournament_matches.matchTournamentId IN (SELECT fullmatchdetails.matchTournamentId FROM fullmatchdetails WHERE fullmatchdetails.matchId = 31)) AND match_players.playerId = 45;
- */

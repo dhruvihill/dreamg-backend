@@ -395,7 +395,8 @@ class MatchDaily extends Status {
             const playerCatches = batting.filter((playerBat) => {
               return (
                 playerBat.dismissalFieldeManId === player.playerId &&
-                playerBat.dismissalType === "CAUGHT"
+                (playerBat.dismissalType === "CAUGHT" ||
+                  playerBat.dismissalType === "STUMPED")
               );
             });
             const playerRunOuts = batting.filter((playerBat) => {
@@ -573,7 +574,8 @@ class MatchDaily extends Status {
             const playerCatches = batting.filter((playerBat) => {
               return (
                 playerBat.dismissalFieldeManId === player.playerId &&
-                playerBat.dismissalType === "CAUGHT"
+                (playerBat.dismissalType === "CAUGHT" ||
+                  playerBat.dismissalType === "STUMPED")
               );
             });
             const playerRunOuts = batting.filter((playerBat) => {
@@ -722,7 +724,7 @@ class MatchDaily extends Status {
                   totalPoints += eBetween7And8;
                   points.economyPoints += eBetween7And8;
                 } else if (
-                  bowler.economyRate > 3.5 &&
+                  bowler.economyRate >= 3.5 &&
                   bowler.economyRate <= 4.49
                 ) {
                   totalPoints += eBetween3_5And4_5;
@@ -834,7 +836,8 @@ class MatchDaily extends Status {
             const playerCatches = batting.filter((playerBat) => {
               return (
                 playerBat.dismissalFieldeManId === player.playerId &&
-                playerBat.dismissalType === "CAUGHT"
+                (playerBat.dismissalType === "CAUGHT" ||
+                  playerBat.dismissalType === "STUMPED")
               );
             });
             const playerRunOuts = batting.filter((playerBat) => {
@@ -921,7 +924,7 @@ class MatchDaily extends Status {
                     totalPoints += srBetween130And150;
                     points.strikeRatePoints += srBetween130And150;
                   } else if (
-                    batsMan.strikeRate > 60 &&
+                    batsMan.strikeRate >= 60 &&
                     batsMan.strikeRate <= 70
                   ) {
                     totalPoints += srBetween60And70;
@@ -995,7 +998,7 @@ class MatchDaily extends Status {
                 ) {
                   totalPoints += eBetween10And11;
                   points.economyPoints += eBetween10And11;
-                } else if (bowler.economyRate > 6 && bowler.economyRate <= 7) {
+                } else if (bowler.economyRate >= 6 && bowler.economyRate <= 7) {
                   totalPoints += eBetween6And7;
                   points.economyPoints += eBetween6And7;
                 } else if (
@@ -1109,7 +1112,8 @@ class MatchDaily extends Status {
             const playerCatches = batting.filter((playerBat) => {
               return (
                 playerBat.dismissalFieldeManId === player.playerId &&
-                playerBat.dismissalType === "CAUGHT"
+                (playerBat.dismissalType === "CAUGHT" ||
+                  playerBat.dismissalType === "STUMPED")
               );
             });
             const playerRunOuts = batting.filter((playerBat) => {
@@ -1195,7 +1199,7 @@ class MatchDaily extends Status {
                     totalPoints += srBetween150And170;
                     points.strikeRatePoints += srBetween150And170;
                   } else if (
-                    batsMan.strikeRate > 70 &&
+                    batsMan.strikeRate >= 70 &&
                     batsMan.strikeRate <= 80
                   ) {
                     totalPoints += srBetween70And80;
@@ -1265,7 +1269,7 @@ class MatchDaily extends Status {
                 ) {
                   totalPoints += eBetween14And15;
                   points.economyPoints += eBetween14And15;
-                } else if (bowler.economyRate > 8 && bowler.economyRate <= 9) {
+                } else if (bowler.economyRate >= 8 && bowler.economyRate <= 9) {
                   totalPoints += eBetween8And9;
                   points.economyPoints += eBetween8And9;
                 } else if (
@@ -1274,7 +1278,7 @@ class MatchDaily extends Status {
                 ) {
                   totalPoints += eBetween7And8;
                   points.economyPoints += eBetween7And8;
-                } else if (bowler.economyRate < 7) {
+                } else if (bowler.economyRate <= 7) {
                   totalPoints += eBelow7;
                   points.economyPoints += eBelow7;
                 }
