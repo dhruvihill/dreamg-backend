@@ -155,10 +155,10 @@ router.post("/getPredictions", async (req, res) => {
         "SELECT COUNT(*) AS totalPredictors FROM userTeamDetails;";
       query =
         filter === "MOST_VIEWED"
-          ? "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, fullmatchdetails.displayName, SUM(userTeamDetails.userTeamViews) AS totalViews, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId GROUP BY userdetails.userId ORDER BY totalViews DESC LIMIT ?, 20;"
+          ? "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, SUM(userTeamDetails.userTeamViews) AS totalViews, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId GROUP BY userdetails.userId ORDER BY totalViews DESC LIMIT ?, 20;"
           : filter === "MOST_LIKED"
-          ? "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, fullmatchdetails.displayName, SUM(userTeamDetails.userTeamLikes) AS totalLikes, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId GROUP BY userdetails.userId ORDER BY totalLikes DESC LIMIT ?, 20;"
-          : "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, fullmatchdetails.displayName, SUM(userTeamDetails.userTeamPoints) AS totalPoints, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT ?, 20;";
+          ? "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, SUM(userTeamDetails.userTeamLikes) AS totalLikes, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId GROUP BY userdetails.userId ORDER BY totalLikes DESC LIMIT ?, 20;"
+          : "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, SUM(userTeamDetails.userTeamPoints) AS totalPoints, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT ?, 20;";
     }
     if (
       validMatchId &&
@@ -673,12 +673,6 @@ router.post("/getUserTeamsByMatch", async (req, res) => {
                           `${process.env.PLAYER_IMAGE_URL}${player.playerId}.jpg`,
                           serverAddress
                         );
-                        if (player.isCaptain == 1) {
-                          userTeamInstance.teamsDetails.points -= player.points;
-                          player.points *= 2;
-                          userTeamInstance.teamsDetails.points += player.points;
-                        }
-
                         return (
                           player.userTeamId == userTeam.userTeamId &&
                           player.isCaptain == 1
@@ -693,11 +687,6 @@ router.post("/getUserTeamsByMatch", async (req, res) => {
                           `${process.env.PLAYER_IMAGE_URL}${player.playerId}.jpg`,
                           serverAddress
                         );
-                        if (player.isViceCaptain == 1) {
-                          userTeamInstance.teamsDetails.points -= player.points;
-                          player.points *= 1.5;
-                          userTeamInstance.teamsDetails.points += player.points;
-                        }
                         return (
                           player.userTeamId == userTeam.userTeamId &&
                           player.isViceCaptain == 1

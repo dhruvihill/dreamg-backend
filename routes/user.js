@@ -15,21 +15,18 @@ router.post("/userProfile", verifyUser, async (req, res) => {
     const { predictorId } = req.body;
     const timeZone = req.headers.timezone;
 
-    const pointsQuery = `SELECT userId, firstName, imageStamp, lastName, phoneNumber, email, dateOfBirth, gender, address, city, pinCode, state, country,
-      (SELECT COUNT(DISTINCT matchId) FROM userTeamDetails WHERE userId = ?) AS totalMatches,
-      (SELECT COUNT(DISTINCT userTeamId) FROM userTeamDetails WHERE userId = ?) AS totalTeams,
-      COALESCE((SELECT SUM(userTeamPoints) AS totalPoints FROM userTeamDetails WHERE userId = ? GROUP BY userTeamType HAVING userTeamType = 1), 0) AS mega_contest_totalPoints,
-      COALESCE((SELECT SUM(userTeamPoints) AS totalPoints FROM userTeamDetails WHERE userId = ? GROUP BY userTeamType HAVING userTeamType = 2), 0) AS head_to_head_totalPoints FROM userdetails WHERE userId = ?;`;
+    const pointsQuery = `SELECT userdetails.userId, userdetails.firstName, userdetails.imageStamp, userdetails.lastName, userdetails.phoneNumber, userdetails.email, userdetails.dateOfBirth, userdetails.gender, userdetails.address, userdetails.city, userdetails.pinCode, userdetails.state, userdetails.country, (SELECT COUNT(DISTINCT matchId) FROM userTeamDetails WHERE userId = userdetails.userId) AS totalMatches, (SELECT COUNT(DISTINCT userTeamId) FROM userTeamDetails WHERE userId = userdetails.userId) AS totalTeams, COALESCE((SELECT SUM(userTeamDetails.userTeamPoints) FROM userTeamDetails WHERE userTeamDetails.teamTypeString = "MEGA_CONTEST" AND userTeamDetails.userId = userdetails.userId), 0) AS mega_contest_totalPoints, COALESCE((SELECT SUM(userTeamDetails.userTeamPoints) FROM userTeamDetails WHERE userTeamDetails.teamTypeString = "HEAD_TO_HEAD" AND userTeamDetails.userId = userdetails.userId), 0) AS head_to_head_totalPoints FROM userdetails WHERE userdetails.userId = ?;`;
 
     const recentMatchesQuery =
       "SELECT matchId, seriesName, seriesDname, matchTypeId, UPPER(matchTyprString) AS matchTyprString, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName, (SELECT COUNT(DISTINCT userId) FROM userTeamDetails WHERE userTeamDetails.matchId = fullmatchdetails.matchId) AS totalPredictors, EXISTS(SELECT userTeamDetails.userTeamId FROM userTeamDetails WHERE userTeamDetails.userId = ? AND userTeamDetails.matchId = fullmatchdetails.matchId AND userTeamDetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT userTeamDetails.userTeamId FROM userTeamDetails WHERE userTeamDetails.userId = ? AND userTeamDetails.matchId = fullmatchdetails.matchId AND userTeamDetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString != 'not_started' AND fullmatchdetails.matchId IN (SELECT DISTINCT userTeamDetails.matchId FROM userTeamDetails WHERE userTeamDetails.userId = ? ORDER BY userTeamDetails.creationTime DESC) LIMIT 5;";
+
     const currentMatchQuery =
       "SELECT matchId, seriesName, seriesDname, matchTypeId, UPPER(matchTyprString) AS matchTyprString, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName, (SELECT COUNT(DISTINCT userId) FROM userTeamDetails WHERE userTeamDetails.matchId = fullmatchdetails.matchId) AS totalPredictors, EXISTS(SELECT userTeamDetails.userTeamId FROM userTeamDetails WHERE userTeamDetails.userId = ? AND userTeamDetails.matchId = fullmatchdetails.matchId AND userTeamDetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT userTeamDetails.userTeamId FROM userTeamDetails WHERE userTeamDetails.userId = ? AND userTeamDetails.matchId = fullmatchdetails.matchId AND userTeamDetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE fullmatchdetails.matchStatusString = 'not_started' AND fullmatchdetails.matchId IN (SELECT DISTINCT userTeamDetails.matchId FROM userTeamDetails WHERE userTeamDetails.userId = ? ORDER BY userTeamDetails.creationTime DESC) LIMIT 5;";
 
     if (!/[^0-9]/g.test(predictorId)) {
       const [points, recentPlayed, currentPlayed] = await fetchData(
         `${pointsQuery}${recentMatchesQuery}${currentMatchQuery}`,
-        Array(11).fill(predictorId)
+        Array(7).fill(predictorId)
       );
 
       if (points.length > 0) {
@@ -125,14 +122,10 @@ router.post("/updateProfile", verifyUser, verifyProfile, async (req, res) => {
     const updateUserQuery = `UPDATE users SET ${keys.join(
       ","
     )} WHERE userId = ?;`;
-    const getUserPointsQuery = `SELECT (SELECT COUNT(DISTINCT matchId) FROM user_team WHERE userId = ?) AS totalMatches,
-        (SELECT COUNT(DISTINCT userTeamId) FROM user_team WHERE userId = ?) AS totalTeams,
-        COALESCE((SELECT SUM(user_team_data.userTeamPoints) FROM users JOIN user_team ON user_team.userId = users.userId JOIN user_team_data ON user_team.userTeamId = user_team_data.userTeamId AND userTeamType = (SELECT teamType FROM team_type WHERE teamTypeString = "MEGA_CONTEST") WHERE users.userId = ?), 0) AS mega_contest_totalPoints, 
-        COALESCE((SELECT SUM(user_team_data.userTeamPoints) FROM users JOIN user_team ON user_team.userId = users.userId JOIN user_team_data ON user_team.userTeamId = user_team_data.userTeamId AND userTeamType = (SELECT teamType FROM team_type WHERE teamTypeString = "HEAD_TO_HEAD") WHERE users.userId = ?), 0) AS head_to_head_totalPoints 
-        FROM users WHERE users.userId = ?;`;
+    const getUserPointsQuery = `SELECT (SELECT COUNT(DISTINCT matchId) FROM userTeamDetails WHERE userId = userdetails.userId) AS totalMatches, (SELECT COUNT(DISTINCT userTeamId) FROM userTeamDetails WHERE userId = userdetails.userId) AS totalTeams, COALESCE((SELECT SUM(userTeamDetails.userTeamPoints) FROM userTeamDetails WHERE userTeamDetails.teamTypeString = "MEGA_CONTEST" AND userTeamDetails.userId = userdetails.userId), 0) AS mega_contest_totalPoints, COALESCE((SELECT SUM(userTeamDetails.userTeamPoints) FROM userTeamDetails WHERE userTeamDetails.teamTypeString = "HEAD_TO_HEAD" AND userTeamDetails.userId = userdetails.userId), 0) AS head_to_head_totalPoints FROM userdetails WHERE userdetails.userId = ?;`;
     const [updateUserResponse, [getUserPoints]] = await fetchData(
       `${updateUserQuery}${getUserPointsQuery}`,
-      [...values, body.userId, ...Array(5).fill(body.userId)]
+      [...values, body.userId, userId]
     );
 
     if (updateUserResponse.affectedRows > 0) {
