@@ -105,12 +105,17 @@ const storeAllData = async () => {
         }
       }
     };
-    a(matches[currentMatch]);
+
+    if (matches.length > 0) {
+      a(matches[currentMatch]);
+    } else {
+      log(`Finished to store all data`);
+    }
   } catch (error) {
     console.log(error);
   }
 };
-// storeAllData();
+storeAllData();
 
 module.exports = {
   fetchData,

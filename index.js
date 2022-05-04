@@ -144,15 +144,15 @@ const tokens = {
     },
   ],
 };
+module.exports = { tokens };
+const { fetchData: periode } = require("./cron/oop/periode");
 
 // calling periode to store periode details in db
 const setIntervalImmediate = () => {
   setInterval(() => {
-    const { fetchData: periode } = require("./cron/oop/periode");
     periode();
   }, 60 * 60 * 1000);
   setTimeout(() => {
-    const { fetchData: periode } = require("./cron/oop/periode");
     periode();
   }, 2000);
 };
@@ -193,5 +193,3 @@ try {
 } catch (error) {
   console.log(error);
 }
-
-module.exports = { tokens };

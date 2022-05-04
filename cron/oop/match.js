@@ -1681,7 +1681,6 @@ class MatchDaily extends Status {
             const res = await handleStore();
             if (res) {
               resolveInterval();
-              resolve();
             }
           }, 30 * 60 * 1000);
           const resolveInterval = () => {
@@ -1707,7 +1706,7 @@ class MatchDaily extends Status {
             const matchStatus = matchTimeLine.sport_event_status.status;
 
             if (matchStatus !== "not_started") {
-              if (matchStatus === "closed") {
+              if (matchStatus === "closed" || matchStatus === "ended") {
                 await this.#updateStatus("ended");
                 resolve();
               } else {
