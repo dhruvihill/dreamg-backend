@@ -16,8 +16,9 @@ const fetchData = async () => {
         const now = new Date();
         const matchStartTime = new Date(parseInt(match.matchStartDateTime));
         if (
-          matchStartTime.getTime() > now.getTime() &&
-          matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000
+          (matchStartTime.getTime() > now.getTime() &&
+            matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) ||
+          match.matchId == 49
         ) {
           log(
             `Started to proceed match for scorcard, lineups and points for ${match.matchId}`
@@ -40,8 +41,17 @@ const fetchData = async () => {
             match.matchStartDateTime,
             match.tournamentId
           );
+          log("going to store lineups for match" + match.matchId);
           await newMatch.handleLineUpStore();
+          log(
+            "got response of lineup and going to procedd for matchStatus" +
+              match.matchId
+          );
           await newMatch.handleMatchStatus();
+          log(
+            "got response of matchStatus and going to procedd for scorcard" +
+              match.matchId
+          );
           await newMatch.handleScorcardAndPoints();
         }
       } catch (error) {
@@ -115,7 +125,7 @@ const storeAllData = async () => {
     console.log(error);
   }
 };
-storeAllData();
+// storeAllData();
 
 module.exports = {
   fetchData,

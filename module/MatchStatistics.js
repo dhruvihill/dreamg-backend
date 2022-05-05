@@ -65,6 +65,7 @@ class MatchStatistics {
       avgTeamBowlingFirstWins: 0,
     },
     topPlayersAtVenue: {
+      basedOnYears: 2,
       batsman: [
         {
           playerId: 0,
@@ -106,6 +107,7 @@ class MatchStatistics {
       matchWithoutDecision: 0,
     },
     teamStrengths: {
+      basedOnYears: 2,
       teams: [
         {
           battingFirstWins: 0,
@@ -122,33 +124,57 @@ class MatchStatistics {
       },
     ],
   };
+  fantasyPoints = {
+    thisSeason: [],
+    lastFiveMatches: [],
+  };
+  playerPerformance = {
+    players: [
+      {
+        playerId: 0,
+        avgPoints: 0,
+        totalMatches: 0,
+        playerPerformance: "",
+      },
+    ],
+    basedOnYears: 2,
+    playerPerformance: {
+      Prime: "100+",
+      InForm: "50-100",
+      Good: "30-50",
+      Average: "20-30",
+      Poor: "10-20",
+      Weak: "0-10",
+    },
+  };
+  statistics = {
+    players: {
+      topBatsMan: [
+        {
+          playerId: 0,
+          averageStrikeRate: 0,
+          totalMatches: 0,
+          runsPerMatch: 0,
+          totalRuns: 0,
+        },
+      ],
+      topBowlers: [
+        {
+          playerId: 0,
+          economy: 0,
+          totalMatches: 0,
+          totalWickets: 0,
+        },
+      ],
+    },
+    basedOnYears: 2,
+  };
 
   constructor(id) {
     this.id = id;
   }
 
-  getMatchDetails() {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const connection = await connectToDb();
-        const [[matchDetails], competitors, [venue]] = await database(
-          "SELECT `matchRadarId`, `matchTournamentId`, `matchStartDateTime`, `isPointsCalculated`, `tossWonBy`, `tossDecision`, `matchTypeId`, `matchTyprString`, `matchStatus`, `matchStatusString`, `seriesName`, `seriesDname`, `isLineUpOut`, `displayName` FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?; SELECT allteams.teamId, allteams.teamRadarId, allteams.name, allteams.countryName, allteams.countryCode, allteams.displayName FROM `fullmatchdetails` JOIN allteams ON allteams.teamId IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id) WHERE fullmatchdetails.matchId = ?; SELECT fullmatchdetails.venueId, fullmatchdetails.venue AS venueName, fullmatchdetails.venueCity, fullmatchdetails.venueCapacity, fullmatchdetails.venuesCountry, fullmatchdetails.end2, fullmatchdetails.end1 FROM `fullmatchdetails` WHERE matchId = ?;",
-          [this.id, this.id, this.id],
-          connection
-        );
-        connection.release();
-        this.matchDetails = matchDetails;
-        this.competitors = [...competitors];
-        this.venue = venue;
-        resolve(this);
-      } catch (error) {
-        console.log(error.message);
-        reject(error);
-      }
-    });
-  }
-
-  getMatchPlayers() {
+  #getMatchPlayers() {
     return new Promise(async (resolve, reject) => {
       try {
         const connection = await connectToDb();
@@ -174,6 +200,29 @@ class MatchStatistics {
     });
   }
 
+  getMatchDetails() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.#getMatchPlayers();
+        const connection = await connectToDb();
+        const [[matchDetails], competitors, [venue]] = await database(
+          "SELECT `matchRadarId`, `matchTournamentId`, `matchStartDateTime`, `isPointsCalculated`, `tossWonBy`, `tossDecision`, `matchTypeId`, `matchTyprString`, `matchStatus`, `matchStatusString`, `seriesName`, `seriesDname`, `isLineUpOut`, `displayName` FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?; SELECT allteams.teamId, allteams.teamRadarId, allteams.name, allteams.countryName, allteams.countryCode, allteams.displayName FROM `fullmatchdetails` JOIN allteams ON allteams.teamId IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id) WHERE fullmatchdetails.matchId = ?; SELECT fullmatchdetails.venueId, fullmatchdetails.venue AS venueName, fullmatchdetails.venueCity, fullmatchdetails.venueCapacity, fullmatchdetails.venuesCountry, fullmatchdetails.end2, fullmatchdetails.end1 FROM `fullmatchdetails` WHERE matchId = ?;",
+          [this.id, this.id, this.id],
+          connection
+        );
+        connection.release();
+        this.matchDetails = matchDetails;
+        this.competitors = [...competitors];
+        this.venue = venue;
+
+        resolve(this);
+      } catch (error) {
+        console.log(error.message);
+        reject(error);
+      }
+    });
+  }
+
   getPitchReport() {
     return new Promise(async (resolve, reject) => {
       try {
@@ -190,10 +239,10 @@ class MatchStatistics {
           "SELECT COALESCE((SUM(IF(scorcardDetails.tossDecision = 'bowl', 1, 0)) / COUNT(*)) * 100, 0) AS tossWinnerOptToBowl, COALESCE((SUM(IF(scorcardDetails.tossWonBy = scorcardDetails.winnerId AND scorcardDetails.tossDecision = 'bowl', 1, 0)) / COUNT(*)) * 100, 0) AS teamBowlingFirstWins FROM fullmatchdetails JOIN scorcardDetails ON scorcardDetails.matchId = fullmatchdetails.matchId WHERE fullmatchdetails.venueId IN (SELECT fullmatchdetails.venueId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.matchTypeId IN (SELECT fullmatchdetails.matchTypeId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.matchStatusString IN ('ended', 'closed') AND fullmatchdetails.matchStartDateTime < (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?);";
 
         const topBatsManQuery =
-          "SELECT inningBatsmans.playerId, SUM(inningBatsmans.runs) AS totalRuns, SUM(inningBatsmans.runs) / COUNT(*) AS runsPerMatch, COUNT(*) AS totalMatches, AVG(inningBatsmans.strikeRate) AS averageStrikeRate FROM fullmatchdetails JOIN scorcardDetails ON scorcardDetails.matchId = fullmatchdetails.matchId JOIN scorcardInning ON scorcardInning.scorcardId = scorcardDetails.scorcardId JOIN inningBatsmans ON inningBatsmans.scorcardInningId = scorcardInning.scorcardInningId WHERE fullmatchdetails.matchId IN (SELECT fullmatchdetails.matchId FROM fullmatchdetails WHERE fullmatchdetails.venueId IN (SELECT fullmatchdetails.venueId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.matchTypeId IN (SELECT fullmatchdetails.matchTypeId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.matchStatusString IN ('ended', 'closed') AND (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) - fullmatchdetails.matchStartDateTime < (2 * 365 * 24 * 60 * 60 * 1000)) AND (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) > fullmatchdetails.matchStartDateTime AND inningBatsmans.playerId IN (SELECT fullplayerdetails.playerId FROM fullplayerdetails WHERE fullplayerdetails.matchId = ?) GROUP BY inningBatsmans.playerId ORDER BY totalRuns DESC, runsPerMatch DESC, averageStrikeRate DESC LIMIT 5;";
+          "SELECT inningBatsmans.playerId, COALESCE(SUM(inningBatsmans.runs), 0) AS totalRuns, COALESCE(SUM(inningBatsmans.runs), 0) / COUNT(*) AS runsPerMatch, COUNT(*) AS totalMatches, AVG(inningBatsmans.strikeRate) AS averageStrikeRate FROM fullmatchdetails JOIN scorcardDetails ON scorcardDetails.matchId = fullmatchdetails.matchId JOIN scorcardInning ON scorcardInning.scorcardId = scorcardDetails.scorcardId JOIN inningBatsmans ON inningBatsmans.scorcardInningId = scorcardInning.scorcardInningId WHERE fullmatchdetails.matchId IN (SELECT fullmatchdetails.matchId FROM fullmatchdetails WHERE fullmatchdetails.venueId IN (SELECT fullmatchdetails.venueId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.matchTypeId IN (SELECT fullmatchdetails.matchTypeId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.matchStatusString IN ('ended', 'closed') AND (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) - fullmatchdetails.matchStartDateTime < (? * 365 * 24 * 60 * 60 * 1000)) AND (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) > fullmatchdetails.matchStartDateTime AND inningBatsmans.playerId IN (SELECT fullplayerdetails.playerId FROM fullplayerdetails WHERE fullplayerdetails.matchId = ?) GROUP BY inningBatsmans.playerId ORDER BY totalRuns DESC, runsPerMatch DESC, averageStrikeRate DESC LIMIT 5;";
 
         const topBowlerQuery =
-          "SELECT inningBowlers.playerId, SUM(inningBowlers.wickets) AS totalWickets, COUNT(*) AS totalMatches, AVG(inningBowlers.economyRate) AS averageEconomy FROM fullmatchdetails JOIN scorcardDetails ON scorcardDetails.matchId = fullmatchdetails.matchId JOIN scorcardInning ON scorcardInning.scorcardId = scorcardDetails.scorcardId JOIN inningBowlers ON inningBowlers.scorcardInningId = scorcardInning.scorcardInningId WHERE fullmatchdetails.matchId IN (SELECT fullmatchdetails.matchId FROM fullmatchdetails WHERE fullmatchdetails.venueId IN (SELECT fullmatchdetails.venueId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.matchTypeId IN (SELECT fullmatchdetails.matchTypeId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.matchStatusString IN ('ended', 'closed') AND (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) - fullmatchdetails.matchStartDateTime < (2 * 365 * 24 * 60 * 60 * 1000)) AND (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) > fullmatchdetails.matchStartDateTime AND inningBowlers.playerId IN (SELECT fullplayerdetails.playerId FROM fullplayerdetails WHERE fullplayerdetails.matchId = ?) GROUP BY inningBowlers.playerId ORDER BY totalWickets DESC, averageEconomy DESC LIMIT 5;";
+          "SELECT inningBowlers.playerId, COALESCE(SUM(inningBowlers.wickets), 0) AS totalWickets, COUNT(*) AS totalMatches, AVG(inningBowlers.economyRate) AS averageEconomy FROM fullmatchdetails JOIN scorcardDetails ON scorcardDetails.matchId = fullmatchdetails.matchId JOIN scorcardInning ON scorcardInning.scorcardId = scorcardDetails.scorcardId JOIN inningBowlers ON inningBowlers.scorcardInningId = scorcardInning.scorcardInningId WHERE fullmatchdetails.matchId IN (SELECT fullmatchdetails.matchId FROM fullmatchdetails WHERE fullmatchdetails.venueId IN (SELECT fullmatchdetails.venueId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.matchTypeId IN (SELECT fullmatchdetails.matchTypeId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.matchStatusString IN ('ended', 'closed') AND (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) - fullmatchdetails.matchStartDateTime < (? * 365 * 24 * 60 * 60 * 1000)) AND (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) > fullmatchdetails.matchStartDateTime AND inningBowlers.playerId IN (SELECT fullplayerdetails.playerId FROM fullplayerdetails WHERE fullplayerdetails.matchId = ?) GROUP BY inningBowlers.playerId ORDER BY totalWickets DESC, averageEconomy DESC LIMIT 5;";
 
         const connection = await connectToDb();
         const [
@@ -205,7 +254,13 @@ class MatchStatistics {
           topBowler,
         ] = await database(
           `${winStatsQuery}${pointsStatsQuery}${avgScoreQuery}${tossWinnerStatsQuery}${topBatsManQuery}${topBowlerQuery}`,
-          [...Array(22).fill(this.id)],
+          [
+            ...Array(15).fill(this.id),
+            this.pitchReport.topPlayersAtVenue.basedOnYears,
+            ...Array(5).fill(this.id),
+            this.pitchReport.topPlayersAtVenue.basedOnYears,
+            ...Array(2).fill(this.id),
+          ],
           connection
         );
         connection.release();
@@ -256,7 +311,7 @@ class MatchStatistics {
           "SELECT (SELECT COUNT(*) FROM fullmatchdetails AS inner2FullmatchDetails JOIN scorcardDetails ON scorcardDetails.matchId = inner2FullmatchDetails.matchId WHERE inner2FullmatchDetails.team1Id IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id) AND inner2FullmatchDetails.team2Id IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id) AND scorcardDetails.winnerId = allteams.teamId AND fullmatchdetails.matchStartDateTime > inner2FullmatchDetails.matchStartDateTime ) AS totalWins, allteams.teamId FROM fullmatchdetails JOIN allteams ON allteams.teamId IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id) WHERE fullmatchdetails.matchId = ?;SELECT (SELECT COUNT(*) FROM fullmatchdetails AS innnerFullMatchDetails WHERE innnerFullMatchDetails.team1Id IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id) AND innnerFullMatchDetails.team2Id IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id) AND innnerFullMatchDetails.matchStartDateTime < fullmatchdetails.matchStartDateTime) AS totalMatches FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?;";
 
         const competitorStrengthQuery =
-          "SELECT (SELECT COUNT(*) FROM fullmatchdetails AS inner2FullmatchDetails JOIN scorcardDetails ON scorcardDetails.matchId = inner2FullmatchDetails.matchId JOIN scorcardInning ON scorcardInning.scorcardId = scorcardDetails.scorcardId WHERE (inner2FullmatchDetails.team1Id IN (allteams.teamId) OR inner2FullmatchDetails.team2Id IN (allteams.teamId)) AND inner2FullmatchDetails.matchTypeId = fullmatchdetails.matchTypeId AND inner2FullmatchDetails.matchStatusString IN ('ended', 'closed') AND scorcardInning.inningNumber = 1 AND scorcardInning.battingTeam = allteams.teamId AND scorcardDetails.winnerId = allteams.teamId AND (fullmatchdetails.matchStartDateTime > inner2FullmatchDetails.matchStartDateTime) AND (inner2FullmatchDetails.matchStartDateTime - fullmatchdetails.matchStartDateTime) < (2 * 365 * 24 * 60 * 60 * 1000)) AS battingFirstWins, (SELECT COUNT(*) FROM fullmatchdetails AS inner2FullmatchDetails JOIN scorcardDetails ON scorcardDetails.matchId = inner2FullmatchDetails.matchId JOIN scorcardInning ON scorcardInning.scorcardId = scorcardDetails.scorcardId WHERE (inner2FullmatchDetails.team1Id IN (allteams.teamId) OR inner2FullmatchDetails.team2Id IN (allteams.teamId)) AND inner2FullmatchDetails.matchTypeId = fullmatchdetails.matchTypeId AND inner2FullmatchDetails.matchStatusString IN ('ended', 'closed') AND scorcardInning.inningNumber = 2 AND scorcardInning.battingTeam = allteams.teamId AND scorcardDetails.winnerId = allteams.teamId AND (fullmatchdetails.matchStartDateTime > inner2FullmatchDetails.matchStartDateTime) AND (inner2FullmatchDetails.matchStartDateTime - fullmatchdetails.matchStartDateTime) < (2 * 365 * 24 * 60 * 60 * 1000)) AS battingSecondWins, (SELECT COUNT(*) FROM fullmatchdetails AS inner2FullmatchDetails JOIN scorcardDetails ON scorcardDetails.matchId = inner2FullmatchDetails.matchId WHERE (inner2FullmatchDetails.team1Id IN (allteams.teamId) OR inner2FullmatchDetails.team2Id IN (allteams.teamId)) AND inner2FullmatchDetails.matchTypeId = fullmatchdetails.matchTypeId AND inner2FullmatchDetails.matchStatusString IN ('ended', 'closed') AND scorcardDetails.winnerId = allteams.teamId AND (fullmatchdetails.matchStartDateTime > inner2FullmatchDetails.matchStartDateTime) AND (inner2FullmatchDetails.matchStartDateTime - fullmatchdetails.matchStartDateTime) < (2 * 365 * 24 * 60 * 60 * 1000)) AS totalMatches, allteams.teamId FROM fullmatchdetails JOIN allteams ON allteams.teamId IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id) WHERE matchId = ?;";
+          "SELECT (SELECT COUNT(*) FROM fullmatchdetails AS inner2FullmatchDetails JOIN scorcardDetails ON scorcardDetails.matchId = inner2FullmatchDetails.matchId JOIN scorcardInning ON scorcardInning.scorcardId = scorcardDetails.scorcardId WHERE (inner2FullmatchDetails.team1Id IN (allteams.teamId) OR inner2FullmatchDetails.team2Id IN (allteams.teamId)) AND inner2FullmatchDetails.matchTypeId = fullmatchdetails.matchTypeId AND inner2FullmatchDetails.matchStatusString IN ('ended', 'closed') AND scorcardInning.inningNumber = 1 AND scorcardInning.battingTeam = allteams.teamId AND scorcardDetails.winnerId = allteams.teamId AND (fullmatchdetails.matchStartDateTime > inner2FullmatchDetails.matchStartDateTime) AND (inner2FullmatchDetails.matchStartDateTime - fullmatchdetails.matchStartDateTime) < (? * 365 * 24 * 60 * 60 * 1000)) AS battingFirstWins, (SELECT COUNT(*) FROM fullmatchdetails AS inner2FullmatchDetails JOIN scorcardDetails ON scorcardDetails.matchId = inner2FullmatchDetails.matchId JOIN scorcardInning ON scorcardInning.scorcardId = scorcardDetails.scorcardId WHERE (inner2FullmatchDetails.team1Id IN (allteams.teamId) OR inner2FullmatchDetails.team2Id IN (allteams.teamId)) AND inner2FullmatchDetails.matchTypeId = fullmatchdetails.matchTypeId AND inner2FullmatchDetails.matchStatusString IN ('ended', 'closed') AND scorcardInning.inningNumber = 2 AND scorcardInning.battingTeam = allteams.teamId AND scorcardDetails.winnerId = allteams.teamId AND (fullmatchdetails.matchStartDateTime > inner2FullmatchDetails.matchStartDateTime) AND (inner2FullmatchDetails.matchStartDateTime - fullmatchdetails.matchStartDateTime) < (? * 365 * 24 * 60 * 60 * 1000)) AS battingSecondWins, (SELECT COUNT(*) FROM fullmatchdetails AS inner2FullmatchDetails JOIN scorcardDetails ON scorcardDetails.matchId = inner2FullmatchDetails.matchId WHERE (inner2FullmatchDetails.team1Id IN (allteams.teamId) OR inner2FullmatchDetails.team2Id IN (allteams.teamId)) AND inner2FullmatchDetails.matchTypeId = fullmatchdetails.matchTypeId AND inner2FullmatchDetails.matchStatusString IN ('ended', 'closed') AND scorcardDetails.winnerId = allteams.teamId AND (fullmatchdetails.matchStartDateTime > inner2FullmatchDetails.matchStartDateTime) AND (inner2FullmatchDetails.matchStartDateTime - fullmatchdetails.matchStartDateTime) < (? * 365 * 24 * 60 * 60 * 1000)) AS totalMatchesWins, allteams.teamId FROM fullmatchdetails JOIN allteams ON allteams.teamId IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id) WHERE matchId = ?;";
 
         const matchesPlayedRecentlyQuery =
           "SELECT scorcardDetails.winnerId AS winnerId, IF(scorcardDetails.winnerId = team1Id, team2Id, IF(scorcardDetails.winnerId = team2Id, team1Id, null)) AS looserId FROM fullmatchdetails JOIN scorcardDetails ON scorcardDetails.matchId = fullmatchdetails.matchId WHERE fullmatchdetails.team1Id IN (SELECT allteams.teamId FROM fullmatchdetails JOIN allteams ON allteams.teamId IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id) WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.team2Id IN (SELECT allteams.teamId FROM fullmatchdetails JOIN allteams ON allteams.teamId IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id) WHERE fullmatchdetails.matchId = ?) AND (fullmatchdetails.matchStartDateTime < (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?)) ORDER BY fullmatchdetails.matchStartDateTime DESC LIMIT 5;";
@@ -265,7 +320,11 @@ class MatchStatistics {
         const [competitorwins, [{ totalMatches }], teams, recentMatches] =
           await database(
             `${matchAgainstEachOtherQuery}${competitorStrengthQuery}${matchesPlayedRecentlyQuery}`,
-            [...Array(9).fill(this.id)],
+            [
+              ...Array(2).fill(this.id),
+              ...Array(3).fill(this.teamComparison.teamStrengths.basedOnYears),
+              ...Array(7).fill(this.id),
+            ],
             connection
           );
         connection.release();
@@ -286,10 +345,110 @@ class MatchStatistics {
           competitorwins;
         this.teamComparison.matchesAgainstEachOther.matchWithoutDecision =
           totalMatches -
-          (competitorwins[0].totalWins, competitorwins[1].totalWins);
+          (competitorwins[0].totalWins + competitorwins[1].totalWins);
         this.teamComparison.teamStrengths.teams = teams;
         this.teamComparison.matchesRecent = recentMatches;
 
+        resolve();
+      } catch (error) {
+        console.log(error.message);
+        reject(error);
+      }
+    });
+  }
+
+  getFantacyPoints() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const thisSeasonStatsQuery =
+          "SELECT COALESCE(SUM(fullplayerdetails.points), 0) AS points, fullplayerdetails.playerId FROM fullplayerdetails JOIN fullmatchdetails ON fullmatchdetails.matchId = fullplayerdetails.matchId WHERE fullplayerdetails.playerId IN (SELECT fullplayerdetails.playerId FROM fullplayerdetails WHERE fullplayerdetails.matchId = ?) AND fullmatchdetails.matchTournamentId IN (SELECT fullmatchdetails.matchTournamentId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.matchStartDateTime < (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.matchTypeId IN (SELECT fullmatchdetails.matchTypeId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) GROUP BY playerId ORDER BY `points` DESC;";
+
+        const lastFiveMatchStatsQuery =
+          "SELECT COALESCE(SUM(fiveMatchState.points)) AS points, fiveMatchState.playerId FROM (SELECT COALESCE(points, 0) AS points, fullplayerdetails.playerId, ROW_NUMBER() OVER (PARTITION BY fullplayerdetails.playerId ORDER BY fullmatchdetails.matchStartDateTime DESC) AS rowId FROM fullplayerdetails JOIN fullmatchdetails ON fullmatchdetails.matchId = fullplayerdetails.matchId WHERE fullmatchdetails.matchStatusString IN ('ended', 'closed') AND fullmatchdetails.matchTypeId IN (SELECT fullmatchdetails.matchTypeId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.matchStartDateTime < (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.matchTypeId IN (SELECT fullmatchdetails.matchTypeId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullplayerdetails.playerId IN (SELECT fullplayerdetails.playerId FROM fullplayerdetails WHERE fullplayerdetails.matchId = ?) ORDER BY `points` DESC) AS fiveMatchState WHERE fiveMatchState.rowId <= 5 GROUP BY fiveMatchState.playerId ORDER BY points DESC;";
+
+        const connection = await connectToDb();
+        const [thisSeason, lastFiveMatches] = await database(
+          `${thisSeasonStatsQuery}${lastFiveMatchStatsQuery}`,
+          [...Array(8).fill(this.id)],
+          connection
+        );
+        connection.release();
+        this.fantasyPoints = {
+          thisSeason: thisSeason,
+          lastFiveMatches: lastFiveMatches,
+        };
+        resolve();
+      } catch (error) {
+        console.log(error.message);
+        reject(error);
+      }
+    });
+  }
+
+  getPlayerPerformance() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const playerPerformanceQuery =
+          "SELECT fullplayerdetails.playerId, COALESCE(AVG(fullplayerdetails.points), 0) AS avgPoints, COUNT(*) AS totalMatches FROM fullplayerdetails JOIN fullmatchdetails ON fullmatchdetails.matchId = fullplayerdetails.matchId WHERE fullplayerdetails.playerId IN (SELECT fullplayerdetails.playerId FROM fullplayerdetails WHERE fullplayerdetails.matchId = ?) AND fullmatchdetails.matchStatusString IN ('ended', 'closed') AND fullmatchdetails.matchTypeId IN (SELECT fullmatchdetails.matchTypeId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) - fullmatchdetails.matchStartDateTime < ? * 365 * 24 * 60 * 60 * 1000 AND fullplayerdetails.isSelected = 1 GROUP BY fullplayerdetails.playerId ORDER BY avgPoints DESC;";
+
+        const connection = await connectToDb();
+        const playerPerformance = await database(
+          playerPerformanceQuery,
+          [...Array(3).fill(this.id), this.playerPerformance.basedOnYears],
+          connection
+        );
+        connection.release();
+
+        playerPerformance.forEach((player) => {
+          let playerPerformance = "";
+          if (player.avgPoints > 100) {
+            playerPerformance = "Prime";
+          } else if (player.avgPoints > 50 && player.avgPoints <= 100) {
+            playerPerformance = "InForm";
+          } else if (player.avgPoints > 30 && player.avgPoints <= 50) {
+            playerPerformance = "Good";
+          } else if (player.avgPoints > 20 && player.avgPoints <= 30) {
+            playerPerformance = "Average";
+          } else if (player.avgPoints > 10 && player.avgPoints <= 20) {
+            playerPerformance = "Poor";
+          } else {
+            playerPerformance = "weak";
+          }
+          player.playerPerformance = playerPerformance;
+        });
+        this.playerPerformance.players = playerPerformance;
+        resolve();
+      } catch (error) {
+        console.log(error.message);
+        reject(error);
+      }
+    });
+  }
+
+  getStatistics() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const topBatsManQuery =
+          "SELECT inningBatsmans.playerId, COALESCE(SUM(inningBatsmans.runs), 0) AS totalRuns, COALESCE(SUM(inningBatsmans.runs), 0) / COUNT(*) AS runsPerMatch, COUNT(*) AS totalMatches, AVG(inningBatsmans.strikeRate) AS averageStrikeRate FROM fullmatchdetails JOIN scorcardDetails ON scorcardDetails.matchId = fullmatchdetails.matchId JOIN scorcardInning ON scorcardInning.scorcardId = scorcardDetails.scorcardId JOIN inningBatsmans ON inningBatsmans.scorcardInningId = scorcardInning.scorcardInningId WHERE fullmatchdetails.matchId IN (SELECT fullmatchdetails.matchId FROM fullmatchdetails WHERE fullmatchdetails.matchTypeId IN (SELECT fullmatchdetails.matchTypeId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.matchStatusString IN ('ended', 'closed') AND (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) - fullmatchdetails.matchStartDateTime < (? * 365 * 24 * 60 * 60 * 1000)) AND (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) > fullmatchdetails.matchStartDateTime AND inningBatsmans.playerId IN (SELECT fullplayerdetails.playerId FROM fullplayerdetails WHERE fullplayerdetails.matchId = ?) GROUP BY inningBatsmans.playerId ORDER BY totalRuns DESC, runsPerMatch DESC, averageStrikeRate DESC LIMIT 5;";
+
+        const topBowlerQuery =
+          "SELECT inningBowlers.playerId, COALESCE(SUM(inningBowlers.wickets), 0) AS totalWickets, COUNT(*) AS totalMatches, AVG(inningBowlers.economyRate) AS averageEconomy FROM fullmatchdetails JOIN scorcardDetails ON scorcardDetails.matchId = fullmatchdetails.matchId JOIN scorcardInning ON scorcardInning.scorcardId = scorcardDetails.scorcardId JOIN inningBowlers ON inningBowlers.scorcardInningId = scorcardInning.scorcardInningId WHERE fullmatchdetails.matchTypeId IN (SELECT fullmatchdetails.matchTypeId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.matchStatusString IN ('ended', 'closed') AND (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) - fullmatchdetails.matchStartDateTime < (? * 365 * 24 * 60 * 60 * 1000) AND (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) > fullmatchdetails.matchStartDateTime AND inningBowlers.playerId IN (SELECT fullplayerdetails.playerId FROM fullplayerdetails WHERE fullplayerdetails.matchId = ?) GROUP BY inningBowlers.playerId ORDER BY totalWickets DESC, averageEconomy DESC LIMIT 5;";
+
+        const connection = await connectToDb();
+        const [topBatsMan, topBowler] = await database(
+          `${topBatsManQuery}${topBowlerQuery}`,
+          [
+            ...Array(2).fill(this.id),
+            this.statistics.basedOnYears,
+            ...Array(4).fill(this.id),
+            this.statistics.basedOnYears,
+            ...Array(2).fill(this.id),
+          ],
+          connection
+        );
+        connection.release();
+        this.statistics.players.topBatsMan = topBatsMan;
+        this.statistics.players.topBowlers = topBowler;
         resolve();
       } catch (error) {
         console.log(error.message);

@@ -154,16 +154,9 @@ router.post("/getPredictions", async (req, res) => {
           ? "SELECT userdetails.userId, SUM(userTeamDetails.userTeamViews) AS totalViews, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE userTeamDetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalViews DESC LIMIT ?, 20;"
           : filter === "MOST_LIKED"
           ? "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, SUM(userTeamDetails.userTeamLikes) AS totalLikes, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE userTeamDetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalLikes DESC LIMIT ?, 20;"
-          : "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, COALESCE(SUM(userTeamDetails.userTeamPoints), 0) AS totalPoints, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE userTeamDetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT ?, 20;";
+          : "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, COALESCE(userTeamDetails.userTeamPoints, 0) AS totalPoints, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE userTeamDetails.matchId = ? GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT ?, 20;";
     } else {
-      totalPredictorsQuery =
-        "SELECT COUNT(*) AS totalPredictors FROM userTeamDetails;";
-      query =
-        filter === "MOST_VIEWED"
-          ? "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, SUM(userTeamDetails.userTeamViews) AS totalViews, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId GROUP BY userdetails.userId ORDER BY totalViews DESC LIMIT ?, 20;"
-          : filter === "MOST_LIKED"
-          ? "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, SUM(userTeamDetails.userTeamLikes) AS totalLikes, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId GROUP BY userdetails.userId ORDER BY totalLikes DESC LIMIT ?, 20;"
-          : "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, COALESCE(SUM(userTeamDetails.userTeamPoints), 0) AS totalPoints, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT ?, 20;";
+      throw new Error("invalid input");
     }
     if (
       validMatchId &&
@@ -758,18 +751,24 @@ router.post("/getMatchStatistsics", async (req, res) => {
           const MatchStatisticsObject = await new MatchStatistics(
             matchId
           ).getMatchDetails();
-          await MatchStatisticsObject.getMatchPlayers();
           await MatchStatisticsObject.getPitchReport();
           await MatchStatisticsObject.getTeamComparison();
+          await MatchStatisticsObject.getFantacyPoints();
+          await MatchStatisticsObject.getPlayerPerformance();
+          await MatchStatisticsObject.getStatistics();
 
           resolve({
             pitchReport: MatchStatisticsObject.pitchReport,
             teamComparison: MatchStatisticsObject.teamComparison,
+            fantasyPoints: MatchStatisticsObject.fantasyPoints,
+            playerPerformance: MatchStatisticsObject.playerPerformance,
+            statistics: MatchStatisticsObject.statistics,
             competitors: MatchStatisticsObject.competitors,
             players: MatchStatisticsObject.players,
             lineUp: {
               isLineUpOut: MatchStatisticsObject.matchDetails.isLineUpOut,
             },
+            venue: MatchStatisticsObject.venue,
           });
         } catch (error) {
           console.log(error.message);
@@ -778,21 +777,13 @@ router.post("/getMatchStatistsics", async (req, res) => {
       });
     };
 
-    const { pitchReport, teamComparison, competitors, players, lineUp } =
-      await fetchData();
+    const statistics = await fetchData();
 
     res.status(200).json({
       status: true,
       message: "success",
       data: {
-        pitchReport,
-        teamComparison,
-        fantsyPoints: {},
-        playerPerformance: {},
-        statistics: {},
-        lineUp,
-        competitors,
-        players,
+        ...statistics,
       },
     });
   } catch (error) {
