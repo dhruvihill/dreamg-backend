@@ -7,6 +7,7 @@ const {
   t20Score,
   t10Score,
 } = require("../points/calculatePoints");
+const log = require("log-to-file");
 
 class Venue {
   venueId = null;
@@ -1443,15 +1444,8 @@ class MatchDaily extends Status {
                               if (currentLineUp === totalLineUps) {
                                 connection.release();
                                 this.#isLineUpStored = true;
-                                const setLineUpFlag = await database(
-                                  "UPDATE tournament_matches SET isLineUpStored = 1 WHERE matchId = ?;",
-                                  [this.id],
-                                  connection
-                                );
-                                if (
-                                  setLineUpFlag &&
-                                  setLineUpFlag.affectedRows > 0
-                                ) {
+
+                                if (setLineUpFlag) {
                                   resolve();
                                 } else {
                                   throw new Error(
@@ -1505,9 +1499,16 @@ class MatchDaily extends Status {
                     if (currentPlayer === totalPlayers) {
                       currentLineUp++;
                       if (currentLineUp === totalLineUps) {
+                        const setLineUpFlag = await database(
+                          "UPDATE tournament_matches SET isLineUpOut = 1 WHERE matchId = ?;",
+                          [this.id],
+                          connection
+                        );
                         connection.release();
                         this.#isLineUpStored = true;
-                        resolve();
+                        if (setLineUpFlag.affectedRows > 0) {
+                          resolve();
+                        }
                       }
                     }
                   } else {
@@ -1631,7 +1632,9 @@ class MatchDaily extends Status {
 
         setTimeout(async () => {
           try {
+            log("IN ./cron/oop/match.js going to store line up");
             await this.storeLineUp();
+            log("IN ./cron/oop/match.js going to handle toss");
             await this.#handleToss();
             resolve();
           } catch (error) {
@@ -1668,18 +1671,29 @@ class MatchDaily extends Status {
               if (!error.message === "Match is not ended") {
                 reject(error);
               } else {
+                log("match is not ended");
                 resolve(false);
               }
             }
           });
         };
         if (this.status === "ended" || this.status === "closed") {
+          log(
+            "IN ./cron/oop/match.js going to store score card and points match is ended"
+          );
           await handleStore();
+          log(
+            "resolving from handleScorcardAndPoints scorcard and points stored"
+          );
           resolve();
         } else {
           const intervalId = setInterval(async () => {
+            log("IN ./cron/oop/match.js going to store score card and points");
             const res = await handleStore();
             if (res) {
+              log(
+                "resolving from handleScorcardAndPoints scorcard and points stored"
+              );
               resolveInterval();
             }
           }, 30 * 60 * 1000);
@@ -1707,10 +1721,17 @@ class MatchDaily extends Status {
 
             if (matchStatus !== "not_started") {
               if (matchStatus === "closed" || matchStatus === "ended") {
+                log(
+                  "IN ./cron/oop/match.js going to store match status which is ended"
+                );
                 await this.#updateStatus("ended");
+                log("resolving from handleMatchStatus status changed");
                 resolve();
               } else {
+                "IN ./cron/oop/match.js going to store match status which is " +
+                  matchStatus;
                 await this.#updateStatus(matchStatus);
+                log("resolving from handleMatchStatus status changed");
                 resolve();
               }
             } else {

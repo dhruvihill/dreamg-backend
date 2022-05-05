@@ -458,12 +458,4 @@ class MatchStatistics {
   }
 }
 
-const a = async () => {
-  const match = await new MatchStatistics(26).getMatchDetails();
-  await match.getMatchPlayers();
-  await match.getPitchReport();
-  await match.getTeamComparison();
-};
-// a();
-
 module.exports = MatchStatistics;

@@ -41,16 +41,22 @@ const fetchData = async () => {
             match.matchStartDateTime,
             match.tournamentId
           );
-          log("going to store lineups for match" + match.matchId);
+          log(
+            "going to store lineups for match" +
+              match.matchId +
+              "FROM ./cron/oop/periode.js"
+          );
           await newMatch.handleLineUpStore();
           log(
             "got response of lineup and going to procedd for matchStatus" +
-              match.matchId
+              match.matchId +
+              "FROM ./cron/oop/periode.js"
           );
           await newMatch.handleMatchStatus();
           log(
             "got response of matchStatus and going to procedd for scorcard" +
-              match.matchId
+              match.matchId +
+              "FROM ./cron/oop/periode.js"
           );
           await newMatch.handleScorcardAndPoints();
         }
