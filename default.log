@@ -1,2 +1,24 @@
-2022.05.05, 14:02:00.0718 UTC -> resolving from handleMatchStatus status changed
-2022.05.05, 14:02:00.0718 UTC -> got response of matchStatus and going to procedd for scorcard50FROM ./cron/oop/periode.js
+2022.05.05, 14:25:24.0177 UTC -> Started to proceed match for scorcard, lineups and points for 50
+2022.05.05, 14:25:24.0178 UTC -> going to store lineups for match50FROM ./cron/oop/periode.js
+2022.05.05, 14:25:24.0187 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.05, 14:25:25.0479 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.05, 14:25:26.0312 UTC -> got response of lineup and going to procedd for matchStatus50FROM ./cron/oop/periode.js
+2022.05.05, 14:25:27.0139 UTC -> resolving from handleMatchStatus status changed
+2022.05.05, 14:25:27.0139 UTC -> got response of matchStatus and going to procedd for scorcard50FROM ./cron/oop/periode.js
+2022.05.05, 14:43:49.0301 UTC -> Started to proceed match for scorcard, lineups and points for 50
+2022.05.05, 14:43:49.0301 UTC -> going to store lineups for match50FROM ./cron/oop/periode.js
+2022.05.05, 14:43:49.0303 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.05, 14:43:50.0387 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.05, 14:43:51.0784 UTC -> got response of lineup and going to procedd for matchStatus50FROM ./cron/oop/periode.js
+2022.05.05, 14:43:52.0397 UTC -> resolving from handleMatchStatus status changed
+2022.05.05, 14:43:52.0397 UTC -> got response of matchStatus and going to procedd for scorcard50FROM ./cron/oop/periode.js
+2022.05.05, 15:13:52.0457 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.05, 15:13:53.0485 UTC -> match is not ended
+2022.05.05, 15:43:52.0462 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.05, 15:43:53.0367 UTC -> match is not ended
+2022.05.05, 16:13:52.0562 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.05, 16:13:53.0890 UTC -> match is not ended
+2022.05.05, 16:43:52.0564 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.05, 16:43:53.0597 UTC -> match is not ended
+2022.05.05, 17:13:52.0600 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.05, 17:13:53.0463 UTC -> match is not ended

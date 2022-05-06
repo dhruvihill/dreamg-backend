@@ -133,12 +133,10 @@ router.post("/setTeam", verifyUser, async (req, res) => {
 
 // get predictors by match id or with no match id and match status
 router.post("/getPredictions", async (req, res) => {
-  const { matchId, filter, pageNumber } = req.body;
-
-  let validMatchId = true;
-
-  // creating query to fetch predictions
   try {
+    const { matchId, filter, pageNumber } = req.body;
+
+    let validMatchId = true;
     let totalPredictorsQuery = "";
     let query;
     if (matchId) {
@@ -213,6 +211,73 @@ router.post("/getPredictions", async (req, res) => {
   }
 });
 
+router.post("/getBestPicks", async (req, res) => {
+  try {
+    const { matchId } = req.body;
+
+    const match = await new MatchStatistics(matchId).getMatchDetails();
+
+    if (
+      match &&
+      match.matchDetails &&
+      match.players.length > 0 &&
+      match.competitors.length > 0
+    ) {
+      let bastMans = match.players.filter(
+        (player) => player.roleName === "BATSMAN" && player.selectedBy > 0
+      );
+      let wicketKeepers = match.players.filter(
+        (player) => player.roleName === "WICKET_KEEPER" && player.selectedBy > 0
+      );
+      let allRounders = match.players.filter(
+        (player) => player.roleName === "ALL_ROUNDER" && player.selectedBy > 0
+      );
+      let bowlers = match.players.filter(
+        (player) => player.roleName === "BOWLER" && player.selectedBy > 0
+      );
+
+      const sortPlayer = (a, b) => {
+        return a.selectedBy > b.selectedBy
+          ? -1
+          : a.selectedBy < b.selectedBy
+          ? 1
+          : 0;
+      };
+
+      bastMans = bastMans.sort(sortPlayer).slice(0, 5);
+      wicketKeepers = wicketKeepers.sort(sortPlayer).slice(0, 5);
+      allRounders = allRounders.sort(sortPlayer).slice(0, 5);
+      bowlers = bowlers.sort(sortPlayer).slice(0, 5);
+
+      res.status(200).send({
+        status: true,
+        message: "success",
+        data: {
+          matchDetails: match.matchDetails,
+          bestPick: {
+            bastMans,
+            wicketKeepers,
+            allRounders,
+            bowlers,
+          },
+          competitors: match.competitors,
+        },
+      });
+    } else {
+      res.status(200).send({
+        status: true,
+        message: "no best picks found",
+        data: {},
+      });
+    }
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.sqlMessage || error.message,
+      data: {},
+    });
+  }
+});
 // getting expert predictors
 
 // depreicated for now

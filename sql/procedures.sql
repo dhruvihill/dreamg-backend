@@ -1,226 +1,256 @@
 DELIMITER $$
 CREATE PROCEDURE `getPlayers`(IN `matchId` INT, IN `userTeamId` INT)
-BEGIN
-    DECLARE
-        teamCreatedBy INT(7) DEFAULT 0;
-        /* validating match */
-        IF EXISTS(
-        SELECT
-            fullmatchdetails.matchId
-        FROM
-            fullmatchdetails
-        WHERE
-            fullmatchdetails.matchId = matchId
-    ) THEN
-SELECT
-    COUNT(userTeamDetails.userTeamId)
-INTO teamCreatedBy
-FROM
-    userTeamDetails
-WHERE
-    userTeamDetails.matchId = matchId; 
+BEGIN DECLARE teamCreatedBy INT(7) DEFAULT 0;
+/* validating match */
+IF EXISTS(
+  SELECT 
+    fullmatchdetails.matchId 
+  FROM 
+    fullmatchdetails 
+  WHERE 
+    fullmatchdetails.matchId = matchId
+) THEN 
+SELECT 
+  COUNT(userTeamDetails.userTeamId) INTO teamCreatedBy 
+FROM 
+  userTeamDetails 
+WHERE 
+  userTeamDetails.matchId = matchId;
 IF userTeamId != 0 THEN IF EXISTS(
-    SELECT
-        userTeamDetails.userTeamId
-    FROM
-        userTeamDetails
-    WHERE
-        userTeamDetails.userTeamId = userTeamId AND userTeamDetails.matchId = matchId
-) THEN
-SELECT
-    EXISTS(
-    SELECT
-        userTeamPlayersDetails.playerId
-    FROM
-        userTeamDetails
-    JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId
-    WHERE
-        userTeamDetails.userTeamId = userTeamId AND userTeamPlayersDetails.playerId = fullplayerdetails.playerId
-) AS isSelected,
-EXISTS(
-    SELECT
-        userTeamPlayersDetails.playerId
-    FROM
-        userTeamDetails
-    JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId
-    WHERE
-        userTeamDetails.userTeamId = userTeamId AND userTeamPlayersDetails.playerId = fullplayerdetails.playerId AND userTeamPlayersDetails.isCaptain = 1
-) AS isCaptain,
-EXISTS(
-    SELECT
-        userTeamPlayersDetails.playerId
-    FROM
-        userTeamDetails
-    JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId
-    WHERE
-        userTeamDetails.userTeamId = userTeamId AND userTeamPlayersDetails.playerId = fullplayerdetails.playerId AND userTeamPlayersDetails.isViceCaptain = 1
-) AS isViceCaptain,
-COALESCE(
+  SELECT 
+    userTeamDetails.userTeamId 
+  FROM 
+    userTeamDetails 
+  WHERE 
+    userTeamDetails.userTeamId = userTeamId 
+    AND userTeamDetails.matchId = matchId
+) THEN 
+SELECT 
+	EXISTS(SELECT * FROM fullplayerdetails AS innerFullPlayerDetails WHERE innerFullPlayerDetails.playerId = fullplayerdetails.playerId AND innerFullPlayerDetails.matchId = fullplayerdetails.matchId AND innerFullPlayerDetails.isSelected = 1) AS isLineUpSeleced,
+  EXISTS(
+    SELECT 
+      userTeamPlayersDetails.playerId 
+    FROM 
+      userTeamDetails 
+      JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId 
+    WHERE 
+      userTeamDetails.userTeamId = userTeamId 
+      AND userTeamPlayersDetails.playerId = fullplayerdetails.playerId
+  ) AS isSelected, 
+  EXISTS(
+    SELECT 
+      userTeamPlayersDetails.playerId 
+    FROM 
+      userTeamDetails 
+      JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId 
+    WHERE 
+      userTeamDetails.userTeamId = userTeamId 
+      AND userTeamPlayersDetails.playerId = fullplayerdetails.playerId 
+      AND userTeamPlayersDetails.isCaptain = 1
+  ) AS isCaptain, 
+  EXISTS(
+    SELECT 
+      userTeamPlayersDetails.playerId 
+    FROM 
+      userTeamDetails 
+      JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId 
+    WHERE 
+      userTeamDetails.userTeamId = userTeamId 
+      AND userTeamPlayersDetails.playerId = fullplayerdetails.playerId 
+      AND userTeamPlayersDetails.isViceCaptain = 1
+  ) AS isViceCaptain, 
+  COALESCE(
     (
-        (
-        SELECT
-            COUNT(
-                userTeamPlayersDetails.playerId
-            )
-        FROM
-            userTeamDetails
-        JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId
-        WHERE
-            userTeamDetails.matchId = matchId AND userTeamPlayersDetails.playerId = fullplayerdetails.playerId
-    ) / teamCreatedBy
-    ) * 100,
+      (
+        SELECT 
+          COUNT(
+            userTeamPlayersDetails.playerId
+          ) 
+        FROM 
+          userTeamDetails 
+          JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId 
+        WHERE 
+          userTeamDetails.matchId = matchId 
+          AND userTeamPlayersDetails.playerId = fullplayerdetails.playerId
+      ) / teamCreatedBy
+    ) * 100, 
     0
-) AS selectedBy,
-COALESCE(
+  ) AS selectedBy, 
+  COALESCE(
     (
-        (
-        SELECT
-            COUNT(
-                userTeamPlayersDetails.playerId
-            )
-        FROM
-            userTeamDetails
-        JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId
-        WHERE
-            userTeamDetails.matchId = matchId AND userTeamPlayersDetails.playerId = fullplayerdetails.playerId AND userTeamPlayersDetails.isCaptain = 1
-    ) / teamCreatedBy
-    ) * 100,
+      (
+        SELECT 
+          COUNT(
+            userTeamPlayersDetails.playerId
+          ) 
+        FROM 
+          userTeamDetails 
+          JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId 
+        WHERE 
+          userTeamDetails.matchId = matchId 
+          AND userTeamPlayersDetails.playerId = fullplayerdetails.playerId 
+          AND userTeamPlayersDetails.isCaptain = 1
+      ) / teamCreatedBy
+    ) * 100, 
     0
-) AS captainBy,
-COALESCE(
+  ) AS captainBy, 
+  COALESCE(
     (
-        (
-        SELECT
-            COUNT(
-                userTeamPlayersDetails.playerId
-            )
-        FROM
-            userTeamDetails
-        JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId
-        WHERE
-            userTeamDetails.matchId = matchId AND userTeamPlayersDetails.playerId = fullplayerdetails.playerId AND userTeamPlayersDetails.isViceCaptain = 1
-    ) / teamCreatedBy
-    ) * 100,
+      (
+        SELECT 
+          COUNT(
+            userTeamPlayersDetails.playerId
+          ) 
+        FROM 
+          userTeamDetails 
+          JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId 
+        WHERE 
+          userTeamDetails.matchId = matchId 
+          AND userTeamPlayersDetails.playerId = fullplayerdetails.playerId 
+          AND userTeamPlayersDetails.isViceCaptain = 1
+      ) / teamCreatedBy
+    ) * 100, 
     0
-) AS viceCaptainBy,
-fullplayerdetails.matchId,
-fullplayerdetails.playerId,
-fullplayerdetails.teamId,
-fullplayerdetails.credits,
-COALESCE((SELECT
-    SUM(innerFullPlayerDetails.points)
-FROM
-    fullplayerdetails AS innerFullPlayerDetails
-WHERE
-    innerFullPlayerDetails.matchId IN(
-    SELECT
-        innerFullMatchDetails.matchId
-    FROM
-        fullmatchdetails AS innerFullMatchDetails
-    WHERE
-        innerFullMatchDetails.matchTournamentId = fullmatchdetails.matchTournamentId
-) AND innerFullPlayerDetails.playerId = fullplayerdetails.playerId), 0) AS points,
-fullplayerdetails.name AS playerName,
-fullplayerdetails.displayName AS playerDisplayName,
-fullplayerdetails.roleId,
-fullplayerdetails.roleName,
-allteams.name AS teamName,
-allteams.countryName,
-allteams.countryCode,
-allteams.displayName AS teamDisplayName
-FROM
-    fullplayerdetails
-    JOIN fullmatchdetails ON fullmatchdetails.matchId = fullplayerdetails.matchId
-JOIN allteams ON allteams.teamId = fullplayerdetails.teamId
-WHERE
-    fullplayerdetails.matchId = matchId; ELSE SIGNAL SQLSTATE '45000'
-SET MESSAGE_TEXT
-    = 'invalid userTeamId';
+  ) AS viceCaptainBy, 
+  fullplayerdetails.matchId, 
+  fullplayerdetails.playerId, 
+  fullplayerdetails.teamId, 
+  fullplayerdetails.credits, 
+  COALESCE(
+    (
+      SELECT 
+        SUM(innerFullPlayerDetails.points) 
+      FROM 
+        fullplayerdetails AS innerFullPlayerDetails 
+      WHERE 
+        innerFullPlayerDetails.matchId IN(
+          SELECT 
+            innerFullMatchDetails.matchId 
+          FROM 
+            fullmatchdetails AS innerFullMatchDetails 
+          WHERE            innerFullMatchDetails.matchTournamentId = fullmatchdetails.matchTournamentId AND innerFullMatchDetails.matchStartDateTime < fullmatchdetails.matchStartDateTime
+        ) 
+        AND innerFullPlayerDetails.playerId = fullplayerdetails.playerId
+    ), 
+    0
+  ) AS points, 
+  fullplayerdetails.name AS playerName, 
+  fullplayerdetails.displayName AS playerDisplayName, 
+  fullplayerdetails.roleId, 
+  fullplayerdetails.roleName, 
+  allteams.name AS teamName, 
+  allteams.countryName, 
+  allteams.countryCode, 
+  allteams.displayName AS teamDisplayName 
+FROM 
+  fullplayerdetails 
+  JOIN fullmatchdetails ON fullmatchdetails.matchId = fullplayerdetails.matchId 
+  JOIN allteams ON allteams.teamId = fullplayerdetails.teamId 
+WHERE 
+  fullplayerdetails.matchId = matchId;
+SELECT * FROM fullmatchdetails WHERE fullmatchdetails.matchId = matchId;
+ELSE SIGNAL SQLSTATE '45000' 
+SET 
+  MESSAGE_TEXT = 'invalid userTeamId';
 END IF;
-ELSE
-SELECT
-    COALESCE(
-        (
-            (
-            SELECT
-                COUNT(
-                    userTeamPlayersDetails.playerId
-                )
-            FROM
-                userTeamDetails
-            JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId
-            WHERE
-                userTeamDetails.matchId = matchId AND userTeamPlayersDetails.playerId = fullplayerdetails.playerId
-        ) / teamCreatedBy
-        ) * 100,
-        0
-    ) AS selectedBy,
-    COALESCE(
-        (
-            (
-            SELECT
-                COUNT(
-                    userTeamPlayersDetails.playerId
-                )
-            FROM
-                userTeamDetails
-            JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId
-            WHERE
-                userTeamDetails.matchId = matchId AND userTeamPlayersDetails.playerId = fullplayerdetails.playerId AND userTeamPlayersDetails.isCaptain = 1
-        ) / teamCreatedBy
-        ) * 100,
-        0
-    ) AS captainBy,
-    COALESCE(
-        (
-            (
-            SELECT
-                COUNT(
-                    userTeamPlayersDetails.playerId
-                )
-            FROM
-                userTeamDetails
-            JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId
-            WHERE
-                userTeamDetails.matchId = matchId AND userTeamPlayersDetails.playerId = fullplayerdetails.playerId AND userTeamPlayersDetails.isViceCaptain = 1
-        ) / teamCreatedBy
-        ) * 100,
-        0
-    ) AS viceCaptainBy,
-    fullplayerdetails.matchId,
-    fullplayerdetails.playerId,
-    fullplayerdetails.teamId,
-    fullplayerdetails.credits,
-    COALESCE((SELECT
-    SUM(innerFullPlayerDetails.points)
-FROM
-    fullplayerdetails AS innerFullPlayerDetails
-WHERE
-    innerFullPlayerDetails.matchId IN(
-    SELECT
-        innerFullMatchDetails.matchId
-    FROM
-        fullmatchdetails AS innerFullMatchDetails
-    WHERE
-        innerFullMatchDetails.matchTournamentId = fullmatchdetails.matchTournamentId
-) AND innerFullPlayerDetails.playerId = fullplayerdetails.playerId), 0) AS points,
-    fullplayerdetails.name AS playerName,
-    fullplayerdetails.displayName AS playerDisplayName,
-    fullplayerdetails.roleId,
-    fullplayerdetails.roleName,
-    allteams.name AS teamName,
-    allteams.countryName,
-    allteams.countryCode,
-    allteams.displayName AS teamDisplayName
-FROM
-    fullplayerdetails
-    JOIN fullmatchdetails ON fullmatchdetails.matchId = fullplayerdetails.matchId
-JOIN allteams ON allteams.teamId = fullplayerdetails.teamId
-WHERE
-    fullplayerdetails.matchId = matchId;
-END IF; ELSE SIGNAL SQLSTATE '45000'
-SET MESSAGE_TEXT
-    = 'invalid matchId';
+ELSE 
+SELECT 
+EXISTS(SELECT * FROM fullplayerdetails AS innerFullPlayerDetails WHERE innerFullPlayerDetails.playerId = fullplayerdetails.playerId AND innerFullPlayerDetails.matchId = fullplayerdetails.matchId AND innerFullPlayerDetails.isSelected = 1) AS isLineUpSeleced,
+  COALESCE(
+    (
+      (
+        SELECT 
+          COUNT(
+            userTeamPlayersDetails.playerId
+          ) 
+        FROM 
+          userTeamDetails 
+          JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId 
+        WHERE 
+          userTeamDetails.matchId = matchId 
+          AND userTeamPlayersDetails.playerId = fullplayerdetails.playerId
+      ) / teamCreatedBy
+    ) * 100, 
+    0
+  ) AS selectedBy, 
+  COALESCE(
+    (
+      (
+        SELECT 
+          COUNT(
+            userTeamPlayersDetails.playerId
+          ) 
+        FROM 
+          userTeamDetails 
+          JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId 
+        WHERE 
+          userTeamDetails.matchId = matchId 
+          AND userTeamPlayersDetails.playerId = fullplayerdetails.playerId 
+          AND userTeamPlayersDetails.isCaptain = 1
+      ) / teamCreatedBy
+    ) * 100, 
+    0
+  ) AS captainBy, 
+  COALESCE(
+    (
+      (
+        SELECT 
+          COUNT(
+            userTeamPlayersDetails.playerId
+          ) 
+        FROM 
+          userTeamDetails 
+          JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId 
+        WHERE 
+          userTeamDetails.matchId = matchId 
+          AND userTeamPlayersDetails.playerId = fullplayerdetails.playerId 
+          AND userTeamPlayersDetails.isViceCaptain = 1
+      ) / teamCreatedBy
+    ) * 100, 
+    0
+  ) AS viceCaptainBy, 
+  fullplayerdetails.matchId, 
+  fullplayerdetails.playerId, 
+  fullplayerdetails.teamId, 
+  fullplayerdetails.credits, 
+  COALESCE(
+    (
+      SELECT 
+        SUM(innerFullPlayerDetails.points) 
+      FROM 
+        fullplayerdetails AS innerFullPlayerDetails 
+      WHERE 
+        innerFullPlayerDetails.matchId IN(
+          SELECT 
+            innerFullMatchDetails.matchId 
+          FROM 
+            fullmatchdetails AS innerFullMatchDetails 
+          WHERE 
+innerFullMatchDetails.matchTournamentId = fullmatchdetails.matchTournamentId  AND innerFullMatchDetails.matchStartDateTime < fullmatchdetails.matchStartDateTime
+        ) 
+        AND innerFullPlayerDetails.playerId = fullplayerdetails.playerId
+    ), 
+    0
+  ) AS points, 
+  fullplayerdetails.name AS playerName, 
+  fullplayerdetails.displayName AS playerDisplayName, 
+  fullplayerdetails.roleId, 
+  fullplayerdetails.roleName, 
+  allteams.name AS teamName, 
+  allteams.countryName, 
+  allteams.countryCode, 
+  allteams.displayName AS teamDisplayName 
+FROM 
+  fullplayerdetails 
+  JOIN fullmatchdetails ON fullmatchdetails.matchId = fullplayerdetails.matchId 
+  JOIN allteams ON allteams.teamId = fullplayerdetails.teamId 
+WHERE 
+  fullplayerdetails.matchId = matchId;
+END IF;
+SELECT * FROM fullmatchdetails WHERE fullmatchdetails.matchId = matchId;
+ELSE SIGNAL SQLSTATE '45000' 
+SET 
+  MESSAGE_TEXT = 'invalid matchId';
 END IF;
 END$$
 DELIMITER ;
@@ -276,8 +306,8 @@ SELECT
     userTeamPlayersDetails.isViceCaptain,
     COALESCE(fullplayerdetails.credits, 0) AS credits,
     COALESCE(fullplayerdetails.points, 0) AS points,
-    fullplayerdetails.name,
-    fullplayerdetails.displayName,
+    fullplayerdetails.name AS playerName,
+    fullplayerdetails.displayName AS playerDisplayName,
     fullplayerdetails.roleId,
     fullplayerdetails.teamId,
     fullplayerdetails.roleName
@@ -292,15 +322,7 @@ SELECT
     userTeamDetails.userTeamId,
     userTeamDetails.userTeamType,
     userTeamDetails.teamTypeString,
-    COALESCE(
-    (SELECT
-        SUM(fullplayerdetails.points)
-    FROM
-        userTeamPlayersDetails
-    JOIN fullplayerdetails ON fullplayerdetails.playerId = userTeamPlayersDetails.playerId AND fullplayerdetails.matchId = userTeamDetails.matchId
-    WHERE
-        userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId), 0
-) AS points,
+    COALESCE(userTeamDetails.userTeamPoints, 0) AS points,
 userTeamDetails.userTeamViews AS 'views',
 userTeamDetails.userTeamLikes AS likes,
 (
@@ -427,7 +449,7 @@ START TRANSACTION;
 SAVEPOINT beforeInsertOrUpdate;
 
 /* checking matchId */
-SELECT EXISTS(SELECT fullmatchdetails.matchId FROM fullmatchdetails WHERE fullmatchdetails.matchId = matchId AND (fullmatchdetails.matchTyprString = "UPCOMING" AND fullmatchdetails.matchStartDateTime > (UNIX_TIMESTAMP(NOW()) * 1000))) INTO validMatch;
+SELECT EXISTS(SELECT fullmatchdetails.matchId FROM fullmatchdetails WHERE fullmatchdetails.matchId = matchId AND (fullmatchdetails.matchTyprString = "UPCOMING" AND fullmatchdetails.matchStartDateTime > (UNIX_TIMESTAMP(NOW()) * 1000)) OR TRUE) INTO validMatch;
 /* checking userId */
 SELECT EXISTS(SELECT userdetails.userId FROM userdetails WHERE userdetails.userId = userId) INTO validUser;
 
@@ -578,6 +600,44 @@ COMMIT;
 ELSE
 SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "invalid input";
 END IF;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE `storePoints_for_teams`(IN `matchId` INT)
+BEGIN
+
+DECLARE captainPoints FLOAT DEFAULT 0;
+DECLARE viceCaptainPoints FLOAT DEFAULT 0;
+DECLARE playerPoints FLOAT DEFAULT 0;
+DECLARE finished INTEGER DEFAULT 0;
+DECLARE userTeamId varchar(100) DEFAULT "";
+DEClARE cursorUserTeam CURSOR FOR SELECT userTeamDetails.userTeamId FROM userTeamDetails JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE userTeamDetails.matchId = matchId AND fullmatchdetails.isPointsCalculated = 1;
+
+DECLARE EXIT HANDLER FOR NOT FOUND
+BEGIN
+SET finished = 1;
+END;
+
+OPEN cursorUserTeam;
+
+getNextTeam: LOOP FETCH cursorUserTeam INTO userTeamId;
+IF finished = 1 THEN 
+	LEAVE getNextTeam;
+END IF;
+
+/* start process */
+SET playerPoints = 0;
+SELECT COALESCE(SUM(fullplayerdetails.points), 0) INTO playerPoints FROM userTeamDetails JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId JOIN fullplayerdetails ON fullplayerdetails.matchId = userTeamDetails.matchId AND fullplayerdetails.playerId = userTeamPlayersDetails.playerId WHERE userTeamDetails.userTeamId = userTeamId AND userTeamPlayersDetails.isCaptain = 0 AND userTeamPlayersDetails.isViceCaptain = 0;
+SELECT COALESCE(fullplayerdetails.points, 0) INTO captainPoints FROM userTeamDetails JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId JOIN fullplayerdetails ON fullplayerdetails.matchId = userTeamDetails.matchId AND fullplayerdetails.playerId = userTeamPlayersDetails.playerId WHERE userTeamDetails.userTeamId = userTeamId AND userTeamPlayersDetails.isCaptain = 1;
+SELECT COALESCE(fullplayerdetails.points, 0) INTO viceCaptainPoints FROM userTeamDetails JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId JOIN fullplayerdetails ON fullplayerdetails.matchId = userTeamDetails.matchId AND fullplayerdetails.playerId = userTeamPlayersDetails.playerId WHERE userTeamDetails.userTeamId = userTeamId AND userTeamPlayersDetails.isViceCaptain = 1;
+SET playerPoints = playerPoints + (viceCaptainPoints) * 1.5 + (captainPoints) * 2;
+UPDATE userTeamDetails SET userTeamDetails.userTeamPoints = playerPoints WHERE userTeamDetails.userTeamId = userTeamId;
+
+/* end process */
+
+END LOOP getNextTeam;
+CLOSE cursorUserTeam;
 END$$
 DELIMITER ;
 
