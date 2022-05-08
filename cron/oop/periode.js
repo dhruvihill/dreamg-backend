@@ -6,7 +6,7 @@ const fetchData = async () => {
   try {
     const connection = await connectToDb();
     const matches = await database(
-      "SELECT `fullmatchdetails`.`matchTournamentId` AS tournamentId, matchId, matchRadarId, matchTournamentId, matchStartDateTime, matchTyprString, matchStatusString, team1Id, team2Id, team1RadarId, team2RadarId FROM `fullmatchdetails` WHERE matchStatusString IN ('not_started') ORDER BY `fullmatchdetails`.matchStartDateTime DESC;",
+      "SELECT `fullmatchdetails`.`matchTournamentId` AS tournamentId, matchId, matchRadarId, matchTournamentId, matchStartDateTime, matchTyprString, matchStatusString, team1Id, team2Id, team1RadarId, team2RadarId, isLineUpOut FROM `fullmatchdetails` WHERE matchStatusString IN ('not_started', 'live') ORDER BY `fullmatchdetails`.matchStartDateTime DESC;",
       [],
       connection
     );
@@ -18,7 +18,7 @@ const fetchData = async () => {
         if (
           (matchStartTime.getTime() > now.getTime() &&
             matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) ||
-          match.matchId == 50
+            match.matchStatusString === "live"
         ) {
           log(
             `Started to proceed match for scorcard, lineups and points for ${match.matchId}`
@@ -39,7 +39,8 @@ const fetchData = async () => {
             match.matchStatusString,
             competitor,
             match.matchStartDateTime,
-            match.tournamentId
+            match.tournamentId,
+            match.isLineUpOut
           );
           log(
             "going to store lineups for match" +
@@ -131,6 +132,7 @@ const storeAllData = async () => {
     console.log(error);
   }
 };
+
 // storeAllData();
 
 module.exports = {

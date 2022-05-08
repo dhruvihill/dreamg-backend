@@ -164,6 +164,13 @@ const connectToDb = () => {
           } catch (error) {
             if (error.message.includes("ECONNREFUSED")) {
               // some email stuff goes here
+              setTimeout(async () => {
+                try {
+                  resolve(await connectToDb())
+                } catch (error) {
+                  reject(error);
+                }
+              }, 200);
             }
             reject(error);
             initializeConnection();

@@ -1,24 +1,1885 @@
-2022.05.05, 14:25:24.0177 UTC -> Started to proceed match for scorcard, lineups and points for 50
-2022.05.05, 14:25:24.0178 UTC -> going to store lineups for match50FROM ./cron/oop/periode.js
-2022.05.05, 14:25:24.0187 UTC -> IN ./cron/oop/match.js going to store line up
-2022.05.05, 14:25:25.0479 UTC -> IN ./cron/oop/match.js going to handle toss
-2022.05.05, 14:25:26.0312 UTC -> got response of lineup and going to procedd for matchStatus50FROM ./cron/oop/periode.js
-2022.05.05, 14:25:27.0139 UTC -> resolving from handleMatchStatus status changed
-2022.05.05, 14:25:27.0139 UTC -> got response of matchStatus and going to procedd for scorcard50FROM ./cron/oop/periode.js
-2022.05.05, 14:43:49.0301 UTC -> Started to proceed match for scorcard, lineups and points for 50
-2022.05.05, 14:43:49.0301 UTC -> going to store lineups for match50FROM ./cron/oop/periode.js
-2022.05.05, 14:43:49.0303 UTC -> IN ./cron/oop/match.js going to store line up
-2022.05.05, 14:43:50.0387 UTC -> IN ./cron/oop/match.js going to handle toss
-2022.05.05, 14:43:51.0784 UTC -> got response of lineup and going to procedd for matchStatus50FROM ./cron/oop/periode.js
-2022.05.05, 14:43:52.0397 UTC -> resolving from handleMatchStatus status changed
-2022.05.05, 14:43:52.0397 UTC -> got response of matchStatus and going to procedd for scorcard50FROM ./cron/oop/periode.js
-2022.05.05, 15:13:52.0457 UTC -> IN ./cron/oop/match.js going to store score card and points
-2022.05.05, 15:13:53.0485 UTC -> match is not ended
-2022.05.05, 15:43:52.0462 UTC -> IN ./cron/oop/match.js going to store score card and points
-2022.05.05, 15:43:53.0367 UTC -> match is not ended
-2022.05.05, 16:13:52.0562 UTC -> IN ./cron/oop/match.js going to store score card and points
-2022.05.05, 16:13:53.0890 UTC -> match is not ended
-2022.05.05, 16:43:52.0564 UTC -> IN ./cron/oop/match.js going to store score card and points
-2022.05.05, 16:43:53.0597 UTC -> match is not ended
-2022.05.05, 17:13:52.0600 UTC -> IN ./cron/oop/match.js going to store score card and points
-2022.05.05, 17:13:53.0463 UTC -> match is not ended
+2022.05.07, 08:42:48.0177 UTC -> Started to proceed match for scorcard, lineups and points for 52
+2022.05.07, 08:42:50.0455 UTC -> going to store lineups for match52FROM ./cron/oop/periode.js
+2022.05.07, 08:48:47.0689 UTC -> Started to proceed match for scorcard, lineups and points for 52
+2022.05.07, 08:48:50.0342 UTC -> going to store lineups for match52FROM ./cron/oop/periode.js
+2022.05.07, 08:49:42.0269 UTC -> Started to proceed match for scorcard, lineups and points for 52
+2022.05.07, 08:49:45.0256 UTC -> going to store lineups for match52FROM ./cron/oop/periode.js
+2022.05.07, 09:07:19.0771 UTC -> Started to proceed match for scorcard, lineups and points for 52
+2022.05.07, 09:07:26.0605 UTC -> going to store lineups for match52FROM ./cron/oop/periode.js
+2022.05.07, 09:35:19.0202 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.07, 09:35:30.0160 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.07, 09:35:31.0272 UTC -> got response of lineup and going to procedd for matchStatus52FROM ./cron/oop/periode.js
+2022.05.07, 10:03:45.0938 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 10:04:11.0675 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 10:04:21.0970 UTC -> got response of matchStatus and going to procedd for scorcard52FROM ./cron/oop/periode.js
+2022.05.07, 10:34:33.0524 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 10:34:54.0149 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 10:34:55.0376 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 11:04:33.0613 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 11:04:48.0323 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 11:04:49.0854 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 11:34:33.0600 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 11:35:02.0416 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 11:35:10.0345 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 12:04:33.0636 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 12:04:38.0863 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 12:04:39.0759 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 12:34:33.0452 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 12:34:55.0717 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 12:34:57.0287 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 13:04:33.0462 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 13:04:37.0646 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 13:04:38.0888 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 13:07:17.0865 UTC -> Started to proceed match for scorcard, lineups and points for 53
+2022.05.07, 13:08:32.0189 UTC -> going to store lineups for match53FROM ./cron/oop/periode.js
+2022.05.07, 13:34:33.0651 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 13:34:39.0933 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 13:34:40.0951 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 13:35:00.0140 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.07, 13:35:09.0931 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.07, 13:35:10.0640 UTC -> got response of lineup and going to procedd for matchStatus53FROM ./cron/oop/periode.js
+2022.05.07, 14:02:00.0754 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 14:02:03.0004 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 14:04:32.0288 UTC -> got response of matchStatus and going to procedd for scorcard53FROM ./cron/oop/periode.js
+2022.05.07, 14:04:35.0616 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 14:04:41.0815 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.07, 14:04:42.0952 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 14:10:11.0197 UTC -> Started to proceed match for scorcard, lineups and points for 52
+2022.05.07, 14:10:24.0263 UTC -> going to store lineups for match52FROM ./cron/oop/periode.js
+2022.05.07, 14:10:26.0793 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.07, 14:10:36.0488 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.07, 14:10:50.0488 UTC -> got response of lineup and going to procedd for matchStatus52FROM ./cron/oop/periode.js
+2022.05.07, 14:10:54.0995 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.07, 14:10:55.0719 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 14:10:57.0387 UTC -> got response of matchStatus and going to procedd for scorcard52FROM ./cron/oop/periode.js
+2022.05.07, 14:11:00.0724 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.07, 14:11:02.0053 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.07, 14:11:02.0803 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 14:14:49.0117 UTC -> Started to proceed match for scorcard, lineups and points for 52
+2022.05.07, 14:14:59.0651 UTC -> going to store lineups for match52FROM ./cron/oop/periode.js
+2022.05.07, 14:15:00.0286 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.07, 14:15:13.0893 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.07, 14:15:16.0982 UTC -> got response of lineup and going to procedd for matchStatus52FROM ./cron/oop/periode.js
+2022.05.07, 14:15:20.0145 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.07, 14:15:21.0059 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 14:15:21.0975 UTC -> got response of matchStatus and going to procedd for scorcard52FROM ./cron/oop/periode.js
+2022.05.07, 14:15:22.0603 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.07, 14:15:23.0413 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.07, 14:15:24.0543 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 14:16:33.0466 UTC -> Started to proceed match for scorcard, lineups and points for 52
+2022.05.07, 14:16:38.0492 UTC -> going to store lineups for match52FROM ./cron/oop/periode.js
+2022.05.07, 14:16:39.0091 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.07, 14:16:48.0102 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.07, 14:16:52.0265 UTC -> got response of lineup and going to procedd for matchStatus52FROM ./cron/oop/periode.js
+2022.05.07, 14:16:54.0096 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.07, 14:16:54.0749 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 14:16:55.0950 UTC -> got response of matchStatus and going to procedd for scorcard52FROM ./cron/oop/periode.js
+2022.05.07, 14:16:57.0705 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.07, 14:16:58.0625 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.07, 14:16:59.0309 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 14:17:20.0463 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.07, 14:18:15.0420 UTC -> going to store lineups for match53FROM ./cron/oop/periode.js
+2022.05.07, 14:18:10.0582 UTC -> Started to proceed match for scorcard, lineups and points for 53
+2022.05.07, 14:18:15.0955 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.07, 14:18:25.0077 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.07, 14:18:27.0433 UTC -> got response of lineup and going to procedd for matchStatus53FROM ./cron/oop/periode.js
+2022.05.07, 14:18:29.0572 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 14:18:30.0302 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 14:18:30.0302 UTC -> got response of matchStatus and going to procedd for scorcard53FROM ./cron/oop/periode.js
+2022.05.07, 14:21:14.0555 UTC -> Started to proceed match for scorcard, lineups and points for 53
+2022.05.07, 14:21:18.0404 UTC -> going to store lineups for match53FROM ./cron/oop/periode.js
+2022.05.07, 14:21:18.0405 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.07, 14:21:28.0683 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.07, 14:21:29.0913 UTC -> got response of lineup and going to procedd for matchStatus53FROM ./cron/oop/periode.js
+2022.05.07, 14:21:34.0658 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 14:21:35.0646 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 14:21:35.0647 UTC -> got response of matchStatus and going to procedd for scorcard53FROM ./cron/oop/periode.js
+2022.05.07, 14:24:25.0423 UTC -> Started to proceed match for scorcard, lineups and points for 53
+2022.05.07, 14:24:28.0413 UTC -> going to store lineups for match53FROM ./cron/oop/periode.js
+2022.05.07, 14:24:28.0414 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.07, 14:24:28.0414 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.07, 14:24:29.0928 UTC -> got response of lineup and going to procedd for matchStatus53FROM ./cron/oop/periode.js
+2022.05.07, 14:24:33.0056 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 14:24:34.0126 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 14:24:34.0126 UTC -> got response of matchStatus and going to procedd for scorcard53FROM ./cron/oop/periode.js
+2022.05.07, 14:54:35.0354 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 14:54:36.0951 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 14:54:38.0108 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 15:24:35.0415 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 15:24:36.0475 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 15:24:37.0207 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 15:54:35.0457 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 15:54:36.0437 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 15:54:36.0800 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 16:24:35.0273 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 16:24:36.0453 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 16:24:37.0289 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 16:54:27.0216 UTC -> Started to proceed match for scorcard, lineups and points for 53
+2022.05.07, 16:54:37.0691 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.07, 16:54:37.0688 UTC -> going to store lineups for match53FROM ./cron/oop/periode.js
+2022.05.07, 16:54:37.0690 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.07, 16:54:39.0705 UTC -> got response of lineup and going to procedd for matchStatus53FROM ./cron/oop/periode.js
+2022.05.07, 16:54:43.0211 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 16:54:44.0008 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 16:54:44.0009 UTC -> got response of matchStatus and going to procedd for scorcard53FROM ./cron/oop/periode.js
+2022.05.07, 16:57:50.0071 UTC -> Started to proceed match for scorcard, lineups and points for 53
+2022.05.07, 16:58:02.0972 UTC -> going to store lineups for match53FROM ./cron/oop/periode.js
+2022.05.07, 16:58:02.0973 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.07, 16:58:02.0973 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.07, 16:58:04.0703 UTC -> got response of lineup and going to procedd for matchStatus53FROM ./cron/oop/periode.js
+2022.05.07, 16:58:06.0239 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 16:58:06.0842 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 16:58:06.0842 UTC -> got response of matchStatus and going to procedd for scorcard53FROM ./cron/oop/periode.js
+2022.05.07, 16:58:51.0501 UTC -> Started to proceed match for scorcard, lineups and points for 53
+2022.05.07, 16:58:54.0996 UTC -> going to store lineups for match53FROM ./cron/oop/periode.js
+2022.05.07, 16:58:54.0998 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.07, 16:58:54.0998 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.07, 16:58:56.0579 UTC -> got response of lineup and going to procedd for matchStatus53FROM ./cron/oop/periode.js
+2022.05.07, 16:58:58.0568 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 16:58:59.0282 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 16:58:59.0283 UTC -> got response of matchStatus and going to procedd for scorcard53FROM ./cron/oop/periode.js
+2022.05.07, 17:08:31.0540 UTC -> Started to proceed match for scorcard, lineups and points for 53
+2022.05.07, 17:08:41.0066 UTC -> going to store lineups for match53FROM ./cron/oop/periode.js
+2022.05.07, 17:08:42.0859 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.07, 17:08:42.0860 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.07, 17:08:44.0999 UTC -> got response of lineup and going to procedd for matchStatus53FROM ./cron/oop/periode.js
+2022.05.07, 17:08:47.0164 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 17:08:48.0227 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 17:08:48.0227 UTC -> got response of matchStatus and going to procedd for scorcard53FROM ./cron/oop/periode.js
+2022.05.07, 17:10:54.0994 UTC -> Started to proceed match for scorcard, lineups and points for 53
+2022.05.07, 17:12:21.0580 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.07, 17:10:54.0995 UTC -> going to store lineups for match53FROM ./cron/oop/periode.js
+2022.05.07, 17:11:29.0373 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.07, 17:12:23.0607 UTC -> got response of lineup and going to procedd for matchStatus53FROM ./cron/oop/periode.js
+2022.05.07, 17:12:32.0970 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 17:12:33.0571 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 17:12:33.0571 UTC -> got response of matchStatus and going to procedd for scorcard53FROM ./cron/oop/periode.js
+2022.05.07, 17:18:23.0588 UTC -> Started to proceed match for scorcard, lineups and points for 53
+2022.05.07, 17:18:23.0591 UTC -> going to store lineups for match53FROM ./cron/oop/periode.js
+2022.05.07, 17:18:28.0963 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.07, 17:18:28.0964 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.07, 17:19:59.0628 UTC -> Started to proceed match for scorcard, lineups and points for 53
+2022.05.07, 17:19:59.0629 UTC -> going to store lineups for match53FROM ./cron/oop/periode.js
+2022.05.07, 17:20:04.0023 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.07, 17:20:04.0024 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.07, 17:20:05.0489 UTC -> got response of lineup and going to procedd for matchStatus53FROM ./cron/oop/periode.js
+2022.05.07, 17:20:07.0870 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 17:21:35.0952 UTC -> Started to proceed match for scorcard, lineups and points for 53
+2022.05.07, 17:21:35.0952 UTC -> going to store lineups for match53FROM ./cron/oop/periode.js
+2022.05.07, 17:21:40.0239 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.07, 17:21:40.0240 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.07, 17:21:41.0636 UTC -> got response of lineup and going to procedd for matchStatus53FROM ./cron/oop/periode.js
+2022.05.07, 17:21:44.0512 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 17:21:45.0388 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 17:21:45.0388 UTC -> got response of matchStatus and going to procedd for scorcard53FROM ./cron/oop/periode.js
+2022.05.07, 17:21:47.0083 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0087 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0091 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0094 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0099 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0102 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0106 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0109 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0113 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0118 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0123 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0130 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0132 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0135 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0137 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0144 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0148 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0151 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0153 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0157 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0163 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0166 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0169 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0170 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0172 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0173 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0174 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0176 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0176 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0177 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0178 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0179 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0180 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0182 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0184 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0184 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0186 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0188 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0189 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0191 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0192 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0193 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0195 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0196 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0198 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0200 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0200 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0202 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0204 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0204 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0206 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0208 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0210 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0210 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0212 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0213 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0215 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0216 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0218 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0218 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0220 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0220 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0222 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0222 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0223 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0224 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0226 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0228 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0230 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0231 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0233 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0234 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0236 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0238 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0238 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0240 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0242 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0244 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0244 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0246 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0246 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0248 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0248 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0249 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0251 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0252 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0253 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0254 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0257 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0259 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0259 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0260 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0262 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0265 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0265 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0267 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0268 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0270 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0272 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0274 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0275 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0277 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0277 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0279 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0279 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0281 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0281 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0283 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0285 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0285 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0287 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0287 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0289 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0289 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0291 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0293 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0293 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0295 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0295 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0297 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0297 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0299 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0299 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0301 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0303 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0303 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0305 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0305 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0307 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0309 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0309 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0311 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0313 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0313 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0315 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0315 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0317 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0319 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0319 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0321 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0323 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0323 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0325 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0327 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0327 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0329 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0331 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0331 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0333 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0334 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0336 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0338 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0338 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0340 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0340 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0341 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0346 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0348 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0350 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0352 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0352 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0354 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0354 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0356 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0356 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0358 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0358 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0360 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0360 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0362 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0362 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0364 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0364 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0366 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0366 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0368 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0371 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0373 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0375 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0377 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0377 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0379 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0381 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0381 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0383 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0383 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0385 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0387 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0389 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0389 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0391 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0393 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0395 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0397 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0399 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0401 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0401 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0403 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0403 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0405 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0407 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0407 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0409 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0409 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0411 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0413 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0413 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0415 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0416 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0416 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0417 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0419 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0421 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0421 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0423 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0423 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0425 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0425 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0427 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0429 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0431 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0431 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0433 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0433 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0435 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0435 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0437 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0437 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0439 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0439 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0441 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0441 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0443 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0443 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0444 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0446 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0448 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0450 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0452 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0453 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0453 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0455 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0457 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0457 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0459 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0459 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0461 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0466 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0468 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0470 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0472 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0472 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0474 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0474 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0476 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0476 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0478 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0485 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0493 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0494 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0496 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0499 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0499 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0501 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0503 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0503 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0505 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0507 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0509 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0511 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0514 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0515 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0517 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0519 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0521 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0523 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0523 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0530 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0530 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0532 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0536 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0547 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0547 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0558 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0558 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0569 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0570 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0572 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0574 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0574 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0581 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0587 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0590 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0599 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0602 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0604 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0606 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0606 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0609 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0619 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0621 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0631 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0643 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0643 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0652 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0655 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0657 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0657 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0658 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0660 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0663 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0665 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0667 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0669 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0671 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0671 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0672 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0674 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0675 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0676 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0678 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0680 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0682 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0683 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0685 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0687 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0689 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0689 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0692 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0692 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0694 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0696 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0696 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0698 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0700 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0704 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0704 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0706 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0708 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0710 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0710 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0712 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0714 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0714 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0716 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0718 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0718 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0720 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0722 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0724 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0726 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0728 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0728 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0730 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0732 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0734 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0734 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0736 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0737 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0738 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0739 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0740 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0741 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0743 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0745 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0747 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0749 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0751 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0753 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0753 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0755 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0755 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0757 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0759 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0761 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0763 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0763 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0765 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0768 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0770 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0772 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0775 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0780 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0782 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0784 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0785 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0787 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0790 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0792 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0793 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0798 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0810 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0812 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0813 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0815 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0817 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0824 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0824 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0826 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0828 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0830 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0835 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0837 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0837 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0839 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0841 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0844 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0846 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0847 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0849 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0851 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0854 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0856 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0857 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0860 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0860 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0862 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0863 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0865 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0868 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0868 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0869 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0871 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0873 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0875 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0876 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0877 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0879 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0880 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0882 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0884 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0886 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0888 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0890 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0893 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0895 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0896 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0898 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0900 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0902 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0904 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0904 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0906 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0909 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0909 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0910 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0912 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0915 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0917 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0919 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0920 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0922 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0924 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0925 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0927 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0928 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0930 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0931 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0934 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0935 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0937 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0940 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0940 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0942 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0942 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0944 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0946 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0946 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0948 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0950 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0950 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0952 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0954 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0954 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0956 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0956 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0958 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0958 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0960 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0962 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0962 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0964 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0966 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0966 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0967 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0968 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0970 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0972 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0972 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0974 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0977 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0979 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0980 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0981 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0984 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0985 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0985 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0987 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0988 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0991 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0993 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0995 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0996 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0997 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:47.0998 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0000 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0001 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0002 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0004 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0005 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0007 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0010 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0013 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0014 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0016 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0018 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0019 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0021 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0021 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0023 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0023 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0025 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0026 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0028 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0029 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0031 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0032 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0034 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0036 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0036 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0038 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0039 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0040 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0042 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0045 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0045 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0047 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0049 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0049 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0051 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0051 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0053 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0055 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0057 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0059 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0063 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0065 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0066 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0069 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0069 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0071 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0072 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0073 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0075 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0077 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0077 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0079 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0082 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0082 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0084 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0085 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0088 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0090 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0093 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0095 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0098 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0098 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0100 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0101 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0103 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0106 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0106 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0107 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0109 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0110 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0111 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0114 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0114 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0116 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0117 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0119 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0122 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0124 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0125 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0126 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0128 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0129 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0131 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0133 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0135 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0138 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0138 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0140 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0141 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0143 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0146 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0146 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0147 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0148 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0150 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0152 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0155 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0155 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0158 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0159 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0159 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0162 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0162 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0164 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0165 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0167 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0170 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0173 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0173 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0176 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0176 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0178 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0179 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0181 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0183 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0185 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0190 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.05.07, 17:21:48.0192 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0193 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0195 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0196 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0198 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0200 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0201 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0203 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0204 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0205 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0206 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0208 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0211 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0212 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0212 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0214 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0215 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0217 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0219 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0221 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0221 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0223 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0223 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0225 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0227 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0229 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0231 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0235 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0235 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0237 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0238 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0240 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0243 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0243 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0246 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0251 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.07, 17:21:48.0253 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0254 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0257 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0270 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0271 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0281 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0282 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0283 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0287 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0289 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0289 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0291 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0291 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0293 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0294 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0295 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0297 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0297 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0299 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0300 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0302 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0303 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0306 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0308 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0309 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0310 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0311 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0313 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0316 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0316 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0319 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0320 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0322 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0323 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0325 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0328 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0330 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0333 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0333 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0335 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0336 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0338 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0339 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0342 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0344 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0346 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0348 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0348 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0350 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0353 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0356 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0356 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0360 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0363 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0365 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0367 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0370 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0372 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0375 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0378 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0378 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0380 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0383 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0385 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0387 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0387 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0389 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0391 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0391 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0394 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0394 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0396 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0398 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0400 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0401 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0403 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0405 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0407 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0409 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0411 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0412 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0412 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0414 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0416 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0417 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0419 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0422 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0423 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0425 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0426 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0428 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0430 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0432 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0434 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0434 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0437 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0437 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0439 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0441 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0443 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0443 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0445 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0448 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0448 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0450 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0452 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0452 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0454 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0457 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0457 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0459 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0461 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0462 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0464 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0466 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0467 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0471 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0473 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0475 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0476 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0478 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0479 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0482 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0485 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0487 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0490 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0493 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0495 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0496 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0498 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0499 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0502 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0503 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0504 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0506 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0510 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0512 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0513 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0515 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0518 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0520 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0521 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0524 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0525 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0525 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0527 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0530 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0532 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0533 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0534 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0536 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0537 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0540 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0540 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0543 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0543 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0545 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0546 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0547 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0549 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0551 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0552 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0554 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0556 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0556 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0558 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0561 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0563 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0564 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0566 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0567 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0569 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0574 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0577 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0578 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0578 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0580 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0582 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0583 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0585 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0587 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0587 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0590 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0590 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0592 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0594 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0596 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0598 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0599 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0601 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0602 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0603 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0605 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0608 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0610 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0611 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0613 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0615 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0617 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0620 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0620 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0623 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0625 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0626 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0628 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0629 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0631 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0632 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0634 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0637 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0639 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0640 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0641 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0643 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0644 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0646 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0649 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0651 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0652 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0655 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0658 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0660 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0662 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0663 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0665 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0666 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0668 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0670 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0673 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0675 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0677 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0677 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0679 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0682 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0685 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0688 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0688 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0690 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0690 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0692 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0695 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0698 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0701 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0701 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0703 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0704 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0706 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0707 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0710 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0710 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0713 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0715 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0718 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0720 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0721 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0723 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0726 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0727 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0728 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0730 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0731 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0735 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0737 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0739 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0741 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0744 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0744 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0746 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0747 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0750 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0751 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0753 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0755 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0757 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0759 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0759 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0761 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0762 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0764 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0768 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0768 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0771 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0771 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0773 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0774 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0777 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0777 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0778 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0780 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0782 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0783 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0785 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0788 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0789 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0791 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0792 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0793 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0795 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0798 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0800 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0800 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0802 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0804 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0805 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0807 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0808 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0810 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0813 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0815 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0817 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0818 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0819 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0820 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0822 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0825 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0828 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0830 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0831 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0834 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0834 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0835 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0837 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0837 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0839 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0841 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0842 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0844 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0845 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0847 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0849 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0851 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0853 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0855 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0857 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0860 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0862 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0863 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0865 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0866 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0868 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0869 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0872 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0875 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0877 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0877 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0879 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0882 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0885 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0887 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0890 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0892 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0894 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0896 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0899 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0902 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0905 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0905 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0907 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0908 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0911 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0911 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0913 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0913 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0915 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0918 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0920 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0921 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0923 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0925 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0929 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.07, 17:21:48.0931 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0932 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0934 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0936 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0938 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0940 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0942 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0944 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0947 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0949 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0952 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0952 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0953 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0955 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0957 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0957 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0959 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0962 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0965 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0965 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0966 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0969 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0971 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0972 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0974 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0975 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0979 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0979 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0981 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0984 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0986 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0989 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0990 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0992 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0997 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:48.0999 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0002 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0002 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0004 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0007 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0007 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0010 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0010 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0012 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0012 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0014 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0017 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0020 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0021 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0023 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0025 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0025 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0027 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0030 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0033 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0033 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0035 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0037 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0037 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0039 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0040 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0042 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0043 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0046 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0046 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0049 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0051 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0052 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0053 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0055 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0058 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0060 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0062 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0063 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0064 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0065 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0069 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.07, 17:21:49.0072 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0077 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0077 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0079 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0081 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0083 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0086 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0088 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0090 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0092 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0095 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0097 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0099 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0099 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0101 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0104 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0106 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0106 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0108 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0112 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0114 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0114 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0116 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0119 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0119 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0121 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0122 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0123 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0125 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0126 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0127 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0129 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0129 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0132 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0132 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0135 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0135 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0136 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0138 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0139 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0140 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0142 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0144 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0147 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0149 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0151 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0154 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0155 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0158 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0160 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0162 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0164 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0167 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0170 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0170 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0173 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0173 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0175 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0176 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0179 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0182 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0184 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0186 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0187 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0190 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0192 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0193 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0196 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0196 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0198 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0199 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0199 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0200 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0202 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0204 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0204 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0206 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0207 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0209 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0212 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0214 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0215 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0218 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0220 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0222 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0224 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0227 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0227 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0229 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0231 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0231 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0232 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 17:21:49.0234 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0234 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0236 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0240 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0240 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0242 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0245 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0248 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0249 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0251 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0254 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0257 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0258 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0258 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0260 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0261 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0264 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0266 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0267 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0268 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0270 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0271 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0274 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0275 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0276 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0278 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0280 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0282 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0285 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0288 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0292 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0293 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0296 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0298 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0301 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0302 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0303 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0304 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0310 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0313 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0316 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0317 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0320 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0322 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0323 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0325 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0328 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0329 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0331 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0333 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0336 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0339 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0339 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0341 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0342 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0344 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0346 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0347 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0347 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0349 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0352 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0354 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0354 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0356 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0358 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0360 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0363 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0363 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0364 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0366 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0369 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0372 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0373 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0373 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0375 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0377 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0379 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0382 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0385 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0387 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0388 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0391 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0392 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0394 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0397 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0397 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0400 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0401 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0404 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0407 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0409 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0412 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0414 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0419 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0421 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0421 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0422 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0423 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0424 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0425 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0427 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0427 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0436 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0441 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0442 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0447 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0449 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0452 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0453 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0454 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0456 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0457 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0460 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0461 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0463 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0466 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0469 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0469 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0472 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0474 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0475 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0478 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0479 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0480 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0482 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0485 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0487 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0489 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0493 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0493 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0494 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0497 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0497 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0499 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0503 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0506 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0508 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0511 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0514 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0517 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0519 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0521 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0523 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0524 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0527 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0527 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0529 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0529 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0531 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0533 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0535 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0537 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0539 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0540 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0541 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0543 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0545 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0548 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0550 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0552 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0552 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0555 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0555 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0558 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0560 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0563 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0565 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0567 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0569 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0569 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0571 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0574 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0575 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0577 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0578 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0580 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0584 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0587 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0590 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0591 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0591 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0592 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0594 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0595 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0598 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0598 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0601 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0602 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0602 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0604 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0607 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0609 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0612 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0615 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0615 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0617 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0620 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0622 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0622 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0624 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0625 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0629 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0629 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0631 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0632 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0634 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0635 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0638 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0640 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0641 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0645 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0647 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0649 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0652 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0654 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0655 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0658 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0658 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0660 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0662 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0664 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0666 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0666 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0668 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0670 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0672 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0675 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0678 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0679 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0682 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0682 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0684 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0687 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0691 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0692 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0692 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0694 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0695 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0698 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0700 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0703 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0704 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0707 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0709 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0712 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0715 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0718 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0721 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0722 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0725 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0727 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0729 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0730 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0732 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0735 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0739 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0739 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0740 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0743 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0743 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0746 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0746 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0749 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0750 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0752 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0753 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0756 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0758 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0760 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0764 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0764 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0765 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0766 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0768 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0770 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0771 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0773 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0775 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0781 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0782 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0784 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0786 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0787 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0789 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0792 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0794 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0795 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0797 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0799 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0799 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0801 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0804 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0805 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0805 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0807 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0808 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0809 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0810 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0812 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0812 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0814 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0817 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0818 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0821 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0824 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0825 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0826 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0826 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0829 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0830 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0832 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0834 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0835 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0837 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0840 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0843 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0846 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0847 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0850 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0850 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0852 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0854 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0856 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0859 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0862 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0864 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0865 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0866 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0868 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0871 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0874 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0875 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0877 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0879 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0882 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0884 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0887 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0889 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0891 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0894 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0895 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0896 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0898 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0900 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0902 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0905 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0907 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0909 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0911 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0914 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0917 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0920 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0923 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0925 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0927 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0929 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0929 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0931 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0932 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0934 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0937 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0940 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0944 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0945 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0946 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0948 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0951 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0954 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0955 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0958 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0961 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0962 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0963 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0964 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0966 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0969 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0971 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0972 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0982 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0984 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0986 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0988 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0989 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0991 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:49.0996 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0007 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0009 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0011 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0013 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0015 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0015 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0017 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0021 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0022 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0024 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0025 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0026 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0027 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0031 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0033 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0034 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0036 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0036 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0038 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0039 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0040 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0041 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0042 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0044 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0047 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0049 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0050 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0050 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0053 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0056 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0057 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0059 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0059 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0061 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0061 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0062 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0064 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0066 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0068 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0069 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0072 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0072 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0074 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0075 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0078 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0079 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0082 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0083 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0085 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0087 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0089 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0093 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0094 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0094 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0095 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0098 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0098 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0100 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0102 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0104 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0108 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0110 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0111 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0112 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0114 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0114 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0116 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0119 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0121 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0121 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0124 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0125 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0126 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0129 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0129 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0130 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0132 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0135 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0137 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0139 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0139 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0142 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0145 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0148 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0151 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0154 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0157 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0159 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0161 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0163 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0164 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0164 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:21:50.0166 UTC -> IN ./cron/oop/match.js going to store score card and points
+2022.05.07, 17:27:10.0331 UTC -> Started to proceed match for scorcard, lineups and points for 53
+2022.05.07, 17:27:10.0332 UTC -> going to store lineups for match53FROM ./cron/oop/periode.js
+2022.05.07, 17:27:10.0333 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.07, 17:27:10.0333 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.07, 17:27:12.0188 UTC -> got response of lineup and going to procedd for matchStatus53FROM ./cron/oop/periode.js
+2022.05.07, 17:27:14.0066 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.07, 17:27:14.0726 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 17:27:14.0726 UTC -> got response of matchStatus and going to procedd for scorcard53FROM ./cron/oop/periode.js
+2022.05.07, 17:27:14.0726 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.07, 17:27:15.0318 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.07, 17:27:16.0078 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 17:29:44.0249 UTC -> Started to proceed match for scorcard, lineups and points for 53
+2022.05.07, 17:29:44.0250 UTC -> going to store lineups for match53FROM ./cron/oop/periode.js
+2022.05.07, 17:29:47.0797 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.07, 17:29:47.0797 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.07, 17:29:51.0304 UTC -> got response of lineup and going to procedd for matchStatus53FROM ./cron/oop/periode.js
+2022.05.07, 17:29:55.0268 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.07, 17:29:56.0021 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 17:29:56.0021 UTC -> got response of matchStatus and going to procedd for scorcard53FROM ./cron/oop/periode.js
+2022.05.07, 17:30:04.0294 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.07, 17:30:27.0841 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.07, 17:30:28.0586 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 17:34:34.0696 UTC -> Started to proceed match for scorcard, lineups and points for 53
+2022.05.07, 17:34:34.0696 UTC -> going to store lineups for match53FROM ./cron/oop/periode.js
+2022.05.07, 17:34:40.0066 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.07, 17:34:40.0067 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.07, 17:34:41.0537 UTC -> got response of lineup and going to procedd for matchStatus53FROM ./cron/oop/periode.js
+2022.05.07, 17:34:43.0307 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.07, 17:34:44.0069 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 17:34:44.0069 UTC -> got response of matchStatus and going to procedd for scorcard53FROM ./cron/oop/periode.js
+2022.05.07, 17:34:51.0064 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.07, 17:35:04.0013 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.07, 17:35:04.0691 UTC -> resolving from handleMatchStatus status changed
+2022.05.07, 17:36:15.0331 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.08, 08:31:57.0316 UTC -> Started to proceed match for scorcard, lineups and points for 54
+2022.05.08, 08:31:57.0317 UTC -> going to store lineups for match54FROM ./cron/oop/periode.js

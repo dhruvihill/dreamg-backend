@@ -14,6 +14,7 @@ class Scorcard {
   };
   #competitors = [];
   #scorcardId = null;
+  #connection = null;
 
   constructor(id, radarId, competitors) {
     this.id = id;
@@ -49,6 +50,9 @@ class Scorcard {
           throw new Error("Scorcard details not found");
         }
       } catch (error) {
+        if (this.#connection) {
+          this.#connection.release();
+        }
         console.log(error);
         reject(error);
       }
@@ -58,12 +62,16 @@ class Scorcard {
   #fetchWinnerManOfMatch = () => {
     return new Promise(async (resolve, reject) => {
       try {
-        const connection = await connectToDb();
-        const [{ playerId }] = await database(
-          "SELECT playerId FROM allplayers WHERE playerRadarId = ?;",
-          [this.#scorcardDetails.statistics.man_of_the_match[0].id.substr(10)],
-          connection
-        );
+        let playerId;
+        if (this.#scorcardDetails?.statistics?.man_of_the_match?.length > 0) {
+          [{ playerId }] = await database(
+            "SELECT playerId FROM allplayers WHERE playerRadarId = ?;",
+            [this.#scorcardDetails?.statistics?.man_of_the_match[0]?.id?.substr(10)],
+            this.#connection
+          );
+        } else {
+          playerId = null
+        }
 
         const [winner] = this.#competitors.filter((competitor) => {
           return (
@@ -84,6 +92,9 @@ class Scorcard {
         this.#scorcardDetails.tossWonBy = tossWonBy.id;
         resolve();
       } catch (error) {
+        if (this.#connection) {
+          this.#connection.release();
+        }
         console.log(error);
         reject(error);
       }
@@ -93,7 +104,6 @@ class Scorcard {
   #storeInningBatting = (battingTeam, inningId) => {
     return new Promise(async (resolve, reject) => {
       try {
-        const connection = await connectToDb();
         const store = await database(
           "INSERT INTO inning_batting SET ?;",
           {
@@ -104,13 +114,15 @@ class Scorcard {
             runRate: battingTeam.statistics?.batting?.run_rate || 0,
             ballFaced: battingTeam.statistics?.batting?.balls_faced || 0,
           },
-          connection
+          this.#connection
         );
         if (store) {
-          connection.release();
           resolve(true);
         }
       } catch (error) {
+        if (this.#connection) {
+          this.#connection.release();
+        }
         console.log(error);
         reject(error);
       }
@@ -120,7 +132,6 @@ class Scorcard {
   #storeInningBowling = (bowlingTeam, inningId) => {
     return new Promise(async (resolve, reject) => {
       try {
-        const connection = await connectToDb();
         const store = await database(
           "INSERT INTO inning_bowling SET ?;",
           {
@@ -134,13 +145,15 @@ class Scorcard {
             legByes: bowlingTeam?.statistics?.bowling?.leg_byes || 0,
             dotBalls: bowlingTeam?.statistics?.bowlin?.dot_balls || 0,
           },
-          connection
+          this.#connection
         );
         if (store) {
-          connection.release();
           resolve(true);
         }
       } catch (error) {
+        if (this.#connection) {
+          this.#connection.release();
+        }
         console.log(error);
         reject(error);
       }
@@ -153,7 +166,6 @@ class Scorcard {
         const totalBatsman = battingTeam?.statistics?.batting?.players?.length;
         let currentBatsman = 0;
 
-        const connection = await connectToDb();
         const storeSingleBastMan = async (player) => {
           try {
             let [
@@ -167,7 +179,7 @@ class Scorcard {
                 player?.statistics?.dismissal?.bowler_id?.substr(10),
                 player?.statistics?.dismissal?.fieldsman_id?.substr(10),
               ],
-              connection
+              this.#connection
             );
             if (isPlayerExists) {
               bowler.length > 0
@@ -218,7 +230,7 @@ class Scorcard {
                     player?.statistics?.dismissal?.shot_type || null,
                   dismissalType: player?.statistics?.dismissal?.type || null,
                 },
-                connection
+                this.#connection
               );
               if (store) {
                 currentBatsman++;
@@ -242,6 +254,9 @@ class Scorcard {
           storeSingleBastMan(player);
         });
       } catch (error) {
+        if (this.#connection) {
+          this.#connection.release();
+        }
         console.log(error);
         reject(error);
       }
@@ -254,14 +269,13 @@ class Scorcard {
         const totalBowlers = bowlingTeam?.statistics?.bowling?.players?.length;
         let currentBowler = 0;
 
-        const connection = await connectToDb();
         const storeSingleBowler = async (player) => {
           try {
             const [{ isExists: isPlayerExists, playerInsertedId }] =
               await database(
                 "SELECT COUNT(playerId) AS isExists, playerId AS playerInsertedId FROM allplayers WHERE playerRadarId = ?;",
                 [player.id.substr(10)],
-                connection
+                this.#connection
               );
             if (isPlayerExists) {
               const store = await database(
@@ -291,17 +305,15 @@ class Scorcard {
                   beatBats: player?.statistics?.beat_bats || 0,
                   edge: player?.statistics?.edges || 0,
                 },
-                connection
+                this.#connection
               );
               if (store) {
                 currentBowler++;
                 if (currentBowler === totalBowlers) {
-                  connection.release();
                   resolve(true);
                 }
               }
             } else {
-              connection.release();
               const newPlayer = new Player(player);
               await newPlayer.getPlayerStatesAndStore();
               setTimeout(() => {
@@ -316,6 +328,9 @@ class Scorcard {
           storeSingleBowler(player);
         });
       } catch (error) {
+        if (this.#connection) {
+          this.#connection.release();
+        }
         console.log(error);
         reject(error);
       }
@@ -333,7 +348,6 @@ class Scorcard {
           this.#scorcardDetails.sportEventStatus &&
           this.#scorcardDetails.sportEventStatus.period_scores
         ) {
-          const connection = await connectToDb();
           this.#scorcardDetails.statistics.innings.forEach(async (inning) => {
             try {
               const battingTeamId = this.#competitors.filter((competitor) => {
@@ -364,7 +378,7 @@ class Scorcard {
                     : inningPeriod.away_wickets || 0,
                   oversPlayed: inning.overs_completed,
                 },
-                connection
+                this.#connection,
               );
 
               if (storeInningScoreRes && storeInningScoreRes.insertId) {
@@ -416,7 +430,9 @@ class Scorcard {
           throw new Error("Insufficient data");
         }
       } catch (error) {
-        console.log(error);
+        if (this.#connection) {
+          this.#connection.release();
+        } console.log(error);
         reject(error);
       }
     });
@@ -425,11 +441,11 @@ class Scorcard {
   storeScorcard = () => {
     return new Promise(async (resolve, reject) => {
       try {
-        const connection = await connectToDb();
+        this.#connection = await connectToDb();
         const [{ isExist }] = await database(
           "SELECT COUNT(*) FROM scorcard_details WHERE matchId = ?;",
           [this.id],
-          connection
+          this.#connection
         );
         if (!isExist) {
           await this.#fetchScorcard();
@@ -446,26 +462,26 @@ class Scorcard {
               0,
               this.#scorcardDetails.sportEventStatus.match_result || null,
             ],
-            connection
+            this.#connection
           );
 
           if (storeScorcardDetailsRes.insertId) {
-            connection.release();
             this.#scorcardId = storeScorcardDetailsRes.insertId;
 
             await this.#storeInning();
-
+            this.#connection.release();
             resolve();
           } else {
-            connection.release();
             throw new Error("something went wrong");
           }
         } else {
-          connection.release();
           resolve();
         }
       } catch (error) {
         console.log(error);
+        if (this.#connection) {
+          this.#connection.release();
+        }
         reject(error);
       }
     });

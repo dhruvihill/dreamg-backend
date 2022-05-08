@@ -27,6 +27,7 @@ const storePlayerRoleParent = async (role, connection) => {
       }
     } catch (error) {
       console.log(error, "storePlayerRoleParent");
+      reject(error);
     }
   });
 };

@@ -125,7 +125,7 @@ router.post("/updateProfile", verifyUser, verifyProfile, async (req, res) => {
     const getUserPointsQuery = `SELECT (SELECT COUNT(DISTINCT matchId) FROM userTeamDetails WHERE userId = userdetails.userId) AS totalMatches, (SELECT COUNT(DISTINCT userTeamId) FROM userTeamDetails WHERE userId = userdetails.userId) AS totalTeams, COALESCE((SELECT SUM(userTeamDetails.userTeamPoints) FROM userTeamDetails WHERE userTeamDetails.teamTypeString = "MEGA_CONTEST" AND userTeamDetails.userId = userdetails.userId), 0) AS mega_contest_totalPoints, COALESCE((SELECT SUM(userTeamDetails.userTeamPoints) FROM userTeamDetails WHERE userTeamDetails.teamTypeString = "HEAD_TO_HEAD" AND userTeamDetails.userId = userdetails.userId), 0) AS head_to_head_totalPoints FROM userdetails WHERE userdetails.userId = ?;`;
     const [updateUserResponse, [getUserPoints]] = await fetchData(
       `${updateUserQuery}${getUserPointsQuery}`,
-      [...values, body.userId, userId]
+      [...values, body.userId, body.userId]
     );
 
     if (updateUserResponse.affectedRows > 0) {
