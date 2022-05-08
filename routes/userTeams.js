@@ -465,9 +465,9 @@ router.post("/getExpertPredictor", async (req, res) => {
 // need some repairs
 router.get("/getTrendingPredictors", async (req, res) => {
   const recentMatchesQuery =
-    "SELECT DISTINCT fullmatchdetails.matchId FROM fullmatchdetails JOIN userTeamDetails ON userTeamDetails.matchId = fullmatchdetails.matchId WHERE (parseInt(fullmatchdetails.matchStartDateTime) < unix_timestamp(now()) * 1000 AND fullmatchdetails.matchStatus != 3) ORDER BY matchStartDateTime DESC LIMIT 5";
+    "SELECT DISTINCT fullmatchdetails.matchId FROM fullmatchdetails JOIN userTeamDetails ON userTeamDetails.matchId = fullmatchdetails.matchId WHERE fullmatchdetails.matchStartDateTime < unix_timestamp(now()) * 1000 AND fullmatchdetails.matchStatus != 'live' ORDER BY matchStartDateTime DESC LIMIT 5;";
   const topPredictorsQuery =
-    "SELECT userdetails.userId, userdetails.imageStamp, firstName, lastName, SUM(userTeamDetails.userTeamPoints) AS totalPoints FROM userTeamDetails JOIN userdetails ON userdetails.userId = userTeamDetails.userId WHERE matchId IN (30100, 30096,30030) GROUP BY userTeamDetails.userId ORDER BY totalPoints DESC LIMIT 10";
+    "SELECT * FROM (SELECT userdetails.userId, userdetails.imageStamp, firstName, lastName, COALESCE(SUM(userTeamDetails.userTeamPoints), 0) AS totalPoints FROM userTeamDetails JOIN userdetails ON userdetails.userId = userTeamDetails.userId GROUP BY userTeamDetails.userId ORDER BY totalPoints DESC LIMIT 10) AS predictors WHERE predictors.totalPoints > 0;";
 
   try {
     const serverAddress = `${req.protocol}://${req.headers.host}`;
