@@ -173,4 +173,41 @@ router.post("/statistics", async (req, res) => {
   }
 });
 
+router.post("/lineup", async (req, res) => {
+  try {
+    const { matchId } = req.body;
+
+    const regx = /[^0-9]/g;
+
+    if (!matchId || regx.test(matchId)) {
+      throw new Error("invalid input");
+    }
+
+    const MatchStatisticsObject = await new MatchStatistics(
+      matchId
+    ).getMatchDetails();
+
+    let lineUp = [];
+    if (MatchStatisticsObject.matchDetails.isLineUpOut == 1) {
+      lineUp = MatchStatisticsObject.players.filter((player) => {
+        return player.isLineUpSelected == 1;
+      });
+    }
+    res.status(200).json({
+      status: true,
+      message: "success",
+      data: {
+        lineUp,
+        competitors: MatchStatisticsObject.competitors,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.sqlMessage || error.message,
+      data: {},
+    });
+  }
+});
+
 module.exports = router;

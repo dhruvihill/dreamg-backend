@@ -426,7 +426,7 @@ router.get("/getTrendingPredictors", async (req, res) => {
 });
 
 // match statistics
-router.use("/statistics", require("./matchStatistics"));
+router.use("/statistics", require("./statistics"));
 
 // comapring teams by match id
 router.post("/compareTeams", async (req, res) => {
