@@ -55,3 +55,15 @@
 2022.05.08, 13:23:05.0969 UTC -> IN ./cron/oop/match.js going to store match status which is live
 2022.05.08, 13:23:06.0714 UTC -> resolving from handleMatchStatus status changed
 2022.05.08, 13:23:06.0714 UTC -> got response of matchStatus and going to procedd for scorcard54FROM ./cron/oop/periode.js
+2022.05.09, 05:58:19.0831 UTC -> Started to proceed match for scorcard, lineups and points for 50
+2022.05.09, 05:58:19.0832 UTC -> going to store lineups for match50FROM ./cron/oop/periode.js
+2022.05.09, 05:58:19.0833 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.09, 05:58:19.0833 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.09, 05:58:21.0884 UTC -> got response of lineup and going to procedd for matchStatus50FROM ./cron/oop/periode.js
+2022.05.09, 05:58:25.0174 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.09, 05:58:25.0182 UTC -> got response of matchStatus and going to procedd for scorcard50FROM ./cron/oop/periode.js
+2022.05.09, 05:58:25.0182 UTC -> resolving from handleMatchStatus status changed
+2022.05.09, 05:58:25.0182 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.09, 05:58:27.0991 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.09, 05:58:27.0995 UTC -> resolving from handleMatchStatus status changed
+2022.05.09, 05:58:29.0327 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
