@@ -398,7 +398,7 @@ router.post("/getUserTeamPlayers", verifyUser, async (req, res) => {
     const { userId, teamId } = req.body;
 
     const matchTeamQuery =
-      "SELECT team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName FROM userTeamDetails JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE userTeamDetails.userTeamId = ?;";
+      "SELECT fullmatchdetails.matchStatus, fullmatchdetails.matchStatusString, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName FROM userTeamDetails JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE userTeamDetails.userTeamId = ?;";
 
     const userTeamDetailsQuery =
       "SELECT userTeamId, teamTypeString, EXISTS(SELECT * FROM fulllikesdetails WHERE fulllikesdetails.userTeamId = userTeamDetails.userTeamId AND fulllikesdetails.userId = ?) AS isUserLiked, (SELECT COUNT(*) FROM fulllikesdetails WHERE fulllikesdetails.userTeamId = userTeamDetails.userTeamId) AS likes FROM userTeamDetails WHERE userTeamDetails.userTeamId = ?;";

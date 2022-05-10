@@ -320,14 +320,22 @@ class MatchDaily extends Status {
   #tossWinner = null;
   #tossDecision = null;
 
-  constructor(id, radarId, status, competitors, matchStartTime, tournamentId, isLineUpStored) {
+  constructor(
+    id,
+    radarId,
+    status,
+    competitors,
+    matchStartTime,
+    tournamentId,
+    isLineUpStored
+  ) {
     super(status);
     this.id = id;
     this.#radarId = radarId;
     this.#competitors = competitors;
     this.#matchStartTime = matchStartTime;
     this.#tournamentId = tournamentId;
-    this.#isLineUpStored = isLineUpStored
+    this.#isLineUpStored = isLineUpStored;
   }
 
   #updateStatus(status) {
@@ -535,15 +543,8 @@ class MatchDaily extends Status {
               if (storePoints) {
                 currentPlayer++;
                 if (currentPlayer === totalPlayers) {
-                  const storeIsPointsCalculatedFlag = await database(
-                    "UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?;",
-                    [matchId],
-                    connection
-                  );
-                  if (storeIsPointsCalculatedFlag) {
-                    connection.release();
-                    resolve(true);
-                  }
+                  connection.release();
+                  resolve(true);
                 }
               }
             }, 200);
@@ -1368,18 +1369,18 @@ class MatchDaily extends Status {
           const matchLineUp = await makeRequest(
             `/matches/sr:match:${this.#radarId}/lineups.json`
           );
-  
+
           if (matchLineUp && matchLineUp.sport_event && matchLineUp.lineups) {
             // store toss details
             const connection = await connectToDb();
-  
+
             const totalLineUps = matchLineUp.lineups.length;
             let currentLineUp = 0;
-  
+
             matchLineUp.lineups.forEach(async (lineup) => {
               const totalPlayers = lineup?.starting_lineup?.length;
               let currentPlayer = 0;
-  
+
               const storePlayer = async (player) => {
                 try {
                   // used when player does not exists in database and then to store player details in database and to store player in tournament_competitions_players table and to store player in matches_players table
@@ -1408,7 +1409,7 @@ class MatchDaily extends Status {
                             playerDetails.bowling_style || null
                           );
                           await newPlayer.getPlayerStatesAndStore();
-  
+
                           // storing player in tournament_competitors_player table
                           const team = lineup.team;
                           const competitor =
@@ -1425,7 +1426,8 @@ class MatchDaily extends Status {
                             tournamentCompetitorIdRes[0].tournamentCompetitorId
                           ) {
                             await newPlayer.storePlayerRelation(
-                              tournamentCompetitorIdRes[0].tournamentCompetitorId
+                              tournamentCompetitorIdRes[0]
+                                .tournamentCompetitorId
                             );
                             // storing player in match_players table
                             const storeMatchPlayersRes = await database(
@@ -1447,7 +1449,7 @@ class MatchDaily extends Status {
                                 if (currentLineUp === totalLineUps) {
                                   connection.release();
                                   this.#isLineUpStored = true;
-  
+
                                   if (setLineUpFlag) {
                                     resolve();
                                   } else {
@@ -1472,14 +1474,15 @@ class MatchDaily extends Status {
                       }
                     });
                   };
-  
+
                   // checking if player is already stored in database table players
-                  const [{ isExists: isPlayerExists, playerId }] = await database(
-                    "SELECT COUNT(playerId) AS isExists, playerId FROM allplayers WHERE playerRadarId = ?;",
-                    [player.id.substr(10)],
-                    connection
-                  );
-  
+                  const [{ isExists: isPlayerExists, playerId }] =
+                    await database(
+                      "SELECT COUNT(playerId) AS isExists, playerId FROM allplayers WHERE playerRadarId = ?;",
+                      [player.id.substr(10)],
+                      connection
+                    );
+
                   // player exists then store it else store it in players table
                   if (isPlayerExists) {
                     const storeMatchPlayersRes = await database(
@@ -1492,7 +1495,7 @@ class MatchDaily extends Status {
                       ],
                       connection
                     );
-  
+
                     // if player stored successfully then go to next player
                     if (
                       storeMatchPlayersRes &&
@@ -1525,7 +1528,7 @@ class MatchDaily extends Status {
                   reject(error);
                 }
               };
-  
+
               lineup?.starting_lineup?.forEach(async (player) => {
                 storePlayer(player);
               });
@@ -1587,8 +1590,18 @@ class MatchDaily extends Status {
             match[0]
           );
           if (calculatePointsRes) {
-            connection.release();
-            resolve();
+            const storeIsPointsCalculatedFlag = await database(
+              "UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?; CALL storePoints_for_teams(?);",
+              [this.id, this.id],
+              connection
+            );
+            if (storeIsPointsCalculatedFlag) {
+              connection.release();
+              resolve(true);
+            } else {
+              connection.release();
+              reject(new Error("can not store isPointsCalculated flag"));
+            }
           } else {
             connection.release();
             throw new Error("can't calculate points");
@@ -1665,7 +1678,7 @@ class MatchDaily extends Status {
               if (this.#isLineUpStored) {
                 await this.handleMatchStatus();
 
-                if (this.status === 'ended' || this.status === "closed") {
+                if (this.status === "ended" || this.status === "closed") {
                   await this.storeScoreCard();
                   await this.storePoints();
                   resolveInside(true);
@@ -1674,8 +1687,8 @@ class MatchDaily extends Status {
                 }
               } else {
                 await this.handleMatchStatus();
-                
-                if (this.status === "ended" || this.status === 'closed') {
+
+                if (this.status === "ended" || this.status === "closed") {
                   await this.handleLineUpStore();
                   await this.storeScoreCard();
                   await this.storePoints();
@@ -1746,21 +1759,29 @@ class MatchDaily extends Status {
                 log("resolving from handleMatchStatus status changed");
                 resolve();
               } else {
-                log("IN ./cron/oop/match.js going to store match status which is " +
-                  matchStatus);
+                log(
+                  "IN ./cron/oop/match.js going to store match status which is " +
+                    matchStatus
+                );
                 await this.#updateStatus(matchStatus);
                 log("resolving from handleMatchStatus status changed");
                 resolve();
               }
             } else {
               setTimeout(async () => {
-                log("Match status is not_started in api for matchId " + this.id);s
+                log(
+                  "Match status is not_started in api for matchId " + this.id
+                );
+                s;
                 await this.handleMatchStatus();
                 resolve();
               }, 3 * 60 * 1000);
             }
           } else {
-            log("Can't update match status as data in available for matchId " + this.id);
+            log(
+              "Can't update match status as data in available for matchId " +
+                this.id
+            );
             throw new Error("can't update status");
           }
         }, parseInt(this.#matchStartTime) - new Date().getTime() + 2 * 60 * 1000);

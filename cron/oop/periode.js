@@ -18,7 +18,7 @@ const fetchData = async () => {
         if (
           (matchStartTime.getTime() > now.getTime() &&
             matchStartTime.getTime() < now.getTime() + 90 * 60 * 1000) ||
-            match.matchStatusString === "live"
+          match.matchStatusString === "live"
         ) {
           log(
             `Started to proceed match for scorcard, lineups and points for ${match.matchId}`
