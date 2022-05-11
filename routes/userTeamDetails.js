@@ -125,6 +125,7 @@ router.post("/getUserTeamsByMatch", async (req, res) => {
                       teams: [],
                       teamsDetails: {},
                     };
+
                     userTeamInstance.teams = matchTeamDetails;
                     userTeamInstance.teamsDetails = userTeam;
                     userTeamInstance.teamsDetails.captain = playerDetails.find(
@@ -154,7 +155,14 @@ router.post("/getUserTeamsByMatch", async (req, res) => {
                           player.isViceCaptain == 1
                         );
                       });
-
+                    userTeamInstance.teams.forEach((team) => {
+                      team.teamTotalPlayers = playerDetails.filter((player) => {
+                        return (
+                          player.teamId === team.teamId &&
+                          player.userTeamId === userTeam.userTeamId
+                        );
+                      })?.length;
+                    });
                     userTeams.push(userTeamInstance);
 
                     currentTeam++;

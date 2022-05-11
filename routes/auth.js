@@ -14,7 +14,7 @@ router.post("/register", async (req, res) => {
       !/[^0-9]/g.test(phoneNumber)
     ) {
       // registering user
-      const result = await fetchData("CALL register_user(?);", [phoneNumber]);
+      const result = await fetchData("CALL registerUser(?);", [phoneNumber]);
 
       // creating auth token
       const jwtData = { user: { userId: result[0][0].userId } };

@@ -267,7 +267,7 @@ class RowMatch extends Venue {
           competitor.players.forEach(async (player) => {
             try {
               const [{ isExists }] = await database(
-                "SELECT COUNT(*) AS isExists FROM match_players WHERE matchId = ? AND playerId = ?;",
+                "SELECT COUNT(*) AS isExists FROM fullplayerdetails WHERE matchId = ? AND playerId = ?;",
                 [this.id, player.insertId],
                 connection
               );
@@ -1590,8 +1590,8 @@ class MatchDaily extends Status {
             match[0]
           );
           if (calculatePointsRes) {
-            const storeIsPointsCalculatedFlag = await database(
-              "UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?; CALL storePoints_for_teams(?);",
+            const [storeIsPointsCalculatedFlag] = await database(
+              "UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?; CALL storePointsForUserTeams(?);",
               [this.id, this.id],
               connection
             );

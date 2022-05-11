@@ -2,74 +2,13 @@ MOST IMPORTANT
 
 {status: false, message: connect ECONNREFUSED 185.42.117.115:3306, data: {matches: [], predictors: [], news: [], isNotification: 0}}
 
-get user teams predictor error handling
-verification of update profile
+avg points of last 5 matches
+points > 100 --> 10.5
+points <= 100 AND points > 80 --> 10
+points <= 80 AND points > 70 --> 9.5
+points <= 70 AND points > 60 --> 9
+points <= 60 AND points > 50 --> 8.5
+points <= 50 AND points > 30 --> 8
+points <= 30 --> 7.5
+ELSE --> 7
 
-******
-solving all kind of error releted to database (database disconnect)
-inserting data into database in following manner SERIES -> MATCH -> TEAM/PlAYER -> MATCHPLAYERRELATION
-error handling in update_views
-REFACTOR getuserprofile recentMatches (matchStatus = 1 to 3)
-EXPERT PREDICTIONS
-trending predictor matchStatus != 3 to matchStatus = 3
-******
-
-
-// authtoken optional
-dashboarddata
-get_matches 
-get_user_team_data
-
-// authtoken required
-getuserprofile
-updateuserprofile
-get_notificationa
-setReadNotification
-setteam
-update_user_team_likes
-update_user_team_views
-set_discussion
-
-// auth token removed
-recentPlayed
-currentPlayed
-getplayers
-get_predictions
-getExpertPredictor
-get_user_teams
-get_user_teams_predictor
-get_discussion
-compare_teams
-
-get_matches,
-recentPlayed,
-currentPlayed,
-get_predictions,
-get_discussion,
-get_user_teams_predictor
-
-// api endpoints
-/api/v1/auth/getuserprofile --> /api/v1/user/userProfile
-/api/v1/auth/updateuserprofile --> /api/v1/user/updateProfile
-
-/api/v1/getdashboarddata --> /api/v1/getDashboardData
-
-/api/v1/matches/get_matches --> /api/v1/matches/getMatches
-
-/api/v1/notification/get_notifications --> /api/v1/notification/getNotifications
-
-/api/v1/players/getplayers --> /api/v1/userTeams/getPlayers
-/api/v1/players/setteam --> /api/v1/userTeams/setTeam
-/api/v1/prediction/get_predictions --> /api/v1/userTeams/getPredictions
-/api/v1/prediction/getExpertPredictor --> /api/v1/userTeams/getExpertPredictor
-/api/v1/prediction/getTrendingPredictors --> /api/v1/userTeams/getTrendingPredictors
-/api/v1/prediction/get_user_teams --> /api/v1/userTeams/getUserTeamsByMatch
-/api/v1/prediction/get_user_teams_predictor --> /api/v1/userTeams/getUserTeamsAll
-/api/v1/prediction/get_user_teams_data --> /api/v1/userTeams/getUserTeamPlayers
-/api/v1/prediction/update_user_team_likes --> /api/v1/userTeams/updateUserTeamLikes
-/api/v1/prediction/update_user_team_views --> /api/v1/userTeams/updateUserTeamViews
-/api/v1/prediction/set_discussion --> /api/v1/userTeams/setDiscussion
-/api/v1/prediction/get_discussion --> /api/v1/userTeams/getDiscussion
-/api/v1/prediction/compare_teams --> /api/v1/userTeams/compareTeams
-
-// To be remove views

@@ -398,7 +398,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE `register_user`(IN `phoneNumber` VARCHAR(11))
+CREATE PROCEDURE `registerUser`(IN `phoneNumber` VARCHAR(11))
 BEGIN
 
 /* error handling for duplicate entry */
@@ -604,7 +604,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE `storePoints_for_teams`(IN `matchId` INT)
+CREATE PROCEDURE `storePointsForUserTeams`(IN `matchId` INT)
 BEGIN
 
 DECLARE captainPoints FLOAT DEFAULT 0;

@@ -150,3 +150,22 @@
 2022.05.10, 14:01:07.0751 UTC -> IN ./cron/oop/match.js going to store match status which is ended
 2022.05.10, 14:01:07.0754 UTC -> resolving from handleMatchStatus status changed
 2022.05.10, 14:01:08.0903 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.10, 15:03:10.0904 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.10, 15:03:14.0716 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.10, 15:03:18.0705 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.10, 15:03:18.0708 UTC -> resolving from handleMatchStatus status changed
+2022.05.10, 15:03:18.0709 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.10, 15:03:19.0932 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.10, 15:03:19.0935 UTC -> resolving from handleMatchStatus status changed
+2022.05.10, 15:03:35.0776 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.10, 15:03:35.0776 UTC -> Finished to store all data
+2022.05.11, 11:10:35.0986 UTC -> Finished to store all data
+2022.05.11, 11:11:16.0935 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.11, 11:11:18.0268 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.11, 11:11:20.0784 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.11, 11:11:20.0787 UTC -> resolving from handleMatchStatus status changed
+2022.05.11, 11:11:20.0787 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.11, 11:11:21.0488 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.11, 11:11:21.0492 UTC -> resolving from handleMatchStatus status changed
+2022.05.11, 11:11:24.0112 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.11, 11:11:24.0112 UTC -> Finished to store all data
