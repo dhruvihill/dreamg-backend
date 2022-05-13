@@ -1,6 +1,7 @@
 const Competitor = require("./competitor");
 const { RowMatch: Match } = require("./match");
-const { connectToDb, database, makeRequest } = require("../makeRequest");
+const { makeRequest } = require("../../middleware/makeRequest");
+const { connectToDb, database } = require("../../middleware/dbSuperUser");
 
 class Category {
   categoryId = null;
@@ -354,10 +355,11 @@ const a = async () => {
     await tournament.storeTournament();
     await tournament.storeCompetitors();
     await tournament.storeMatches();
+    console.log("stored success");
   } catch (error) {
     console.log(error);
   }
 };
-// a();
+a();
 
-module.exports = Tournament;
+// module.exports = Tournament;

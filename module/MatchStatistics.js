@@ -1,4 +1,4 @@
-const { connectToDb, database } = require("../cron/makeRequest");
+const { connectToDb, database } = require("../middleware/dbSuperUser");
 
 class MatchStatistics {
   id = 0;

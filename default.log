@@ -169,3 +169,130 @@
 2022.05.11, 11:11:21.0492 UTC -> resolving from handleMatchStatus status changed
 2022.05.11, 11:11:24.0112 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
 2022.05.11, 11:11:24.0112 UTC -> Finished to store all data
+2022.05.11, 12:31:43.0179 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:31:43.0179 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:32:36.0886 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:32:36.0887 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:32:46.0068 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:32:46.0068 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:35:21.0468 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:35:21.0468 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:37:17.0374 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:37:17.0374 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:37:31.0460 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:37:31.0460 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:37:39.0455 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:37:39.0456 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:37:47.0101 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:37:47.0101 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:38:08.0904 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:38:08.0904 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:38:32.0449 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:38:32.0449 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:39:09.0574 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:39:09.0574 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:39:32.0048 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:39:32.0048 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:39:59.0413 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:39:59.0413 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:40:17.0353 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:40:17.0353 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:40:35.0054 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:40:35.0054 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:40:44.0783 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:40:44.0783 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:40:47.0205 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:40:47.0205 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:41:09.0278 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:41:09.0279 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:41:17.0540 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:41:17.0540 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:50:53.0900 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:50:53.0901 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:51:28.0143 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:51:28.0143 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:52:21.0731 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:52:21.0732 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:53:35.0152 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:53:35.0152 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 12:59:43.0779 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 12:59:43.0780 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:02:19.0870 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:02:19.0870 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:03:56.0081 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:03:56.0082 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:08:51.0219 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:08:51.0220 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:09:38.0291 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:09:38.0292 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:10:48.0333 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:10:48.0333 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:13:06.0756 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:13:06.0757 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:14:17.0165 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:14:17.0165 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:14:46.0577 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:14:46.0577 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:15:59.0244 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:15:59.0244 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:17:20.0705 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:17:20.0706 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:20:23.0991 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:20:23.0991 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:20:36.0633 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:20:36.0634 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:24:47.0490 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:24:47.0490 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:24:54.0716 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:24:54.0716 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:25:43.0659 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:25:43.0659 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:41:13.0663 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:41:13.0663 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:41:13.0664 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.11, 13:41:15.0146 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.11, 13:41:15.0994 UTC -> got response of lineup and going to procedd for matchStatus58FROM ./cron/oop/periode.js
+2022.05.11, 13:43:56.0956 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:43:56.0956 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:43:56.0958 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.11, 13:43:56.0959 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.11, 13:43:57.0825 UTC -> got response of lineup and going to procedd for matchStatus58FROM ./cron/oop/periode.js
+2022.05.11, 13:47:44.0170 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:47:44.0170 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:47:44.0171 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.11, 13:47:44.0171 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.11, 13:47:45.0048 UTC -> got response of lineup and going to procedd for matchStatus58FROM ./cron/oop/periode.js
+2022.05.11, 13:48:00.0130 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:48:00.0131 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:48:00.0132 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.11, 13:48:00.0132 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.11, 13:48:00.0892 UTC -> got response of lineup and going to procedd for matchStatus58FROM ./cron/oop/periode.js
+2022.05.11, 13:48:29.0632 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:48:29.0633 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:48:29.0636 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.11, 13:48:29.0637 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.11, 13:48:30.0513 UTC -> got response of lineup and going to procedd for matchStatus58FROM ./cron/oop/periode.js
+2022.05.11, 13:49:48.0036 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:49:48.0037 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:49:48.0038 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.11, 13:49:48.0038 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.11, 13:49:48.0790 UTC -> got response of lineup and going to procedd for matchStatus58FROM ./cron/oop/periode.js
+2022.05.11, 13:52:21.0210 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:52:21.0211 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:52:21.0211 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.11, 13:52:21.0212 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.11, 13:52:22.0053 UTC -> got response of lineup and going to procedd for matchStatus58FROM ./cron/oop/periode.js
+2022.05.11, 13:52:38.0384 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.11, 13:52:38.0384 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.11, 13:52:38.0385 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.11, 13:52:38.0385 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.11, 13:52:39.0677 UTC -> got response of lineup and going to procedd for matchStatus58FROM ./cron/oop/periode.js
+2022.05.12, 08:02:25.0569 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.12, 08:02:28.0386 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.12, 08:02:32.0046 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.12, 08:02:32.0049 UTC -> resolving from handleMatchStatus status changed
+2022.05.12, 08:02:32.0049 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.12, 08:02:33.0066 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.12, 08:02:33.0068 UTC -> resolving from handleMatchStatus status changed
+2022.05.12, 08:02:35.0107 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.12, 08:02:35.0107 UTC -> Finished to store all data

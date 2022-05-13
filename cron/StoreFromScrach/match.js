@@ -1,6 +1,8 @@
-const { connectToDb, database, makeRequest } = require("../makeRequest");
+const { makeRequest } = require("../../middleware/makeRequest");
+const { connectToDb, database } = require("../../middleware/dbSuperUser");
 const Player = require("./player");
 const Scorcard = require("./scorcard");
+const { storeAllScorcardForMatch } = require("../UpdateMatchStatus/periode");
 const {
   testScore,
   odiScore,
@@ -156,155 +158,6 @@ class Status {
         reject(error);
         console.log(error);
         resolve(false);
-      }
-    });
-  }
-}
-
-class RowMatch extends Venue {
-  id = null;
-  #radarId = 0;
-  #status = "";
-  #tournamentId = 0;
-  #startTime = ""; // must be converted to milliseconds before inserting into db
-  #competitor1 = {};
-  #competitor2 = {};
-
-  constructor(
-    id,
-    status,
-    tournamentId,
-    startTime,
-    competitor1,
-    competitor2,
-    venueName,
-    venueId,
-    venueCapacity,
-    venueCity,
-    venueCountry,
-    venueCountryCode,
-    end1,
-    end2,
-    venueMapCardinalities
-  ) {
-    super(
-      venueName,
-      venueId,
-      venueCapacity,
-      venueCity,
-      venueCountry,
-      venueCountryCode,
-      venueMapCardinalities,
-      end1,
-      end2
-    );
-    this.#radarId = id;
-    this.#status = status;
-    this.#tournamentId = tournamentId;
-    this.#startTime = startTime;
-    this.#competitor1 = competitor1;
-    this.#competitor2 = competitor2;
-  }
-
-  storeMatch() {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const connection = await connectToDb();
-        const [{ isExists, id }] = await database(
-          "SELECT COUNT(*) AS isExists, matchId AS id FROM tournament_matches WHERE matchRadarId = ?;",
-          [this.#radarId],
-          connection
-        );
-
-        if (!isExists) {
-          // storing venue
-          await super.storeVenue();
-
-          // initializing status and store
-          const status = new Status(this.#status);
-          await status.storeStatus();
-
-          const storeMatch = await database(
-            "INSERT INTO `tournament_matches`(`matchRadarId`, `matchTournamentId`, `matchStartTime`, `competitor1`, `competitor2`, `venueId`, `matchStatus`) VALUES (?, ?, ?, ?, ?, ?, ?);",
-            [
-              this.#radarId,
-              this.#tournamentId,
-              new Date(this.#startTime).getTime(),
-              this.#competitor1.insertId,
-              this.#competitor2.insertId,
-              this.venueId,
-              status.statusId,
-            ],
-            connection
-          );
-
-          if (storeMatch && storeMatch.insertId) {
-            this.id = storeMatch.insertId;
-            connection.release();
-            resolve();
-          }
-        } else {
-          this.id = id;
-          connection.release();
-          resolve();
-        }
-      } catch (error) {
-        console.log(error);
-        reject(error);
-      }
-    });
-  }
-
-  storeMatchPlayers() {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const totalPlayers =
-          this.#competitor1.players.length + this.#competitor2.players.length;
-        let currentPlayer = 0;
-
-        const connection = await connectToDb();
-        [this.#competitor1, this.#competitor2].forEach((competitor) => {
-          competitor.players.forEach(async (player) => {
-            try {
-              const [{ isExists }] = await database(
-                "SELECT COUNT(*) AS isExists FROM fullplayerdetails WHERE matchId = ? AND playerId = ?;",
-                [this.id, player.insertId],
-                connection
-              );
-
-              if (!isExists) {
-                const matchPlayerRes = await database(
-                  "INSERT INTO match_players SET matchId = ?, playerId = ?, competitorId = ?;",
-                  [this.id, player.insertId, competitor.insertId],
-                  connection
-                );
-
-                if (matchPlayerRes && matchPlayerRes.affectedRows) {
-                  currentPlayer++;
-
-                  if (currentPlayer >= totalPlayers) {
-                    connection.release();
-                    resolve();
-                  }
-                }
-              } else {
-                currentPlayer++;
-
-                console.log(currentPlayer);
-                if (currentPlayer >= totalPlayers) {
-                  connection.release();
-                  resolve();
-                }
-              }
-            } catch (error) {
-              console.log(error);
-              reject(error);
-            }
-          });
-        });
-      } catch (error) {
-        console.log(error);
-        reject(error);
       }
     });
   }
@@ -1591,8 +1444,8 @@ class MatchDaily extends Status {
           );
           if (calculatePointsRes) {
             const [storeIsPointsCalculatedFlag] = await database(
-              "UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?; CALL storePointsForUserTeams(?);",
-              [this.id, this.id],
+              "UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?; CALL storePointsForUserTeams(?); CALL calculateCreditsForPlayers(?, ?);",
+              [this.id, this.id, this.id, 0],
               connection
             );
             if (storeIsPointsCalculatedFlag) {
@@ -1785,6 +1638,178 @@ class MatchDaily extends Status {
             throw new Error("can't update status");
           }
         }, parseInt(this.#matchStartTime) - new Date().getTime() + 2 * 60 * 1000);
+      } catch (error) {
+        console.log(error);
+        reject(error);
+      }
+    });
+  }
+}
+
+class RowMatch extends Venue {
+  id = null;
+  #radarId = 0;
+  #status = "";
+  #tournamentId = 0;
+  #startTime = ""; // must be converted to milliseconds before inserting into db
+  #competitor1 = {};
+  #competitor2 = {};
+
+  constructor(
+    id,
+    status,
+    tournamentId,
+    startTime,
+    competitor1,
+    competitor2,
+    venueName,
+    venueId,
+    venueCapacity,
+    venueCity,
+    venueCountry,
+    venueCountryCode,
+    end1,
+    end2,
+    venueMapCardinalities
+  ) {
+    super(
+      venueName,
+      venueId,
+      venueCapacity,
+      venueCity,
+      venueCountry,
+      venueCountryCode,
+      venueMapCardinalities,
+      end1,
+      end2
+    );
+    this.#radarId = id;
+    this.#status = status;
+    this.#tournamentId = tournamentId;
+    this.#startTime = startTime;
+    this.#competitor1 = competitor1;
+    this.#competitor2 = competitor2;
+  }
+
+  storeMatch() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const connection = await connectToDb();
+        const [{ isExists, id }] = await database(
+          "SELECT COUNT(*) AS isExists, matchId AS id FROM tournament_matches WHERE matchRadarId = ?;",
+          [this.#radarId],
+          connection
+        );
+
+        if (!isExists) {
+          // storing venue
+          await super.storeVenue();
+
+          // initializing status and store
+          const status = new Status(this.#status);
+          await status.storeStatus();
+
+          const storeMatch = await database(
+            "INSERT INTO `tournament_matches`(`matchRadarId`, `matchTournamentId`, `matchStartTime`, `competitor1`, `competitor2`, `venueId`, `matchStatus`) VALUES (?, ?, ?, ?, ?, ?, ?);",
+            [
+              this.#radarId,
+              this.#tournamentId,
+              new Date(this.#startTime).getTime(),
+              this.#competitor1.insertId,
+              this.#competitor2.insertId,
+              this.venueId,
+              status.statusId,
+            ],
+            connection
+          );
+
+          if (storeMatch && storeMatch.insertId) {
+            this.id = storeMatch.insertId;
+            connection.release();
+            resolve();
+          }
+        } else {
+          this.id = id;
+          connection.release();
+          resolve();
+        }
+      } catch (error) {
+        console.log(error);
+        reject(error);
+      }
+    });
+  }
+
+  storeMatchPlayers() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const totalPlayers =
+          this.#competitor1.players.length + this.#competitor2.players.length;
+        let currentPlayer = 0;
+
+        const connection = await connectToDb();
+        [this.#competitor1, this.#competitor2].forEach((competitor) => {
+          competitor.players.forEach(async (player) => {
+            try {
+              const [{ isExists }] = await database(
+                "SELECT COUNT(*) AS isExists FROM fullplayerdetails WHERE matchId = ? AND playerId = ?;",
+                [this.id, player.insertId],
+                connection
+              );
+
+              if (!isExists) {
+                const matchPlayerRes = await database(
+                  "INSERT INTO match_players SET matchId = ?, playerId = ?, competitorId = ?;",
+                  [this.id, player.insertId, competitor.insertId],
+                  connection
+                );
+
+                if (matchPlayerRes && matchPlayerRes.affectedRows) {
+                  currentPlayer++;
+
+                  if (currentPlayer >= totalPlayers) {
+                    if (this.#status === "not_started") {
+                      await database(
+                        "CALL calculateCreditsForPlayers(?, 1);",
+                        [this.id],
+                        connection
+                      );
+                    } else if (
+                      this.#status === "ended" ||
+                      this.#status === "closed"
+                    ) {
+                      await storeAllScorcardForMatch(this.id);
+                    }
+                    connection.release();
+                    resolve();
+                  }
+                }
+              } else {
+                currentPlayer++;
+
+                if (currentPlayer >= totalPlayers) {
+                  if (this.#status === "not_started") {
+                    await database(
+                      "CALL calculateCreditsForPlayers(?, 1);",
+                      [this.id],
+                      connection
+                    );
+                  } else if (
+                    this.#status === "ended" ||
+                    this.status === "closed"
+                  ) {
+                    await storeAllScorcardForMatch(this.id);
+                  }
+                  connection.release();
+                  resolve();
+                }
+              }
+            } catch (error) {
+              console.log(error);
+              reject(error);
+            }
+          });
+        });
       } catch (error) {
         console.log(error);
         reject(error);

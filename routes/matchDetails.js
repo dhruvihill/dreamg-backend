@@ -141,7 +141,6 @@ router.post("/getPredictions", async (req, res) => {
 router.post("/getBestPicks", async (req, res) => {
   try {
     const { matchId } = req.body;
-
     const match = await new MatchStatistics(matchId).getMatchDetails();
 
     if (
@@ -150,18 +149,53 @@ router.post("/getBestPicks", async (req, res) => {
       match.players.length > 0 &&
       match.competitors.length > 0
     ) {
-      let bastMans = match.players.filter(
-        (player) => player.roleName === "BATSMAN" && player.selectedBy > 0
-      );
-      let wicketKeepers = match.players.filter(
-        (player) => player.roleName === "WICKET_KEEPER" && player.selectedBy > 0
-      );
-      let allRounders = match.players.filter(
-        (player) => player.roleName === "ALL_ROUNDER" && player.selectedBy > 0
-      );
-      let bowlers = match.players.filter(
-        (player) => player.roleName === "BOWLER" && player.selectedBy > 0
-      );
+      const serverAddress = `${req.protocol}://${req.headers.host}`;
+
+      match.competitors.forEach((competitor) => {
+        competitor.displayPicture = imageUrl(
+          __dirname,
+          "../",
+          `${process.env.TEAM_IMAGE_URL}${competitor.teamId}.jpg`,
+          serverAddress
+        );
+      });
+
+      let bastMans = match.players.filter((player) => {
+        player.URL = imageUrl(
+          __dirname,
+          "../",
+          `${process.env.PLAYER_IMAGE_URL}${player.playerId}.jpg`,
+          serverAddress
+        );
+        return player.roleName === "BATSMAN" && player.selectedBy > 0;
+      });
+      let wicketKeepers = match.players.filter((player) => {
+        player.URL = imageUrl(
+          __dirname,
+          "../",
+          `${process.env.PLAYER_IMAGE_URL}${player.playerId}.jpg`,
+          serverAddress
+        );
+        return player.roleName === "WICKET_KEEPER" && player.selectedBy > 0;
+      });
+      let allRounders = match.players.filter((player) => {
+        player.URL = imageUrl(
+          __dirname,
+          "../",
+          `${process.env.PLAYER_IMAGE_URL}${player.playerId}.jpg`,
+          serverAddress
+        );
+        return player.roleName === "ALL_ROUNDER" && player.selectedBy > 0;
+      });
+      let bowlers = match.players.filter((player) => {
+        player.URL = imageUrl(
+          __dirname,
+          "../",
+          `${process.env.PLAYER_IMAGE_URL}${player.playerId}.jpg`,
+          serverAddress
+        );
+        return player.roleName === "BOWLER" && player.selectedBy > 0;
+      });
 
       const sortPlayer = (a, b) => {
         return a.selectedBy > b.selectedBy

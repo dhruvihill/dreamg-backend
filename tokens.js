@@ -1,0 +1,150 @@
+const tokens = {
+  apiTokens: [
+    {
+      token: "hvasue8t2dya4z5amxqhe3gw",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "b6behgkrrnjy48cua23amf89",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "tq3kk7yp6cxgwmdyh77pzwhy",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "wknczdyhsnbs7frfvp9qse4c",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "y6ym7b596he4gft3zuzrencb",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "j3n4sedpgnvd5tx3mg6ye4v8",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "mknqt7rrrfwxqa5hevqav99q",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "fqb5sqmztc79ucjfkr83snmz",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "3frs3xa587s9uhfwa2wnkufu",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "q7te6md2rf9ez7aju72bm4gz",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "fmpwthupf2fr479np2r6dauy",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "8gvnuxmz6hhd6xp9srrffju7",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "77rga3pqmmc8a63d4qfpwdzd",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "k6bnypfa2ub5mvn8uxbc59f6",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "2jws2w6zmp4gt8zn3bv56nfy",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "cg85e68fxv6mzgnbe2sjbsx3",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "9dn2jbeu4j5ujxrxcgx6ev8k",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "tmhxaq4w74x7c2xyahuhfq9y",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "6sh4zwc43b5a8ajszjh7e79d",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "bme7zzhvyxkw2g2vvkpx8dwe",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "egb9th552ezx7ddmamtvst7w",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "js5u7mmxkcazf325xp9zchk4",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "86es3v3uadks3nxj4ts994z4",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
+      token: "gej38ey64cqm4amkvcb8uezb",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+  ],
+};
+
+module.exports = { tokens };

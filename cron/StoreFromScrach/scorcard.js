@@ -1,4 +1,5 @@
-const { connectToDb, database, makeRequest } = require("../makeRequest");
+const { makeRequest } = require("../../middleware/makeRequest");
+const { connectToDb, database } = require("../../middleware/dbSuperUser");
 const Player = require("./player");
 
 class Scorcard {
@@ -66,11 +67,15 @@ class Scorcard {
         if (this.#scorcardDetails?.statistics?.man_of_the_match?.length > 0) {
           [{ playerId }] = await database(
             "SELECT playerId FROM allplayers WHERE playerRadarId = ?;",
-            [this.#scorcardDetails?.statistics?.man_of_the_match[0]?.id?.substr(10)],
+            [
+              this.#scorcardDetails?.statistics?.man_of_the_match[0]?.id?.substr(
+                10
+              ),
+            ],
             this.#connection
           );
         } else {
-          playerId = null
+          playerId = null;
         }
 
         const [winner] = this.#competitors.filter((competitor) => {
@@ -378,7 +383,7 @@ class Scorcard {
                     : inningPeriod.away_wickets || 0,
                   oversPlayed: inning.overs_completed,
                 },
-                this.#connection,
+                this.#connection
               );
 
               if (storeInningScoreRes && storeInningScoreRes.insertId) {
@@ -432,7 +437,8 @@ class Scorcard {
       } catch (error) {
         if (this.#connection) {
           this.#connection.release();
-        } console.log(error);
+        }
+        console.log(error);
         reject(error);
       }
     });

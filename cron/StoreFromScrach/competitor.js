@@ -1,4 +1,5 @@
-const { connectToDb, database, makeRequest } = require("../makeRequest");
+const { makeRequest } = require("../../middleware/makeRequest");
+const { connectToDb, database } = require("../../middleware/dbSuperUser");
 const Player = require("./player");
 
 class Competitor {
