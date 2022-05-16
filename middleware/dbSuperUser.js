@@ -1,6 +1,6 @@
 const mysql = require("mysql");
 let connectionForCron = null;
-require("dotenv");
+require("dotenv").config();
 
 const connectToDb = () => {
   // connect to database
