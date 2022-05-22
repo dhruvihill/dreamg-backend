@@ -318,3 +318,7 @@
 2022.05.16, 17:53:57.0663 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
 2022.05.16, 17:53:58.0167 UTC -> IN ./cron/oop/match.js going to store match status which is ended
 2022.05.16, 17:53:58.0830 UTC -> resolving from handleMatchStatus status changed
+2022.05.22, 13:25:47.0092 UTC -> Started to proceed match for scorcard, lineups and points for 70
+2022.05.22, 13:25:47.0092 UTC -> going to store lineups for match70FROM ./cron/oop/periode.js
+2022.05.22, 13:28:14.0841 UTC -> Started to proceed match for scorcard, lineups and points for 70
+2022.05.22, 13:28:14.0841 UTC -> going to store lineups for match70FROM ./cron/oop/periode.js

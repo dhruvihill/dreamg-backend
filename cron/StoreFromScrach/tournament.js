@@ -315,15 +315,15 @@ class Tournament {
               match.scheduled,
               competitor1,
               competitor2,
-              match.venue.name,
-              match.venue.id.substr(9),
-              match.venue.capacity,
-              match.venue.city_name,
-              match.venue.country_name,
-              match.venue.country_code,
-              match.venue.bowling_ends[0].name,
-              match.venue.bowling_ends[1].name,
-              match.venue.map_coordinates
+              match?.venue?.name,
+              match?.venue?.id?.substr(9),
+              match?.venue?.capacity,
+              match?.venue?.city_name,
+              match?.venue?.country_name,
+              match?.venue?.country_code,
+              match?.venue?.bowling_ends && match?.venue?.bowling_ends.length > 0 ? match?.venue?.bowling_ends[0]?.name : null,
+              match?.venue?.bowling_ends && match?.venue?.bowling_ends.length > 0 ? match?.venue?.bowling_ends[1]?.name : null,
+              match?.venue?.map_coordinates
             );
             await newMatch.storeMatch();
             await newMatch.storeMatchPlayers();
@@ -339,7 +339,6 @@ class Tournament {
             reject(error);
           }
         };
-
         storeSingleMatch(this.#matches[currentMatch]);
       } catch (error) {
         console.log(error);
@@ -351,7 +350,7 @@ class Tournament {
 
 const a = async () => {
   try {
-    const tournament = new Tournament("2472");
+    const tournament = new Tournament("34336");
     await tournament.storeTournament();
     await tournament.storeCompetitors();
     await tournament.storeMatches();
@@ -362,4 +361,4 @@ const a = async () => {
 };
 a();
 
-// module.exports = Tournament;
+module.exports = Tournament;

@@ -48,38 +48,42 @@ class Venue {
   storeVenue() {
     return new Promise(async (resolve, reject) => {
       try {
-        const connection = await connectToDb();
-        const [{ isExists, id }] = await database(
-          "SELECT COUNT(*) AS isExists, venueId AS id FROM venues WHERE venues.venueRadarId = ?;",
-          [this.radarId],
-          connection
-        );
-
-        if (!isExists) {
-          const storeVenue = await database(
-            "INSERT INTO `venues`(`venueName`, `venueCapacity`, `venueCity`, `venueRadarId`, `venueCountry`, `venueCountryCode`, `venueMapCardinalities`, `venueEnd1`, `venueEnd2`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);",
-            [
-              this.name,
-              this.capacity,
-              this.city,
-              this.radarId,
-              this.country,
-              this.countryCode,
-              this.mapCardinalitties,
-              this.end1,
-              this.end2,
-            ],
+        if (this.radarId) {
+          const connection = await connectToDb();
+          const [{ isExists, id }] = await database(
+            "SELECT COUNT(*) AS isExists, venueId AS id FROM venues WHERE venues.venueRadarId = ?;",
+            [this.radarId],
             connection
           );
-
-          if (storeVenue && storeVenue.insertId) {
+  
+          if (!isExists) {
+            const storeVenue = await database(
+              "INSERT INTO `venues`(`venueName`, `venueCapacity`, `venueCity`, `venueRadarId`, `venueCountry`, `venueCountryCode`, `venueMapCardinalities`, `venueEnd1`, `venueEnd2`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);",
+              [
+                this.name,
+                this.capacity,
+                this.city,
+                this.radarId,
+                this.country,
+                this.countryCode,
+                this.mapCardinalitties,
+                this.end1,
+                this.end2,
+              ],
+              connection
+            );
+  
+            if (storeVenue && storeVenue.insertId) {
+              connection.release();
+              this.venueId = storeVenue.insertId;
+              resolve();
+            }
+          } else {
             connection.release();
-            this.venueId = storeVenue.insertId;
+            this.venueId = id;
             resolve();
           }
         } else {
-          connection.release();
-          this.venueId = id;
           resolve();
         }
       } catch (error) {
@@ -1748,25 +1752,46 @@ class RowMatch extends Venue {
         let currentPlayer = 0;
 
         const connection = await connectToDb();
-        [this.#competitor1, this.#competitor2].forEach((competitor) => {
-          competitor.players.forEach(async (player) => {
-            try {
-              const [{ isExists }] = await database(
-                "SELECT COUNT(*) AS isExists FROM fullplayerdetails WHERE matchId = ? AND playerId = ?;",
-                [this.id, player.insertId],
-                connection
-              );
-
-              if (!isExists) {
-                const matchPlayerRes = await database(
-                  "INSERT INTO match_players SET matchId = ?, playerId = ?, competitorId = ?;",
-                  [this.id, player.insertId, competitor.insertId],
+        if (totalPlayers > 0) {
+          [this.#competitor1, this.#competitor2].forEach((competitor) => {
+            competitor.players.forEach(async (player) => {
+              try {
+                const [{ isExists }] = await database(
+                  "SELECT COUNT(*) AS isExists FROM fullplayerdetails WHERE matchId = ? AND playerId = ?;",
+                  [this.id, player.insertId],
                   connection
                 );
-
-                if (matchPlayerRes && matchPlayerRes.affectedRows) {
+  
+                if (!isExists) {
+                  const matchPlayerRes = await database(
+                    "INSERT INTO match_players SET matchId = ?, playerId = ?, competitorId = ?;",
+                    [this.id, player.insertId, competitor.insertId],
+                    connection
+                  );
+  
+                  if (matchPlayerRes && matchPlayerRes.affectedRows) {
+                    currentPlayer++;
+  
+                    if (currentPlayer >= totalPlayers) {
+                      if (this.#status === "not_started") {
+                        await database(
+                          "CALL calculateCreditsForPlayers(?, 1);",
+                          [this.id],
+                          connection
+                        );
+                      } else if (
+                        this.#status === "ended" ||
+                        this.#status === "closed"
+                      ) {
+                        await storeAllScorcardForMatch(this.id);
+                      }
+                      connection.release();
+                      resolve();
+                    }
+                  }
+                } else {
                   currentPlayer++;
-
+  
                   if (currentPlayer >= totalPlayers) {
                     if (this.#status === "not_started") {
                       await database(
@@ -1776,7 +1801,7 @@ class RowMatch extends Venue {
                       );
                     } else if (
                       this.#status === "ended" ||
-                      this.#status === "closed"
+                      this.status === "closed"
                     ) {
                       await storeAllScorcardForMatch(this.id);
                     }
@@ -1784,32 +1809,16 @@ class RowMatch extends Venue {
                     resolve();
                   }
                 }
-              } else {
-                currentPlayer++;
-
-                if (currentPlayer >= totalPlayers) {
-                  if (this.#status === "not_started") {
-                    await database(
-                      "CALL calculateCreditsForPlayers(?, 1);",
-                      [this.id],
-                      connection
-                    );
-                  } else if (
-                    this.#status === "ended" ||
-                    this.status === "closed"
-                  ) {
-                    await storeAllScorcardForMatch(this.id);
-                  }
-                  connection.release();
-                  resolve();
-                }
+              } catch (error) {
+                console.log(error);
+                reject(error);
               }
-            } catch (error) {
-              console.log(error);
-              reject(error);
-            }
+            });
           });
-        });
+        } else {
+          connection.release();
+          resolve();
+        }
       } catch (error) {
         console.log(error);
         reject(error);

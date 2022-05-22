@@ -97,8 +97,7 @@ class Competitor {
   #fetchPlayers(tournamentRadarId) {
     return new Promise(async (resolve, reject) => {
       const { players } = await makeRequest(
-        `/tournaments/sr:tournament:${tournamentRadarId}/teams/sr:competitor:${
-          this.#radarId
+        `/tournaments/sr:tournament:${tournamentRadarId}/teams/sr:competitor:${this.#radarId
         }/squads.json`
       );
 
@@ -115,6 +114,15 @@ class Competitor {
             resolve();
           }
         });
+      } else {
+        const connection = await connectToDb();
+
+        const updateIsPlayersArrivedFalg = await database("UPDATE tournament_competitor SET isPlayerArrived = 0 WHERE tournamentCompetitorId = ?;", [this.tournamentCompetitorId], connection);
+
+        connection.release();
+        this.players = [];
+        this.#isPlayersArrived = 0;
+        resolve();
       }
     });
   }
@@ -155,7 +163,11 @@ class Competitor {
             reject(error);
           }
         };
-        storeSinglePlayer(this.players[currentPlayer]);
+        if (totalPlayers > 0) {
+          storeSinglePlayer(this.players[currentPlayer]);
+        } else {
+          resolve();
+        }
       } catch (error) {
         console.log(error);
         resolve(false);
