@@ -65,7 +65,7 @@ class MatchStatistics {
       avgTeamBowlingFirstWins: 0,
     },
     topPlayersAtVenue: {
-      basedOnYears: 2,
+      basedOnYears: "2",
       batsman: [
         {
           playerId: 0,
@@ -107,7 +107,7 @@ class MatchStatistics {
       matchWithoutDecision: 0,
     },
     teamStrengths: {
-      basedOnYears: 2,
+      basedOnYears: "2",
       teams: [
         {
           battingFirstWins: 0,
@@ -137,7 +137,7 @@ class MatchStatistics {
         playerPerformance: "",
       },
     ],
-    basedOnYears: 2,
+    basedOnYears: "2",
     playerPerformance: {
       Prime: "100+",
       InForm: "50-100",
@@ -167,7 +167,7 @@ class MatchStatistics {
         },
       ],
     },
-    basedOnYears: 2,
+    basedOnYears: "2",
   };
 
   constructor(id) {
@@ -265,19 +265,26 @@ class MatchStatistics {
         );
         connection.release();
         this.pitchReport.totalPlayedMatch = totalMatches;
-        this.pitchReport.pitchWinningStats.winsBattingFirst = winsBattingFirst;
-        this.pitchReport.pitchWinningStats.winsBowlingFirst = winsBowlingFirst;
+        this.pitchReport.pitchWinningStats.winsBattingFirst = winsBattingFirst.toFixed(2);
+        this.pitchReport.pitchWinningStats.winsBowlingFirst = winsBowlingFirst.toFixed(2);
         this.pitchReport.totalTeamsCreated = totalTeamsCreated;
-        this.pitchReport.averageFantacyPoints = averagePoints;
+        this.pitchReport.averageFantacyPoints = averagePoints.toFixed(2);
         this.pitchReport.pitchScoreStats.avgFirstinningScore =
-          averageFirstinningScore;
-        this.pitchReport.pitchScoreStats.avgTotalScore = averageTotalScore;
+          averageFirstinningScore.toFixed(2);
+        this.pitchReport.pitchScoreStats.avgTotalScore = averageTotalScore.toFixed(2);
         this.pitchReport.pitchScoreStats.avgTossWinnerOptToBowl =
-          tossWinnerOptToBowl;
+          tossWinnerOptToBowl.toFixed(2);
         this.pitchReport.pitchScoreStats.avgTeamBowlingFirstWins =
-          teamBowlingFirstWins;
-        this.pitchReport.topPlayersAtVenue.batsman = topBatsMan;
-        this.pitchReport.topPlayersAtVenue.bowler = topBowler;
+          teamBowlingFirstWins.toFixed(2);
+        this.pitchReport.topPlayersAtVenue.batsman = topBatsMan.map((batsman) => {
+          batsman.runsPerMatch = batsman.runsPerMatch.toFixed(2);
+          batsman.averageStrikeRate = batsman.averageStrikeRate.toFixed(2);
+          return batsman;
+        });
+        this.pitchReport.topPlayersAtVenue.bowler = topBowler.map((bowler) => {
+          bowler.averageEconomy = bowler.averageEconomy.toFixed(2);
+          return bowler;
+        });
 
         // this.pitchReport.topPlayersAtVenue.batsman =
         //   this.pitchReport.topPlayersAtVenue.batsman.map((batsman) => {
@@ -332,11 +339,11 @@ class MatchStatistics {
         this.teamComparison.winProbability = [
           {
             teamId: competitorwins[0].teamId,
-            winProbability: 50,
+            winProbability: "50.00",
           },
           {
             teamId: competitorwins[1].teamId,
-            winProbability: 50,
+            winProbability: "50.00",
           },
         ];
 
@@ -400,6 +407,7 @@ class MatchStatistics {
         connection.release();
 
         playerPerformance.forEach((player) => {
+          player.avgPoints = player.avgPoints.toFixed(2);
           let playerPerformance = "";
           if (player.avgPoints > 100) {
             playerPerformance = "Prime";
@@ -447,8 +455,15 @@ class MatchStatistics {
           connection
         );
         connection.release();
-        this.statistics.players.topBatsMan = topBatsMan;
-        this.statistics.players.topBowlers = topBowler;
+        this.statistics.players.topBatsMan = topBatsMan.map((batsman) => {
+          batsman.runsPerMatch = batsman.runsPerMatch.toFixed(2);
+          batsman.averageStrikeRate = batsman.averageStrikeRate.toFixed(2);
+          return batsman;
+        });
+        this.statistics.players.topBowlers = topBowler.map((bowler) => {
+          bowler.averageEconomy = bowler.averageEconomy.toFixed(2);
+          return bowler;
+        });
         resolve();
       } catch (error) {
         console.log(error.message);
