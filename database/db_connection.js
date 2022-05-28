@@ -44,6 +44,7 @@ const initializeConnection = () => {
       password: process.env.CLEVER_CLOUD_PASSWORD,
       database: process.env.CLEVER_CLOUD_DATABASE_NAME,
       multipleStatements: true,
+      connectionLimit: 3,
     });
   } catch (error) {
     console.log(error);

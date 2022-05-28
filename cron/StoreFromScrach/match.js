@@ -55,7 +55,7 @@ class Venue {
             [this.radarId],
             connection
           );
-  
+
           if (!isExists) {
             const storeVenue = await database(
               "INSERT INTO `venues`(`venueName`, `venueCapacity`, `venueCity`, `venueRadarId`, `venueCountry`, `venueCountryCode`, `venueMapCardinalities`, `venueEnd1`, `venueEnd2`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);",
@@ -72,7 +72,7 @@ class Venue {
               ],
               connection
             );
-  
+
             if (storeVenue && storeVenue.insertId) {
               connection.release();
               this.venueId = storeVenue.insertId;
@@ -198,7 +198,7 @@ class MatchDaily extends Status {
   #updateStatus(status) {
     return new Promise(async (resolve, reject) => {
       try {
-        await super.updateStatus(this.id, status);
+        await this.updateStatus(this.id, status);
         resolve();
       } catch (error) {
         console.log(error);
@@ -1227,169 +1227,175 @@ class MatchDaily extends Status {
             `/matches/sr:match:${this.#radarId}/lineups.json`
           );
 
-          if (matchLineUp && matchLineUp.sport_event && matchLineUp.lineups) {
+          if (matchLineUp && matchLineUp.sport_event && matchLineUp.lineups && matchLineUp?.lineups?.length === 2) {
             // store toss details
             const connection = await connectToDb();
 
-            const totalLineUps = matchLineUp.lineups.length;
-            let currentLineUp = 0;
+            let allLineUpPlayers = [];
+            matchLineUp.lineups.forEach((lineUp) => {
+              lineUp.starting_lineup.forEach((player) => {
+                allLineUpPlayers.push({...player, team: lineUp.team});
+              })
+            });
+            
+            const totalPlayers = allLineUpPlayers.length;
+            let currentPlayer = 0;
 
-            matchLineUp.lineups.forEach(async (lineup) => {
-              const totalPlayers = lineup?.starting_lineup?.length;
-              let currentPlayer = 0;
+            const storePlayer = async (player) => {
+              try {
+                // used when player does not exists in database and then to store player details in database and to store player in tournament_competitions_players table and to store player in matches_players table
+                const storePlayerAndMatchPlayer = async ({
+                  isPlayerExists,
+                }) => {
+                  return new Promise(async (resolve, reject) => {
+                    try {
+                      const { player: playerDetails, statistics } =
+                        await makeRequest(
+                          `/players/sr:player:${player.id.substr(
+                            10
+                          )}/profile.json`
+                        );
+                      if (playerDetails) {
+                        const newPlayer = new Player(
+                          playerDetails.type,
+                          playerDetails.id.substr(10),
+                          playerDetails.name.split(", ")[1],
+                          playerDetails.name.split(", ")[0],
+                          playerDetails.nationality,
+                          playerDetails.country_code,
+                          playerDetails.date_of_birth,
+                          statistics || null,
+                          playerDetails.batting_style || null,
+                          playerDetails.bowling_style || null
+                        );
+                        await newPlayer.getPlayerStatesAndStore();
 
-              const storePlayer = async (player) => {
-                try {
-                  // used when player does not exists in database and then to store player details in database and to store player in tournament_competitions_players table and to store player in matches_players table
-                  const storePlayerAndMatchPlayer = async ({
-                    isPlayerExists,
-                  }) => {
-                    return new Promise(async (resolve, reject) => {
-                      try {
-                        const { player: playerDetails, statistics } =
-                          await makeRequest(
-                            `/players/sr:player:${player.id.substr(
-                              10
-                            )}/profile.json`
+                        // storing player in tournament_competitors_player table
+                        const competitor =
+                          matchLineUp.sport_event.competitors.find(
+                            (competitor) => competitor.qualifier === player.team
                           );
-                        if (playerDetails) {
-                          const newPlayer = new Player(
-                            playerDetails.type,
-                            playerDetails.id.substr(10),
-                            playerDetails.name.split(", ")[1],
-                            playerDetails.name.split(", ")[0],
-                            playerDetails.nationality,
-                            playerDetails.country_code,
-                            playerDetails.date_of_birth,
-                            statistics || null,
-                            playerDetails.batting_style || null,
-                            playerDetails.bowling_style || null
+                        const tournamentCompetitorIdRes = await database(
+                          "SELECT tournamentCompetitorId, competitorId FROM allteams2 WHERE allteams2.tournamentId = ? AND allteams2.competitorRadarId = ?;",
+                          [this.#tournamentId, competitor.id.substr(14)],
+                          connection
+                        );
+                        if (
+                          tournamentCompetitorIdRes.length > 0 &&
+                          tournamentCompetitorIdRes[0].tournamentCompetitorId
+                        ) {
+                          await newPlayer.storePlayerRelation(
+                            tournamentCompetitorIdRes[0]
+                              .tournamentCompetitorId
                           );
-                          await newPlayer.getPlayerStatesAndStore();
-
-                          // storing player in tournament_competitors_player table
-                          const team = lineup.team;
-                          const competitor =
-                            matchLineUp.sport_event.competitors.find(
-                              (competitor) => competitor.qualifier === team
-                            );
-                          const tournamentCompetitorIdRes = await database(
-                            "SELECT tournamentCompetitorId, competitorId FROM allteams2 WHERE allteams2.tournamentId = ? AND allteams2.competitorRadarId = ?;",
-                            [this.#tournamentId, competitor.id.substr(14)],
+                          // storing player in match_players table
+                          const storeMatchPlayersRes = await database(
+                            "INSERT INTO match_players (matchId, competitorId, playerId, isSelected, isCaptain, isWicketKeeper) VALUES (?, ?, ?, ?, ?, ?);",
+                            [
+                              this.id,
+                              tournamentCompetitorIdRes[0].competitorId,
+                              newPlayer.id,
+                              true,
+                              player.is_captain || 0,
+                              player.is_wicketkeeper || 0,
+                            ],
                             connection
                           );
-                          if (
-                            tournamentCompetitorIdRes.length > 0 &&
-                            tournamentCompetitorIdRes[0].tournamentCompetitorId
-                          ) {
-                            await newPlayer.storePlayerRelation(
-                              tournamentCompetitorIdRes[0]
-                                .tournamentCompetitorId
-                            );
-                            // storing player in match_players table
-                            const storeMatchPlayersRes = await database(
-                              "INSERT INTO match_players (matchId, competitorId, playerId, isSelected, isCaptain, isWicketKeeper) VALUES (?, ?, ?, ?, ?, ?);",
-                              [
-                                this.id,
-                                tournamentCompetitorIdRes[0].competitorId,
-                                newPlayer.id,
-                                true,
-                                player.is_captain || 0,
-                                player.is_wicketkeeper || 0,
-                              ],
-                              connection
-                            );
-                            if (storeMatchPlayersRes) {
-                              currentPlayer++;
-                              if (currentPlayer === totalPlayers) {
-                                currentLineUp++;
-                                if (currentLineUp === totalLineUps) {
-                                  connection.release();
-                                  this.#isLineUpStored = true;
+                          if (storeMatchPlayersRes) {
+                            currentPlayer++;
+                            if (currentPlayer === totalPlayers) {
+                              const setLineUpFlag = await database(
+                                "UPDATE tournament_matches SET isLineUpOut = 1 WHERE matchId = ?;",
+                                [this.id],
+                                connection
+                              );
+                                connection.release();
+                                this.#isLineUpStored = true;
 
-                                  if (setLineUpFlag) {
-                                    resolve();
-                                  } else {
-                                    throw new Error(
-                                      "Error while updating lineup flag"
-                                    );
-                                  }
+                                if (setLineUpFlag.affectedRows > 0) {
+                                  resolve();
+                                } else {
+                                  throw new Error(
+                                    "Error while updating lineup flag"
+                                  );
                                 }
-                              }
                             } else {
-                              connection.release();
-                              throw new Error("Error while storing lineup");
+                              storePlayer(allLineUpPlayers[currentPlayer]);
                             }
-                          }
-                        } else {
-                          connection.release();
-                          throw new Error("Player not found");
-                        }
-                      } catch (error) {
-                        console.log(error.message);
-                        reject(error);
-                      }
-                    });
-                  };
-
-                  // checking if player is already stored in database table players
-                  const [{ isExists: isPlayerExists, playerId }] =
-                    await database(
-                      "SELECT COUNT(playerId) AS isExists, playerId FROM allplayers WHERE playerRadarId = ?;",
-                      [player.id.substr(10)],
-                      connection
-                    );
-
-                  // player exists then store it else store it in players table
-                  if (isPlayerExists) {
-                    const storeMatchPlayersRes = await database(
-                      "UPDATE match_players SET isSelected = 1, isCaptain = ?, isWicketKeeper = ? WHERE playerId = ? AND matchId = ?;",
-                      [
-                        player.is_captain || 0,
-                        player.is_wicketkeeper || 0,
-                        playerId,
-                        this.id,
-                      ],
-                      connection
-                    );
-
-                    // if player stored successfully then go to next player
-                    if (
-                      storeMatchPlayersRes &&
-                      storeMatchPlayersRes.affectedRows > 0
-                    ) {
-                      currentPlayer++;
-                      if (currentPlayer === totalPlayers) {
-                        currentLineUp++;
-                        if (currentLineUp === totalLineUps) {
-                          const setLineUpFlag = await database(
-                            "UPDATE tournament_matches SET isLineUpOut = 1 WHERE matchId = ?;",
-                            [this.id],
-                            connection
-                          );
-                          connection.release();
-                          this.#isLineUpStored = true;
-                          if (setLineUpFlag.affectedRows > 0) {
-                            resolve();
+                          } else {
+                            connection.release();
+                            throw new Error("Error while storing lineup");
                           }
                         }
+                      } else {
+                        connection.release();
+                        throw new Error("Player not found");
                       }
+                    } catch (error) {
+                      console.log(error.message);
+                      reject(error);
+                    }
+                  });
+                };
+
+                // checking if player is already stored in database table players
+                const [{ isExists: isPlayerExists, playerId }] =
+                  await database(
+                    "SELECT COUNT(playerId) AS isExists, playerId FROM allplayers WHERE playerRadarId = ?;",
+                    [player.id.substr(10)],
+                    connection
+                  );
+
+                // player exists then store it else store it in players table
+                if (isPlayerExists) {
+                  const storeMatchPlayersRes = await database(
+                    "UPDATE match_players SET isSelected = 1, isCaptain = ?, isWicketKeeper = ? WHERE playerId = ? AND matchId = ?;",
+                    [
+                      player.is_captain || 0,
+                      player.is_wicketkeeper || 0,
+                      playerId,
+                      this.id,
+                    ],
+                    connection
+                  );
+
+                  // if player stored successfully then go to next player
+                  if (
+                    storeMatchPlayersRes &&
+                    storeMatchPlayersRes.affectedRows > 0
+                  ) {
+                    currentPlayer++;
+                    if (currentPlayer === totalPlayers) {
+                        const setLineUpFlag = await database(
+                          "UPDATE tournament_matches SET isLineUpOut = 1 WHERE matchId = ?;",
+                          [this.id],
+                          connection
+                        );
+                        connection.release();
+                        this.#isLineUpStored = true;
+                        if (setLineUpFlag.affectedRows > 0) {
+                          resolve();
+                        }
                     } else {
-                      storePlayerAndMatchPlayer({ isPlayerExists: 1 });
+                      storePlayer(allLineUpPlayers[currentPlayer]);
                     }
                   } else {
-                    storePlayerAndMatchPlayer({ isPlayerExists: 1 });
+                    await storePlayerAndMatchPlayer({ isPlayerExists: 1 });
+                    storePlayer(allLineUpPlayers[currentPlayer]);
                   }
-                } catch (error) {
-                  console.log(error, "storeMatchLineup1");
-                  reject(error);
+                } else {
+                  await storePlayerAndMatchPlayer({ isPlayerExists: 1 });
+                  storePlayer(allLineUpPlayers[currentPlayer]);
                 }
-              };
+              } catch (error) {
+                console.log(error, "storeMatchLineup1");
+                reject(error);
+              }
+            };
 
-              lineup?.starting_lineup?.forEach(async (player) => {
-                storePlayer(player);
-              });
-            });
+            (function () {
+              storePlayer(allLineUpPlayers[currentPlayer]);
+            })();
           } else {
             throw new Error("can not store lineup");
           }
@@ -1618,7 +1624,7 @@ class MatchDaily extends Status {
               } else {
                 log(
                   "IN ./cron/oop/match.js going to store match status which is " +
-                    matchStatus
+                  matchStatus
                 );
                 await this.#updateStatus(matchStatus);
                 log("resolving from handleMatchStatus status changed");
@@ -1637,7 +1643,7 @@ class MatchDaily extends Status {
           } else {
             log(
               "Can't update match status as data in available for matchId " +
-                this.id
+              this.id
             );
             throw new Error("can't update status");
           }
@@ -1707,7 +1713,7 @@ class RowMatch extends Venue {
 
         if (!isExists) {
           // storing venue
-          await super.storeVenue();
+          await this.storeVenue();
 
           // initializing status and store
           const status = new Status(this.#status);
@@ -1761,17 +1767,17 @@ class RowMatch extends Venue {
                   [this.id, player.insertId],
                   connection
                 );
-  
+
                 if (!isExists) {
                   const matchPlayerRes = await database(
                     "INSERT INTO match_players SET matchId = ?, playerId = ?, competitorId = ?;",
                     [this.id, player.insertId, competitor.insertId],
                     connection
                   );
-  
+
                   if (matchPlayerRes && matchPlayerRes.affectedRows) {
                     currentPlayer++;
-  
+
                     if (currentPlayer >= totalPlayers) {
                       if (this.#status === "not_started") {
                         await database(
@@ -1791,7 +1797,7 @@ class RowMatch extends Venue {
                   }
                 } else {
                   currentPlayer++;
-  
+
                   if (currentPlayer >= totalPlayers) {
                     if (this.#status === "not_started") {
                       await database(

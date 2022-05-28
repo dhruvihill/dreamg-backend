@@ -78,7 +78,7 @@ class Player extends Role {
       try {
         if (this.radarId) {
           const connection = await connectToDb();
-          await super.storeRole();
+          await this.storeRole();
           let [{ isExists: isPlayerExist, playerId }] = await database(
             "SELECT COUNT(playerId) AS isExists, playerId FROM players WHERE players.playerRadarId = ?;",
             [this.radarId],
@@ -468,8 +468,8 @@ class PlayerStatistics extends Player {
   async getPlayerStatesAndStore() {
     return new Promise(async (resolve, reject) => {
       try {
+        await this.storePlayer();
         const connection = await connectToDb();
-        await super.storePlayer();
         const [{ isExists: isStateExist }] = await database(
           "SELECT COUNT(player_statistics_batting.playerId) As isExists FROM `player_statistics_batting` WHERE player_statistics_batting.playerId = ?;",
           [super.id],

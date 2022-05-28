@@ -41,6 +41,7 @@ const connectToDb = () => {
       }
     } catch (error) {
       console.log(error, "connectToDb");
+      reject(error);
     }
 
     // error handling to Database
@@ -56,7 +57,7 @@ const connectToDb = () => {
 const initializeConnection = () => {
   try {
     connectionForCron = mysql.createPool({
-      connectionLimit: 0,
+      connectionLimit: 5,
       host: process.env.CLEVER_CLOUD_HOST || "localhost",
       user: process.env.CLEVER_CLOUD_USER || "root",
       password: process.env.CLEVER_CLOUD_PASSWORD || "",
