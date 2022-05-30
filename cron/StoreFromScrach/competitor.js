@@ -21,6 +21,39 @@ class Competitor {
     this.#displayName = displayName;
   }
 
+  #fetchPlayers(tournamentRadarId) {
+    return new Promise(async (resolve, reject) => {
+      const { players } = await makeRequest(
+        `/tournaments/sr:tournament:${tournamentRadarId}/teams/sr:competitor:${this.#radarId
+        }/squads.json`
+      );
+
+      if (players && players.length > 0) {
+        this.isPlayersArrived = 1;
+        const totalPlayers = players.length;
+        let currentPlayer = 0;
+
+        players.forEach((player) => {
+          this.players.push(player);
+          currentPlayer++;
+          if (currentPlayer >= totalPlayers) {
+            this.#isPlayersArrived = 1;
+            resolve();
+          }
+        });
+      } else {
+        const connection = await connectToDb();
+
+        const updateIsPlayersArrivedFalg = await database("UPDATE tournament_competitor SET isPlayerArrived = 0 WHERE tournamentCompetitorId = ?;", [this.tournamentCompetitorId], connection);
+
+        connection.release();
+        this.players = [];
+        this.#isPlayersArrived = 0;
+        resolve();
+      }
+    });
+  }
+
   storeCompetitor() {
     return new Promise(async (resolve, reject) => {
       try {
@@ -67,6 +100,7 @@ class Competitor {
           [tournamentStoredId, this.id],
           connection
         );
+        
 
         if (!isExists) {
           const tournamentCompetitorRes = await database(
@@ -89,39 +123,6 @@ class Competitor {
         if (error.sqlMessage) {
           this.tournamentCompetitorId = null;
         }
-        resolve();
-      }
-    });
-  }
-
-  #fetchPlayers(tournamentRadarId) {
-    return new Promise(async (resolve, reject) => {
-      const { players } = await makeRequest(
-        `/tournaments/sr:tournament:${tournamentRadarId}/teams/sr:competitor:${this.#radarId
-        }/squads.json`
-      );
-
-      if (players && players.length > 0) {
-        this.isPlayersArrived = 1;
-        const totalPlayers = players.length;
-        let currentPlayer = 0;
-
-        players.forEach((player) => {
-          this.players.push(player);
-          currentPlayer++;
-          if (currentPlayer >= totalPlayers) {
-            this.#isPlayersArrived = 1;
-            resolve();
-          }
-        });
-      } else {
-        const connection = await connectToDb();
-
-        const updateIsPlayersArrivedFalg = await database("UPDATE tournament_competitor SET isPlayerArrived = 0 WHERE tournamentCompetitorId = ?;", [this.tournamentCompetitorId], connection);
-
-        connection.release();
-        this.players = [];
-        this.#isPlayersArrived = 0;
         resolve();
       }
     });

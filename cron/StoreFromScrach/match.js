@@ -214,7 +214,7 @@ class MatchDaily extends Status {
 
         const updateTossDetails = await database(
           "UPDATE tournament_matches SET tossWonBy = ?, tossDecision = ? WHERE matchId = ?;",
-          [this.#tossWinner, this.#tossDecision, this.id],
+          [this.#tossWinner, this.#tossDecision || 'bat', this.id],
           connection
         );
 

@@ -1,6 +1,21 @@
 const mysql = require("mysql");
-let connectionForCron = null;
 require("dotenv").config();
+let connectionForCron = mysql.createPool({
+  connectionLimit: 5,
+  host: process.env.CLEVER_CLOUD_HOST || "localhost",
+  user: process.env.CLEVER_CLOUD_USER || "root",
+  password: process.env.CLEVER_CLOUD_PASSWORD || "",
+  database: process.env.CLEVER_CLOUD_DATABASE_NAME || "dreamg-v3",
+  multipleStatements: true,
+});
+let totalConnection = 0;
+let totalConnectionAttemps = 0;
+connectionForCron.on('connection', function (connection) {
+  totalConnection++;
+});
+connectionForCron.on('release', function (connection) {
+  totalConnection--;
+});
 
 const connectToDb = () => {
   // connect to database
@@ -12,6 +27,7 @@ const connectToDb = () => {
             if (err) throw err;
             else {
               // console.log("Connected Successfully for cron");
+              totalConnectionAttemps++;
               resolve(connection);
             }
           } catch (error) {
@@ -26,7 +42,6 @@ const connectToDb = () => {
               }, 200);
             }
             reject(error);
-            initializeConnection();
           }
         });
       } else {
@@ -57,7 +72,7 @@ const connectToDb = () => {
 const initializeConnection = () => {
   try {
     connectionForCron = mysql.createPool({
-      connectionLimit: 3,
+      connectionLimit: 5,
       host: process.env.CLEVER_CLOUD_HOST || "localhost",
       user: process.env.CLEVER_CLOUD_USER || "root",
       password: process.env.CLEVER_CLOUD_PASSWORD || "",
@@ -68,7 +83,6 @@ const initializeConnection = () => {
     console.log(error, "initializeConnection");
   }
 };
-initializeConnection();
 
 // query to fetch, insert data
 const database = (query, options, connection) => {
