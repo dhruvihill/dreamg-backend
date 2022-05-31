@@ -187,17 +187,21 @@ router.post("/lineup", async (req, res) => {
       matchId
     ).getMatchDetails();
 
-    let lineUp = [];
-    if (MatchStatisticsObject.matchDetails.isLineUpOut == 1) {
-      lineUp = MatchStatisticsObject.players.filter((player) => {
-        return player.isLineUpSelected == 1;
+    MatchStatisticsObject.competitors.forEach((competitor) => {
+      competitor.players = [];
+      MatchStatisticsObject.players.forEach((player) => {
+        if (
+          player.teamId === competitor.teamId &&
+          player.isLineUpSelected == 1
+        ) {
+          competitor.players.push(player);
+        }
       });
-    }
+    });
     res.status(200).json({
       status: true,
       message: "success",
       data: {
-        lineUp,
         competitors: MatchStatisticsObject.competitors,
       },
     });
