@@ -8,14 +8,6 @@ let connectionForCron = mysql.createPool({
   database: process.env.CLEVER_CLOUD_DATABASE_NAME || "dreamg-v3",
   multipleStatements: true,
 });
-let totalConnection = 0;
-let totalConnectionAttemps = 0;
-connectionForCron.on("connection", function (connection) {
-  totalConnection++;
-});
-connectionForCron.on("release", function (connection) {
-  totalConnection--;
-});
 
 const connectToDb = () => {
   // connect to database
@@ -27,7 +19,6 @@ const connectToDb = () => {
             if (err) throw err;
             else {
               // console.log("Connected Successfully for cron");
-              totalConnectionAttemps++;
               resolve(connection);
             }
           } catch (error) {

@@ -11,13 +11,13 @@ router.post("/", verifyUser, (req, res) => {
       message: "success",
       data: {
         appVersion: "1.0.0",
-        isNotificationEnabled: true,
-        isAdEnabled: true,
+        isNotificationEnabled: userId ? false : true,
+        isAdEnabled: userId ? false : true,
         adTypes: {
-          banner: true,
-          video: true,
-          inline: true,
-          fullscreen: true,
+          banner: userId ? false : true,
+          video: userId ? false : true,
+          inline: userId ? false : true,
+          fullscreen: userId ? false : true,
         },
       },
     });
