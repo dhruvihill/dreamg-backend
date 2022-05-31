@@ -1,7 +1,7 @@
 const mysql = require("mysql");
 require("dotenv").config();
 let connectionForCron = mysql.createPool({
-  connectionLimit: 5,
+  connectionLimit: process.env.CLEVER_CLOUD_HOST === "localhost" ? 0 : 4,
   host: process.env.CLEVER_CLOUD_HOST || "localhost",
   user: process.env.CLEVER_CLOUD_USER || "root",
   password: process.env.CLEVER_CLOUD_PASSWORD || "",
@@ -10,10 +10,10 @@ let connectionForCron = mysql.createPool({
 });
 let totalConnection = 0;
 let totalConnectionAttemps = 0;
-connectionForCron.on('connection', function (connection) {
+connectionForCron.on("connection", function (connection) {
   totalConnection++;
 });
-connectionForCron.on('release', function (connection) {
+connectionForCron.on("release", function (connection) {
   totalConnection--;
 });
 
@@ -72,7 +72,7 @@ const connectToDb = () => {
 const initializeConnection = () => {
   try {
     connectionForCron = mysql.createPool({
-      connectionLimit: 5,
+      connectionLimit: process.env.CLEVER_CLOUD_HOST === "localhost" ? 0 : 4,
       host: process.env.CLEVER_CLOUD_HOST || "localhost",
       user: process.env.CLEVER_CLOUD_USER || "root",
       password: process.env.CLEVER_CLOUD_PASSWORD || "",

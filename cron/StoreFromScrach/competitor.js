@@ -24,7 +24,8 @@ class Competitor {
   #fetchPlayers(tournamentRadarId) {
     return new Promise(async (resolve, reject) => {
       const { players } = await makeRequest(
-        `/tournaments/sr:tournament:${tournamentRadarId}/teams/sr:competitor:${this.#radarId
+        `/tournaments/sr:tournament:${tournamentRadarId}/teams/sr:competitor:${
+          this.#radarId
         }/squads.json`
       );
 
@@ -44,7 +45,11 @@ class Competitor {
       } else {
         const connection = await connectToDb();
 
-        const updateIsPlayersArrivedFalg = await database("UPDATE tournament_competitor SET isPlayerArrived = 0 WHERE tournamentCompetitorId = ?;", [this.tournamentCompetitorId], connection);
+        const updateIsPlayersArrivedFalg = await database(
+          "UPDATE tournament_competitor SET isPlayerArrived = 0 WHERE tournamentCompetitorId = ?;",
+          [this.tournamentCompetitorId],
+          connection
+        );
 
         connection.release();
         this.players = [];
@@ -96,11 +101,10 @@ class Competitor {
       try {
         const connection = await connectToDb();
         const [{ isExists, id }] = await database(
-          "SELECT COUNT(*) AS isExists, tournament_competitor.tournamentCompetitorId FROM tournament_competitor WHERE tournament_competitor.tournamentId = ? AND tournament_competitor.competitorId = ?;; ",
+          "SELECT COUNT(*) AS isExists, `tournament_competitor`.`tournamentCompetitorId` AS id FROM tournament_competitor WHERE tournament_competitor.tournamentId = ? AND tournament_competitor.competitorId = ?; ",
           [tournamentStoredId, this.id],
           connection
         );
-        
 
         if (!isExists) {
           const tournamentCompetitorRes = await database(

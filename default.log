@@ -2204,3 +2204,1812 @@
 2022.05.29, 14:11:52.0965 UTC -> IN ./cron/oop/match.js going to store line up
 2022.05.29, 14:11:52.0966 UTC -> IN ./cron/oop/match.js going to store line up
 2022.05.29, 14:35:37.0007 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:01:55.0159 UTC -> Started to proceed match for scorcard, lineups and points for 70
+2022.05.31, 10:01:55.0159 UTC -> going to store lineups for match70FROM ./cron/oop/periode.js
+2022.05.31, 10:01:55.0159 UTC -> Started to proceed match for scorcard, lineups and points for 69
+2022.05.31, 10:01:55.0159 UTC -> going to store lineups for match69FROM ./cron/oop/periode.js
+2022.05.31, 10:01:55.0159 UTC -> Started to proceed match for scorcard, lineups and points for 68
+2022.05.31, 10:01:55.0160 UTC -> Started to proceed match for scorcard, lineups and points for 67
+2022.05.31, 10:01:55.0159 UTC -> going to store lineups for match68FROM ./cron/oop/periode.js
+2022.05.31, 10:01:55.0160 UTC -> going to store lineups for match67FROM ./cron/oop/periode.js
+2022.05.31, 10:01:55.0160 UTC -> Started to proceed match for scorcard, lineups and points for 66
+2022.05.31, 10:01:55.0160 UTC -> going to store lineups for match66FROM ./cron/oop/periode.js
+2022.05.31, 10:01:55.0160 UTC -> Started to proceed match for scorcard, lineups and points for 65
+2022.05.31, 10:01:55.0160 UTC -> going to store lineups for match65FROM ./cron/oop/periode.js
+2022.05.31, 10:01:55.0160 UTC -> Started to proceed match for scorcard, lineups and points for 64
+2022.05.31, 10:01:55.0160 UTC -> going to store lineups for match64FROM ./cron/oop/periode.js
+2022.05.31, 10:01:55.0160 UTC -> Started to proceed match for scorcard, lineups and points for 63
+2022.05.31, 10:01:55.0160 UTC -> going to store lineups for match63FROM ./cron/oop/periode.js
+2022.05.31, 10:01:55.0160 UTC -> Started to proceed match for scorcard, lineups and points for 62
+2022.05.31, 10:01:55.0160 UTC -> going to store lineups for match62FROM ./cron/oop/periode.js
+2022.05.31, 10:01:55.0160 UTC -> Started to proceed match for scorcard, lineups and points for 61
+2022.05.31, 10:01:55.0160 UTC -> going to store lineups for match61FROM ./cron/oop/periode.js
+2022.05.31, 10:01:55.0160 UTC -> Started to proceed match for scorcard, lineups and points for 60
+2022.05.31, 10:01:55.0160 UTC -> going to store lineups for match60FROM ./cron/oop/periode.js
+2022.05.31, 10:01:55.0160 UTC -> Started to proceed match for scorcard, lineups and points for 59
+2022.05.31, 10:01:55.0160 UTC -> going to store lineups for match59FROM ./cron/oop/periode.js
+2022.05.31, 10:01:55.0160 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:01:55.0227 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:01:55.0232 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:01:55.0236 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:01:55.0241 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:01:55.0245 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:01:55.0249 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:01:55.0252 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:01:55.0256 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:01:55.0260 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:01:55.0264 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:01:55.0267 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:01:56.0522 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:01:56.0637 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:01:56.0700 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:01:56.0728 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:01:57.0382 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:01:58.0499 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:01:59.0988 UTC -> got response of lineup and going to procedd for matchStatus67FROM ./cron/oop/periode.js
+2022.05.31, 10:02:00.0258 UTC -> got response of lineup and going to procedd for matchStatus69FROM ./cron/oop/periode.js
+2022.05.31, 10:02:00.0267 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:02:00.0709 UTC -> got response of lineup and going to procedd for matchStatus63FROM ./cron/oop/periode.js
+2022.05.31, 10:02:02.0659 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:02.0667 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:02.0667 UTC -> got response of matchStatus and going to procedd for scorcard67FROM ./cron/oop/periode.js
+2022.05.31, 10:02:02.0667 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:02:02.0869 UTC -> got response of lineup and going to procedd for matchStatus64FROM ./cron/oop/periode.js
+2022.05.31, 10:02:03.0075 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:02:03.0164 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:03.0170 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:03.0170 UTC -> got response of matchStatus and going to procedd for scorcard69FROM ./cron/oop/periode.js
+2022.05.31, 10:02:03.0170 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:02:03.0487 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:03.0492 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:03.0492 UTC -> got response of matchStatus and going to procedd for scorcard63FROM ./cron/oop/periode.js
+2022.05.31, 10:02:03.0492 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:02:04.0852 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:02:04.0881 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:04.0886 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:04.0958 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:02:05.0833 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:05.0836 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:06.0108 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:06.0114 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:06.0114 UTC -> got response of matchStatus and going to procedd for scorcard64FROM ./cron/oop/periode.js
+2022.05.31, 10:02:06.0115 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:02:07.0219 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:02:08.0301 UTC -> got response of lineup and going to procedd for matchStatus62FROM ./cron/oop/periode.js
+2022.05.31, 10:02:08.0441 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:02:08.0731 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:02:08.0738 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:02:10.0467 UTC -> got response of lineup and going to procedd for matchStatus60FROM ./cron/oop/periode.js
+2022.05.31, 10:02:13.0957 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:13.0962 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:13.0962 UTC -> got response of matchStatus and going to procedd for scorcard62FROM ./cron/oop/periode.js
+2022.05.31, 10:02:13.0962 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:02:15.0473 UTC -> got response of lineup and going to procedd for matchStatus66FROM ./cron/oop/periode.js
+2022.05.31, 10:02:15.0927 UTC -> got response of lineup and going to procedd for matchStatus61FROM ./cron/oop/periode.js
+2022.05.31, 10:02:16.0449 UTC -> got response of lineup and going to procedd for matchStatus70FROM ./cron/oop/periode.js
+2022.05.31, 10:02:17.0742 UTC -> got response of lineup and going to procedd for matchStatus59FROM ./cron/oop/periode.js
+2022.05.31, 10:02:20.0146 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:20.0151 UTC -> got response of matchStatus and going to procedd for scorcard60FROM ./cron/oop/periode.js
+2022.05.31, 10:02:20.0151 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:20.0151 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:02:21.0296 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:21.0305 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:21.0305 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:02:21.0305 UTC -> got response of matchStatus and going to procedd for scorcard70FROM ./cron/oop/periode.js
+2022.05.31, 10:02:24.0474 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:24.0483 UTC -> got response of lineup and going to procedd for matchStatus68FROM ./cron/oop/periode.js
+2022.05.31, 10:02:24.0484 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:24.0484 UTC -> got response of matchStatus and going to procedd for scorcard66FROM ./cron/oop/periode.js
+2022.05.31, 10:02:24.0484 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:02:25.0403 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:25.0406 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:26.0206 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:26.0209 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:26.0455 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:26.0462 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:26.0462 UTC -> got response of matchStatus and going to procedd for scorcard61FROM ./cron/oop/periode.js
+2022.05.31, 10:02:26.0462 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:02:26.0920 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:02:27.0581 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:27.0583 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:28.0434 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:28.0439 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:29.0191 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:29.0207 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:29.0229 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:29.0229 UTC -> got response of matchStatus and going to procedd for scorcard68FROM ./cron/oop/periode.js
+2022.05.31, 10:02:29.0230 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:02:29.0230 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:29.0230 UTC -> got response of matchStatus and going to procedd for scorcard59FROM ./cron/oop/periode.js
+2022.05.31, 10:02:29.0231 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:02:29.0432 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:29.0440 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:30.0377 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:30.0380 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:32.0196 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:02:32.0532 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:02:32.0831 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:02:33.0254 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:33.0258 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:34.0060 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:34.0063 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:34.0325 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:34.0332 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:35.0868 UTC -> got response of lineup and going to procedd for matchStatus65FROM ./cron/oop/periode.js
+2022.05.31, 10:02:35.0875 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:02:36.0224 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:02:36.0707 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:02:36.0713 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:02:37.0328 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:37.0332 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:37.0332 UTC -> got response of matchStatus and going to procedd for scorcard65FROM ./cron/oop/periode.js
+2022.05.31, 10:02:37.0332 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:02:37.0360 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:02:38.0774 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:02:38.0778 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:02:39.0826 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:04:02.0798 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.31, 10:04:02.0799 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0799 UTC -> Started to proceed match for scorcard, lineups and points for 57
+2022.05.31, 10:04:02.0799 UTC -> going to store lineups for match57FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0799 UTC -> Started to proceed match for scorcard, lineups and points for 56
+2022.05.31, 10:04:02.0799 UTC -> going to store lineups for match56FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0799 UTC -> Started to proceed match for scorcard, lineups and points for 55
+2022.05.31, 10:04:02.0799 UTC -> going to store lineups for match55FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0799 UTC -> Started to proceed match for scorcard, lineups and points for 54
+2022.05.31, 10:04:02.0799 UTC -> going to store lineups for match54FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0799 UTC -> Started to proceed match for scorcard, lineups and points for 53
+2022.05.31, 10:04:02.0799 UTC -> going to store lineups for match53FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0799 UTC -> Started to proceed match for scorcard, lineups and points for 52
+2022.05.31, 10:04:02.0799 UTC -> going to store lineups for match52FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0799 UTC -> Started to proceed match for scorcard, lineups and points for 51
+2022.05.31, 10:04:02.0799 UTC -> going to store lineups for match51FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0800 UTC -> Started to proceed match for scorcard, lineups and points for 50
+2022.05.31, 10:04:02.0800 UTC -> going to store lineups for match50FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0800 UTC -> Started to proceed match for scorcard, lineups and points for 49
+2022.05.31, 10:04:02.0800 UTC -> going to store lineups for match49FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0800 UTC -> Started to proceed match for scorcard, lineups and points for 48
+2022.05.31, 10:04:02.0800 UTC -> going to store lineups for match48FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0800 UTC -> Started to proceed match for scorcard, lineups and points for 47
+2022.05.31, 10:04:02.0800 UTC -> going to store lineups for match47FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0800 UTC -> Started to proceed match for scorcard, lineups and points for 46
+2022.05.31, 10:04:02.0800 UTC -> going to store lineups for match46FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0800 UTC -> Started to proceed match for scorcard, lineups and points for 45
+2022.05.31, 10:04:02.0800 UTC -> going to store lineups for match45FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0800 UTC -> Started to proceed match for scorcard, lineups and points for 44
+2022.05.31, 10:04:02.0800 UTC -> going to store lineups for match44FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0800 UTC -> Started to proceed match for scorcard, lineups and points for 43
+2022.05.31, 10:04:02.0800 UTC -> going to store lineups for match43FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0800 UTC -> Started to proceed match for scorcard, lineups and points for 42
+2022.05.31, 10:04:02.0800 UTC -> going to store lineups for match42FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0800 UTC -> Started to proceed match for scorcard, lineups and points for 41
+2022.05.31, 10:04:02.0800 UTC -> going to store lineups for match41FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0800 UTC -> Started to proceed match for scorcard, lineups and points for 40
+2022.05.31, 10:04:02.0800 UTC -> going to store lineups for match40FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0800 UTC -> Started to proceed match for scorcard, lineups and points for 39
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match39FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 38
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match38FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 37
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match37FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 36
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match36FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 35
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match35FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 34
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match34FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 33
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match33FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 32
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match32FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 31
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match31FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 30
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match30FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 29
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match29FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 28
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match28FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 27
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match27FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 26
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match26FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 25
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match25FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 24
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match24FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 23
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match23FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 22
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match22FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 21
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match21FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 20
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match20FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 19
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match19FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 18
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match18FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 17
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match17FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 16
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match16FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 15
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match15FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 14
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match14FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 12
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match13FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match12FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 10
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match11FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 11
+2022.05.31, 10:04:02.0801 UTC -> going to store lineups for match10FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0802 UTC -> Started to proceed match for scorcard, lineups and points for 9
+2022.05.31, 10:04:02.0802 UTC -> going to store lineups for match9FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0802 UTC -> Started to proceed match for scorcard, lineups and points for 8
+2022.05.31, 10:04:02.0802 UTC -> going to store lineups for match8FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0802 UTC -> Started to proceed match for scorcard, lineups and points for 7
+2022.05.31, 10:04:02.0802 UTC -> going to store lineups for match7FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0802 UTC -> Started to proceed match for scorcard, lineups and points for 6
+2022.05.31, 10:04:02.0802 UTC -> going to store lineups for match6FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0802 UTC -> going to store lineups for match5FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0802 UTC -> Started to proceed match for scorcard, lineups and points for 5
+2022.05.31, 10:04:02.0802 UTC -> Started to proceed match for scorcard, lineups and points for 4
+2022.05.31, 10:04:02.0802 UTC -> going to store lineups for match4FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0802 UTC -> Started to proceed match for scorcard, lineups and points for 3
+2022.05.31, 10:04:02.0802 UTC -> going to store lineups for match3FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0802 UTC -> Started to proceed match for scorcard, lineups and points for 2
+2022.05.31, 10:04:02.0802 UTC -> Started to proceed match for scorcard, lineups and points for 1
+2022.05.31, 10:04:02.0802 UTC -> going to store lineups for match2FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0802 UTC -> going to store lineups for match1FROM ./cron/oop/periode.js
+2022.05.31, 10:04:02.0802 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0801 UTC -> Started to proceed match for scorcard, lineups and points for 13
+2022.05.31, 10:04:02.0874 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0880 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0884 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0887 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0892 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0897 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0901 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0905 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0909 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0914 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0919 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0923 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0927 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0932 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0936 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0940 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0945 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0950 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0954 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0958 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0962 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0966 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0971 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0976 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0976 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0976 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0976 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0976 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0976 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0976 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0976 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0976 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0977 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0977 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0977 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0977 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0977 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0977 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0977 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0977 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0977 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0977 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0977 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0977 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0977 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0977 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0977 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0977 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0977 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0977 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0977 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0977 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0978 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0978 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0978 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0978 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:02.0978 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:04:03.0912 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:04.0091 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:04.0092 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:04.0476 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:04.0549 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:05.0807 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:06.0336 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:06.0346 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:06.0419 UTC -> got response of lineup and going to procedd for matchStatus36FROM ./cron/oop/periode.js
+2022.05.31, 10:04:07.0381 UTC -> got response of lineup and going to procedd for matchStatus57FROM ./cron/oop/periode.js
+2022.05.31, 10:04:07.0611 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:08.0171 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:08.0286 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:09.0351 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:09.0357 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:04:09.0357 UTC -> got response of matchStatus and going to procedd for scorcard57FROM ./cron/oop/periode.js
+2022.05.31, 10:04:09.0357 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:04:09.0626 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:10.0243 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:10.0348 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:10.0948 UTC -> got response of lineup and going to procedd for matchStatus47FROM ./cron/oop/periode.js
+2022.05.31, 10:04:11.0143 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:12.0473 UTC -> got response of lineup and going to procedd for matchStatus38FROM ./cron/oop/periode.js
+2022.05.31, 10:04:12.0933 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:13.0100 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:13.0608 UTC -> got response of lineup and going to procedd for matchStatus37FROM ./cron/oop/periode.js
+2022.05.31, 10:04:14.0826 UTC -> got response of lineup and going to procedd for matchStatus58FROM ./cron/oop/periode.js
+2022.05.31, 10:04:15.0556 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:15.0562 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:04:15.0562 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:04:15.0562 UTC -> got response of matchStatus and going to procedd for scorcard37FROM ./cron/oop/periode.js
+2022.05.31, 10:04:15.0987 UTC -> got response of lineup and going to procedd for matchStatus33FROM ./cron/oop/periode.js
+2022.05.31, 10:04:16.0401 UTC -> got response of lineup and going to procedd for matchStatus52FROM ./cron/oop/periode.js
+2022.05.31, 10:04:17.0325 UTC -> got response of lineup and going to procedd for matchStatus55FROM ./cron/oop/periode.js
+2022.05.31, 10:04:18.0251 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:18.0257 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:04:18.0257 UTC -> got response of matchStatus and going to procedd for scorcard38FROM ./cron/oop/periode.js
+2022.05.31, 10:04:18.0257 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:04:18.0944 UTC -> got response of lineup and going to procedd for matchStatus30FROM ./cron/oop/periode.js
+2022.05.31, 10:04:19.0051 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:19.0055 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:04:19.0055 UTC -> got response of matchStatus and going to procedd for scorcard55FROM ./cron/oop/periode.js
+2022.05.31, 10:04:19.0055 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:04:19.0990 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:19.0998 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:04:19.0998 UTC -> got response of matchStatus and going to procedd for scorcard58FROM ./cron/oop/periode.js
+2022.05.31, 10:04:19.0998 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:04:20.0304 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:20.0371 UTC -> got response of lineup and going to procedd for matchStatus31FROM ./cron/oop/periode.js
+2022.05.31, 10:04:20.0919 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:23.0043 UTC -> got response of lineup and going to procedd for matchStatus35FROM ./cron/oop/periode.js
+2022.05.31, 10:04:23.0085 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:23.0091 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:04:23.0091 UTC -> got response of matchStatus and going to procedd for scorcard30FROM ./cron/oop/periode.js
+2022.05.31, 10:04:23.0091 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:04:23.0627 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:23.0633 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:04:23.0633 UTC -> got response of matchStatus and going to procedd for scorcard31FROM ./cron/oop/periode.js
+2022.05.31, 10:04:23.0633 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:04:24.0066 UTC -> got response of lineup and going to procedd for matchStatus43FROM ./cron/oop/periode.js
+2022.05.31, 10:04:25.0245 UTC -> got response of lineup and going to procedd for matchStatus32FROM ./cron/oop/periode.js
+2022.05.31, 10:04:25.0955 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:25.0960 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:04:25.0960 UTC -> got response of matchStatus and going to procedd for scorcard47FROM ./cron/oop/periode.js
+2022.05.31, 10:04:25.0960 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:04:26.0169 UTC -> got response of lineup and going to procedd for matchStatus34FROM ./cron/oop/periode.js
+2022.05.31, 10:04:26.0799 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:26.0801 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:04:26.0925 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:26.0929 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:04:27.0800 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:27.0852 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:27.0857 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:04:29.0789 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:30.0724 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:31.0011 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:31.0171 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:31.0210 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:35.0204 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:35.0378 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:37.0021 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:49.0451 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:52.0671 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:52.0755 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:53.0062 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:53.0237 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:04:54.0845 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:55.0009 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:55.0197 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:55.0414 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:04:55.0535 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:27.0511 UTC -> Started to proceed match for scorcard, lineups and points for 56
+2022.05.31, 10:06:27.0512 UTC -> going to store lineups for match56FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0512 UTC -> Started to proceed match for scorcard, lineups and points for 54
+2022.05.31, 10:06:27.0512 UTC -> going to store lineups for match54FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0512 UTC -> Started to proceed match for scorcard, lineups and points for 53
+2022.05.31, 10:06:27.0512 UTC -> going to store lineups for match53FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0512 UTC -> Started to proceed match for scorcard, lineups and points for 52
+2022.05.31, 10:06:27.0512 UTC -> going to store lineups for match52FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0512 UTC -> Started to proceed match for scorcard, lineups and points for 51
+2022.05.31, 10:06:27.0512 UTC -> going to store lineups for match51FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0512 UTC -> Started to proceed match for scorcard, lineups and points for 50
+2022.05.31, 10:06:27.0512 UTC -> going to store lineups for match50FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0513 UTC -> Started to proceed match for scorcard, lineups and points for 49
+2022.05.31, 10:06:27.0513 UTC -> going to store lineups for match49FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0513 UTC -> Started to proceed match for scorcard, lineups and points for 48
+2022.05.31, 10:06:27.0513 UTC -> going to store lineups for match48FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0513 UTC -> Started to proceed match for scorcard, lineups and points for 46
+2022.05.31, 10:06:27.0513 UTC -> going to store lineups for match46FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0513 UTC -> Started to proceed match for scorcard, lineups and points for 45
+2022.05.31, 10:06:27.0513 UTC -> going to store lineups for match45FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0513 UTC -> Started to proceed match for scorcard, lineups and points for 44
+2022.05.31, 10:06:27.0513 UTC -> going to store lineups for match44FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0513 UTC -> Started to proceed match for scorcard, lineups and points for 43
+2022.05.31, 10:06:27.0513 UTC -> going to store lineups for match43FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0513 UTC -> Started to proceed match for scorcard, lineups and points for 42
+2022.05.31, 10:06:27.0513 UTC -> going to store lineups for match42FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0513 UTC -> Started to proceed match for scorcard, lineups and points for 41
+2022.05.31, 10:06:27.0513 UTC -> going to store lineups for match41FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0513 UTC -> Started to proceed match for scorcard, lineups and points for 40
+2022.05.31, 10:06:27.0513 UTC -> going to store lineups for match40FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0513 UTC -> Started to proceed match for scorcard, lineups and points for 39
+2022.05.31, 10:06:27.0513 UTC -> going to store lineups for match39FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0513 UTC -> Started to proceed match for scorcard, lineups and points for 36
+2022.05.31, 10:06:27.0513 UTC -> going to store lineups for match36FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0513 UTC -> Started to proceed match for scorcard, lineups and points for 35
+2022.05.31, 10:06:27.0513 UTC -> going to store lineups for match35FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0513 UTC -> Started to proceed match for scorcard, lineups and points for 34
+2022.05.31, 10:06:27.0513 UTC -> going to store lineups for match34FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0513 UTC -> Started to proceed match for scorcard, lineups and points for 33
+2022.05.31, 10:06:27.0513 UTC -> going to store lineups for match33FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0513 UTC -> Started to proceed match for scorcard, lineups and points for 32
+2022.05.31, 10:06:27.0513 UTC -> going to store lineups for match32FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0513 UTC -> Started to proceed match for scorcard, lineups and points for 29
+2022.05.31, 10:06:27.0513 UTC -> going to store lineups for match29FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0513 UTC -> Started to proceed match for scorcard, lineups and points for 28
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match28FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 27
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match27FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 26
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match26FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 25
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match25FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 24
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match24FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 23
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match23FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 22
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match22FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 21
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match21FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 20
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match20FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 19
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match19FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 18
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match18FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 17
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match17FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 16
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match16FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 15
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match15FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 14
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match14FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 13
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match13FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 12
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match12FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 11
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match11FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 10
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match10FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 9
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match9FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 8
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match8FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 7
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match7FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 6
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match6FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 4
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match4FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 5
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 3
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 2
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match3FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match2FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> Started to proceed match for scorcard, lineups and points for 1
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match1FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0514 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0514 UTC -> going to store lineups for match5FROM ./cron/oop/periode.js
+2022.05.31, 10:06:27.0589 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0596 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0600 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:27.0600 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0605 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0605 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:27.0609 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0613 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0617 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0621 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0622 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:27.0626 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0626 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:27.0630 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0630 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:27.0635 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0635 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:27.0639 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0646 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0650 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0655 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0659 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0659 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:27.0663 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0663 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:27.0667 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0667 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:27.0671 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0671 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:27.0675 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0675 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:27.0679 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0679 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:27.0682 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0682 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:27.0686 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0686 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:27.0690 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0691 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0691 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:27.0691 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0691 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:27.0691 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0691 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0691 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:27.0691 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0691 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:27.0692 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0692 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0692 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0692 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0692 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0692 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0692 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0692 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0692 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0692 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0692 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0692 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0692 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0692 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0692 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0692 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0692 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0692 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0692 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:27.0692 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:06:28.0934 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:28.0944 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:30.0250 UTC -> got response of lineup and going to procedd for matchStatus43FROM ./cron/oop/periode.js
+2022.05.31, 10:06:30.0616 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:30.0740 UTC -> got response of lineup and going to procedd for matchStatus28FROM ./cron/oop/periode.js
+2022.05.31, 10:06:30.0943 UTC -> got response of lineup and going to procedd for matchStatus52FROM ./cron/oop/periode.js
+2022.05.31, 10:06:31.0994 UTC -> got response of lineup and going to procedd for matchStatus33FROM ./cron/oop/periode.js
+2022.05.31, 10:06:32.0323 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:33.0373 UTC -> got response of lineup and going to procedd for matchStatus27FROM ./cron/oop/periode.js
+2022.05.31, 10:06:33.0657 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:06:33.0659 UTC -> got response of lineup and going to procedd for matchStatus34FROM ./cron/oop/periode.js
+2022.05.31, 10:06:33.0666 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:06:33.0666 UTC -> got response of matchStatus and going to procedd for scorcard43FROM ./cron/oop/periode.js
+2022.05.31, 10:06:33.0666 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:06:35.0500 UTC -> got response of lineup and going to procedd for matchStatus25FROM ./cron/oop/periode.js
+2022.05.31, 10:06:35.0555 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:06:35.0560 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:06:36.0134 UTC -> got response of lineup and going to procedd for matchStatus32FROM ./cron/oop/periode.js
+2022.05.31, 10:06:37.0166 UTC -> got response of lineup and going to procedd for matchStatus45FROM ./cron/oop/periode.js
+2022.05.31, 10:06:37.0841 UTC -> got response of lineup and going to procedd for matchStatus29FROM ./cron/oop/periode.js
+2022.05.31, 10:06:38.0067 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:06:38.0081 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:06:38.0081 UTC -> got response of matchStatus and going to procedd for scorcard33FROM ./cron/oop/periode.js
+2022.05.31, 10:06:38.0081 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:06:38.0128 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:38.0330 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:06:38.0336 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:06:38.0336 UTC -> got response of matchStatus and going to procedd for scorcard34FROM ./cron/oop/periode.js
+2022.05.31, 10:06:38.0336 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:06:39.0417 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:06:39.0424 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:06:39.0840 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:40.0167 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:40.0642 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:06:40.0651 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:06:40.0651 UTC -> got response of matchStatus and going to procedd for scorcard45FROM ./cron/oop/periode.js
+2022.05.31, 10:06:40.0651 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:06:41.0135 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:06:41.0143 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:06:41.0594 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:42.0502 UTC -> got response of lineup and going to procedd for matchStatus24FROM ./cron/oop/periode.js
+2022.05.31, 10:06:42.0750 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:06:43.0455 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:06:43.0461 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:06:43.0461 UTC -> got response of matchStatus and going to procedd for scorcard32FROM ./cron/oop/periode.js
+2022.05.31, 10:06:43.0461 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:06:44.0102 UTC -> got response of lineup and going to procedd for matchStatus40FROM ./cron/oop/periode.js
+2022.05.31, 10:06:44.0547 UTC -> got response of lineup and going to procedd for matchStatus36FROM ./cron/oop/periode.js
+2022.05.31, 10:06:44.0790 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:06:44.0802 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:06:44.0803 UTC -> got response of matchStatus and going to procedd for scorcard24FROM ./cron/oop/periode.js
+2022.05.31, 10:06:44.0803 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:06:46.0405 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:06:46.0704 UTC -> got response of lineup and going to procedd for matchStatus35FROM ./cron/oop/periode.js
+2022.05.31, 10:06:46.0997 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:06:47.0015 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:06:47.0015 UTC -> got response of matchStatus and going to procedd for scorcard27FROM ./cron/oop/periode.js
+2022.05.31, 10:06:47.0015 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:06:47.0221 UTC -> got response of lineup and going to procedd for matchStatus46FROM ./cron/oop/periode.js
+2022.05.31, 10:06:47.0380 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:06:47.0385 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:06:47.0385 UTC -> got response of matchStatus and going to procedd for scorcard40FROM ./cron/oop/periode.js
+2022.05.31, 10:06:47.0385 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:06:49.0129 UTC -> got response of lineup and going to procedd for matchStatus39FROM ./cron/oop/periode.js
+2022.05.31, 10:06:49.0561 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:06:49.0671 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:06:52.0031 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:06:52.0404 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:06:53.0279 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:06:54.0897 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:06:56.0338 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:06:56.0931 UTC -> got response of lineup and going to procedd for matchStatus42FROM ./cron/oop/periode.js
+2022.05.31, 10:06:56.0937 UTC -> got response of lineup and going to procedd for matchStatus49FROM ./cron/oop/periode.js
+2022.05.31, 10:06:56.0942 UTC -> got response of lineup and going to procedd for matchStatus44FROM ./cron/oop/periode.js
+2022.05.31, 10:06:59.0110 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:06:59.0392 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:06:59.0554 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:07:00.0831 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:07:01.0731 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:07:02.0490 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:07:02.0629 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:07:11.0272 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:07:11.0773 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:07:13.0283 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:07:13.0295 UTC -> got response of lineup and going to procedd for matchStatus22FROM ./cron/oop/periode.js
+2022.05.31, 10:07:13.0299 UTC -> got response of lineup and going to procedd for matchStatus21FROM ./cron/oop/periode.js
+2022.05.31, 10:07:13.0367 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:07:15.0843 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:07:16.0775 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:09:10.0829 UTC -> Started to proceed match for scorcard, lineups and points for 56
+2022.05.31, 10:09:10.0829 UTC -> going to store lineups for match56FROM ./cron/oop/periode.js
+2022.05.31, 10:09:11.0364 UTC -> Started to proceed match for scorcard, lineups and points for 54
+2022.05.31, 10:09:11.0364 UTC -> going to store lineups for match54FROM ./cron/oop/periode.js
+2022.05.31, 10:09:11.0780 UTC -> Started to proceed match for scorcard, lineups and points for 53
+2022.05.31, 10:09:11.0780 UTC -> going to store lineups for match53FROM ./cron/oop/periode.js
+2022.05.31, 10:09:12.0138 UTC -> Started to proceed match for scorcard, lineups and points for 52
+2022.05.31, 10:09:12.0138 UTC -> going to store lineups for match52FROM ./cron/oop/periode.js
+2022.05.31, 10:09:12.0676 UTC -> Started to proceed match for scorcard, lineups and points for 51
+2022.05.31, 10:09:12.0677 UTC -> going to store lineups for match51FROM ./cron/oop/periode.js
+2022.05.31, 10:09:13.0049 UTC -> Started to proceed match for scorcard, lineups and points for 50
+2022.05.31, 10:09:13.0049 UTC -> going to store lineups for match50FROM ./cron/oop/periode.js
+2022.05.31, 10:09:13.0419 UTC -> Started to proceed match for scorcard, lineups and points for 49
+2022.05.31, 10:09:13.0420 UTC -> going to store lineups for match49FROM ./cron/oop/periode.js
+2022.05.31, 10:09:13.0805 UTC -> Started to proceed match for scorcard, lineups and points for 48
+2022.05.31, 10:09:13.0805 UTC -> going to store lineups for match48FROM ./cron/oop/periode.js
+2022.05.31, 10:09:14.0121 UTC -> Started to proceed match for scorcard, lineups and points for 46
+2022.05.31, 10:09:14.0121 UTC -> going to store lineups for match46FROM ./cron/oop/periode.js
+2022.05.31, 10:09:15.0299 UTC -> Started to proceed match for scorcard, lineups and points for 44
+2022.05.31, 10:09:15.0300 UTC -> going to store lineups for match44FROM ./cron/oop/periode.js
+2022.05.31, 10:09:15.0819 UTC -> Started to proceed match for scorcard, lineups and points for 42
+2022.05.31, 10:09:15.0819 UTC -> going to store lineups for match42FROM ./cron/oop/periode.js
+2022.05.31, 10:09:16.0447 UTC -> Started to proceed match for scorcard, lineups and points for 41
+2022.05.31, 10:09:16.0447 UTC -> going to store lineups for match41FROM ./cron/oop/periode.js
+2022.05.31, 10:09:16.0989 UTC -> Started to proceed match for scorcard, lineups and points for 39
+2022.05.31, 10:09:16.0989 UTC -> going to store lineups for match39FROM ./cron/oop/periode.js
+2022.05.31, 10:09:17.0581 UTC -> Started to proceed match for scorcard, lineups and points for 36
+2022.05.31, 10:09:17.0581 UTC -> going to store lineups for match36FROM ./cron/oop/periode.js
+2022.05.31, 10:09:18.0268 UTC -> Started to proceed match for scorcard, lineups and points for 35
+2022.05.31, 10:09:18.0268 UTC -> going to store lineups for match35FROM ./cron/oop/periode.js
+2022.05.31, 10:09:18.0886 UTC -> Started to proceed match for scorcard, lineups and points for 29
+2022.05.31, 10:09:18.0887 UTC -> going to store lineups for match29FROM ./cron/oop/periode.js
+2022.05.31, 10:09:19.0588 UTC -> Started to proceed match for scorcard, lineups and points for 28
+2022.05.31, 10:09:19.0589 UTC -> going to store lineups for match28FROM ./cron/oop/periode.js
+2022.05.31, 10:09:20.0168 UTC -> Started to proceed match for scorcard, lineups and points for 26
+2022.05.31, 10:09:20.0168 UTC -> going to store lineups for match26FROM ./cron/oop/periode.js
+2022.05.31, 10:09:20.0714 UTC -> Started to proceed match for scorcard, lineups and points for 25
+2022.05.31, 10:09:20.0714 UTC -> going to store lineups for match25FROM ./cron/oop/periode.js
+2022.05.31, 10:09:21.0229 UTC -> Started to proceed match for scorcard, lineups and points for 23
+2022.05.31, 10:09:21.0229 UTC -> going to store lineups for match23FROM ./cron/oop/periode.js
+2022.05.31, 10:09:21.0734 UTC -> Started to proceed match for scorcard, lineups and points for 22
+2022.05.31, 10:09:21.0734 UTC -> going to store lineups for match22FROM ./cron/oop/periode.js
+2022.05.31, 10:09:22.0188 UTC -> Started to proceed match for scorcard, lineups and points for 21
+2022.05.31, 10:09:22.0189 UTC -> going to store lineups for match21FROM ./cron/oop/periode.js
+2022.05.31, 10:09:22.0582 UTC -> Started to proceed match for scorcard, lineups and points for 20
+2022.05.31, 10:09:22.0582 UTC -> going to store lineups for match20FROM ./cron/oop/periode.js
+2022.05.31, 10:09:23.0124 UTC -> Started to proceed match for scorcard, lineups and points for 19
+2022.05.31, 10:09:23.0124 UTC -> going to store lineups for match19FROM ./cron/oop/periode.js
+2022.05.31, 10:09:23.0588 UTC -> Started to proceed match for scorcard, lineups and points for 18
+2022.05.31, 10:09:23.0588 UTC -> going to store lineups for match18FROM ./cron/oop/periode.js
+2022.05.31, 10:09:24.0056 UTC -> Started to proceed match for scorcard, lineups and points for 17
+2022.05.31, 10:09:24.0056 UTC -> going to store lineups for match17FROM ./cron/oop/periode.js
+2022.05.31, 10:09:24.0548 UTC -> Started to proceed match for scorcard, lineups and points for 16
+2022.05.31, 10:09:24.0548 UTC -> going to store lineups for match16FROM ./cron/oop/periode.js
+2022.05.31, 10:09:25.0078 UTC -> Started to proceed match for scorcard, lineups and points for 15
+2022.05.31, 10:09:25.0078 UTC -> going to store lineups for match15FROM ./cron/oop/periode.js
+2022.05.31, 10:09:25.0523 UTC -> Started to proceed match for scorcard, lineups and points for 14
+2022.05.31, 10:09:25.0523 UTC -> going to store lineups for match14FROM ./cron/oop/periode.js
+2022.05.31, 10:09:25.0860 UTC -> Started to proceed match for scorcard, lineups and points for 13
+2022.05.31, 10:09:25.0861 UTC -> going to store lineups for match13FROM ./cron/oop/periode.js
+2022.05.31, 10:09:26.0069 UTC -> Started to proceed match for scorcard, lineups and points for 12
+2022.05.31, 10:09:26.0069 UTC -> going to store lineups for match12FROM ./cron/oop/periode.js
+2022.05.31, 10:09:26.0240 UTC -> Started to proceed match for scorcard, lineups and points for 11
+2022.05.31, 10:09:26.0241 UTC -> going to store lineups for match11FROM ./cron/oop/periode.js
+2022.05.31, 10:09:26.0597 UTC -> Started to proceed match for scorcard, lineups and points for 10
+2022.05.31, 10:09:26.0597 UTC -> going to store lineups for match10FROM ./cron/oop/periode.js
+2022.05.31, 10:09:26.0771 UTC -> Started to proceed match for scorcard, lineups and points for 9
+2022.05.31, 10:09:26.0771 UTC -> going to store lineups for match9FROM ./cron/oop/periode.js
+2022.05.31, 10:09:26.0964 UTC -> Started to proceed match for scorcard, lineups and points for 8
+2022.05.31, 10:09:26.0964 UTC -> going to store lineups for match8FROM ./cron/oop/periode.js
+2022.05.31, 10:09:27.0140 UTC -> Started to proceed match for scorcard, lineups and points for 7
+2022.05.31, 10:09:27.0140 UTC -> going to store lineups for match7FROM ./cron/oop/periode.js
+2022.05.31, 10:09:27.0531 UTC -> Started to proceed match for scorcard, lineups and points for 6
+2022.05.31, 10:09:27.0531 UTC -> going to store lineups for match6FROM ./cron/oop/periode.js
+2022.05.31, 10:09:27.0720 UTC -> Started to proceed match for scorcard, lineups and points for 5
+2022.05.31, 10:09:27.0720 UTC -> going to store lineups for match5FROM ./cron/oop/periode.js
+2022.05.31, 10:09:28.0104 UTC -> Started to proceed match for scorcard, lineups and points for 4
+2022.05.31, 10:09:28.0104 UTC -> going to store lineups for match4FROM ./cron/oop/periode.js
+2022.05.31, 10:09:28.0276 UTC -> Started to proceed match for scorcard, lineups and points for 3
+2022.05.31, 10:09:28.0276 UTC -> going to store lineups for match3FROM ./cron/oop/periode.js
+2022.05.31, 10:09:28.0681 UTC -> Started to proceed match for scorcard, lineups and points for 2
+2022.05.31, 10:09:28.0682 UTC -> going to store lineups for match2FROM ./cron/oop/periode.js
+2022.05.31, 10:09:28.0904 UTC -> going to store lineups for match1FROM ./cron/oop/periode.js
+2022.05.31, 10:09:28.0904 UTC -> Started to proceed match for scorcard, lineups and points for 1
+2022.05.31, 10:09:28.0908 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:28.0907 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:28.0987 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:28.0987 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:28.0993 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:28.0993 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:29.0005 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0005 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:29.0009 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0009 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:29.0014 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0014 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:29.0019 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0019 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:29.0023 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0023 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:29.0028 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0028 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:29.0033 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0033 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:29.0038 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0038 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:29.0043 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0043 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:29.0047 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0047 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:29.0052 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0052 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:29.0056 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0056 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:29.0874 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0874 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:29.0880 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0880 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:29.0887 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0891 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0892 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:29.0896 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0900 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0900 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:29.0905 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0905 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:29.0909 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0909 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:29.0913 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0918 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0919 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0919 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0919 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0919 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0919 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0919 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0919 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0920 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0920 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0920 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0920 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0920 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0920 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0920 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0920 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0921 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:29.0921 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:09:35.0787 UTC -> got response of lineup and going to procedd for matchStatus54FROM ./cron/oop/periode.js
+2022.05.31, 10:09:35.0791 UTC -> got response of lineup and going to procedd for matchStatus52FROM ./cron/oop/periode.js
+2022.05.31, 10:09:35.0793 UTC -> got response of lineup and going to procedd for matchStatus56FROM ./cron/oop/periode.js
+2022.05.31, 10:09:37.0345 UTC -> got response of lineup and going to procedd for matchStatus41FROM ./cron/oop/periode.js
+2022.05.31, 10:09:38.0012 UTC -> got response of lineup and going to procedd for matchStatus20FROM ./cron/oop/periode.js
+2022.05.31, 10:09:38.0948 UTC -> got response of lineup and going to procedd for matchStatus29FROM ./cron/oop/periode.js
+2022.05.31, 10:09:39.0051 UTC -> got response of lineup and going to procedd for matchStatus35FROM ./cron/oop/periode.js
+2022.05.31, 10:09:40.0611 UTC -> got response of lineup and going to procedd for matchStatus42FROM ./cron/oop/periode.js
+2022.05.31, 10:09:41.0632 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:09:41.0641 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:09:41.0642 UTC -> got response of matchStatus and going to procedd for scorcard35FROM ./cron/oop/periode.js
+2022.05.31, 10:09:41.0642 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:09:42.0664 UTC -> got response of lineup and going to procedd for matchStatus50FROM ./cron/oop/periode.js
+2022.05.31, 10:09:42.0971 UTC -> got response of lineup and going to procedd for matchStatus39FROM ./cron/oop/periode.js
+2022.05.31, 10:09:43.0300 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:09:43.0304 UTC -> got response of lineup and going to procedd for matchStatus48FROM ./cron/oop/periode.js
+2022.05.31, 10:09:43.0307 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:09:43.0307 UTC -> got response of matchStatus and going to procedd for scorcard41FROM ./cron/oop/periode.js
+2022.05.31, 10:09:43.0307 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:09:44.0203 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:09:44.0210 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:09:44.0211 UTC -> got response of matchStatus and going to procedd for scorcard29FROM ./cron/oop/periode.js
+2022.05.31, 10:09:44.0211 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:09:46.0369 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:09:46.0375 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:09:46.0375 UTC -> got response of matchStatus and going to procedd for scorcard54FROM ./cron/oop/periode.js
+2022.05.31, 10:09:46.0375 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:09:46.0471 UTC -> got response of lineup and going to procedd for matchStatus44FROM ./cron/oop/periode.js
+2022.05.31, 10:09:46.0500 UTC -> got response of lineup and going to procedd for matchStatus21FROM ./cron/oop/periode.js
+2022.05.31, 10:09:46.0645 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:09:46.0652 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:09:46.0652 UTC -> got response of matchStatus and going to procedd for scorcard39FROM ./cron/oop/periode.js
+2022.05.31, 10:09:46.0652 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:09:46.0728 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:09:46.0736 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:09:46.0736 UTC -> got response of matchStatus and going to procedd for scorcard48FROM ./cron/oop/periode.js
+2022.05.31, 10:09:46.0736 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:09:49.0338 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:09:49.0344 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:09:49.0483 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:09:49.0490 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:09:49.0490 UTC -> got response of matchStatus and going to procedd for scorcard42FROM ./cron/oop/periode.js
+2022.05.31, 10:09:49.0490 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:09:49.0614 UTC -> got response of lineup and going to procedd for matchStatus49FROM ./cron/oop/periode.js
+2022.05.31, 10:09:49.0812 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:09:49.0823 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:09:49.0823 UTC -> got response of matchStatus and going to procedd for scorcard50FROM ./cron/oop/periode.js
+2022.05.31, 10:09:49.0823 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:09:49.0823 UTC -> got response of lineup and going to procedd for matchStatus22FROM ./cron/oop/periode.js
+2022.05.31, 10:09:52.0095 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:09:52.0102 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:09:52.0102 UTC -> got response of matchStatus and going to procedd for scorcard49FROM ./cron/oop/periode.js
+2022.05.31, 10:09:52.0102 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:09:52.0124 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:09:52.0270 UTC -> got response of lineup and going to procedd for matchStatus46FROM ./cron/oop/periode.js
+2022.05.31, 10:09:52.0335 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:09:52.0340 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:09:52.0345 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:09:52.0346 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:09:54.0094 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:09:54.0101 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:09:54.0101 UTC -> got response of matchStatus and going to procedd for scorcard22FROM ./cron/oop/periode.js
+2022.05.31, 10:09:54.0101 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:09:54.0857 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:09:54.0862 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:09:55.0110 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:09:55.0232 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:09:56.0776 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:09:56.0776 UTC -> got response of matchStatus and going to procedd for scorcard56FROM ./cron/oop/periode.js
+2022.05.31, 10:09:56.0776 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:09:56.0780 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:09:56.0780 UTC -> got response of matchStatus and going to procedd for scorcard52FROM ./cron/oop/periode.js
+2022.05.31, 10:09:56.0780 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:09:57.0134 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:57.0147 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:09:57.0352 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:09:57.0874 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:09:58.0521 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:09:58.0530 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:09:58.0530 UTC -> got response of matchStatus and going to procedd for scorcard20FROM ./cron/oop/periode.js
+2022.05.31, 10:09:58.0531 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:09:58.0695 UTC -> got response of lineup and going to procedd for matchStatus53FROM ./cron/oop/periode.js
+2022.05.31, 10:09:59.0107 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:09:59.0110 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:09:59.0177 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:09:59.0183 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:10:00.0164 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:10:00.0171 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:10:00.0171 UTC -> got response of matchStatus and going to procedd for scorcard53FROM ./cron/oop/periode.js
+2022.05.31, 10:10:00.0171 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:10:01.0047 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:10:01.0384 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:10:01.0530 UTC -> got response of lineup and going to procedd for matchStatus18FROM ./cron/oop/periode.js
+2022.05.31, 10:10:01.0852 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:10:02.0095 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:10:03.0272 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:10:03.0408 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:10:03.0414 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:10:03.0966 UTC -> got response of lineup and going to procedd for matchStatus16FROM ./cron/oop/periode.js
+2022.05.31, 10:10:04.0481 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:10:04.0488 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:10:04.0488 UTC -> got response of matchStatus and going to procedd for scorcard18FROM ./cron/oop/periode.js
+2022.05.31, 10:10:04.0488 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:10:04.0585 UTC -> got response of lineup and going to procedd for matchStatus17FROM ./cron/oop/periode.js
+2022.05.31, 10:10:05.0259 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:10:06.0278 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:10:06.0703 UTC -> got response of lineup and going to procedd for matchStatus15FROM ./cron/oop/periode.js
+2022.05.31, 10:10:06.0807 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:10:06.0812 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:10:07.0066 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:10:07.0826 UTC -> got response of lineup and going to procedd for matchStatus13FROM ./cron/oop/periode.js
+2022.05.31, 10:10:08.0134 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:10:09.0252 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:10:14.0670 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:10:14.0713 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:10:14.0992 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:10:15.0628 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:10:17.0431 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:10:17.0769 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:10:20.0418 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:10:20.0533 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:10:20.0709 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:10:22.0764 UTC -> got response of lineup and going to procedd for matchStatus10FROM ./cron/oop/periode.js
+2022.05.31, 10:10:22.0832 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:10:22.0899 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:10:22.0972 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:10:23.0207 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:10:23.0275 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:10:23.0342 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:10:23.0368 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:10:23.0666 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:10:25.0622 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:10:27.0869 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:10:29.0624 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:26.0028 UTC -> Started to proceed match for scorcard, lineups and points for 70
+2022.05.31, 10:16:26.0028 UTC -> going to store lineups for match70FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0029 UTC -> Started to proceed match for scorcard, lineups and points for 69
+2022.05.31, 10:16:26.0029 UTC -> going to store lineups for match69FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0029 UTC -> Started to proceed match for scorcard, lineups and points for 68
+2022.05.31, 10:16:26.0029 UTC -> going to store lineups for match68FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0029 UTC -> Started to proceed match for scorcard, lineups and points for 67
+2022.05.31, 10:16:26.0029 UTC -> going to store lineups for match67FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0029 UTC -> Started to proceed match for scorcard, lineups and points for 66
+2022.05.31, 10:16:26.0030 UTC -> going to store lineups for match66FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0030 UTC -> Started to proceed match for scorcard, lineups and points for 65
+2022.05.31, 10:16:26.0030 UTC -> going to store lineups for match65FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0030 UTC -> Started to proceed match for scorcard, lineups and points for 64
+2022.05.31, 10:16:26.0030 UTC -> going to store lineups for match64FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0030 UTC -> Started to proceed match for scorcard, lineups and points for 63
+2022.05.31, 10:16:26.0030 UTC -> going to store lineups for match63FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0030 UTC -> Started to proceed match for scorcard, lineups and points for 62
+2022.05.31, 10:16:26.0030 UTC -> going to store lineups for match62FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0030 UTC -> Started to proceed match for scorcard, lineups and points for 61
+2022.05.31, 10:16:26.0031 UTC -> going to store lineups for match61FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0031 UTC -> Started to proceed match for scorcard, lineups and points for 60
+2022.05.31, 10:16:26.0031 UTC -> going to store lineups for match60FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0031 UTC -> Started to proceed match for scorcard, lineups and points for 59
+2022.05.31, 10:16:26.0031 UTC -> going to store lineups for match59FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0031 UTC -> Started to proceed match for scorcard, lineups and points for 58
+2022.05.31, 10:16:26.0031 UTC -> going to store lineups for match58FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0031 UTC -> Started to proceed match for scorcard, lineups and points for 57
+2022.05.31, 10:16:26.0031 UTC -> going to store lineups for match57FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0031 UTC -> Started to proceed match for scorcard, lineups and points for 56
+2022.05.31, 10:16:26.0031 UTC -> going to store lineups for match56FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0032 UTC -> Started to proceed match for scorcard, lineups and points for 55
+2022.05.31, 10:16:26.0032 UTC -> going to store lineups for match55FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0032 UTC -> Started to proceed match for scorcard, lineups and points for 54
+2022.05.31, 10:16:26.0032 UTC -> going to store lineups for match54FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0032 UTC -> Started to proceed match for scorcard, lineups and points for 53
+2022.05.31, 10:16:26.0032 UTC -> going to store lineups for match53FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0032 UTC -> Started to proceed match for scorcard, lineups and points for 52
+2022.05.31, 10:16:26.0032 UTC -> going to store lineups for match52FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0032 UTC -> Started to proceed match for scorcard, lineups and points for 51
+2022.05.31, 10:16:26.0032 UTC -> going to store lineups for match51FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0032 UTC -> Started to proceed match for scorcard, lineups and points for 50
+2022.05.31, 10:16:26.0032 UTC -> going to store lineups for match50FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0032 UTC -> Started to proceed match for scorcard, lineups and points for 49
+2022.05.31, 10:16:26.0032 UTC -> going to store lineups for match49FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0033 UTC -> Started to proceed match for scorcard, lineups and points for 48
+2022.05.31, 10:16:26.0033 UTC -> going to store lineups for match48FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0033 UTC -> Started to proceed match for scorcard, lineups and points for 47
+2022.05.31, 10:16:26.0033 UTC -> going to store lineups for match47FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0033 UTC -> Started to proceed match for scorcard, lineups and points for 46
+2022.05.31, 10:16:26.0033 UTC -> going to store lineups for match46FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0033 UTC -> Started to proceed match for scorcard, lineups and points for 45
+2022.05.31, 10:16:26.0033 UTC -> going to store lineups for match45FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0033 UTC -> Started to proceed match for scorcard, lineups and points for 44
+2022.05.31, 10:16:26.0033 UTC -> going to store lineups for match44FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0033 UTC -> Started to proceed match for scorcard, lineups and points for 43
+2022.05.31, 10:16:26.0033 UTC -> going to store lineups for match43FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0033 UTC -> Started to proceed match for scorcard, lineups and points for 42
+2022.05.31, 10:16:26.0034 UTC -> going to store lineups for match42FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0034 UTC -> Started to proceed match for scorcard, lineups and points for 41
+2022.05.31, 10:16:26.0034 UTC -> going to store lineups for match41FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0034 UTC -> Started to proceed match for scorcard, lineups and points for 40
+2022.05.31, 10:16:26.0034 UTC -> going to store lineups for match40FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0034 UTC -> Started to proceed match for scorcard, lineups and points for 39
+2022.05.31, 10:16:26.0034 UTC -> going to store lineups for match39FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0034 UTC -> Started to proceed match for scorcard, lineups and points for 38
+2022.05.31, 10:16:26.0034 UTC -> going to store lineups for match38FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0034 UTC -> Started to proceed match for scorcard, lineups and points for 37
+2022.05.31, 10:16:26.0034 UTC -> going to store lineups for match37FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0034 UTC -> Started to proceed match for scorcard, lineups and points for 36
+2022.05.31, 10:16:26.0034 UTC -> going to store lineups for match36FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0034 UTC -> Started to proceed match for scorcard, lineups and points for 35
+2022.05.31, 10:16:26.0034 UTC -> going to store lineups for match35FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0035 UTC -> Started to proceed match for scorcard, lineups and points for 34
+2022.05.31, 10:16:26.0035 UTC -> going to store lineups for match34FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0035 UTC -> Started to proceed match for scorcard, lineups and points for 33
+2022.05.31, 10:16:26.0035 UTC -> going to store lineups for match33FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0035 UTC -> Started to proceed match for scorcard, lineups and points for 32
+2022.05.31, 10:16:26.0035 UTC -> going to store lineups for match32FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0035 UTC -> Started to proceed match for scorcard, lineups and points for 31
+2022.05.31, 10:16:26.0035 UTC -> going to store lineups for match31FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0035 UTC -> Started to proceed match for scorcard, lineups and points for 30
+2022.05.31, 10:16:26.0035 UTC -> going to store lineups for match30FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0035 UTC -> Started to proceed match for scorcard, lineups and points for 29
+2022.05.31, 10:16:26.0035 UTC -> Started to proceed match for scorcard, lineups and points for 27
+2022.05.31, 10:16:26.0035 UTC -> going to store lineups for match27FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0036 UTC -> Started to proceed match for scorcard, lineups and points for 26
+2022.05.31, 10:16:26.0035 UTC -> going to store lineups for match29FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0036 UTC -> going to store lineups for match26FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0036 UTC -> Started to proceed match for scorcard, lineups and points for 25
+2022.05.31, 10:16:26.0036 UTC -> going to store lineups for match25FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0035 UTC -> Started to proceed match for scorcard, lineups and points for 28
+2022.05.31, 10:16:26.0036 UTC -> Started to proceed match for scorcard, lineups and points for 24
+2022.05.31, 10:16:26.0036 UTC -> going to store lineups for match24FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0036 UTC -> Started to proceed match for scorcard, lineups and points for 23
+2022.05.31, 10:16:26.0036 UTC -> going to store lineups for match23FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0036 UTC -> Started to proceed match for scorcard, lineups and points for 22
+2022.05.31, 10:16:26.0036 UTC -> going to store lineups for match22FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0036 UTC -> Started to proceed match for scorcard, lineups and points for 21
+2022.05.31, 10:16:26.0036 UTC -> going to store lineups for match21FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0036 UTC -> going to store lineups for match20FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0036 UTC -> Started to proceed match for scorcard, lineups and points for 19
+2022.05.31, 10:16:26.0036 UTC -> Started to proceed match for scorcard, lineups and points for 20
+2022.05.31, 10:16:26.0036 UTC -> going to store lineups for match19FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0036 UTC -> going to store lineups for match18FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0036 UTC -> Started to proceed match for scorcard, lineups and points for 18
+2022.05.31, 10:16:26.0036 UTC -> Started to proceed match for scorcard, lineups and points for 17
+2022.05.31, 10:16:26.0036 UTC -> Started to proceed match for scorcard, lineups and points for 16
+2022.05.31, 10:16:26.0036 UTC -> going to store lineups for match17FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0037 UTC -> going to store lineups for match16FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0037 UTC -> Started to proceed match for scorcard, lineups and points for 15
+2022.05.31, 10:16:26.0037 UTC -> going to store lineups for match15FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0037 UTC -> Started to proceed match for scorcard, lineups and points for 14
+2022.05.31, 10:16:26.0037 UTC -> going to store lineups for match14FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0037 UTC -> Started to proceed match for scorcard, lineups and points for 13
+2022.05.31, 10:16:26.0037 UTC -> going to store lineups for match13FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0037 UTC -> Started to proceed match for scorcard, lineups and points for 12
+2022.05.31, 10:16:26.0037 UTC -> Started to proceed match for scorcard, lineups and points for 11
+2022.05.31, 10:16:26.0037 UTC -> going to store lineups for match12FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0037 UTC -> going to store lineups for match11FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0037 UTC -> Started to proceed match for scorcard, lineups and points for 10
+2022.05.31, 10:16:26.0037 UTC -> going to store lineups for match10FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0037 UTC -> going to store lineups for match9FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0037 UTC -> Started to proceed match for scorcard, lineups and points for 9
+2022.05.31, 10:16:26.0037 UTC -> Started to proceed match for scorcard, lineups and points for 8
+2022.05.31, 10:16:26.0037 UTC -> going to store lineups for match8FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0037 UTC -> Started to proceed match for scorcard, lineups and points for 7
+2022.05.31, 10:16:26.0037 UTC -> going to store lineups for match7FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0038 UTC -> Started to proceed match for scorcard, lineups and points for 6
+2022.05.31, 10:16:26.0038 UTC -> going to store lineups for match6FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0038 UTC -> Started to proceed match for scorcard, lineups and points for 5
+2022.05.31, 10:16:26.0038 UTC -> going to store lineups for match5FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0038 UTC -> Started to proceed match for scorcard, lineups and points for 4
+2022.05.31, 10:16:26.0038 UTC -> going to store lineups for match4FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0038 UTC -> Started to proceed match for scorcard, lineups and points for 3
+2022.05.31, 10:16:26.0038 UTC -> going to store lineups for match3FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0038 UTC -> Started to proceed match for scorcard, lineups and points for 2
+2022.05.31, 10:16:26.0038 UTC -> Started to proceed match for scorcard, lineups and points for 1
+2022.05.31, 10:16:26.0038 UTC -> going to store lineups for match2FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0038 UTC -> going to store lineups for match1FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0039 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0038 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0035 UTC -> going to store lineups for match28FROM ./cron/oop/periode.js
+2022.05.31, 10:16:26.0108 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0108 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0112 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0112 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0116 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0116 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0120 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0120 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0124 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0124 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0128 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0129 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0133 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0133 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0137 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0137 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0141 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0141 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0145 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0145 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0149 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0150 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0153 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0153 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0157 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0158 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0162 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0162 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0166 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0166 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0170 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0170 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0174 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0174 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0178 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0178 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0182 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0182 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0186 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0186 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0190 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0190 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0194 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0194 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0198 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0198 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0202 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0202 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0202 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0203 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0203 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0203 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0203 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0203 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0203 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0203 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0203 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0203 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0203 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0203 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0203 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0204 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0204 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0204 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0204 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0204 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0204 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0204 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0204 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0204 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0204 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0204 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0204 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0204 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0205 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0205 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0205 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0205 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0205 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0205 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0205 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0205 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0205 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0205 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0205 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0205 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0205 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0206 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0206 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0206 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0206 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0206 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0206 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0206 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0206 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0206 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0206 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0206 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0206 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0206 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0207 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0207 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0207 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0207 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0207 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0207 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0207 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0207 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0207 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0207 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0207 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0207 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0208 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0208 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0208 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0208 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0208 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0208 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0208 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0208 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0208 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0208 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0208 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0208 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0213 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0213 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0213 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0213 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0213 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0213 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:16:26.0213 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:26.0213 UTC -> IN ./cron/oop/match.js going to store line up
+2022.05.31, 10:16:28.0334 UTC -> got response of lineup and going to procedd for matchStatus70FROM ./cron/oop/periode.js
+2022.05.31, 10:16:28.0923 UTC -> got response of lineup and going to procedd for matchStatus67FROM ./cron/oop/periode.js
+2022.05.31, 10:16:29.0215 UTC -> got response of lineup and going to procedd for matchStatus69FROM ./cron/oop/periode.js
+2022.05.31, 10:16:29.0224 UTC -> got response of lineup and going to procedd for matchStatus48FROM ./cron/oop/periode.js
+2022.05.31, 10:16:29.0755 UTC -> got response of lineup and going to procedd for matchStatus59FROM ./cron/oop/periode.js
+2022.05.31, 10:16:31.0504 UTC -> got response of lineup and going to procedd for matchStatus68FROM ./cron/oop/periode.js
+2022.05.31, 10:16:31.0926 UTC -> got response of lineup and going to procedd for matchStatus31FROM ./cron/oop/periode.js
+2022.05.31, 10:16:32.0322 UTC -> got response of lineup and going to procedd for matchStatus52FROM ./cron/oop/periode.js
+2022.05.31, 10:16:32.0356 UTC -> got response of lineup and going to procedd for matchStatus64FROM ./cron/oop/periode.js
+2022.05.31, 10:16:32.0550 UTC -> got response of lineup and going to procedd for matchStatus53FROM ./cron/oop/periode.js
+2022.05.31, 10:16:34.0387 UTC -> got response of lineup and going to procedd for matchStatus61FROM ./cron/oop/periode.js
+2022.05.31, 10:16:34.0708 UTC -> got response of lineup and going to procedd for matchStatus62FROM ./cron/oop/periode.js
+2022.05.31, 10:16:35.0269 UTC -> got response of lineup and going to procedd for matchStatus51FROM ./cron/oop/periode.js
+2022.05.31, 10:16:35.0276 UTC -> got response of lineup and going to procedd for matchStatus46FROM ./cron/oop/periode.js
+2022.05.31, 10:16:37.0242 UTC -> got response of lineup and going to procedd for matchStatus45FROM ./cron/oop/periode.js
+2022.05.31, 10:16:37.0634 UTC -> got response of lineup and going to procedd for matchStatus54FROM ./cron/oop/periode.js
+2022.05.31, 10:16:37.0710 UTC -> got response of lineup and going to procedd for matchStatus55FROM ./cron/oop/periode.js
+2022.05.31, 10:16:38.0040 UTC -> got response of lineup and going to procedd for matchStatus56FROM ./cron/oop/periode.js
+2022.05.31, 10:16:38.0320 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:38.0338 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:16:38.0338 UTC -> got response of matchStatus and going to procedd for scorcard61FROM ./cron/oop/periode.js
+2022.05.31, 10:16:38.0339 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:16:40.0033 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:40.0037 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:16:40.0436 UTC -> got response of lineup and going to procedd for matchStatus66FROM ./cron/oop/periode.js
+2022.05.31, 10:16:40.0509 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:40.0515 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:16:40.0515 UTC -> got response of matchStatus and going to procedd for scorcard54FROM ./cron/oop/periode.js
+2022.05.31, 10:16:40.0515 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:16:40.0583 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:40.0589 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:16:40.0589 UTC -> got response of matchStatus and going to procedd for scorcard52FROM ./cron/oop/periode.js
+2022.05.31, 10:16:40.0589 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:16:40.0836 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:40.0843 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:16:40.0843 UTC -> got response of matchStatus and going to procedd for scorcard56FROM ./cron/oop/periode.js
+2022.05.31, 10:16:40.0843 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:16:42.0770 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:42.0777 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:16:42.0777 UTC -> got response of matchStatus and going to procedd for scorcard31FROM ./cron/oop/periode.js
+2022.05.31, 10:16:42.0777 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:16:43.0175 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:43.0181 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:16:43.0181 UTC -> got response of matchStatus and going to procedd for scorcard66FROM ./cron/oop/periode.js
+2022.05.31, 10:16:43.0181 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:16:43.0661 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:43.0667 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:16:43.0667 UTC -> got response of matchStatus and going to procedd for scorcard67FROM ./cron/oop/periode.js
+2022.05.31, 10:16:43.0667 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:16:43.0741 UTC -> got response of lineup and going to procedd for matchStatus58FROM ./cron/oop/periode.js
+2022.05.31, 10:16:44.0457 UTC -> got response of lineup and going to procedd for matchStatus37FROM ./cron/oop/periode.js
+2022.05.31, 10:16:45.0494 UTC -> got response of lineup and going to procedd for matchStatus44FROM ./cron/oop/periode.js
+2022.05.31, 10:16:46.0036 UTC -> got response of lineup and going to procedd for matchStatus43FROM ./cron/oop/periode.js
+2022.05.31, 10:16:46.0099 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:16:46.0277 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:46.0281 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:16:47.0058 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:47.0064 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:16:48.0070 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:48.0079 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:16:48.0079 UTC -> got response of matchStatus and going to procedd for scorcard44FROM ./cron/oop/periode.js
+2022.05.31, 10:16:48.0079 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:16:48.0406 UTC -> got response of lineup and going to procedd for matchStatus60FROM ./cron/oop/periode.js
+2022.05.31, 10:16:48.0982 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:48.0989 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:16:48.0989 UTC -> got response of matchStatus and going to procedd for scorcard68FROM ./cron/oop/periode.js
+2022.05.31, 10:16:48.0989 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:16:49.0212 UTC -> got response of lineup and going to procedd for matchStatus57FROM ./cron/oop/periode.js
+2022.05.31, 10:16:49.0899 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:49.0917 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:16:49.0917 UTC -> got response of matchStatus and going to procedd for scorcard70FROM ./cron/oop/periode.js
+2022.05.31, 10:16:49.0917 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:16:50.0636 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:50.0639 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:16:51.0280 UTC -> got response of lineup and going to procedd for matchStatus42FROM ./cron/oop/periode.js
+2022.05.31, 10:16:51.0424 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:51.0433 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:16:51.0433 UTC -> got response of matchStatus and going to procedd for scorcard45FROM ./cron/oop/periode.js
+2022.05.31, 10:16:51.0433 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:16:51.0676 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:51.0680 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:16:52.0493 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:52.0502 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:16:52.0502 UTC -> got response of matchStatus and going to procedd for scorcard60FROM ./cron/oop/periode.js
+2022.05.31, 10:16:52.0502 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:16:53.0812 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:53.0817 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:53.0830 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:16:53.0830 UTC -> got response of matchStatus and going to procedd for scorcard69FROM ./cron/oop/periode.js
+2022.05.31, 10:16:53.0830 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:16:53.0835 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:16:53.0835 UTC -> got response of matchStatus and going to procedd for scorcard57FROM ./cron/oop/periode.js
+2022.05.31, 10:16:53.0835 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:16:54.0349 UTC -> got response of lineup and going to procedd for matchStatus41FROM ./cron/oop/periode.js
+2022.05.31, 10:16:54.0424 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:54.0429 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:16:54.0795 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:16:56.0869 UTC -> got response of lineup and going to procedd for matchStatus40FROM ./cron/oop/periode.js
+2022.05.31, 10:16:56.0992 UTC -> got response of lineup and going to procedd for matchStatus39FROM ./cron/oop/periode.js
+2022.05.31, 10:16:56.0993 UTC -> got response of lineup and going to procedd for matchStatus36FROM ./cron/oop/periode.js
+2022.05.31, 10:16:57.0106 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:57.0112 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:16:57.0112 UTC -> got response of matchStatus and going to procedd for scorcard53FROM ./cron/oop/periode.js
+2022.05.31, 10:16:57.0112 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:16:57.0344 UTC -> got response of lineup and going to procedd for matchStatus38FROM ./cron/oop/periode.js
+2022.05.31, 10:16:59.0975 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:16:59.0983 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:00.0006 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:17:00.0094 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:00.0098 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:00.0114 UTC -> got response of lineup and going to procedd for matchStatus35FROM ./cron/oop/periode.js
+2022.05.31, 10:17:00.0279 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:00.0285 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:00.0286 UTC -> got response of matchStatus and going to procedd for scorcard43FROM ./cron/oop/periode.js
+2022.05.31, 10:17:00.0286 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:02.0295 UTC -> got response of lineup and going to procedd for matchStatus34FROM ./cron/oop/periode.js
+2022.05.31, 10:17:02.0435 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:02.0441 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:02.0442 UTC -> got response of matchStatus and going to procedd for scorcard40FROM ./cron/oop/periode.js
+2022.05.31, 10:17:02.0442 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:02.0740 UTC -> got response of lineup and going to procedd for matchStatus32FROM ./cron/oop/periode.js
+2022.05.31, 10:17:03.0467 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:17:03.0628 UTC -> got response of lineup and going to procedd for matchStatus33FROM ./cron/oop/periode.js
+2022.05.31, 10:17:04.0832 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:04.0840 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:04.0840 UTC -> got response of matchStatus and going to procedd for scorcard32FROM ./cron/oop/periode.js
+2022.05.31, 10:17:04.0840 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:05.0380 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:05.0386 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:05.0386 UTC -> got response of matchStatus and going to procedd for scorcard38FROM ./cron/oop/periode.js
+2022.05.31, 10:17:05.0386 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:05.0589 UTC -> got response of lineup and going to procedd for matchStatus30FROM ./cron/oop/periode.js
+2022.05.31, 10:17:05.0624 UTC -> got response of lineup and going to procedd for matchStatus29FROM ./cron/oop/periode.js
+2022.05.31, 10:17:06.0150 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:06.0153 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:07.0750 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:07.0755 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:08.0477 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:08.0487 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:08.0487 UTC -> got response of lineup and going to procedd for matchStatus50FROM ./cron/oop/periode.js
+2022.05.31, 10:17:08.0911 UTC -> got response of lineup and going to procedd for matchStatus65FROM ./cron/oop/periode.js
+2022.05.31, 10:17:09.0116 UTC -> got response of lineup and going to procedd for matchStatus28FROM ./cron/oop/periode.js
+2022.05.31, 10:17:10.0625 UTC -> got response of lineup and going to procedd for matchStatus27FROM ./cron/oop/periode.js
+2022.05.31, 10:17:10.0984 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:10.0994 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:10.0995 UTC -> got response of matchStatus and going to procedd for scorcard30FROM ./cron/oop/periode.js
+2022.05.31, 10:17:10.0995 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:11.0074 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:11.0081 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:11.0081 UTC -> got response of matchStatus and going to procedd for scorcard29FROM ./cron/oop/periode.js
+2022.05.31, 10:17:11.0081 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:11.0528 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:11.0533 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:11.0538 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:11.0559 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:11.0559 UTC -> got response of matchStatus and going to procedd for scorcard33FROM ./cron/oop/periode.js
+2022.05.31, 10:17:11.0559 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:13.0195 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:13.0203 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:13.0203 UTC -> got response of matchStatus and going to procedd for scorcard65FROM ./cron/oop/periode.js
+2022.05.31, 10:17:13.0203 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:13.0371 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:13.0375 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:13.0735 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:13.0740 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:14.0064 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:14.0074 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:14.0074 UTC -> got response of matchStatus and going to procedd for scorcard27FROM ./cron/oop/periode.js
+2022.05.31, 10:17:14.0074 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:15.0940 UTC -> got response of lineup and going to procedd for matchStatus25FROM ./cron/oop/periode.js
+2022.05.31, 10:17:15.0957 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:15.0962 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:16.0523 UTC -> got response of lineup and going to procedd for matchStatus24FROM ./cron/oop/periode.js
+2022.05.31, 10:17:16.0557 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:16.0561 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:18.0226 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:18.0236 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:18.0236 UTC -> got response of matchStatus and going to procedd for scorcard25FROM ./cron/oop/periode.js
+2022.05.31, 10:17:18.0236 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:18.0352 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:17:18.0642 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:18.0651 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:18.0651 UTC -> got response of matchStatus and going to procedd for scorcard24FROM ./cron/oop/periode.js
+2022.05.31, 10:17:18.0651 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:20.0052 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:20.0057 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:20.0455 UTC -> got response of lineup and going to procedd for matchStatus22FROM ./cron/oop/periode.js
+2022.05.31, 10:17:21.0056 UTC -> got response of lineup and going to procedd for matchStatus21FROM ./cron/oop/periode.js
+2022.05.31, 10:17:21.0192 UTC -> got response of lineup and going to procedd for matchStatus23FROM ./cron/oop/periode.js
+2022.05.31, 10:17:21.0605 UTC -> got response of lineup and going to procedd for matchStatus20FROM ./cron/oop/periode.js
+2022.05.31, 10:17:22.0776 UTC -> got response of lineup and going to procedd for matchStatus19FROM ./cron/oop/periode.js
+2022.05.31, 10:17:23.0746 UTC -> got response of lineup and going to procedd for matchStatus18FROM ./cron/oop/periode.js
+2022.05.31, 10:17:23.0923 UTC -> got response of lineup and going to procedd for matchStatus17FROM ./cron/oop/periode.js
+2022.05.31, 10:17:23.0993 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:24.0001 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:24.0001 UTC -> got response of matchStatus and going to procedd for scorcard19FROM ./cron/oop/periode.js
+2022.05.31, 10:17:24.0001 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:24.0632 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:24.0637 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:24.0637 UTC -> got response of matchStatus and going to procedd for scorcard51FROM ./cron/oop/periode.js
+2022.05.31, 10:17:24.0637 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:25.0112 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:25.0117 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:25.0117 UTC -> got response of matchStatus and going to procedd for scorcard17FROM ./cron/oop/periode.js
+2022.05.31, 10:17:25.0117 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:25.0867 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:17:26.0277 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:26.0282 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:26.0987 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:26.0995 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:26.0995 UTC -> got response of matchStatus and going to procedd for scorcard18FROM ./cron/oop/periode.js
+2022.05.31, 10:17:26.0995 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:27.0601 UTC -> got response of lineup and going to procedd for matchStatus16FROM ./cron/oop/periode.js
+2022.05.31, 10:17:27.0814 UTC -> got response of lineup and going to procedd for matchStatus15FROM ./cron/oop/periode.js
+2022.05.31, 10:17:28.0190 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:28.0196 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:28.0196 UTC -> got response of matchStatus and going to procedd for scorcard41FROM ./cron/oop/periode.js
+2022.05.31, 10:17:28.0196 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:28.0601 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:28.0605 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:29.0859 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:29.0863 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:30.0456 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:17:30.0649 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:30.0655 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:30.0661 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:30.0664 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:30.0664 UTC -> got response of matchStatus and going to procedd for scorcard16FROM ./cron/oop/periode.js
+2022.05.31, 10:17:30.0664 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:32.0184 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:17:32.0520 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:32.0528 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:32.0528 UTC -> got response of matchStatus and going to procedd for scorcard15FROM ./cron/oop/periode.js
+2022.05.31, 10:17:32.0528 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:33.0109 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:33.0113 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:33.0245 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:17:34.0251 UTC -> got response of lineup and going to procedd for matchStatus13FROM ./cron/oop/periode.js
+2022.05.31, 10:17:35.0270 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:17:35.0601 UTC -> got response of lineup and going to procedd for matchStatus12FROM ./cron/oop/periode.js
+2022.05.31, 10:17:35.0708 UTC -> got response of lineup and going to procedd for matchStatus11FROM ./cron/oop/periode.js
+2022.05.31, 10:17:35.0739 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:35.0746 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:35.0746 UTC -> got response of matchStatus and going to procedd for scorcard13FROM ./cron/oop/periode.js
+2022.05.31, 10:17:35.0746 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:36.0773 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:36.0779 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:37.0166 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:37.0172 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:38.0012 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:38.0019 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:38.0098 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:38.0103 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:38.0112 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:38.0113 UTC -> got response of matchStatus and going to procedd for scorcard11FROM ./cron/oop/periode.js
+2022.05.31, 10:17:38.0113 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:38.0114 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:38.0114 UTC -> got response of matchStatus and going to procedd for scorcard12FROM ./cron/oop/periode.js
+2022.05.31, 10:17:38.0114 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:39.0485 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:39.0489 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:40.0001 UTC -> got response of lineup and going to procedd for matchStatus10FROM ./cron/oop/periode.js
+2022.05.31, 10:17:40.0699 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:17:41.0438 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:41.0441 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:42.0413 UTC -> got response of lineup and going to procedd for matchStatus8FROM ./cron/oop/periode.js
+2022.05.31, 10:17:42.0607 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:17:42.0808 UTC -> got response of lineup and going to procedd for matchStatus6FROM ./cron/oop/periode.js
+2022.05.31, 10:17:43.0756 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:43.0763 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:43.0763 UTC -> got response of matchStatus and going to procedd for scorcard8FROM ./cron/oop/periode.js
+2022.05.31, 10:17:43.0763 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:43.0985 UTC -> got response of lineup and going to procedd for matchStatus7FROM ./cron/oop/periode.js
+2022.05.31, 10:17:44.0235 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:44.0243 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:44.0243 UTC -> got response of matchStatus and going to procedd for scorcard6FROM ./cron/oop/periode.js
+2022.05.31, 10:17:44.0243 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:45.0120 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:45.0124 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:45.0563 UTC -> got response of lineup and going to procedd for matchStatus5FROM ./cron/oop/periode.js
+2022.05.31, 10:17:46.0666 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:17:47.0062 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:47.0074 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:47.0074 UTC -> got response of matchStatus and going to procedd for scorcard7FROM ./cron/oop/periode.js
+2022.05.31, 10:17:47.0074 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:47.0321 UTC -> got response of lineup and going to procedd for matchStatus4FROM ./cron/oop/periode.js
+2022.05.31, 10:17:48.0298 UTC -> got response of lineup and going to procedd for matchStatus3FROM ./cron/oop/periode.js
+2022.05.31, 10:17:49.0381 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:49.0392 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:49.0392 UTC -> got response of matchStatus and going to procedd for scorcard5FROM ./cron/oop/periode.js
+2022.05.31, 10:17:49.0392 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:50.0272 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:50.0278 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:50.0278 UTC -> got response of matchStatus and going to procedd for scorcard48FROM ./cron/oop/periode.js
+2022.05.31, 10:17:50.0278 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:50.0349 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:50.0360 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:50.0360 UTC -> got response of matchStatus and going to procedd for scorcard46FROM ./cron/oop/periode.js
+2022.05.31, 10:17:50.0360 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:50.0651 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:50.0658 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:50.0718 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:50.0727 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:50.0727 UTC -> got response of matchStatus and going to procedd for scorcard55FROM ./cron/oop/periode.js
+2022.05.31, 10:17:50.0727 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:52.0325 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:52.0341 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:52.0687 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:52.0694 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:52.0995 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:53.0000 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:53.0226 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:17:53.0770 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:53.0777 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:53.0777 UTC -> got response of matchStatus and going to procedd for scorcard62FROM ./cron/oop/periode.js
+2022.05.31, 10:17:53.0777 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:54.0790 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:17:55.0234 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:17:56.0086 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:56.0093 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:56.0093 UTC -> got response of matchStatus and going to procedd for scorcard58FROM ./cron/oop/periode.js
+2022.05.31, 10:17:56.0093 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:56.0834 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:56.0837 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:57.0209 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:57.0214 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:57.0214 UTC -> got response of matchStatus and going to procedd for scorcard36FROM ./cron/oop/periode.js
+2022.05.31, 10:17:57.0214 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:57.0565 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:57.0571 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:57.0571 UTC -> got response of matchStatus and going to procedd for scorcard39FROM ./cron/oop/periode.js
+2022.05.31, 10:17:57.0571 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:17:57.0688 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:57.0692 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:59.0224 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:59.0227 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:59.0878 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:17:59.0893 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:17:59.0893 UTC -> got response of matchStatus and going to procedd for scorcard20FROM ./cron/oop/periode.js
+2022.05.31, 10:17:59.0893 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:18:00.0066 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:00.0070 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:00.0243 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:00.0658 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:00.0670 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:00.0670 UTC -> got response of matchStatus and going to procedd for scorcard50FROM ./cron/oop/periode.js
+2022.05.31, 10:18:00.0670 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:18:01.0769 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:01.0776 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:01.0792 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:02.0391 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:02.0436 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:02.0436 UTC -> got response of matchStatus and going to procedd for scorcard28FROM ./cron/oop/periode.js
+2022.05.31, 10:18:02.0436 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:18:03.0107 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:03.0112 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:03.0113 UTC -> got response of matchStatus and going to procedd for scorcard64FROM ./cron/oop/periode.js
+2022.05.31, 10:18:03.0113 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:18:03.0662 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:04.0455 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:04.0490 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:04.0490 UTC -> got response of matchStatus and going to procedd for scorcard34FROM ./cron/oop/periode.js
+2022.05.31, 10:18:04.0490 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:18:04.0555 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:04.0927 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:04.0931 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:05.0734 UTC -> got response of lineup and going to procedd for matchStatus63FROM ./cron/oop/periode.js
+2022.05.31, 10:18:05.0967 UTC -> got response of lineup and going to procedd for matchStatus49FROM ./cron/oop/periode.js
+2022.05.31, 10:18:07.0621 UTC -> got response of lineup and going to procedd for matchStatus47FROM ./cron/oop/periode.js
+2022.05.31, 10:18:07.0914 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:07.0918 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:08.0145 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:08.0151 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:08.0151 UTC -> got response of matchStatus and going to procedd for scorcard59FROM ./cron/oop/periode.js
+2022.05.31, 10:18:08.0151 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:18:08.0798 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:08.0803 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:09.0846 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:10.0335 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:10.0351 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:10.0351 UTC -> got response of matchStatus and going to procedd for scorcard47FROM ./cron/oop/periode.js
+2022.05.31, 10:18:10.0351 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:18:10.0445 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:10.0451 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:10.0451 UTC -> got response of matchStatus and going to procedd for scorcard37FROM ./cron/oop/periode.js
+2022.05.31, 10:18:10.0451 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:18:10.0644 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:11.0992 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:12.0699 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:12.0706 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:12.0706 UTC -> got response of matchStatus and going to procedd for scorcard42FROM ./cron/oop/periode.js
+2022.05.31, 10:18:12.0707 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:18:12.0841 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:12.0960 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:12.0963 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:13.0408 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:13.0428 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:14.0407 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:14.0412 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:14.0931 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:15.0249 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:15.0326 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:15.0330 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:15.0710 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:16.0612 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:16.0873 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:17.0264 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:17.0268 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:17.0926 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:18.0710 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:18.0966 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:18.0974 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:18.0974 UTC -> got response of matchStatus and going to procedd for scorcard23FROM ./cron/oop/periode.js
+2022.05.31, 10:18:18.0975 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:18:19.0200 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:19.0206 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:19.0206 UTC -> got response of matchStatus and going to procedd for scorcard35FROM ./cron/oop/periode.js
+2022.05.31, 10:18:19.0206 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:18:19.0500 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:19.0745 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:20.0525 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:21.0487 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:21.0500 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:21.0688 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:21.0692 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:21.0702 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:21.0705 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:22.0459 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:23.0219 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:23.0595 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:24.0812 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:24.0819 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:24.0819 UTC -> got response of matchStatus and going to procedd for scorcard22FROM ./cron/oop/periode.js
+2022.05.31, 10:18:24.0819 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:18:24.0915 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:24.0920 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:24.0940 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:18:26.0140 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:26.0151 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:26.0372 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:26.0378 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:26.0379 UTC -> got response of matchStatus and going to procedd for scorcard21FROM ./cron/oop/periode.js
+2022.05.31, 10:18:26.0379 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:18:26.0996 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:27.0415 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:27.0419 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:27.0680 UTC -> got response of lineup and going to procedd for matchStatus26FROM ./cron/oop/periode.js
+2022.05.31, 10:18:28.0644 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:28.0656 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:28.0856 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:30.0055 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:30.0060 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:30.0990 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:30.0998 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:30.0998 UTC -> got response of matchStatus and going to procedd for scorcard10FROM ./cron/oop/periode.js
+2022.05.31, 10:18:30.0998 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:18:31.0271 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:32.0069 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:32.0888 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:32.0897 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:33.0109 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:18:33.0240 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:33.0244 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:33.0920 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:34.0680 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:18:35.0152 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:35.0768 UTC -> got response of lineup and going to procedd for matchStatus14FROM ./cron/oop/periode.js
+2022.05.31, 10:18:36.0204 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:36.0207 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:36.0255 UTC -> got response of lineup and going to procedd for matchStatus9FROM ./cron/oop/periode.js
+2022.05.31, 10:18:37.0170 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:37.0177 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:37.0177 UTC -> got response of matchStatus and going to procedd for scorcard14FROM ./cron/oop/periode.js
+2022.05.31, 10:18:37.0177 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:18:38.0787 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:38.0790 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:38.0833 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:38.0835 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:38.0835 UTC -> got response of matchStatus and going to procedd for scorcard3FROM ./cron/oop/periode.js
+2022.05.31, 10:18:38.0835 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:18:38.0943 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:38.0949 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:38.0949 UTC -> got response of matchStatus and going to procedd for scorcard4FROM ./cron/oop/periode.js
+2022.05.31, 10:18:38.0949 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:18:39.0095 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:39.0803 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:18:41.0366 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:41.0374 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:41.0374 UTC -> got response of matchStatus and going to procedd for scorcard9FROM ./cron/oop/periode.js
+2022.05.31, 10:18:41.0374 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:18:41.0458 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:41.0463 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:41.0967 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:41.0975 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:42.0716 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:42.0762 UTC -> got response of lineup and going to procedd for matchStatus2FROM ./cron/oop/periode.js
+2022.05.31, 10:18:43.0465 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.05.31, 10:18:43.0648 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:43.0971 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:44.0322 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:44.0327 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:44.0327 UTC -> got response of matchStatus and going to procedd for scorcard2FROM ./cron/oop/periode.js
+2022.05.31, 10:18:44.0327 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:18:50.0004 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:50.0481 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:50.0484 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:50.0530 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:50.0535 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:50.0625 UTC -> got response of lineup and going to procedd for matchStatus1FROM ./cron/oop/periode.js
+2022.05.31, 10:18:51.0887 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:52.0893 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:52.0950 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:52.0953 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:53.0138 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:53.0142 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:53.0230 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:53.0237 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:53.0641 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:54.0545 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:55.0162 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:55.0879 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:55.0884 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:55.0987 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:55.0992 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:55.0993 UTC -> got response of matchStatus and going to procedd for scorcard63FROM ./cron/oop/periode.js
+2022.05.31, 10:18:55.0993 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:18:56.0006 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:56.0011 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:56.0011 UTC -> got response of matchStatus and going to procedd for scorcard49FROM ./cron/oop/periode.js
+2022.05.31, 10:18:56.0011 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:18:56.0530 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:57.0209 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:57.0212 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:58.0200 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:58.0276 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:18:58.0280 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:18:58.0397 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:18:58.0434 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:19:00.0034 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:19:00.0039 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:19:00.0165 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:19:00.0579 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:19:01.0208 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:19:01.0216 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:19:01.0216 UTC -> got response of matchStatus and going to procedd for scorcard26FROM ./cron/oop/periode.js
+2022.05.31, 10:19:01.0216 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:19:01.0394 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:19:01.0398 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:19:02.0209 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:19:02.0528 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:19:02.0534 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:19:02.0534 UTC -> got response of matchStatus and going to procedd for scorcard1FROM ./cron/oop/periode.js
+2022.05.31, 10:19:02.0535 UTC -> IN ./cron/oop/match.js going to store score card and points match is ended
+2022.05.31, 10:19:03.0632 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:19:03.0636 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:19:03.0683 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:19:03.0687 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:19:03.0724 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:19:04.0261 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:19:04.0663 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:19:05.0453 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:19:05.0838 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:19:05.0973 UTC -> IN ./cron/oop/match.js going to store match status which is ended
+2022.05.31, 10:19:05.0977 UTC -> resolving from handleMatchStatus status changed
+2022.05.31, 10:19:06.0150 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:19:07.0030 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.05.31, 10:34:07.0241 UTC -> Finished to store all data
+2022.05.31, 10:34:07.0368 UTC -> Finished to store all data
+2022.05.31, 10:34:07.0497 UTC -> Finished to store all data
+2022.05.31, 10:34:07.0607 UTC -> Finished to store all data
+2022.05.31, 10:34:07.0772 UTC -> Finished to store all data
+2022.05.31, 10:34:07.0938 UTC -> Finished to store all data
+2022.05.31, 10:34:08.0071 UTC -> Finished to store all data
+2022.05.31, 10:34:08.0180 UTC -> Finished to store all data
+2022.05.31, 10:34:08.0313 UTC -> Finished to store all data
+2022.05.31, 10:34:08.0428 UTC -> Finished to store all data
+2022.05.31, 10:34:08.0565 UTC -> Finished to store all data
+2022.05.31, 10:34:08.0684 UTC -> Finished to store all data
+2022.05.31, 10:34:08.0830 UTC -> Finished to store all data
+2022.05.31, 10:34:08.0933 UTC -> Finished to store all data
+2022.05.31, 10:34:09.0036 UTC -> Finished to store all data
+2022.05.31, 10:34:09.0153 UTC -> Finished to store all data
+2022.05.31, 10:34:09.0257 UTC -> Finished to store all data
+2022.05.31, 10:34:09.0370 UTC -> Finished to store all data
+2022.05.31, 10:34:09.0492 UTC -> Finished to store all data
+2022.05.31, 10:34:09.0617 UTC -> Finished to store all data
+2022.05.31, 10:34:09.0724 UTC -> Finished to store all data
+2022.05.31, 10:34:10.0004 UTC -> Finished to store all data

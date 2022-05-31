@@ -12,7 +12,7 @@ const setIntervalImmediate = () => {
     periode();
   }, 2000);
 };
-setIntervalImmediate();
+// setIntervalImmediate();
 
 const app = express();
 
@@ -24,6 +24,7 @@ app.use(bodyParser.json());
 app.use("/public", express.static("public"));
 
 // Routes
+app.use("/api/v1/system", require("./routes/masterAPI"));
 app.use("/api/v1/auth", require("./routes/auth"));
 app.use("/api/v1/user", require("./routes/user"));
 app.use("/api/v1/getDashboardData", require("./routes/dashboard"));
