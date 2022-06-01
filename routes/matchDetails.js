@@ -425,7 +425,7 @@ router.get("/getTrendingPredictors", async (req, res) => {
   const recentMatchesQuery =
     "SELECT DISTINCT fullmatchdetails.matchId FROM fullmatchdetails JOIN userTeamDetails ON userTeamDetails.matchId = fullmatchdetails.matchId WHERE fullmatchdetails.matchStartDateTime < unix_timestamp(now()) * 1000 AND fullmatchdetails.matchStatus != 'live' ORDER BY matchStartDateTime DESC LIMIT 5;";
   const topPredictorsQuery =
-    "SELECT * FROM (SELECT userdetails.userId, userdetails.imageStamp, firstName, lastName, COALESCE(SUM(userTeamDetails.userTeamPoints), 0) AS totalPoints FROM userTeamDetails JOIN userdetails ON userdetails.userId = userTeamDetails.userId GROUP BY userTeamDetails.userId ORDER BY totalPoints DESC LIMIT 10) AS predictors WHERE predictors.totalPoints > 0;";
+    "SELECT * FROM (SELECT userdetails.userId, userdetails.imageStamp, firstName, lastName, COALESCE(AVG(userTeamDetails.userTeamPoints), 0) AS totalPoints FROM userTeamDetails JOIN userdetails ON userdetails.userId = userTeamDetails.userId GROUP BY userTeamDetails.userId ORDER BY totalPoints DESC LIMIT 10) AS predictors WHERE predictors.totalPoints > 0;";
 
   try {
     const serverAddress = `${req.protocol}://${req.headers.host}`;
@@ -435,6 +435,7 @@ router.get("/getTrendingPredictors", async (req, res) => {
 
     // replace server address
     predictor.forEach((trending) => {
+      trending.totalPoints = trending.totalPoints.toFixed(1);
       trending.displayPicture = imageUrl(
         __dirname,
         "../",

@@ -1,4 +1,4 @@
-const { connectToDb, database } = require("../middleware/dbSuperUser");
+const { fetchData } = require("../database/db_connection");
 
 class MatchStatistics {
   id = 0;
@@ -177,13 +177,8 @@ class MatchStatistics {
   #getMatchPlayers() {
     return new Promise(async (resolve, reject) => {
       try {
-        const connection = await connectToDb();
-        const [lineUp] = await database(
-          "CALL getPlayers(?, 0)",
-          [this.id],
-          connection
-        );
-        connection.release();
+        const [lineUp] = await fetchData("CALL getPlayers(?, 0)", [this.id]);
+
         this.players = lineUp;
         if (this.matchDetails.isLineUpOut === 1) {
           const lineUpOut = this.players.filter(
@@ -204,13 +199,12 @@ class MatchStatistics {
     return new Promise(async (resolve, reject) => {
       try {
         await this.#getMatchPlayers();
-        const connection = await connectToDb();
-        const [[matchDetails], competitors, [venue]] = await database(
+
+        const [[matchDetails], competitors, [venue]] = await fetchData(
           "SELECT `matchRadarId`, `matchTournamentId`, `matchStartDateTime`, `isPointsCalculated`, `tossWonBy`, `tossDecision`, `matchTypeId`, `matchTyprString`, `matchStatus`, `matchStatusString`, `seriesName`, `seriesDname`, `isLineUpOut`, `displayName` FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?; SELECT allteams.teamId, allteams.teamRadarId, allteams.name, allteams.countryName, allteams.countryCode, allteams.displayName FROM `fullmatchdetails` JOIN allteams ON allteams.teamId IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id) WHERE fullmatchdetails.matchId = ?; SELECT fullmatchdetails.venueId, fullmatchdetails.venue AS venueName, fullmatchdetails.venueCity, fullmatchdetails.venueCapacity, fullmatchdetails.venuesCountry, fullmatchdetails.end2, fullmatchdetails.end1 FROM `fullmatchdetails` WHERE matchId = ?;",
-          [this.id, this.id, this.id],
-          connection
+          [this.id, this.id, this.id]
         );
-        connection.release();
+
         this.matchDetails = matchDetails;
         this.competitors = [...competitors];
         this.venue = venue;
@@ -244,7 +238,6 @@ class MatchStatistics {
         const topBowlerQuery =
           "SELECT inningBowlers.playerId, COALESCE(SUM(inningBowlers.wickets), 0) AS totalWickets, COUNT(*) AS totalMatches, AVG(inningBowlers.economyRate) AS averageEconomy FROM fullmatchdetails JOIN scorcardDetails ON scorcardDetails.matchId = fullmatchdetails.matchId JOIN scorcardInning ON scorcardInning.scorcardId = scorcardDetails.scorcardId JOIN inningBowlers ON inningBowlers.scorcardInningId = scorcardInning.scorcardInningId WHERE fullmatchdetails.matchId IN (SELECT fullmatchdetails.matchId FROM fullmatchdetails WHERE fullmatchdetails.venueId IN (SELECT fullmatchdetails.venueId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.matchTypeId IN (SELECT fullmatchdetails.matchTypeId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.matchStatusString IN ('ended', 'closed') AND (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) - fullmatchdetails.matchStartDateTime < (? * 365 * 24 * 60 * 60 * 1000)) AND (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) > fullmatchdetails.matchStartDateTime AND inningBowlers.playerId IN (SELECT fullplayerdetails.playerId FROM fullplayerdetails WHERE fullplayerdetails.matchId = ?) GROUP BY inningBowlers.playerId ORDER BY totalWickets DESC, averageEconomy DESC LIMIT 5;";
 
-        const connection = await connectToDb();
         const [
           [{ winsBattingFirst, winsBowlingFirst, totalMatches }],
           [{ averagePoints, totalTeamsCreated }],
@@ -252,7 +245,7 @@ class MatchStatistics {
           [{ tossWinnerOptToBowl, teamBowlingFirstWins }],
           topBatsMan,
           topBowler,
-        ] = await database(
+        ] = await fetchData(
           `${winStatsQuery}${pointsStatsQuery}${avgScoreQuery}${tossWinnerStatsQuery}${topBatsManQuery}${topBowlerQuery}`,
           [
             ...Array(15).fill(this.id),
@@ -260,27 +253,31 @@ class MatchStatistics {
             ...Array(5).fill(this.id),
             this.pitchReport.topPlayersAtVenue.basedOnYears,
             ...Array(2).fill(this.id),
-          ],
-          connection
+          ]
         );
-        connection.release();
+
         this.pitchReport.totalPlayedMatch = totalMatches;
-        this.pitchReport.pitchWinningStats.winsBattingFirst = winsBattingFirst.toFixed(2);
-        this.pitchReport.pitchWinningStats.winsBowlingFirst = winsBowlingFirst.toFixed(2);
+        this.pitchReport.pitchWinningStats.winsBattingFirst =
+          winsBattingFirst.toFixed(2);
+        this.pitchReport.pitchWinningStats.winsBowlingFirst =
+          winsBowlingFirst.toFixed(2);
         this.pitchReport.totalTeamsCreated = totalTeamsCreated;
         this.pitchReport.averageFantacyPoints = averagePoints.toFixed(2);
         this.pitchReport.pitchScoreStats.avgFirstinningScore =
           averageFirstinningScore.toFixed(2);
-        this.pitchReport.pitchScoreStats.avgTotalScore = averageTotalScore.toFixed(2);
+        this.pitchReport.pitchScoreStats.avgTotalScore =
+          averageTotalScore.toFixed(2);
         this.pitchReport.pitchScoreStats.avgTossWinnerOptToBowl =
           tossWinnerOptToBowl.toFixed(2);
         this.pitchReport.pitchScoreStats.avgTeamBowlingFirstWins =
           teamBowlingFirstWins.toFixed(2);
-        this.pitchReport.topPlayersAtVenue.batsman = topBatsMan.map((batsman) => {
-          batsman.runsPerMatch = batsman.runsPerMatch.toFixed(2);
-          batsman.averageStrikeRate = batsman.averageStrikeRate.toFixed(2);
-          return batsman;
-        });
+        this.pitchReport.topPlayersAtVenue.batsman = topBatsMan.map(
+          (batsman) => {
+            batsman.runsPerMatch = batsman.runsPerMatch.toFixed(2);
+            batsman.averageStrikeRate = batsman.averageStrikeRate.toFixed(2);
+            return batsman;
+          }
+        );
         this.pitchReport.topPlayersAtVenue.bowler = topBowler.map((bowler) => {
           bowler.averageEconomy = bowler.averageEconomy.toFixed(2);
           return bowler;
@@ -323,18 +320,15 @@ class MatchStatistics {
         const matchesPlayedRecentlyQuery =
           "SELECT scorcardDetails.winnerId AS winnerId, IF(scorcardDetails.winnerId = team1Id, team2Id, IF(scorcardDetails.winnerId = team2Id, team1Id, null)) AS looserId FROM fullmatchdetails JOIN scorcardDetails ON scorcardDetails.matchId = fullmatchdetails.matchId WHERE fullmatchdetails.team1Id IN (SELECT allteams.teamId FROM fullmatchdetails JOIN allteams ON allteams.teamId IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id) WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.team2Id IN (SELECT allteams.teamId FROM fullmatchdetails JOIN allteams ON allteams.teamId IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id) WHERE fullmatchdetails.matchId = ?) AND (fullmatchdetails.matchStartDateTime < (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?)) ORDER BY fullmatchdetails.matchStartDateTime DESC LIMIT 5;";
 
-        const connection = await connectToDb();
         const [competitorwins, [{ totalMatches }], teams, recentMatches] =
-          await database(
+          await fetchData(
             `${matchAgainstEachOtherQuery}${competitorStrengthQuery}${matchesPlayedRecentlyQuery}`,
             [
               ...Array(2).fill(this.id),
               ...Array(3).fill(this.teamComparison.teamStrengths.basedOnYears),
               ...Array(7).fill(this.id),
-            ],
-            connection
+            ]
           );
-        connection.release();
 
         this.teamComparison.winProbability = [
           {
@@ -373,13 +367,11 @@ class MatchStatistics {
         const lastFiveMatchStatsQuery =
           "SELECT COALESCE(SUM(fiveMatchState.points)) AS points, fiveMatchState.playerId FROM (SELECT COALESCE(points, 0) AS points, fullplayerdetails.playerId, ROW_NUMBER() OVER (PARTITION BY fullplayerdetails.playerId ORDER BY fullmatchdetails.matchStartDateTime DESC) AS rowId FROM fullplayerdetails JOIN fullmatchdetails ON fullmatchdetails.matchId = fullplayerdetails.matchId WHERE fullmatchdetails.matchStatusString IN ('ended', 'closed') AND fullmatchdetails.matchTypeId IN (SELECT fullmatchdetails.matchTypeId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.matchStartDateTime < (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.matchTypeId IN (SELECT fullmatchdetails.matchTypeId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullplayerdetails.playerId IN (SELECT fullplayerdetails.playerId FROM fullplayerdetails WHERE fullplayerdetails.matchId = ?) ORDER BY `points` DESC) AS fiveMatchState WHERE fiveMatchState.rowId <= 5 GROUP BY fiveMatchState.playerId ORDER BY points DESC;";
 
-        const connection = await connectToDb();
-        const [thisSeason, lastFiveMatches] = await database(
+        const [thisSeason, lastFiveMatches] = await fetchData(
           `${thisSeasonStatsQuery}${lastFiveMatchStatsQuery}`,
-          [...Array(8).fill(this.id)],
-          connection
+          [...Array(8).fill(this.id)]
         );
-        connection.release();
+
         this.fantasyPoints = {
           thisSeason: thisSeason,
           lastFiveMatches: lastFiveMatches,
@@ -398,13 +390,10 @@ class MatchStatistics {
         const playerPerformanceQuery =
           "SELECT fullplayerdetails.playerId, COALESCE(AVG(fullplayerdetails.points), 0) AS avgPoints, COUNT(*) AS totalMatches FROM fullplayerdetails JOIN fullmatchdetails ON fullmatchdetails.matchId = fullplayerdetails.matchId WHERE fullplayerdetails.playerId IN (SELECT fullplayerdetails.playerId FROM fullplayerdetails WHERE fullplayerdetails.matchId = ?) AND fullmatchdetails.matchStatusString IN ('ended', 'closed') AND fullmatchdetails.matchTypeId IN (SELECT fullmatchdetails.matchTypeId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) - fullmatchdetails.matchStartDateTime < ? * 365 * 24 * 60 * 60 * 1000 AND fullplayerdetails.isSelected = 1 GROUP BY fullplayerdetails.playerId ORDER BY avgPoints DESC;";
 
-        const connection = await connectToDb();
-        const playerPerformance = await database(
-          playerPerformanceQuery,
-          [...Array(3).fill(this.id), this.playerPerformance.basedOnYears],
-          connection
-        );
-        connection.release();
+        const playerPerformance = await fetchData(playerPerformanceQuery, [
+          ...Array(3).fill(this.id),
+          this.playerPerformance.basedOnYears,
+        ]);
 
         playerPerformance.forEach((player) => {
           player.avgPoints = player.avgPoints.toFixed(2);
@@ -442,8 +431,7 @@ class MatchStatistics {
         const topBowlerQuery =
           "SELECT inningBowlers.playerId, COALESCE(SUM(inningBowlers.wickets), 0) AS totalWickets, COUNT(*) AS totalMatches, AVG(inningBowlers.economyRate) AS averageEconomy FROM fullmatchdetails JOIN scorcardDetails ON scorcardDetails.matchId = fullmatchdetails.matchId JOIN scorcardInning ON scorcardInning.scorcardId = scorcardDetails.scorcardId JOIN inningBowlers ON inningBowlers.scorcardInningId = scorcardInning.scorcardInningId WHERE fullmatchdetails.matchTypeId IN (SELECT fullmatchdetails.matchTypeId FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) AND fullmatchdetails.matchStatusString IN ('ended', 'closed') AND (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) - fullmatchdetails.matchStartDateTime < (? * 365 * 24 * 60 * 60 * 1000) AND (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = ?) > fullmatchdetails.matchStartDateTime AND inningBowlers.playerId IN (SELECT fullplayerdetails.playerId FROM fullplayerdetails WHERE fullplayerdetails.matchId = ?) GROUP BY inningBowlers.playerId ORDER BY totalWickets DESC, averageEconomy DESC LIMIT 5;";
 
-        const connection = await connectToDb();
-        const [topBatsMan, topBowler] = await database(
+        const [topBatsMan, topBowler] = await fetchData(
           `${topBatsManQuery}${topBowlerQuery}`,
           [
             ...Array(2).fill(this.id),
@@ -451,10 +439,9 @@ class MatchStatistics {
             ...Array(4).fill(this.id),
             this.statistics.basedOnYears,
             ...Array(2).fill(this.id),
-          ],
-          connection
+          ]
         );
-        connection.release();
+
         this.statistics.players.topBatsMan = topBatsMan.map((batsman) => {
           batsman.runsPerMatch = batsman.runsPerMatch.toFixed(2);
           batsman.averageStrikeRate = batsman.averageStrikeRate.toFixed(2);

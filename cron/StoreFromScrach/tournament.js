@@ -196,10 +196,11 @@ class Tournament {
   storeTournament() {
     return new Promise(async (resolve, reject) => {
       try {
+        await this.#fetchTournamentDetails();
         const connection = await connectToDb();
         const [{ isExists, id: tournamentStoredId }] = await database(
-          "SELECT COUNT(*) AS isExists, tournamentId AS id FROM fullseriesdetails WHERE fullseriesdetails.tournamentRadarId = ?;",
-          [this.#radarId],
+          "SELECT COUNT(*) AS isExists, tournamentId AS id FROM fullseriesdetails WHERE fullseriesdetails.tournamentRadarId = ? AND fullseriesdetails.currentSeasonRadarId = ?;",
+          [this.#radarId, this.#tournamentDetails.seasonId],
           connection
         );
 
@@ -308,7 +309,7 @@ class Tournament {
             );
             const newMatch = new Match(
               match.id.substr(9),
-              match.status,
+              match.status === "closed" ? "ended" : match.status,
               this.id,
               match.scheduled,
               competitor1,
@@ -365,4 +366,4 @@ const a = async () => {
 };
 a();
 
-module.exports = Tournament;
+// module.exports = Tournament;

@@ -2,7 +2,6 @@ const { makeRequest } = require("../../middleware/makeRequest");
 const { connectToDb, database } = require("../../middleware/dbSuperUser");
 const Player = require("./player");
 const Scorcard = require("./scorcard");
-const { storeAllScorcardForMatch } = require("../UpdateMatchStatus/periode");
 const {
   testScore,
   odiScore,
@@ -10,6 +9,75 @@ const {
   t10Score,
 } = require("../points/calculatePoints");
 const log = require("log-to-file");
+
+const storeAllScorcardForMatch = async (matchId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const connection = await connectToDb();
+      const matches = await database(
+        "SELECT `fullmatchdetails`.`matchTournamentId` AS tournamentId, matchId, matchRadarId, matchTournamentId, matchStartDateTime, matchTyprString, matchStatusString, team1Id, team2Id, team1RadarId, team2RadarId FROM `fullmatchdetails` WHERE matchStatusString IN ('ended', 'closed') AND isPointsCalculated = 0 AND matchId = ? ORDER BY `fullmatchdetails`.matchStartDateTime;",
+        [matchId],
+        connection
+      );
+
+      connection.release();
+      let currentMatch = 0;
+      const totalMatches = matches.length;
+      const a = async (match) => {
+        try {
+          const competitor = [
+            {
+              id: match.team1Id,
+              radarId: match.team1RadarId,
+            },
+            {
+              id: match.team2Id,
+              radarId: match.team2RadarId,
+            },
+          ];
+          const newMatch = new Match(
+            match.matchId,
+            match.matchRadarId,
+            match.matchStatusString,
+            competitor,
+            match.matchStartDateTime,
+            match.tournamentId
+          );
+          await newMatch.handleLineUpStore();
+          await newMatch.handleMatchStatus();
+          await newMatch.handleScorcardAndPoints();
+          currentMatch++;
+          if (currentMatch === totalMatches) {
+            log(`Finished to store all data`);
+            resolve();
+          } else {
+            log(`Finished to store match ${currentMatch}`);
+            a(matches[currentMatch]);
+          }
+        } catch (error) {
+          console.log(error);
+          currentMatch++;
+          if (currentMatch === totalMatches) {
+            log(`Finished to store all data`);
+            resolve();
+          } else {
+            log(`Finished to store match ${currentMatch}`);
+            a(matches[currentMatch]);
+          }
+        }
+      };
+
+      if (matches.length > 0) {
+        a(matches[currentMatch]);
+      } else {
+        resolve();
+        log(`Finished to store all data`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  });
+};
 
 class Venue {
   venueId = null;
@@ -214,7 +282,7 @@ class MatchDaily extends Status {
 
         const updateTossDetails = await database(
           "UPDATE tournament_matches SET tossWonBy = ?, tossDecision = ? WHERE matchId = ?;",
-          [this.#tossWinner, this.#tossDecision || 'bat', this.id],
+          [this.#tossWinner, this.#tossDecision || "bat", this.id],
           connection
         );
 
@@ -1227,17 +1295,22 @@ class MatchDaily extends Status {
             `/matches/sr:match:${this.#radarId}/lineups.json`
           );
 
-          if (matchLineUp && matchLineUp.sport_event && matchLineUp.lineups && matchLineUp?.lineups?.length === 2) {
+          if (
+            matchLineUp &&
+            matchLineUp.sport_event &&
+            matchLineUp.lineups &&
+            matchLineUp?.lineups?.length === 2
+          ) {
             // store toss details
             const connection = await connectToDb();
 
             let allLineUpPlayers = [];
             matchLineUp.lineups.forEach((lineUp) => {
               lineUp.starting_lineup.forEach((player) => {
-                allLineUpPlayers.push({...player, team: lineUp.team});
-              })
+                allLineUpPlayers.push({ ...player, team: lineUp.team });
+              });
             });
-            
+
             const totalPlayers = allLineUpPlayers.length;
             let currentPlayer = 0;
 
@@ -1285,8 +1358,7 @@ class MatchDaily extends Status {
                           tournamentCompetitorIdRes[0].tournamentCompetitorId
                         ) {
                           await newPlayer.storePlayerRelation(
-                            tournamentCompetitorIdRes[0]
-                              .tournamentCompetitorId
+                            tournamentCompetitorIdRes[0].tournamentCompetitorId
                           );
                           // storing player in match_players table
                           const storeMatchPlayersRes = await database(
@@ -1309,16 +1381,16 @@ class MatchDaily extends Status {
                                 [this.id],
                                 connection
                               );
-                                connection.release();
-                                this.#isLineUpStored = true;
+                              connection.release();
+                              this.#isLineUpStored = true;
 
-                                if (setLineUpFlag.affectedRows > 0) {
-                                  resolve();
-                                } else {
-                                  throw new Error(
-                                    "Error while updating lineup flag"
-                                  );
-                                }
+                              if (setLineUpFlag.affectedRows > 0) {
+                                resolve();
+                              } else {
+                                throw new Error(
+                                  "Error while updating lineup flag"
+                                );
+                              }
                             } else {
                               storePlayer(allLineUpPlayers[currentPlayer]);
                             }
@@ -1339,12 +1411,11 @@ class MatchDaily extends Status {
                 };
 
                 // checking if player is already stored in database table players
-                const [{ isExists: isPlayerExists, playerId }] =
-                  await database(
-                    "SELECT COUNT(playerId) AS isExists, playerId FROM allplayers WHERE playerRadarId = ?;",
-                    [player.id.substr(10)],
-                    connection
-                  );
+                const [{ isExists: isPlayerExists, playerId }] = await database(
+                  "SELECT COUNT(playerId) AS isExists, playerId FROM allplayers WHERE playerRadarId = ?;",
+                  [player.id.substr(10)],
+                  connection
+                );
 
                 // player exists then store it else store it in players table
                 if (isPlayerExists) {
@@ -1366,16 +1437,16 @@ class MatchDaily extends Status {
                   ) {
                     currentPlayer++;
                     if (currentPlayer === totalPlayers) {
-                        const setLineUpFlag = await database(
-                          "UPDATE tournament_matches SET isLineUpOut = 1 WHERE matchId = ?;",
-                          [this.id],
-                          connection
-                        );
-                        connection.release();
-                        this.#isLineUpStored = true;
-                        if (setLineUpFlag.affectedRows > 0) {
-                          resolve();
-                        }
+                      const setLineUpFlag = await database(
+                        "UPDATE tournament_matches SET isLineUpOut = 1 WHERE matchId = ?;",
+                        [this.id],
+                        connection
+                      );
+                      connection.release();
+                      this.#isLineUpStored = true;
+                      if (setLineUpFlag.affectedRows > 0) {
+                        resolve();
+                      }
                     } else {
                       storePlayer(allLineUpPlayers[currentPlayer]);
                     }
@@ -1624,7 +1695,7 @@ class MatchDaily extends Status {
               } else {
                 log(
                   "IN ./cron/oop/match.js going to store match status which is " +
-                  matchStatus
+                    matchStatus
                 );
                 await this.#updateStatus(matchStatus);
                 log("resolving from handleMatchStatus status changed");
@@ -1643,7 +1714,7 @@ class MatchDaily extends Status {
           } else {
             log(
               "Can't update match status as data in available for matchId " +
-              this.id
+                this.id
             );
             throw new Error("can't update status");
           }
