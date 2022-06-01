@@ -110,7 +110,7 @@ class Tournament {
     this.#radarId = id;
   }
 
-  #fetchTournamentDetails() {
+  fetchTournamentDetails() {
     return new Promise(async (resolve, reject) => {
       try {
         const { tournament, groups } = await makeRequest(
@@ -168,12 +168,12 @@ class Tournament {
                         currentMatch++;
                         if (currentMatch === totalMatches) {
                           this.#tournamentDetails.isMatchesArrived = 1;
-                          resolve();
+                          resolve(this);
                         }
                       });
                     } else {
                       this.#tournamentDetails.isMatchesArrived = 0;
-                      resolve();
+                      resolve(this);
                     }
                   }
                 }
@@ -181,7 +181,7 @@ class Tournament {
             });
           } else {
             this.#tournamentDetails.isCompetitorArrived = 0;
-            resolve();
+            resolve(this);
           }
         } else {
           throw new Error("tournament is null");
@@ -204,8 +204,6 @@ class Tournament {
         );
 
         if (!isExists) {
-          await this.#fetchTournamentDetails();
-
           const tournamentType = new Type(this.#tournamentDetails.type);
           const tournamentCategory = new Category(
             this.#tournamentDetails.categoryId,
@@ -321,8 +319,14 @@ class Tournament {
               match?.venue?.city_name,
               match?.venue?.country_name,
               match?.venue?.country_code,
-              match?.venue?.bowling_ends && match?.venue?.bowling_ends.length > 0 ? match?.venue?.bowling_ends[0]?.name : null,
-              match?.venue?.bowling_ends && match?.venue?.bowling_ends.length > 0 ? match?.venue?.bowling_ends[1]?.name : null,
+              match?.venue?.bowling_ends &&
+              match?.venue?.bowling_ends.length > 0
+                ? match?.venue?.bowling_ends[0]?.name
+                : null,
+              match?.venue?.bowling_ends &&
+              match?.venue?.bowling_ends.length > 0
+                ? match?.venue?.bowling_ends[1]?.name
+                : null,
               match?.venue?.map_coordinates
             );
             await newMatch.storeMatch();
@@ -350,7 +354,7 @@ class Tournament {
 
 const a = async () => {
   try {
-    const tournament = new Tournament("34336");
+    const tournament = await new Tournament("2472").fetchTournamentDetails();
     await tournament.storeTournament();
     await tournament.storeCompetitors();
     await tournament.storeMatches();
