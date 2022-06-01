@@ -1,4 +1,5 @@
 const express = require("express");
+const { imageUrl } = require("../database/db_connection");
 const router = express.Router({ mergeParams: true });
 const MatchStatistics = require("../module/MatchStatistics");
 
@@ -175,6 +176,7 @@ router.post("/statistics", async (req, res) => {
 
 router.post("/lineup", async (req, res) => {
   try {
+    const serverAddress = `${req.protocol}://${req.headers.host}`;
     const { matchId } = req.body;
 
     const regx = /[^0-9]/g;
@@ -188,12 +190,24 @@ router.post("/lineup", async (req, res) => {
     ).getMatchDetails();
 
     MatchStatisticsObject.competitors.forEach((competitor) => {
+      competitor.teamFlagURL = imageUrl(
+        __dirname,
+        "../",
+        `${process.env.TEAM_IMAGE_URL}${competitor.teamId}.jpg`,
+        serverAddress
+      );
       competitor.players = [];
       MatchStatisticsObject.players.forEach((player) => {
         if (
           player.teamId === competitor.teamId &&
           player.isLineUpSelected == 1
         ) {
+          player.URL = imageUrl(
+            __dirname,
+            "../",
+            `${process.env.PLAYER_IMAGE_URL}${player.playerId}.jpg`,
+            serverAddress
+          );
           competitor.players.push(player);
         }
       });

@@ -462,7 +462,7 @@ class Scorcard {
             [
               this.id,
               this.#scorcardDetails.tossWonBy || null,
-              this.#scorcardDetails.sportEventStatus.toss_decision || null,
+              this.#scorcardDetails.sportEventStatus.toss_decision || "bat",
               this.#scorcardDetails.winner || null,
               this.#scorcardDetails.manOfMatch || null,
               0,

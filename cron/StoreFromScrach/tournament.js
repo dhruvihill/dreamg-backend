@@ -196,7 +196,7 @@ class Tournament {
   storeTournament() {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.#fetchTournamentDetails();
+        await this.fetchTournamentDetails();
         const connection = await connectToDb();
         const [{ isExists, id: tournamentStoredId }] = await database(
           "SELECT COUNT(*) AS isExists, tournamentId AS id FROM fullseriesdetails WHERE fullseriesdetails.tournamentRadarId = ? AND fullseriesdetails.currentSeasonRadarId = ?;",
@@ -355,7 +355,7 @@ class Tournament {
 
 const a = async () => {
   try {
-    const tournament = await new Tournament("2472").fetchTournamentDetails();
+    const tournament = await new Tournament("15574").fetchTournamentDetails();
     await tournament.storeTournament();
     await tournament.storeCompetitors();
     await tournament.storeMatches();
@@ -366,4 +366,4 @@ const a = async () => {
 };
 a();
 
-// module.exports = Tournament;
+module.exports = Tournament;

@@ -2,11 +2,11 @@ const mysql = require("mysql");
 require("dotenv").config();
 
 let connectionForCron = mysql.createPool({
-  connectionLimit: process.env.CLEVER_CLOUD_HOST === "localhost" ? 0 : 4,
-  host: process.env.CLEVER_CLOUD_HOST || "localhost",
-  user: process.env.CLEVER_CLOUD_USER || "root",
-  password: process.env.CLEVER_CLOUD_PASSWORD || "",
-  database: process.env.CLEVER_CLOUD_DATABASE_NAME || "dreamg-v3",
+  connectionLimit: process.env.CONNECTION_LIMIT,
+  host: process.env.CLEVER_CLOUD_HOST,
+  user: process.env.CLEVER_CLOUD_USER,
+  password: process.env.CLEVER_CLOUD_PASSWORD,
+  database: process.env.CLEVER_CLOUD_DATABASE_NAME,
   multipleStatements: true,
 });
 
@@ -64,19 +64,11 @@ const connectToDb = () => {
 const initializeConnection = () => {
   try {
     connectionForCron = mysql.createPool({
-<<<<<<< HEAD
-      connectionLimit: 5,
+      connectionLimit: process.env.CONNECTION_LIMIT,
       host: process.env.CLEVER_CLOUD_HOST,
       user: process.env.CLEVER_CLOUD_USER,
       password: process.env.CLEVER_CLOUD_PASSWORD,
       database: process.env.CLEVER_CLOUD_DATABASE_NAME,
-=======
-      connectionLimit: process.env.CLEVER_CLOUD_HOST === "localhost" ? 0 : 4,
-      host: process.env.CLEVER_CLOUD_HOST || "localhost",
-      user: process.env.CLEVER_CLOUD_USER || "root",
-      password: process.env.CLEVER_CLOUD_PASSWORD || "",
-      database: process.env.CLEVER_CLOUD_DATABASE_NAME || "dreamg-v3",
->>>>>>> refs/remotes/origin/main
       multipleStatements: true,
     });
   } catch (error) {
