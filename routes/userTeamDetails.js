@@ -409,7 +409,7 @@ router.post("/getUserTeamPlayers", verifyUser, async (req, res) => {
       "SELECT fullmatchdetails.matchStatus, fullmatchdetails.matchStatusString, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName FROM userTeamDetails JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE userTeamDetails.userTeamId = ?;";
 
     const userTeamDetailsQuery =
-      "SELECT userTeamId, teamTypeString, EXISTS(SELECT * FROM fulllikesdetails WHERE fulllikesdetails.userTeamId = userTeamDetails.userTeamId AND fulllikesdetails.userId = ?) AS isUserLiked, (SELECT COUNT(*) FROM fulllikesdetails WHERE fulllikesdetails.userTeamId = userTeamDetails.userTeamId) AS likes FROM userTeamDetails WHERE userTeamDetails.userTeamId = ?;";
+      "SELECT userTeamId, teamTypeString, EXISTS(SELECT * FROM fulllikesdetails WHERE fulllikesdetails.userTeamId = userTeamDetails.userTeamId AND fulllikesdetails.userId = ?) AS isUserLiked, userTeamPoints, (SELECT COUNT(*) FROM fulllikesdetails WHERE fulllikesdetails.userTeamId = userTeamDetails.userTeamId) AS likes FROM userTeamDetails WHERE userTeamDetails.userTeamId = ?;";
 
     const userTeamPlayers =
       "SELECT fullplayerdetails.playerId AS playerId, userTeamPlayersDetails.isCaptain, userTeamPlayersDetails.isViceCaptain, fullplayerdetails.name AS playerName, fullplayerdetails.displayName AS playerDisplayName, roleId, roleName, COALESCE(points, 0) AS points, IF(fullmatchdetails.isPointsCalculated, CONCAT(COALESCE(points, 0), ' Pt'), CONCAT(COALESCE(credits, 0), ' Cr')) AS showStr, COALESCE(credits, 0) As credits, fullplayerdetails.teamId, allteams.displayName AS teamDisplayName FROM userTeamDetails JOIN userTeamPlayersDetails ON userTeamPlayersDetails.userTeamId = userTeamDetails.userTeamId JOIN fullplayerdetails ON fullplayerdetails.playerId = userTeamPlayersDetails.playerId AND fullplayerdetails.matchId = userTeamDetails.matchId JOIN allteams ON allteams.teamId = fullplayerdetails.teamId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE userTeamDetails.userTeamId = ?;";
@@ -453,6 +453,7 @@ router.post("/getUserTeamPlayers", verifyUser, async (req, res) => {
               players: userTeamPlayersDetails,
               teamsDetails: {
                 ...matchTeamDetails[0],
+                totalPoints: userTeamDetails.userTeamPoints,
                 userTeamId: userTeamDetails["userTeamId"],
                 likes: userTeamDetails["likes"],
                 isUserLiked: userTeamDetails["isUserLiked"],
