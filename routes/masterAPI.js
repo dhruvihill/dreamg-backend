@@ -16,9 +16,9 @@ router.post("/", verifyUser, (req, res) => {
         adTypes: {
           banner: userId ? false : true,
           video: userId ? false : true,
-          inline: userId ? false : true,
-          fullscreenBanner: userId ? false : true,
-          fullscreenVideo: "VIDEO" || "FULL_SCREEN",
+          inLine: userId ? false : true,
+          fullScreenBanner: userId ? false : true,
+          fullScreenVideo: "VIDEO" || "FULL_SCREEN",
         },
       },
     });

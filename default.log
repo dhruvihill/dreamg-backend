@@ -2099,3 +2099,16 @@
 2022.06.03, 14:14:30.0756 UTC -> resolving from handleMatchStatus status changed
 2022.06.03, 14:14:32.0865 UTC -> match is not ended for matchId 103
 2022.06.03, 14:14:32.0865 UTC -> resolving from handleScorcardAndPoints scorcard and points stored
+2022.06.03, 14:15:41.0975 UTC -> Started to proceed match for scorcard, lineups and points for 106
+2022.06.03, 14:15:41.0976 UTC -> Started to proceed match for scorcard, lineups and points for 209
+2022.06.03, 14:15:41.0976 UTC -> going to store lineups for match209FROM ./cron/oop/periode.js
+2022.06.03, 14:15:41.0976 UTC -> going to store lineups for match106FROM ./cron/oop/periode.js
+2022.06.03, 14:15:41.0976 UTC -> Started to proceed match for scorcard, lineups and points for 103
+2022.06.03, 14:15:41.0976 UTC -> going to store lineups for match103FROM ./cron/oop/periode.js
+2022.06.03, 14:15:41.0977 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.06.03, 14:15:41.0998 UTC -> IN ./cron/oop/match.js going to store line up
+2022.06.03, 14:15:41.0999 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.06.03, 14:15:42.0001 UTC -> IN ./cron/oop/match.js going to store line up
+2022.06.03, 14:15:42.0001 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.06.03, 14:15:41.0977 UTC -> IN ./cron/oop/match.js going to store line up
+2022.06.03, 14:15:44.0775 UTC -> got response of lineup and going to procedd for matchStatus103FROM ./cron/oop/periode.js
