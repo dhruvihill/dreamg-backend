@@ -159,6 +159,15 @@ class Competitor {
 
             currentPlayer++;
             if (currentPlayer >= totalPlayers) {
+              const connection = await connectToDb();
+
+              const updateIsPlayersArrivedFalg = await database(
+                "UPDATE tournament_competitor SET isPlayerArrived = 1 WHERE tournamentCompetitorId = ?;",
+                [this.tournamentCompetitorId],
+                connection
+              );
+
+              connection.release();
               resolve();
             } else {
               storeSinglePlayer(this.players[currentPlayer]);

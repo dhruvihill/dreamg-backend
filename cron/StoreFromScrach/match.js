@@ -35,7 +35,7 @@ const storeAllScorcardForMatch = async (matchId) => {
               radarId: match.team2RadarId,
             },
           ];
-          const newMatch = new Match(
+          const newMatch = new MatchDaily(
             match.matchId,
             match.matchRadarId,
             match.matchStatusString,
@@ -303,7 +303,7 @@ class MatchDaily extends Status {
         const connection = await connectToDb();
         let currentPlayer = 0;
         const totalPlayers = lineUp.length;
-        if (matchType === "test") {
+        if (matchType.includes("test")) {
           lineUp.forEach((player) => {
             let totalPoints = 4;
             const points = {
@@ -474,7 +474,7 @@ class MatchDaily extends Status {
               }
             }, 200);
           });
-        } else if (matchType === "odi") {
+        } else if (matchType.includes("odi")) {
           lineUp.forEach((player) => {
             let totalPoints = 4;
             const points = {
@@ -736,7 +736,7 @@ class MatchDaily extends Status {
               }
             }, 200);
           });
-        } else if (matchType === "t20") {
+        } else if (matchType.includes("t20")) {
           lineUp.forEach((player) => {
             let totalPoints = 4;
             const points = {
@@ -1012,7 +1012,7 @@ class MatchDaily extends Status {
               }
             }, 200);
           });
-        } else if (matchType === "t10") {
+        } else if (matchType.includes("t10")) {
           lineUp.forEach((player) => {
             let totalPoints = 4;
             const points = {

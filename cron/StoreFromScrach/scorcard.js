@@ -12,6 +12,8 @@ class Scorcard {
     tossWonBy: null,
     manOfMatch: null,
     winner: null,
+    isTie: false,
+    isDraw: false,
   };
   #competitors = [];
   #scorcardId = null;
@@ -81,20 +83,25 @@ class Scorcard {
         const [winner] = this.#competitors.filter((competitor) => {
           return (
             competitor.radarId ==
-            this.#scorcardDetails.sportEventStatus.winner_id.substr(14)
+            this.#scorcardDetails?.sportEventStatus?.winner_id?.substr(14)
           );
         });
 
         const [tossWonBy] = this.#competitors.filter((competitor) => {
           return (
             competitor.radarId ==
-            this.#scorcardDetails.sportEventStatus.toss_won_by.substr(14)
+            this.#scorcardDetails?.sportEventStatus?.toss_won_by?.substr(14)
           );
         });
 
         this.#scorcardDetails.manOfMatch = playerId;
-        this.#scorcardDetails.winner = winner.id;
-        this.#scorcardDetails.tossWonBy = tossWonBy.id;
+        this.#scorcardDetails.winner =
+          this.#scorcardDetails?.sportEventStatus?.match_result_type === "t"
+            ? (this.#scorcardDetails.isTie = true)
+            : this.#scorcardDetails?.sportEventStatus?.match_result_type === "d"
+            ? (this.#scorcardDetails.isDraw = true)
+            : winner?.id;
+        this.#scorcardDetails.tossWonBy = tossWonBy?.id;
         resolve();
       } catch (error) {
         if (this.#connection) {
@@ -458,7 +465,7 @@ class Scorcard {
           await this.#fetchWinnerManOfMatch();
 
           const storeScorcardDetailsRes = await database(
-            "INSERT INTO `scorcard_details`(`matchId`, `tossWonBy`, `tossDecision`, `winnerId`, `manOfMatch`, `isPointsCalculated`, `matchResultString`) VALUES (?, ?, ?, ?, ?, ?, ?);",
+            "INSERT INTO `scorcard_details`(`matchId`, `tossWonBy`, `tossDecision`, `winnerId`, `manOfMatch`, `isPointsCalculated`, `matchResultString`, `isTie`, `isDraw`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);",
             [
               this.id,
               this.#scorcardDetails.tossWonBy || null,
@@ -467,6 +474,8 @@ class Scorcard {
               this.#scorcardDetails.manOfMatch || null,
               0,
               this.#scorcardDetails.sportEventStatus.match_result || null,
+              this.#scorcardDetails.isDraw,
+              this.#scorcardDetails.isTie,
             ],
             this.#connection
           );

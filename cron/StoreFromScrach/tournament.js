@@ -86,6 +86,7 @@ class Type {
 
 class Tournament {
   id = null;
+  #isAlreadyStored = false;
   #radarId = 0; // tournament id of sports radar
   #competitors = [];
   #matches = [];
@@ -104,6 +105,11 @@ class Tournament {
     isCompetitorArrived: 0,
     isMatchesArrived: 0,
     year: 0,
+  };
+  #storedTournament = {
+    storedMatches: [],
+    storedPlayers: [],
+    storedCompetitors: [],
   };
 
   constructor(id) {
@@ -193,10 +199,34 @@ class Tournament {
     });
   }
 
+  #fetchDBTournamentDetails() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const connection = await connectToDb();
+
+        const [storedCompetitors, storedMatches, storedPlayers] =
+          await database(
+            "SELECT tournamentCompetitorId, competitorId, competitorRadarId, isPlayerArrived FROM `allteams2` where tournamentId = ?; SELECT matchId, matchRadarId FROM `fullmatchdetails` where matchTournamentId = ?; SELECT allplayers.playerId AS insertId, allplayers.playerRadarId, allteams2.competitorRadarId FROM `tournament_competitor_player` JOIN allteams2 ON allteams2.tournamentCompetitorId = tournament_competitor_player.tournamentCompetitorId JOIN allplayers ON allplayers.playerId = tournament_competitor_player.playerId WHERE allteams2.tournamentId = ?;",
+            [this.id, this.id, this.id],
+            connection
+          );
+        this.#storedTournament = {
+          storedCompetitors: storedCompetitors || [],
+          storedMatches: storedMatches || [],
+          storedPlayers: storedPlayers || [],
+        };
+        connection.release();
+        resolve();
+      } catch (error) {
+        console.log(error.message);
+        reject(error);
+      }
+    });
+  }
+
   storeTournament() {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.fetchTournamentDetails();
         const connection = await connectToDb();
         const [{ isExists, id: tournamentStoredId }] = await database(
           "SELECT COUNT(*) AS isExists, tournamentId AS id FROM fullseriesdetails WHERE fullseriesdetails.tournamentRadarId = ? AND fullseriesdetails.currentSeasonRadarId = ?;",
@@ -240,6 +270,8 @@ class Tournament {
         } else {
           connection.release();
           this.id = tournamentStoredId;
+          this.#isAlreadyStored = true;
+          await this.#fetchDBTournamentDetails();
           resolve();
         }
       } catch (error) {
@@ -255,24 +287,88 @@ class Tournament {
   storeCompetitors() {
     return new Promise(async (resolve, reject) => {
       try {
+        if (this.#isAlreadyStored) {
+          if (this.#storedTournament.storedCompetitors.length > 0) {
+            const competitors = this.#competitors.map((competitor) => {
+              const res = this.#storedTournament.storedCompetitors.find(
+                (competitor2) => {
+                  return (
+                    competitor2.competitorRadarId == competitor.id.substr(14)
+                  );
+                }
+              );
+              if (!res) {
+                competitor.tobeStored = true;
+                return competitor;
+              } else {
+                if (res.isPlayerArrived === 0) {
+                  competitor.storedTournamentCompetitorId =
+                    res.tournamentCompetitorId;
+                  competitor.storeOnlyPlayers = true;
+                  competitor.insertId = res.competitorId;
+                  competitor.tobeStored = true;
+                  competitor.players =
+                    this.#storedTournament.storedPlayers.filter((player) => {
+                      return (
+                        player.competitorRadarId == competitor.id.substr(14)
+                      );
+                    });
+                  return competitor;
+                } else {
+                  competitor.tobeStored = false;
+                  competitor.insertId = res.competitorId;
+                  competitor.players =
+                    this.#storedTournament.storedPlayers.filter((player) => {
+                      return (
+                        player.competitorRadarId == competitor.id.substr(14)
+                      );
+                    });
+                  return competitor;
+                }
+              }
+            });
+            this.#competitors = competitors.filter((competitor) => {
+              return competitor !== null;
+            });
+          }
+        } else {
+          this.#competitors.forEach((competitor) => {
+            competitor.tobeStored = true;
+          });
+        }
+
         const totalCompetitors = this.#competitors.length;
         let currentCompetitor = 0;
 
         const storeSingleCompetitor = async (competitor) => {
           try {
-            const newCompetitor = new Competitor(
-              competitor.id.substr(14),
-              competitor.name,
-              competitor.country,
-              competitor.country_code,
-              competitor.abbreviation
-            );
+            if (competitor.tobeStored) {
+              const newCompetitor = new Competitor(
+                competitor.id.substr(14),
+                competitor.name,
+                competitor.country,
+                competitor.country_code,
+                competitor.abbreviation
+              );
 
-            await newCompetitor.storeCompetitor();
-            await newCompetitor.storeCompetitorRelation(this.id);
-            await newCompetitor.storePlayers(this.#radarId);
-            competitor.insertId = newCompetitor.id;
-            competitor.players = newCompetitor.players;
+              if (competitor.storeOnlyPlayers) {
+                newCompetitor.id = competitor.insertId;
+                newCompetitor.tournamentCompetitorId =
+                  competitor.storedTournamentCompetitorId;
+                await newCompetitor.storePlayers(this.#radarId);
+              } else {
+                await newCompetitor.storeCompetitor();
+                await newCompetitor.storeCompetitorRelation(this.id);
+                await newCompetitor.storePlayers(this.#radarId);
+
+                this.#competitors.forEach((competitor2) => {
+                  if (competitor2.id == competitor.id) {
+                    competitor2.insertId = newCompetitor.id;
+                    competitor2.players = newCompetitor.players;
+                  }
+                });
+              }
+            }
 
             currentCompetitor++;
             if (currentCompetitor >= totalCompetitors) {
@@ -285,7 +381,11 @@ class Tournament {
             reject(error);
           }
         };
-        storeSingleCompetitor(this.#competitors[currentCompetitor]);
+        if (this.#competitors.length > 0) {
+          storeSingleCompetitor(this.#competitors[currentCompetitor]);
+        } else {
+          resolve();
+        }
       } catch (error) {
         console.log(error);
         reject(error);
@@ -296,6 +396,17 @@ class Tournament {
   storeMatches() {
     return new Promise(async (resolve, reject) => {
       try {
+        if (this.#isAlreadyStored) {
+          if (this.#storedTournament.storedMatches.length > 0) {
+            const matches = this.#matches.filter((match) => {
+              return !this.#storedTournament.storedMatches.find((match2) => {
+                return match2.matchRadarId == match.id.substr(9);
+              });
+            });
+            this.#matches = matches;
+          }
+        }
+
         const totalMatches = this.#matches.length;
         let currentMatch = 0;
 
@@ -344,7 +455,11 @@ class Tournament {
             reject(error);
           }
         };
-        storeSingleMatch(this.#matches[currentMatch]);
+        if (this.#matches.length > 0) {
+          storeSingleMatch(this.#matches[currentMatch]);
+        } else {
+          resolve();
+        }
       } catch (error) {
         console.log(error);
         reject(error);
@@ -355,7 +470,7 @@ class Tournament {
 
 const a = async () => {
   try {
-    const tournament = await new Tournament("15574").fetchTournamentDetails();
+    const tournament = await new Tournament("34354").fetchTournamentDetails();
     await tournament.storeTournament();
     await tournament.storeCompetitors();
     await tournament.storeMatches();
