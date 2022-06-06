@@ -168,6 +168,9 @@ class Status {
   status = "";
 
   constructor(status) {
+    if (status === "closed") {
+      status = "ended";
+    }
     this.status = status;
   }
 
@@ -1651,7 +1654,7 @@ class MatchDaily extends Status {
             "resolving from handleScorcardAndPoints scorcard and points stored"
           );
           resolve();
-        } else {
+        } else if (this.status !== "abandoned" || this.status !== "cancelled") {
           const intervalId = setInterval(async () => {
             log("IN ./cron/oop/match.js going to store score card and points");
             const res = await handleStore();
@@ -1666,6 +1669,8 @@ class MatchDaily extends Status {
             clearInterval(intervalId);
             resolve();
           };
+        } else {
+          log("match is abandoned or cancelled");
         }
       } catch (error) {
         console.log(error);

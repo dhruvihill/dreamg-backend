@@ -468,17 +468,28 @@ class Tournament {
   }
 }
 
-const a = async () => {
-  try {
-    const tournament = await new Tournament("34354").fetchTournamentDetails();
-    await tournament.storeTournament();
-    await tournament.storeCompetitors();
-    await tournament.storeMatches();
-    console.log("stored success");
-  } catch (error) {
-    console.log(error);
-  }
+const a = async (tId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const tournament = await new Tournament(tId).fetchTournamentDetails();
+      await tournament.storeTournament();
+      await tournament.storeCompetitors();
+      await tournament.storeMatches();
+      console.log("stored success");
+      resolve();
+    } catch (error) {
+      console.log(error);
+    }
+  });
 };
-a();
+const b = async () => {
+  await a("34354");
+  await a("15574");
+  await a("36621");
+  await a("36503");
+  await a("36683");
+  await a("34336");
+};
+b();
 
 module.exports = Tournament;

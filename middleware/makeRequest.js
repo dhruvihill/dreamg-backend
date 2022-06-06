@@ -36,25 +36,25 @@ const makeRequestForSportRadar = (url) => {
             .then((data) => {
               generateTimeOut(
                 apiToken,
-                parseInt(data.headers["x-plan-quota-current"]),
+                parseInt(data?.headers["x-plan-quota-current"]),
                 1100
               );
               resolve(data.data);
             })
             .catch((error) => {
               if (
-                (error.response &&
-                  parseInt(error.response.headers["x-plan-quota-current"]) >
+                (error?.response &&
+                  parseInt(error?.response?.headers["x-plan-quota-current"]) >
                     parseInt(
-                      error.response.headers["x-plan-quota-allotted"]
+                      error?.response?.headers["x-plan-quota-allotted"]
                     )) ||
-                parseInt(error.response.headers["x-plan-quota-current"]) ===
-                  parseInt(error.response.headers["x-plan-quota-allotted"])
+                parseInt(error?.response?.headers["x-plan-quota-current"]) ===
+                  parseInt(error?.response?.headers["x-plan-quota-allotted"])
               ) {
                 api_tokens.forEach((token) => {
                   if (token.token === apiToken) {
                     token.totalCallMade = parseInt(
-                      error.response.headers["x-plan-quota-current"]
+                      error?.response?.headers["x-plan-quota-current"]
                     );
                   }
                 });

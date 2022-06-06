@@ -6,7 +6,7 @@ const fetchData = async () => {
   try {
     const connection = await connectToDb();
     const matches = await database(
-      "SELECT `fullmatchdetails`.`matchTournamentId` AS tournamentId, matchId, matchRadarId, matchTournamentId, matchStartDateTime, matchTyprString, matchStatusString, team1Id, team2Id, team1RadarId, team2RadarId, isLineUpOut, isPointsCalculated FROM `fullmatchdetails` WHERE matchStatusString IN ('not_started', 'live', 'ended') ORDER BY `fullmatchdetails`.matchStartDateTime DESC;",
+      "SELECT `fullmatchdetails`.`matchTournamentId` AS tournamentId, matchId, matchRadarId, matchTournamentId, matchStartDateTime, matchTyprString, matchStatusString, team1Id, team2Id, team1RadarId, team2RadarId, isLineUpOut, isPointsCalculated FROM `fullmatchdetails` WHERE matchStatusString IN ('not_started', 'live', 'ended', 'closed') ORDER BY `fullmatchdetails`.matchStartDateTime DESC;",
       [],
       connection
     );
@@ -22,7 +22,8 @@ const fetchData = async () => {
           (matchStartTime.getTime() < now.getTime() &&
             match.matchStatusString === "not_started") ||
           (match.isPointsCalculated === 0 &&
-            match.matchStatusString === "ended")
+            (match.matchStatusString === "ended" ||
+              match.matchStatusString === "closed"))
         ) {
           log(
             `Started to proceed match for scorcard, lineups and points for ${match.matchId}`
