@@ -249,14 +249,13 @@ router.post("/uploadPanDetails", upload(), verifyUser, async (req, res) => {
 
     const panProofImage = req.files.panProofImage.data;
 
-    const panUser = new UserPan(
-      userId,
+    const panUser = new UserPan(userId);
+    await panUser.InsertUserPanDetails(
       userPanFullName,
       userPanNumber,
       convertToYYYYMMDD(userDateOfBirth),
       panProofImage
     );
-    await panUser.InsertUserPanDetails();
 
     res.status(200).json({
       status: true,
@@ -292,8 +291,8 @@ router.post("/uploadBankDetails", upload(), verifyUser, async (req, res) => {
 
     const bankProofImage = req.files.bankProofImage.data;
 
-    const bankUser = new UserBank(
-      userId,
+    const bankUser = new UserBank(userId);
+    await bankUser.InsertUserBankDetails(
       userBankName,
       userBankAccountNumber,
       userBankIFSC,
@@ -301,8 +300,6 @@ router.post("/uploadBankDetails", upload(), verifyUser, async (req, res) => {
       userUPI,
       bankProofImage
     );
-    await bankUser.fetchUserBankDetails();
-    await bankUser.InsertUserBankDetails();
 
     res.status(200).json({
       status: true,

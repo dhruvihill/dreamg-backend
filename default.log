@@ -5418,3 +5418,75 @@
 2022.06.09, 14:41:35.0823 UTC -> IN ./cron/oop/match.js going to store match status which is live
 2022.06.09, 14:41:35.0855 UTC -> resolving from handleMatchStatus status changed
 2022.06.09, 14:41:35.0855 UTC -> got response of matchStatus and going to procedd for scorcard211FROM ./cron/oop/periode.js
+2022.06.09, 14:43:10.0095 UTC -> Started to proceed match for scorcard, lineups and points for 211
+2022.06.09, 14:43:10.0095 UTC -> going to store lineups for match211FROM ./cron/oop/periode.js
+2022.06.09, 14:43:10.0096 UTC -> IN ./cron/oop/match.js going to store line up
+2022.06.09, 14:43:10.0097 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.06.09, 14:43:11.0727 UTC -> got response of lineup and going to procedd for matchStatus211FROM ./cron/oop/periode.js
+2022.06.09, 14:43:13.0399 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.06.09, 14:43:13.0405 UTC -> resolving from handleMatchStatus status changed
+2022.06.09, 14:43:13.0405 UTC -> got response of matchStatus and going to procedd for scorcard211FROM ./cron/oop/periode.js
+2022.06.09, 14:44:06.0144 UTC -> Started to proceed match for scorcard, lineups and points for 211
+2022.06.09, 14:44:06.0146 UTC -> going to store lineups for match211FROM ./cron/oop/periode.js
+2022.06.09, 14:44:06.0147 UTC -> IN ./cron/oop/match.js going to store line up
+2022.06.09, 14:44:06.0147 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.06.09, 14:44:07.0413 UTC -> got response of lineup and going to procedd for matchStatus211FROM ./cron/oop/periode.js
+2022.06.09, 14:44:09.0231 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.06.09, 14:44:09.0237 UTC -> resolving from handleMatchStatus status changed
+2022.06.09, 14:44:09.0237 UTC -> got response of matchStatus and going to procedd for scorcard211FROM ./cron/oop/periode.js
+2022.06.09, 14:44:23.0279 UTC -> Started to proceed match for scorcard, lineups and points for 211
+2022.06.09, 14:44:23.0280 UTC -> going to store lineups for match211FROM ./cron/oop/periode.js
+2022.06.09, 14:44:23.0281 UTC -> IN ./cron/oop/match.js going to store line up
+2022.06.09, 14:44:23.0282 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.06.09, 14:44:24.0364 UTC -> got response of lineup and going to procedd for matchStatus211FROM ./cron/oop/periode.js
+2022.06.09, 14:44:25.0948 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.06.09, 14:44:25.0954 UTC -> resolving from handleMatchStatus status changed
+2022.06.09, 14:44:25.0954 UTC -> got response of matchStatus and going to procedd for scorcard211FROM ./cron/oop/periode.js
+2022.06.09, 14:45:32.0910 UTC -> Started to proceed match for scorcard, lineups and points for 211
+2022.06.09, 14:45:32.0911 UTC -> going to store lineups for match211FROM ./cron/oop/periode.js
+2022.06.09, 14:45:32.0911 UTC -> IN ./cron/oop/match.js going to store line up
+2022.06.09, 14:45:32.0912 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.06.09, 14:45:34.0475 UTC -> got response of lineup and going to procedd for matchStatus211FROM ./cron/oop/periode.js
+2022.06.09, 14:45:36.0062 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.06.09, 14:45:36.0071 UTC -> resolving from handleMatchStatus status changed
+2022.06.09, 14:45:36.0071 UTC -> got response of matchStatus and going to procedd for scorcard211FROM ./cron/oop/periode.js
+2022.06.09, 14:45:49.0185 UTC -> Started to proceed match for scorcard, lineups and points for 211
+2022.06.09, 14:45:49.0186 UTC -> going to store lineups for match211FROM ./cron/oop/periode.js
+2022.06.09, 14:45:49.0187 UTC -> IN ./cron/oop/match.js going to store line up
+2022.06.09, 14:45:49.0188 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.06.09, 14:45:50.0188 UTC -> got response of lineup and going to procedd for matchStatus211FROM ./cron/oop/periode.js
+2022.06.09, 14:45:51.0914 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.06.09, 14:45:51.0924 UTC -> resolving from handleMatchStatus status changed
+2022.06.09, 14:45:51.0924 UTC -> got response of matchStatus and going to procedd for scorcard211FROM ./cron/oop/periode.js
+2022.06.09, 14:46:05.0210 UTC -> Started to proceed match for scorcard, lineups and points for 211
+2022.06.09, 14:46:05.0211 UTC -> going to store lineups for match211FROM ./cron/oop/periode.js
+2022.06.09, 14:46:05.0212 UTC -> IN ./cron/oop/match.js going to store line up
+2022.06.09, 14:46:05.0212 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.06.09, 14:46:06.0438 UTC -> got response of lineup and going to procedd for matchStatus211FROM ./cron/oop/periode.js
+2022.06.09, 14:46:08.0190 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.06.09, 14:46:08.0196 UTC -> resolving from handleMatchStatus status changed
+2022.06.09, 14:46:08.0196 UTC -> got response of matchStatus and going to procedd for scorcard211FROM ./cron/oop/periode.js
+2022.06.09, 14:46:24.0293 UTC -> Started to proceed match for scorcard, lineups and points for 211
+2022.06.09, 14:46:24.0295 UTC -> going to store lineups for match211FROM ./cron/oop/periode.js
+2022.06.09, 14:46:24.0296 UTC -> IN ./cron/oop/match.js going to store line up
+2022.06.09, 14:46:24.0297 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.06.09, 14:46:25.0308 UTC -> got response of lineup and going to procedd for matchStatus211FROM ./cron/oop/periode.js
+2022.06.09, 14:46:27.0093 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.06.09, 14:46:27.0107 UTC -> resolving from handleMatchStatus status changed
+2022.06.09, 14:46:27.0107 UTC -> got response of matchStatus and going to procedd for scorcard211FROM ./cron/oop/periode.js
+2022.06.09, 14:46:37.0009 UTC -> Started to proceed match for scorcard, lineups and points for 211
+2022.06.09, 14:46:37.0010 UTC -> going to store lineups for match211FROM ./cron/oop/periode.js
+2022.06.09, 14:46:37.0012 UTC -> IN ./cron/oop/match.js going to store line up
+2022.06.09, 14:46:37.0012 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.06.09, 14:46:38.0029 UTC -> got response of lineup and going to procedd for matchStatus211FROM ./cron/oop/periode.js
+2022.06.09, 14:46:39.0932 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.06.09, 14:46:39.0942 UTC -> resolving from handleMatchStatus status changed
+2022.06.09, 14:46:39.0943 UTC -> got response of matchStatus and going to procedd for scorcard211FROM ./cron/oop/periode.js
+2022.06.09, 14:46:45.0046 UTC -> Started to proceed match for scorcard, lineups and points for 211
+2022.06.09, 14:46:45.0046 UTC -> going to store lineups for match211FROM ./cron/oop/periode.js
+2022.06.09, 14:46:45.0047 UTC -> IN ./cron/oop/match.js going to store line up
+2022.06.09, 14:46:45.0048 UTC -> IN ./cron/oop/match.js going to handle toss
+2022.06.09, 14:46:46.0636 UTC -> got response of lineup and going to procedd for matchStatus211FROM ./cron/oop/periode.js
+2022.06.09, 14:46:48.0376 UTC -> IN ./cron/oop/match.js going to store match status which is live
+2022.06.09, 14:46:48.0382 UTC -> resolving from handleMatchStatus status changed
+2022.06.09, 14:46:48.0382 UTC -> got response of matchStatus and going to procedd for scorcard211FROM ./cron/oop/periode.js

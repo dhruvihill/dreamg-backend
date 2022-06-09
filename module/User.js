@@ -1,6 +1,4 @@
 const { fetchData } = require("../database/db_connection");
-const { writeFile } = require("fs/promises");
-const { join } = require("path");
 class User {
   id = null;
   #userDetails = {
@@ -178,23 +176,23 @@ class UserPan extends User {
   #userDateOfBirth = ""; // YYYY-MM-DD format
   #userPanImage = "";
 
-  constructor(
-    id,
+  constructor(id) {
+    super(id);
+  }
+
+  async InsertUserPanDetails(
     userPanFullName,
     userPanNumber,
     userDateOfBirth,
     userPanImage
   ) {
-    super(id);
-    this.#userPanFullName = userPanFullName;
-    this.#userPanNumber = userPanNumber;
-    this.#userDateOfBirth = userDateOfBirth;
-    this.#userPanImage = userPanImage;
-  }
-
-  async InsertUserPanDetails() {
     return new Promise(async (resolve, reject) => {
       try {
+        this.#userDateOfBirth = userDateOfBirth;
+        this.#userPanFullName = userPanFullName;
+        this.#userPanNumber = userPanNumber;
+        this.#userPanImage = userPanImage;
+
         if (
           this.#userPanFullName === "" ||
           this.#userPanNumber === "" ||
@@ -256,8 +254,11 @@ class UserBank extends User {
   #userUPI = ""; //optionak
   #userBankProofImage = "";
 
-  constructor(
-    id,
+  constructor(id) {
+    super(id);
+  }
+
+  async InsertUserBankDetails(
     userBankName,
     userBankAccountNumber,
     userBankIFSC,
@@ -265,18 +266,15 @@ class UserBank extends User {
     userUPI,
     userBankProofImage
   ) {
-    super(id);
-    this.#userBankName = userBankName;
-    this.#userBankAccountNumber = userBankAccountNumber;
-    this.#userBankIFSC = userBankIFSC;
-    this.#userFullName = userFullName;
-    this.#userUPI = userUPI;
-    this.#userBankProofImage = userBankProofImage;
-  }
-
-  async InsertUserBankDetails() {
     return new Promise(async (resolve, reject) => {
       try {
+        this.#userBankName = userBankName;
+        this.#userBankAccountNumber = userBankAccountNumber;
+        this.#userBankIFSC = userBankIFSC;
+        this.#userFullName = userFullName;
+        this.#userUPI = userUPI;
+        this.#userBankProofImage = userBankProofImage;
+
         if (
           this.#userBankName === "" ||
           this.#userBankAccountNumber === "" ||
