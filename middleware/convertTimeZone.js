@@ -14,4 +14,13 @@ const convertTimeZone = (time, timeZone) => {
   return [newTime, new Date(time).getTime().toString()];
 };
 
-module.exports = convertTimeZone;
+const convertToYYYYMMDD = (date) => {
+  if (date) {
+    date = new Date(parseInt(date));
+    const newDate = momentTimeZone(date).utc().format("YYYY-MM-DD");
+    return newDate;
+  }
+  return "";
+};
+
+module.exports = { convertTimeZone, convertToYYYYMMDD };

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router({ mergeParams: true });
 const MatchStatistics = require("../module/MatchStatistics");
 const { fetchData, imageUrl } = require("../database/db_connection");
-const convertTimeZone = require("../middleware/convertTimeZone");
+const { convertTimeZone } = require("../middleware/convertTimeZone");
 
 // get players by match id
 router.post("/getPlayers", async (req, res) => {

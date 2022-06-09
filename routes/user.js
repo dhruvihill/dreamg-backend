@@ -7,7 +7,11 @@ const { rename, writeFile } = require("fs/promises");
 const { existsSync, mkdirSync } = require("fs");
 const path = require("path");
 const upload = require("express-fileupload");
-const convertTimeZone = require("../middleware/convertTimeZone");
+const {
+  convertTimeZone,
+  convertToYYYYMMDD,
+} = require("../middleware/convertTimeZone");
+const { UserPan, UserBank } = require("../module/User");
 
 // fetching user data
 router.post("/userProfile", verifyUser, async (req, res) => {
@@ -229,6 +233,89 @@ router.post("/uploadProfilePicture", upload(), verifyUser, async (req, res) => {
     res.status(400).json({
       status: false,
       message: "some error occured",
+      data: {},
+    });
+  }
+});
+
+router.post("/uploadPanDetails", upload(), verifyUser, async (req, res) => {
+  try {
+    const { userId, userPanFullName, userPanNumber, userDateOfBirth } =
+      req.body;
+
+    if (!req.files) {
+      throw { message: "no file found" };
+    }
+
+    const panProofImage = req.files.panProofImage.data;
+
+    const panUser = new UserPan(
+      userId,
+      userPanFullName,
+      userPanNumber,
+      convertToYYYYMMDD(userDateOfBirth),
+      panProofImage
+    );
+    await panUser.InsertUserPanDetails();
+
+    res.status(200).json({
+      status: true,
+      message: "success",
+      data: {
+        status: "success",
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message:
+        error.code === "ER_DUP_ENTRY" ? "Duplicate Entry" : error.message,
+      data: {},
+    });
+  }
+});
+
+router.post("/uploadBankDetails", upload(), verifyUser, async (req, res) => {
+  try {
+    const {
+      userId,
+      userBankName,
+      userBankAccountNumber,
+      userBankIFSC,
+      userFullName,
+      userUPI,
+    } = req.body;
+
+    if (!req.files) {
+      throw { message: "no file found" };
+    }
+
+    const bankProofImage = req.files.bankProofImage.data;
+
+    const bankUser = new UserBank(
+      userId,
+      userBankName,
+      userBankAccountNumber,
+      userBankIFSC,
+      userFullName,
+      userUPI,
+      bankProofImage
+    );
+    await bankUser.fetchUserBankDetails();
+    await bankUser.InsertUserBankDetails();
+
+    res.status(200).json({
+      status: true,
+      message: "success",
+      data: {
+        status: "success",
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message:
+        error.code === "ER_DUP_ENTRY" ? "Duplicate Entry" : error.message,
       data: {},
     });
   }

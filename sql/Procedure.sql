@@ -1,5 +1,74 @@
 DELIMITER $$
-CREATE PROCEDURE `getPlayers`(IN `matchId` INT, IN `userTeamId` INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `calculateCreditsForPlayers`(IN `matchId` INT, IN `creditForThisMatch` BOOLEAN)
+BEGIN
+DECLARE playerCredit DECIMAL(20, 1) DEFAULT 7.5;
+DECLARE playerAVGPoints FLOAT DEFAULT 0;
+DECLARE playerMatches INT DEFAULT 0;
+DECLARE currentPlayerId INT DEFAULT 0;
+DECLARE finished BOOLEAN DEFAULT 0;
+DECLARE playerNextMatch INT DEFAULT NULL;
+
+DEClARE matchPlayers CURSOR FOR SELECT fullplayerdetails.playerId FROM fullplayerdetails WHERE fullplayerdetails.matchId = matchId;
+
+DECLARE CONTINUE HANDLER FOR NOT FOUND
+BEGIN
+SET finished = 1;
+END;
+
+OPEN matchPlayers;
+
+nextPlayer: LOOP FETCH matchPlayers INTO currentPlayerId;
+IF finished = 1 THEN 
+	LEAVE nextPlayer;
+END IF;
+
+/* process start for credit */
+
+IF creditForThisMatch != 1 THEN
+
+SELECT IF(playerMatches.playedMatches >= 5, playerMatches.points, 0) INTO playerAVGPoints FROM (SELECT AVG(fullplayerdetails.points) AS points, COUNT(*) AS playedMatches FROM fullplayerdetails JOIN fullmatchdetails ON fullmatchdetails.matchId = fullplayerdetails.matchId WHERE fullplayerdetails.playerId = currentPlayerId AND (fullmatchdetails.matchStartDateTime < (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = matchId) OR fullmatchdetails.matchId = matchId) AND fullmatchdetails.matchStatusString IN ('ended', 'closed') AND fullmatchdetails.matchTypeId IN (SELECT fullmatchdetails.matchTypeId FROM fullmatchdetails WHERE fullmatchdetails.matchId = matchId) AND fullplayerdetails.isSelected = 1 ORDER BY fullmatchdetails.matchStartDateTime DESC LIMIT 5) AS playerMatches;
+
+ELSE 
+SELECT IF(playerMatches.playedMatches >= 5, playerMatches.points, 0) INTO playerAVGPoints FROM (SELECT AVG(fullplayerdetails.points) AS points, COUNT(*) AS playedMatches FROM fullplayerdetails JOIN fullmatchdetails ON fullmatchdetails.matchId = fullplayerdetails.matchId WHERE fullplayerdetails.playerId = currentPlayerId AND fullmatchdetails.matchStartDateTime < (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = matchId) AND fullmatchdetails.matchStatusString IN ('ended', 'closed') AND fullmatchdetails.matchTypeId IN (SELECT fullmatchdetails.matchTypeId FROM fullmatchdetails WHERE fullmatchdetails.matchId = matchId) AND fullplayerdetails.isSelected = 1 ORDER BY fullmatchdetails.matchStartDateTime DESC LIMIT 5) AS playerMatches;
+END IF;
+
+/* fetching */
+IF playerAVGPoints > 100 THEN
+	SET playerCredit = 10.5;
+ELSEIF playerAVGPoints <= 100 AND playerAVGPoints > 85 THEN
+	SET playerCredit = 10;
+ELSEIF playerAVGPoints <= 85 AND playerAVGPoints > 75 THEN
+	SET playerCredit = 9.5;
+ELSEIF playerAVGPoints <= 75 AND playerAVGPoints > 65 THEN
+	SET playerCredit = 9;
+ELSEIF playerAVGPoints <= 65 AND playerAVGPoints > 50 THEN
+	SET playerCredit = 8.5;
+ELSEIF playerAVGPoints <= 50 AND playerAVGPoints > 30 THEN
+	SET playerCredit = 8;
+ELSEIF playerAVGPoints <= 30 THEN
+	SET playerCredit = 7.5;
+ELSE 
+	SET playerCredit = 7;
+END IF;
+IF creditForThisMatch = 1 THEN 
+	UPDATE match_players SET match_players.credit = playerCredit WHERE match_players.playerId = currentPlayerId AND match_players.matchId = matchId;
+
+ELSE
+	SELECT fullmatchdetails.matchId INTO playerNextMatch FROM fullplayerdetails JOIN fullmatchdetails ON fullmatchdetails.matchId = fullplayerdetails.matchId WHERE fullplayerdetails.playerId = currentPlayerId AND fullmatchdetails.matchStartDateTime > (SELECT fullmatchdetails.matchStartDateTime FROM fullmatchdetails WHERE fullmatchdetails.matchId = matchId) AND fullmatchdetails.matchStatusString IN ('not_started') AND fullmatchdetails.matchTypeId IN (SELECT fullmatchdetails.matchTypeId FROM fullmatchdetails WHERE fullmatchdetails.matchId = matchId) ORDER BY fullmatchdetails.matchStartDateTime DESC LIMIT 1;
+IF playerNextMatch THEN
+UPDATE match_players SET match_players.credit = playerCredit WHERE match_players.playerId = currentPlayerId AND match_players.matchId = playerNextMatch;
+END IF;
+END IF;
+/* process end for credit */
+
+END LOOP nextPlayer;
+CLOSE matchPlayers;
+
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getPlayers`(IN `matchId` INT, IN `userTeamId` INT)
 BEGIN DECLARE teamCreatedBy INT(7) DEFAULT 0;
 /* validating match */
 IF EXISTS(
@@ -27,6 +96,7 @@ IF userTeamId != 0 THEN IF EXISTS(
 ) THEN 
 SELECT 
 	EXISTS(SELECT * FROM fullplayerdetails AS innerFullPlayerDetails WHERE innerFullPlayerDetails.playerId = fullplayerdetails.playerId AND innerFullPlayerDetails.matchId = fullplayerdetails.matchId AND innerFullPlayerDetails.isSelected = 1) AS isLineUpSelected,
+COALESCE((SELECT innerPlayerDetails.isSelected FROM fullmatchdetails AS innerFullmatch JOIN fullplayerdetails AS innerPlayerDetails ON innerPlayerDetails.playerId = fullplayerdetails.playerId AND innerPlayerDetails.matchId = innerFullmatch.matchId WHERE innerFullmatch.matchTournamentId IN (fullmatchdetails.matchTournamentId) AND innerFullmatch.matchId != fullmatchdetails.matchId AND (innerFullmatch.team1Id IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id) OR innerFullmatch.team2Id IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id)) AND innerFullmatch.matchStatusString IN ('ended', 'closed') AND innerFullmatch.matchStartDateTime < fullmatchdetails.matchStartDateTime ORDER BY innerFullmatch.matchStartDateTime DESC LIMIT 1), 0) AS isLastMatchPlayed,
   EXISTS(
     SELECT 
       userTeamPlayersDetails.playerId 
@@ -156,6 +226,7 @@ END IF;
 ELSE 
 SELECT 
 EXISTS(SELECT * FROM fullplayerdetails AS innerFullPlayerDetails WHERE innerFullPlayerDetails.playerId = fullplayerdetails.playerId AND innerFullPlayerDetails.matchId = fullplayerdetails.matchId AND innerFullPlayerDetails.isSelected = 1) AS isLineUpSelected,
+COALESCE((SELECT innerPlayerDetails.isSelected FROM fullmatchdetails AS innerFullmatch JOIN fullplayerdetails AS innerPlayerDetails ON innerPlayerDetails.playerId = fullplayerdetails.playerId AND innerPlayerDetails.matchId = innerFullmatch.matchId WHERE innerFullmatch.matchTournamentId IN (fullmatchdetails.matchTournamentId) AND innerFullmatch.matchId != fullmatchdetails.matchId AND (innerFullmatch.team1Id IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id) OR innerFullmatch.team2Id IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id)) AND innerFullmatch.matchStatusString IN ('ended', 'closed') AND innerFullmatch.matchStartDateTime < fullmatchdetails.matchStartDateTime ORDER BY innerFullmatch.matchStartDateTime DESC LIMIT 1), 0) AS isLastMatchPlayed,
   COALESCE(
     (
       (
@@ -256,7 +327,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE `getUserTeam`(IN `matchId` INT, IN `userId` INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getUserTeam`(IN `matchId` INT, IN `userId` INT)
 BEGIN
     IF EXISTS
         (
@@ -384,7 +455,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE `get_notifications`(IN `userId` INT(10))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_notifications`(IN `userId` INT(10))
 BEGIN
 
 /* checking user in notificatio history */
@@ -398,7 +469,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE `registerUser`(IN `phoneNumber` VARCHAR(11))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `registerUser`(IN `phoneNumber` VARCHAR(11))
 BEGIN
 
 /* error handling for duplicate entry */
@@ -418,7 +489,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE `setUserTeam`(IN `matchId` INT, IN `userId` INT, IN `userTeamId` INT, IN `userTeamType` INT, IN `captain` INT, IN `viceCaptain` INT, IN `player3` INT, IN `player4` INT, IN `player5` INT, IN `player6` INT, IN `player7` INT, IN `player8` INT, IN `player9` INT, IN `player10` INT, IN `player11` INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `setUserTeam`(IN `matchId` INT, IN `userId` INT, IN `userTeamId` INT, IN `userTeamType` INT, IN `captain` INT, IN `viceCaptain` INT, IN `player3` INT, IN `player4` INT, IN `player5` INT, IN `player6` INT, IN `player7` INT, IN `player8` INT, IN `player9` INT, IN `player10` INT, IN `player11` INT)
 BEGIN
 DECLARE validPlayers INT DEFAULT 0;
 DECLARE validUser INT DEFAULT 0;
@@ -449,7 +520,7 @@ START TRANSACTION;
 SAVEPOINT beforeInsertOrUpdate;
 
 /* checking matchId */
-SELECT EXISTS(SELECT fullmatchdetails.matchId FROM fullmatchdetails WHERE fullmatchdetails.matchId = matchId AND (fullmatchdetails.matchTyprString = "UPCOMING" AND fullmatchdetails.matchStartDateTime > (UNIX_TIMESTAMP(NOW()) * 1000)) OR TRUE) INTO validMatch;
+SELECT EXISTS(SELECT * FROM (SELECT fullmatchdetails.matchId, EXISTS(SELECT * FROM fullmatchdetails AS innerFullMatch WHERE (innerFullMatch.team1Id IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id) OR innerFullMatch.team2Id IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id)) AND innerFullMatch.matchStartDateTime < fullmatchdetails.matchStartDateTime AND innerFullMatch.matchTournamentId IN (fullmatchdetails.matchTournamentId) AND innerFullMatch.matchStatusString NOT IN ('ended', 'closed')) AS isDisabled FROM fullmatchdetails WHERE fullmatchdetails.matchId = matchId AND (fullmatchdetails.matchStatusString IN ('not_started') AND fullmatchdetails.matchStartDateTime > (UNIX_TIMESTAMP(NOW()) * 1000))) AS e WHERE e.isDisabled != 1) INTO validMatch;
 /* checking userId */
 SELECT EXISTS(SELECT userdetails.userId FROM userdetails WHERE userdetails.userId = userId) INTO validUser;
 
@@ -540,7 +611,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE `set_discussion`(IN `matchId` VARCHAR(10), IN `messengerId` VARCHAR(10), IN `createrId` VARCHAR(10), IN `message` VARCHAR(5000))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `set_discussion`(IN `matchId` VARCHAR(10), IN `messengerId` VARCHAR(10), IN `createrId` VARCHAR(10), IN `message` VARCHAR(5000))
 BEGIN
 
 START TRANSACTION;
@@ -576,7 +647,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE `set_isreaded`(IN `userId` INT(9), IN `notificationId` INT(9))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `set_isreaded`(IN `userId` INT(9), IN `notificationId` INT(9))
 BEGIN
 START TRANSACTION;
 IF (SELECT notifications.userId = userId FROM notifications WHERE notifications.notificationId = notificationId)
@@ -590,7 +661,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE `set_mark_as_read_all`(IN `userId` INT(9))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `set_mark_as_read_all`(IN `userId` INT(9))
 BEGIN
 START TRANSACTION;
 IF EXISTS(SELECT all_users.userId FROM all_users WHERE all_users.userId = userId)
@@ -604,7 +675,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE `storePointsForUserTeams`(IN `matchId` INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `storePointsForUserTeams`(IN `matchId` INT)
 BEGIN
 
 DECLARE captainPoints FLOAT DEFAULT 0;
@@ -642,7 +713,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE `update_likes`(IN `teamId` INT(7), IN `userId` INT(7))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_likes`(IN `teamId` INT(7), IN `userId` INT(7))
 BEGIN
 
 /* Declaring variables */
@@ -655,10 +726,13 @@ DECLARE isUserLikedTeam INT DEFAULT 0;
 /* checking existance of user */
 SELECT EXISTS(SELECT userdetails.userId FROM userdetails WHERE userdetails.userId = userId) INTO userExists;
 
+IF userExists = 1 THEN
+
+IF EXISTS(SELECT * FROM userTeamDetails JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE userTeamDetails.userTeamId = teamId AND fullmatchdetails.matchStatusString IN ('not_started', 'live')) = 1 THEN
+
 /* checking existance of team */
 SELECT EXISTS(SELECT userTeamDetails.userTeamId FROM userTeamDetails WHERE userTeamDetails.userTeamId = teamId) INTO teamExists;
 
-IF userExists = 1 THEN
 IF teamExists = 1 THEN
 
 /* storing value of isUserLiked in particular team */
@@ -688,6 +762,10 @@ ELSE SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'invalid input';
 
 /* generating error for user not exists */
 END IF;
+
+ELSE SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'you can only like live and upcoming match team';
+END IF;
+
 ELSE SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'invalid input';
 
 END IF;
@@ -698,7 +776,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE `update_views`(IN `teamId` VARCHAR(10), IN `viewerId` VARCHAR(10))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_views`(IN `teamId` VARCHAR(10), IN `viewerId` VARCHAR(10))
 BEGIN
 
 /* validation inputs */

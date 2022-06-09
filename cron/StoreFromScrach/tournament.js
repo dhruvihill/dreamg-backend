@@ -483,12 +483,13 @@ const a = async (tId) => {
   });
 };
 const b = async () => {
-  await a("34354");
-  await a("15574");
-  await a("36621");
-  await a("36503");
-  await a("36683");
-  await a("34336");
+  await a("29968");
+  // await a("34354");
+  // await a("15574");
+  // await a("36621");
+  // await a("36503");
+  // await a("36683");
+  // await a("34336");
 };
 b();
 

@@ -3,7 +3,7 @@ const router = express.Router();
 const verifyUser = require("../middleware/verifyUser");
 const axios = require("axios");
 const { fetchData, imageUrl } = require("../database/db_connection");
-const convertTimeZone = require("../middleware/convertTimeZone");
+const { convertTimeZone } = require("../middleware/convertTimeZone");
 
 // getting dashboard data upcominng matches, predictors, news and isNotification
 router.get("/", verifyUser, async (req, res) => {
