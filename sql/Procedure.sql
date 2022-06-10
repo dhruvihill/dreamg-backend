@@ -1,5 +1,5 @@
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `calculateCreditsForPlayers`(IN `matchId` INT, IN `creditForThisMatch` BOOLEAN)
+CREATE PROCEDURE `calculateCreditsForPlayers`(IN `matchId` INT, IN `creditForThisMatch` BOOLEAN)
 BEGIN
 DECLARE playerCredit DECIMAL(20, 1) DEFAULT 7.5;
 DECLARE playerAVGPoints FLOAT DEFAULT 0;
@@ -68,7 +68,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getPlayers`(IN `matchId` INT, IN `userTeamId` INT)
+CREATE PROCEDURE `getPlayers`(IN `matchId` INT, IN `userTeamId` INT)
 BEGIN DECLARE teamCreatedBy INT(7) DEFAULT 0;
 /* validating match */
 IF EXISTS(
@@ -327,7 +327,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getUserTeam`(IN `matchId` INT, IN `userId` INT)
+CREATE PROCEDURE `getUserTeam`(IN `matchId` INT, IN `userId` INT)
 BEGIN
     IF EXISTS
         (
@@ -455,7 +455,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_notifications`(IN `userId` INT(10))
+CREATE PROCEDURE `get_notifications`(IN `userId` INT(10))
 BEGIN
 
 /* checking user in notificatio history */
@@ -469,7 +469,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `registerUser`(IN `phoneNumber` VARCHAR(11))
+CREATE PROCEDURE `registerUser`(IN `phoneNumber` VARCHAR(11))
 BEGIN
 
 /* error handling for duplicate entry */
@@ -489,7 +489,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `setUserTeam`(IN `matchId` INT, IN `userId` INT, IN `userTeamId` INT, IN `userTeamType` INT, IN `captain` INT, IN `viceCaptain` INT, IN `player3` INT, IN `player4` INT, IN `player5` INT, IN `player6` INT, IN `player7` INT, IN `player8` INT, IN `player9` INT, IN `player10` INT, IN `player11` INT)
+CREATE PROCEDURE `setUserTeam`(IN `matchId` INT, IN `userId` INT, IN `userTeamId` INT, IN `userTeamType` INT, IN `captain` INT, IN `viceCaptain` INT, IN `player3` INT, IN `player4` INT, IN `player5` INT, IN `player6` INT, IN `player7` INT, IN `player8` INT, IN `player9` INT, IN `player10` INT, IN `player11` INT)
 BEGIN
 DECLARE validPlayers INT DEFAULT 0;
 DECLARE validUser INT DEFAULT 0;
@@ -520,7 +520,7 @@ START TRANSACTION;
 SAVEPOINT beforeInsertOrUpdate;
 
 /* checking matchId */
-SELECT EXISTS(SELECT * FROM (SELECT fullmatchdetails.matchId, EXISTS(SELECT * FROM fullmatchdetails AS innerFullMatch WHERE (innerFullMatch.team1Id IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id) OR innerFullMatch.team2Id IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id)) AND innerFullMatch.matchStartDateTime < fullmatchdetails.matchStartDateTime AND innerFullMatch.matchTournamentId IN (fullmatchdetails.matchTournamentId) AND innerFullMatch.matchStatusString NOT IN ('ended', 'closed')) AS isDisabled FROM fullmatchdetails WHERE fullmatchdetails.matchId = matchId AND (fullmatchdetails.matchStatusString IN ('not_started') AND fullmatchdetails.matchStartDateTime > (UNIX_TIMESTAMP(NOW()) * 1000))) AS e WHERE e.isDisabled != 1) INTO validMatch;
+SELECT EXISTS(SELECT * FROM (SELECT fullmatchdetails.matchId, EXISTS(SELECT * FROM fullmatchdetails AS innerFullMatch WHERE (innerFullMatch.team1Id IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id) OR innerFullMatch.team2Id IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id)) AND innerFullMatch.matchStartDateTime < fullmatchdetails.matchStartDateTime AND innerFullMatch.matchTournamentId IN (fullmatchdetails.matchTournamentId) AND innerFullMatch.matchStatusString IN ('live', 'not_started')) AS isDisabled FROM fullmatchdetails WHERE fullmatchdetails.matchId = matchId AND (fullmatchdetails.matchStatusString IN ('not_started') AND fullmatchdetails.matchStartDateTime > (UNIX_TIMESTAMP(NOW()) * 1000))) AS e WHERE e.isDisabled != 1) INTO validMatch;
 /* checking userId */
 SELECT EXISTS(SELECT userdetails.userId FROM userdetails WHERE userdetails.userId = userId) INTO validUser;
 
@@ -611,7 +611,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `set_discussion`(IN `matchId` VARCHAR(10), IN `messengerId` VARCHAR(10), IN `createrId` VARCHAR(10), IN `message` VARCHAR(5000))
+CREATE PROCEDURE `set_discussion`(IN `matchId` VARCHAR(10), IN `messengerId` VARCHAR(10), IN `createrId` VARCHAR(10), IN `message` VARCHAR(5000))
 BEGIN
 
 START TRANSACTION;
@@ -647,7 +647,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `set_isreaded`(IN `userId` INT(9), IN `notificationId` INT(9))
+CREATE PROCEDURE `set_isreaded`(IN `userId` INT(9), IN `notificationId` INT(9))
 BEGIN
 START TRANSACTION;
 IF (SELECT notifications.userId = userId FROM notifications WHERE notifications.notificationId = notificationId)
@@ -661,7 +661,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `set_mark_as_read_all`(IN `userId` INT(9))
+CREATE PROCEDURE `set_mark_as_read_all`(IN `userId` INT(9))
 BEGIN
 START TRANSACTION;
 IF EXISTS(SELECT all_users.userId FROM all_users WHERE all_users.userId = userId)
@@ -675,7 +675,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `storePointsForUserTeams`(IN `matchId` INT)
+CREATE PROCEDURE `storePointsForUserTeams`(IN `matchId` INT)
 BEGIN
 
 DECLARE captainPoints FLOAT DEFAULT 0;
@@ -713,7 +713,78 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `update_likes`(IN `teamId` INT(7), IN `userId` INT(7))
+CREATE PROCEDURE `transitCoins`(IN `userId` INT, IN `coinsToBeTransit` INT ZEROFILL, IN `coinTransitSource` TINYTEXT)
+BEGIN
+DECLARE coinTransitSourceId INT DEFAULT 0;
+DECLARE defaulteCoinsOfSource INT DEFAULT NUll;
+DECLARE operation TINYTEXT DEFAULT "";
+
+DECLARE EXIT HANDLER FOR SQLEXCEPTION
+BEGIN
+ROLLBACK TO SAVEPOINT beforeUpdate;
+RESIGNAL;
+END;
+
+START TRANSACTION;
+SAVEPOINT beforeUpdate;
+
+IF EXISTS(SELECT * FROM userdetails WHERE userdetails.userId = userId) THEN
+
+SELECT coinTransitSource.sourceId, coinTransitSource.defaulteCoins, coinTransitSource.operation INTO coinTransitSourceId, defaulteCoinsOfSource, operation FROM coinTransitSource WHERE coinTransitSource.sourceName = coinTransitSource;
+
+IF coinTransitSourceId != 0 THEN
+
+IF ISNULL(defaulteCoinsOfSource) != 1 THEN
+	SET coinsToBeTransit = defaulteCoinsOfSource;
+END IF;
+
+IF operation != "" THEN
+	IF operation = "+" THEN
+    	UPDATE users SET users.coins = users.coins + coinsToBeTransit WHERE users.userId = userId;
+        INSERT INTO coinHistory(`spendedCoints`, `userId`, `spendSource`) VALUES (coinsToBeTransit, userId, coinTransitSourceId);
+        COMMIT;
+    ELSEIF operation = "-" THEN        
+    	SELECT SUM(coinHistory.spendedCoints) INTO @usersSupposedCoins FROM coinHistory WHERE coinHistory.userId = userId;
+        SELECT users.coins INTO @usersActualCoins FROM users WHERE users.userId = userId;
+        
+        IF @usersSupposedCoins = @usersActualCoins AND @usersActualCoins > coinsToBeTransit THEN
+        	IF coinTransitSource = "REEDEM" THEN
+            	SET @coinsToRewardMap = 0;
+            	SELECT coinsRewardsMapping.reward INTO @coinsToRewardMap FROM coinsRewardsMapping WHERE coinsRewardsMapping.coins = coinsToBeTransit;
+                IF @coinsToRewardMap != 0 THEN
+                	SET @balanceSource = (SELECT balanceSource.sourceId FROM balanceSource WHERE balanceSource.sourceName = "REEDEM");
+                	UPDATE users SET users.coins = users.coins - coinsToBeTransit, users.balance = users.balance + @coinsToRewardMap WHERE users.userId = userId;
+        			INSERT INTO coinHistory(`spendedCoints`, `userId`, `spendSource`) VALUES (-coinsToBeTransit, userId, coinTransitSourceId);
+                    INSERT INTO balanceHistory(`transitedBalance`, `userId`, `transitionSource`) VALUES (@coinsToRewardMap, userId, @balanceSource);
+                    COMMIT;
+                 ELSE 
+                 	ROLLBACK TO beforeUpdate;
+                    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'something went wrong';
+                 END IF;
+            ELSE
+            	UPDATE users SET users.coins = users.coins - coinsToBeTransit WHERE users.userId = userId;
+        		INSERT INTO coinHistory(`spendedCoints`, `userId`, `spendSource`) VALUES (-coinsToBeTransit, userId, coinTransitSourceId);
+                COMMIT;
+            END IF;
+        ELSE
+        	ROLLBACK TO beforeUpdate;
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'something went wrong';
+        END IF;
+    END IF;
+ELSE SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'something went wrong';
+END IF;
+
+ELSE SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'invalid source';
+END IF;
+
+ELSE SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'invalid input';
+END IF;
+
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE `update_likes`(IN `teamId` INT(7), IN `userId` INT(7))
 BEGIN
 
 /* Declaring variables */
@@ -776,12 +847,14 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `update_views`(IN `teamId` VARCHAR(10), IN `viewerId` VARCHAR(10))
+CREATE PROCEDURE `update_views`(IN `teamId` VARCHAR(10), IN `viewerId` VARCHAR(10))
 BEGIN
 
 /* validation inputs */
 IF (NOT teamId REGEXP '[^0123456789]' AND NOT viewerId REGEXP '[^0123456789]') = 1 THEN
-    
+
+IF EXISTS(SELECT * FROM userTeamDetails JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE userTeamDetails.userTeamId = teamId AND fullmatchdetails.matchStatusString IN ('live', 'not_started')) THEN 
+
 /* checking team creater is not viewer */
 IF viewerId NOT IN (SELECT userTeamDetails.userId FROM userTeamDetails WHERE userTeamDetails.userTeamId = teamId) = 1 THEN
     
@@ -803,6 +876,9 @@ SELECT "success" AS message;
 ELSE SELECT "fail" AS message;
 END IF;
     
+ELSE SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'invalid input';
+END IF;
+
 /* error for invalid inputs */
 ELSE SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'invalid input';
 END IF;

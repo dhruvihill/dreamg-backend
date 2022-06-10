@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jun 06, 2022 at 05:04 PM
+-- Generation Time: Jun 10, 2022 at 04:16 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -11,24 +11,153 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
 --
 -- Database: `dreamg-v3`
 --
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `coinSpendSource`
+-- Table structure for table `balanceHistory`
 --
 
-INSERT INTO `coinSpendSource` (`sourceId`, `sourceName`) VALUES
-(1, 'WITHDRAW'),
-(2, 'CREATE_TEAM'),
-(3, 'BONUS_FOR_WINNING_CONTEST');
+CREATE TABLE `balanceHistory` (
+  `transactionId` int(11) NOT NULL,
+  `transitedBalance` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `transitionSource` int(11) NOT NULL,
+  `logTime` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `balanceHistory`
+--
+
+INSERT INTO `balanceHistory` (`transactionId`, `transitedBalance`, `userId`, `transitionSource`, `logTime`) VALUES
+(1, 10, 1, 2, '2022-06-10 12:48:29'),
+(2, 200, 1, 2, '2022-06-10 12:59:43');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `balanceSource`
+--
+
+CREATE TABLE `balanceSource` (
+  `sourceId` int(11) NOT NULL,
+  `sourceName` tinytext NOT NULL,
+  `message` tinytext NOT NULL,
+  `operation` tinytext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `balanceSource`
+--
+
+INSERT INTO `balanceSource` (`sourceId`, `sourceName`, `message`, `operation`) VALUES
+(1, 'WITHDRAW', 'Money Withdrawed', '-'),
+(2, 'REEDEM', 'Money Reedemed from coins', '+');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `coinHistory`
+--
+
+CREATE TABLE `coinHistory` (
+  `transactionId` int(11) NOT NULL,
+  `spendedCoints` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `spendSource` int(11) NOT NULL,
+  `timeZone` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `coinHistory`
+--
+
+INSERT INTO `coinHistory` (`transactionId`, `spendedCoints`, `userId`, `spendSource`, `timeZone`) VALUES
+(3, 100, 1, 3, '2022-06-10 11:38:59'),
+(5, 100, 1, 3, '2022-06-10 11:41:01'),
+(6, -50, 1, 1, '2022-06-10 11:41:37'),
+(7, 100, 1, 3, '2022-06-10 11:48:00'),
+(8, -50, 1, 1, '2022-06-10 11:48:21'),
+(9, -50, 1, 1, '2022-06-10 11:48:52'),
+(10, -50, 1, 1, '2022-06-10 12:10:59'),
+(11, 10, 1, 4, '2022-06-10 12:12:02'),
+(12, 5000, 1, 3, '2022-06-10 12:48:05'),
+(13, -5000, 1, 1, '2022-06-10 12:48:29'),
+(14, 30, 1, 2, '2022-06-10 12:53:41'),
+(15, 50000, 1, 3, '2022-06-10 12:59:15'),
+(16, -50000, 1, 1, '2022-06-10 12:59:43');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `coinsRewardsMapping`
+--
+
+CREATE TABLE `coinsRewardsMapping` (
+  `coins` int(7) NOT NULL,
+  `reward` int(5) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `coinsRewardsMapping`
+--
+
+INSERT INTO `coinsRewardsMapping` (`coins`, `reward`) VALUES
+(5000, 10),
+(8000, 20),
+(12000, 30),
+(15000, 45),
+(20000, 60),
+(25000, 90),
+(30000, 120),
+(40000, 150),
+(50000, 200);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `coinTransitSource`
+--
+
+CREATE TABLE `coinTransitSource` (
+  `sourceId` int(11) NOT NULL,
+  `sourceName` varchar(100) NOT NULL,
+  `message` text NOT NULL,
+  `defaulteCoins` int(11) DEFAULT NULL,
+  `operation` tinytext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `coinTransitSource`
+--
+
+INSERT INTO `coinTransitSource` (`sourceId`, `sourceName`, `message`, `defaulteCoins`, `operation`) VALUES
+(1, 'REEDEM', 'Coins reedemed', NULL, '-'),
+(2, 'CREATE_TEAM', 'Team created bonus', 30, '+'),
+(3, 'BONUS_FOR_WINNING_CONTEST_MOST_POPULAR', 'One of the most popular team', 50000, '+'),
+(4, 'DAILY_APP_OPEN', 'Daily Streak coins', 10, '+'),
+(5, 'BONUS_FOR_WINNING_CONTEST_MOST_LIKED', 'One of the most liked team', 50, '+'),
+(6, 'BONUS_FOR_WINNING_CONTEST_MOST_VIEWED', 'One of the most viewed team', 30, '+');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `competitors`
+--
+
+CREATE TABLE `competitors` (
+  `competitorId` int(11) NOT NULL,
+  `competitorRadarId` int(11) NOT NULL,
+  `competitorName` varchar(50) NOT NULL,
+  `competitorCountry` varchar(30) DEFAULT NULL,
+  `competitorCountryCode` varchar(20) DEFAULT NULL,
+  `competitorDisplayName` tinytext DEFAULT NULL,
+  `logTime` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `competitors`
@@ -69,7 +198,66 @@ INSERT INTO `competitors` (`competitorId`, `competitorRadarId`, `competitorName`
 (32, 247881, 'Sri Lanka', 'Sri Lanka', 'LKA', 'SRI', '2022-06-06 15:01:34'),
 (33, 142714, 'West Indies', NULL, NULL, 'WI', '2022-06-06 15:02:17'),
 (34, 107205, 'England', 'England', 'ENG', 'ENG', '2022-06-06 15:03:58'),
-(35, 142702, 'New Zealand', 'New Zealand', 'NZL', 'NZ', '2022-06-06 15:04:00');
+(35, 142702, 'New Zealand', 'New Zealand', 'NZL', 'NZ', '2022-06-06 15:04:00'),
+(36, 142708, 'South Africa', 'South Africa', 'ZAF', 'SA', '2022-06-09 13:33:02'),
+(37, 107203, 'India', 'India', 'IND', 'IND', '2022-06-09 13:33:02');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `discussion`
+--
+
+CREATE TABLE `discussion` (
+  `discussionId` int(11) NOT NULL,
+  `matchId` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `messengerId` int(11) NOT NULL,
+  `message` varchar(5000) NOT NULL,
+  `messageTime` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inning_batsmans`
+--
+
+CREATE TABLE `inning_batsmans` (
+  `scorcardInningId` int(11) NOT NULL,
+  `playerId` int(11) NOT NULL,
+  `battingOrder` int(11) DEFAULT NULL,
+  `runs` int(11) NOT NULL DEFAULT 0,
+  `strikeRate` float DEFAULT 0,
+  `isNotOut` tinyint(1) NOT NULL DEFAULT 0,
+  `isDuck` tinyint(1) NOT NULL DEFAULT 0,
+  `isRetiredHurt` tinyint(1) NOT NULL DEFAULT 0,
+  `ballFaced` int(11) NOT NULL DEFAULT 0,
+  `fours` int(11) NOT NULL DEFAULT 0,
+  `sixes` int(11) NOT NULL DEFAULT 0,
+  `attackIngShot` int(11) NOT NULL DEFAULT 0,
+  `semiAttackingShot` int(11) NOT NULL DEFAULT 0,
+  `defendingShot` int(11) NOT NULL DEFAULT 0,
+  `leaves` int(11) NOT NULL DEFAULT 0,
+  `onSideShot` int(11) NOT NULL DEFAULT 0,
+  `offSideShot` int(11) NOT NULL DEFAULT 0,
+  `squreLegShot` int(11) NOT NULL DEFAULT 0,
+  `fineLegShot` int(11) NOT NULL DEFAULT 0,
+  `thirdManShot` int(11) NOT NULL DEFAULT 0,
+  `coverShot` int(11) NOT NULL DEFAULT 0,
+  `pointsShot` int(11) NOT NULL DEFAULT 0,
+  `midOnShot` int(11) NOT NULL DEFAULT 0,
+  `midOffShot` int(11) NOT NULL DEFAULT 0,
+  `midWicketShot` int(11) NOT NULL DEFAULT 0,
+  `dismissalOverBallNumber` tinyint(1) DEFAULT NULL,
+  `dismissalOverNumber` smallint(6) DEFAULT NULL,
+  `dismissalBallerId` int(11) DEFAULT NULL,
+  `dismissalDiliveryType` tinytext DEFAULT NULL,
+  `dismissalFieldeManId` int(11) DEFAULT NULL,
+  `dismissalIsOnStrike` tinyint(1) DEFAULT NULL,
+  `dismissalShotType` tinytext DEFAULT NULL,
+  `dismissalType` tinytext DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `inning_batsmans`
@@ -2788,7 +2976,398 @@ INSERT INTO `inning_batsmans` (`scorcardInningId`, `playerId`, `battingOrder`, `
 (246, 738, 8, 12, 63.16, 0, 0, 0, 19, 0, 0, 0, 0, 0, 0, 11, 5, 4, 0, 1, 3, 0, 2, 1, 5, 5, 39, 747, NULL, NULL, 1, NULL, 'run_out'),
 (246, 777, 2, 19, 79.17, 0, 0, 0, 24, 3, 0, 0, 0, 0, 0, 5, 13, 2, 0, 1, 5, 5, 2, 2, 1, 2, 8, 743, NULL, NULL, 1, NULL, 'leg_before_wicket'),
 (246, 778, 7, 7, 38.89, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 3, 10, 1, 0, 0, 6, 2, 0, 2, 2, 3, 33, 757, NULL, NULL, 1, NULL, 'leg_before_wicket'),
-(246, 779, 11, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL);
+(246, 779, 11, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(247, 1, 3, 2, 9.09, 0, 0, 0, 22, 0, 0, 0, 0, 10, 11, 2, 5, 0, 1, 1, 2, 1, 1, 1, 0, 5, 10, 385, 'normal', 628, 1, 'defensive', 'caught'),
+(247, 50, 9, 26, 113.04, 0, 0, 0, 23, 4, 0, 5, 5, 10, 3, 6, 7, 2, 1, 0, 4, 1, 1, 2, 2, 5, 31, 439, NULL, 385, 1, 'attacking', 'caught'),
+(247, 100, 11, 14, 87.5, 0, 0, 0, 16, 1, 0, 3, 4, 5, 4, 3, 6, 0, 0, 1, 2, 2, 1, 1, 2, 6, 40, 372, 'normal', 640, 1, 'semi_attacking', 'caught'),
+(247, 104, 5, 13, 37.14, 0, 0, 0, 35, 3, 0, 0, 9, 16, 8, 7, 12, 1, 0, 0, 8, 2, 4, 2, 2, 5, 18, 385, NULL, NULL, 1, 'defensive', 'bowled'),
+(247, 129, 4, 3, 42.86, 0, 0, 0, 7, 0, 0, 0, 1, 4, 2, 0, 4, 0, 0, 1, 1, 1, 0, 1, 0, 1, 8, 396, 'out_swinger', 77, 1, 'defensive', 'caught'),
+(247, 491, 2, 1, 50, 0, 0, 0, 2, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 3, 439, 'out_swinger', 77, 1, 'defensive', 'caught'),
+(247, 635, 7, 42, 84, 1, 0, 0, 50, 4, 0, 11, 10, 17, 11, 11, 22, 2, 0, 2, 9, 9, 2, 2, 7, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(247, 784, 1, 1, 5.88, 0, 0, 0, 17, 0, 0, 0, 2, 7, 8, 2, 4, 0, 0, 1, 0, 3, 1, 0, 1, 3, 5, 439, 'out_swinger', 77, 1, 'defensive', 'caught'),
+(247, 785, 6, 14, 35.9, 0, 0, 0, 39, 2, 0, 0, 9, 15, 15, 12, 5, 3, 1, 0, 2, 3, 4, 0, 4, 5, 22, 385, 'in_swinger', NULL, 1, 'left_alone', 'bowled'),
+(247, 789, 10, 7, 38.89, 0, 0, 0, 18, 1, 0, 2, 3, 8, 5, 2, 7, 0, 0, 0, 6, 1, 0, 0, 2, 1, 36, 385, 'in_swinger', NULL, 1, 'defensive', 'leg_before_wicket'),
+(247, 790, 8, 6, 54.55, 0, 0, 0, 11, 1, 0, 4, 1, 5, 1, 4, 4, 0, 1, 1, 2, 1, 0, 0, 3, 5, 25, 439, NULL, 385, 1, 'attacking', 'caught'),
+(248, 77, 5, 1, 11.11, 0, 0, 0, 9, 0, 0, 0, 1, 4, 4, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 3, 33, 100, NULL, NULL, 1, 'defensive', 'bowled'),
+(248, 275, 4, 11, 73.33, 0, 0, 0, 15, 2, 0, 0, 6, 6, 3, 5, 6, 1, 0, 2, 2, 1, 1, 1, 3, 2, 29, 635, NULL, 50, 1, 'semi_attacking', 'caught'),
+(248, 372, 6, 1, 11.11, 0, 0, 0, 9, 0, 0, 0, 2, 4, 3, 2, 0, 0, 0, 0, 0, 0, 2, 0, 0, 3, 32, 50, 'out_swinger', 785, 1, 'semi_attacking', 'caught'),
+(248, 376, 1, 25, 32.47, 0, 0, 0, 77, 2, 0, 3, 14, 44, 15, 26, 26, 5, 0, 2, 16, 3, 6, 5, 15, 4, 30, 50, 'normal', NULL, 1, 'defensive', 'leg_before_wicket'),
+(248, 385, 8, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 5, 33, 100, NULL, 104, 1, 'left_alone', 'caught'),
+(248, 396, 9, 9, 64.29, 0, 0, 0, 14, 1, 0, 1, 3, 8, 2, 3, 3, 0, 2, 0, 0, 2, 1, 1, 0, 3, 38, 50, 'angled_in', NULL, 1, 'defensive', 'bowled'),
+(248, 435, 11, 8, 100, 0, 0, 0, 8, 1, 0, 1, 2, 4, 1, 3, 3, 0, 0, 1, 1, 0, 2, 1, 1, 5, 43, 100, 'out_swinger', 104, 1, 'defensive', 'caught'),
+(248, 439, 10, 7, 36.84, 1, 0, 0, 19, 0, 0, 2, 5, 12, 0, 7, 7, 2, 0, 0, 3, 3, 0, 1, 5, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(248, 534, 2, 43, 76.79, 0, 0, 0, 56, 7, 0, 2, 15, 19, 20, 5, 21, 1, 1, 3, 13, 0, 0, 5, 3, 6, 14, 790, 'out_swinger', 785, 1, 'semi_attacking', 'caught'),
+(248, 581, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(248, 628, 7, 7, 31.82, 0, 0, 0, 22, 0, 0, 1, 3, 11, 7, 3, 9, 1, 0, 2, 4, 0, 1, 3, 1, 5, 40, 50, 'out_swinger', 104, 1, 'defensive', 'caught'),
+(248, 640, 3, 7, 25.93, 0, 0, 0, 27, 1, 0, 0, 6, 13, 7, 5, 10, 2, 0, 0, 6, 1, 2, 3, 1, 6, 24, 790, NULL, 785, 1, 'defensive', 'caught'),
+(249, 1, 3, 15, 44.12, 0, 0, 0, 34, 2, 0, 1, 8, 18, 7, 8, 18, 2, 0, 4, 7, 2, 2, 5, 4, 2, 12, 385, NULL, 77, 1, 'attacking', 'caught'),
+(249, 50, 9, 21, 80.77, 0, 0, 0, 26, 4, 0, 6, 6, 11, 2, 7, 7, 0, 1, 3, 3, 0, 3, 1, 3, 3, 92, 435, 'leg_spin', 275, 1, 'attacking', 'caught'),
+(249, 100, 11, 4, 133.33, 1, 0, 0, 3, 1, 0, 0, 1, 0, 2, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(249, 104, 5, 108, 53.2, 0, 0, 0, 203, 12, 0, 16, 50, 88, 44, 64, 82, 14, 4, 3, 54, 8, 15, 17, 31, 3, 84, 396, 'normal', 628, 1, 'defensive', 'caught'),
+(249, 129, 4, 13, 38.24, 0, 0, 0, 34, 1, 0, 2, 8, 20, 4, 11, 14, 1, 1, 0, 9, 1, 4, 4, 5, 5, 23, 396, 'angled_in', 628, 1, 'attacking', 'caught'),
+(249, 491, 2, 1, 16.67, 0, 0, 0, 6, 0, 0, 0, 0, 5, 1, 0, 4, 0, 0, 2, 1, 0, 0, 1, 0, 1, 3, 439, 'out_swinger', 628, 1, 'defensive', 'caught'),
+(249, 635, 7, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 84, 396, 'in_swinger', 640, 1, 'defensive', 'run_out'),
+(249, 784, 1, 14, 42.42, 0, 0, 0, 33, 2, 0, 2, 3, 12, 15, 5, 9, 1, 0, 0, 2, 4, 1, 3, 3, 2, 14, 385, 'normal', 628, 1, 'defensive', 'caught'),
+(249, 785, 6, 96, 48.48, 0, 0, 0, 198, 12, 0, 24, 47, 95, 29, 67, 74, 19, 3, 3, 41, 9, 11, 21, 34, 2, 87, 439, 'in_swinger', NULL, 1, 'defensive', 'leg_before_wicket'),
+(249, 789, 10, 4, 30.77, 0, 0, 0, 13, 0, 0, 0, 2, 11, 0, 3, 4, 1, 0, 0, 4, 0, 1, 0, 1, 3, 91, 385, 'normal', NULL, 1, 'defensive', 'leg_before_wicket'),
+(249, 790, 8, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 84, 396, 'in_swinger', NULL, 1, 'defensive', 'bowled'),
+(250, 77, 5, 16, 106.67, 0, 0, 0, 15, 3, 0, 3, 3, 7, 1, 0, 9, 0, 0, 0, 7, 2, 0, 0, 0, 6, 20, 790, 'in_swinger', NULL, 1, 'semi_attacking', 'bowled'),
+(250, 275, 4, 115, 67.65, 1, 0, 0, 170, 12, 0, 25, 55, 78, 12, 66, 72, 15, 10, 5, 28, 23, 10, 16, 31, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(250, 372, 6, 54, 49.09, 0, 0, 0, 110, 5, 3, 11, 16, 67, 14, 37, 35, 4, 2, 2, 17, 7, 12, 9, 19, 6, 50, 790, NULL, 785, 1, 'semi_attacking', 'caught'),
+(250, 376, 1, 20, 62.5, 0, 0, 0, 32, 4, 0, 1, 8, 13, 10, 5, 15, 1, 0, 0, 9, 2, 2, 4, 2, 6, 8, 790, 'in_swinger', NULL, 1, 'left_alone', 'bowled'),
+(250, 385, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(250, 396, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(250, 435, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(250, 439, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(250, 534, 2, 9, 31.03, 0, 0, 0, 29, 1, 0, 1, 3, 19, 6, 2, 11, 0, 0, 1, 10, 0, 0, 0, 2, 6, 12, 790, 'out_swinger', 50, 1, 'defensive', 'caught'),
+(250, 628, 7, 32, 34.78, 1, 0, 0, 92, 3, 0, 8, 17, 52, 15, 29, 39, 3, 2, 2, 22, 7, 7, 8, 17, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(250, 640, 3, 10, 37.04, 0, 0, 0, 27, 0, 0, 0, 7, 16, 4, 8, 8, 1, 0, 1, 5, 0, 0, 2, 7, 2, 17, 100, 'in_swinger', NULL, 1, 'defensive', 'bowled'),
+(251, 148, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(251, 679, 6, 4, 66.67, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 2, 3, 1, 0, 0, 1, 1, 0, 1, 1, 3, 13, 706, NULL, NULL, 1, NULL, 'caught'),
+(251, 684, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(251, 687, 1, 21, 161.54, 0, 0, 0, 13, 1, 2, 0, 0, 0, 0, 4, 5, 1, 0, 1, 1, 2, 0, 1, 3, 3, 4, 711, NULL, NULL, 1, NULL, 'caught'),
+(251, 688, 8, 25, 138.89, 1, 0, 0, 18, 1, 1, 0, 0, 0, 0, 10, 7, 1, 1, 0, 3, 3, 3, 1, 5, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(251, 689, 2, 35, 120.69, 0, 0, 0, 29, 5, 0, 0, 0, 0, 0, 11, 12, 3, 0, 0, 4, 4, 3, 4, 5, 3, 10, 705, NULL, NULL, 1, NULL, 'caught'),
+(251, 691, 7, 7, 77.78, 0, 0, 0, 9, 1, 0, 0, 0, 0, 0, 2, 5, 0, 0, 0, 5, 0, 1, 0, 1, 5, 15, 706, NULL, NULL, 1, NULL, 'bowled'),
+(251, 694, 5, 34, 125.93, 0, 0, 0, 27, 2, 1, 0, 0, 0, 0, 16, 7, 6, 2, 0, 3, 0, 2, 4, 6, 6, 20, 719, NULL, NULL, 1, NULL, 'leg_before_wicket'),
+(251, 696, 4, 9, 75, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 4, 6, 1, 0, 1, 4, 0, 1, 1, 2, 2, 11, 706, NULL, NULL, 1, NULL, 'caught'),
+(251, 697, 3, 3, 50, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 4, 1, 0, 0, 0, 0, 0, 2, 1, 2, 3, 6, 722, NULL, NULL, 1, NULL, 'caught'),
+(251, 699, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(252, 705, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(252, 706, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(252, 708, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(252, 709, 2, 54, 145.95, 1, 0, 0, 37, 7, 2, 0, 0, 0, 0, 15, 17, 3, 3, 1, 3, 7, 1, 6, 8, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(252, 711, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(252, 716, 1, 83, 276.67, 0, 0, 0, 30, 5, 9, 0, 0, 0, 0, 11, 14, 6, 0, 2, 9, 1, 0, 2, 5, 4, 10, 688, NULL, NULL, 1, NULL, 'caught'),
+(252, 718, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(252, 719, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(252, 722, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(252, 724, 3, 3, 60, 1, 0, 0, 5, 0, 0, 0, 0, 0, 0, 4, 1, 2, 1, 0, 0, 1, 0, 0, 1, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(252, 725, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(253, 225, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(253, 370, 5, 26, 108.33, 0, 0, 0, 24, 1, 1, 0, 0, 0, 0, 11, 10, 1, 2, 0, 3, 5, 6, 2, 2, 1, 13, 330, NULL, NULL, 1, NULL, 'caught'),
+(253, 371, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(253, 375, 6, 51, 154.55, 1, 0, 0, 33, 0, 3, 0, 0, 0, 0, 13, 13, 2, 1, 0, 6, 2, 4, 5, 6, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(253, 377, 1, 2, 40, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 1, 1, 1, 0, 5, 1, 330, NULL, NULL, 1, NULL, 'run_out'),
+(253, 379, 4, 10, 76.92, 0, 0, 0, 13, 1, 0, 0, 0, 0, 0, 7, 4, 2, 1, 2, 1, 0, 4, 1, 0, 4, 8, 326, NULL, NULL, 1, NULL, 'caught'),
+(253, 380, 7, 24, 133.33, 0, 0, 0, 18, 1, 1, 0, 0, 0, 0, 5, 11, 2, 1, 0, 4, 1, 1, 6, 1, 3, 18, 327, NULL, NULL, 1, NULL, 'caught'),
+(253, 382, 8, 4, 57.14, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 3, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 20, 327, NULL, NULL, 1, NULL, 'caught'),
+(253, 384, 3, 10, 100, 0, 0, 0, 10, 2, 0, 0, 0, 0, 0, 2, 7, 0, 0, 1, 5, 0, 0, 1, 2, 1, 4, 327, NULL, NULL, 1, NULL, 'caught'),
+(253, 386, 9, 5, 250, 1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 1, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(253, 388, 2, 2, 25, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 4, 4, 1, 0, 1, 3, 0, 2, 0, 1, 4, 5, 329, NULL, NULL, 1, NULL, 'caught'),
+(254, 325, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 380, NULL, NULL, 1, NULL, 'bowled'),
+(254, 326, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(254, 327, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(254, 329, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(254, 330, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(254, 331, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(254, 332, 3, 49, 104.26, 0, 0, 0, 47, 6, 0, 0, 0, 0, 0, 10, 28, 2, 0, 5, 11, 10, 2, 2, 6, 2, 16, 375, NULL, NULL, 1, NULL, 'leg_before_wicket'),
+(254, 335, 5, 28, 175, 1, 0, 0, 16, 4, 0, 0, 0, 0, 0, 5, 9, 0, 1, 3, 2, 2, 0, 2, 4, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(254, 336, 4, 10, 66.67, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 3, 9, 0, 1, 0, 4, 4, 1, 1, 1, 6, 12, 225, NULL, NULL, 1, NULL, 'caught'),
+(254, 346, 2, 21, 110.53, 0, 0, 0, 19, 2, 0, 0, 0, 0, 0, 11, 5, 3, 1, 1, 2, 2, 3, 0, 4, 2, 9, 375, NULL, NULL, 1, NULL, 'bowled'),
+(254, 347, 6, 17, 170, 1, 0, 0, 10, 3, 0, 0, 0, 0, 0, 4, 4, 0, 0, 2, 1, 0, 2, 1, 2, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(255, 448, 1, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 2, 1, 429, NULL, NULL, 1, NULL, 'caught'),
+(255, 450, 5, 25, 92.59, 0, 0, 0, 27, 1, 0, 0, 0, 0, 0, 17, 6, 1, 3, 0, 3, 1, 5, 2, 8, 1, 20, 441, NULL, NULL, 1, NULL, 'caught'),
+(255, 452, 3, 50, 147.06, 0, 0, 0, 34, 6, 1, 0, 0, 0, 0, 16, 13, 2, 5, 0, 6, 2, 3, 5, 6, 6, 11, 41, NULL, NULL, 1, NULL, 'caught_bowled'),
+(255, 455, 4, 19, 126.67, 0, 0, 0, 15, 1, 1, 0, 0, 0, 0, 3, 11, 0, 0, 3, 5, 0, 1, 3, 2, 1, 10, 435, NULL, NULL, 1, NULL, 'caught'),
+(255, 458, 11, 2, 66.67, 1, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1, 2, 0, 1, 1, 0, 0, 0, 1, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(255, 461, 10, 5, 125, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 2, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 19, 429, NULL, NULL, 0, NULL, 'run_out'),
+(255, 462, 9, 1, 50, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 18, 441, NULL, NULL, 1, NULL, 'leg_before_wicket'),
+(255, 467, 7, 3, 75, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 1, 0, 0, 1, 0, 2, 16, 445, NULL, NULL, 1, NULL, 'bowled'),
+(255, 468, 6, 9, 128.57, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 5, 2, 0, 0, 0, 1, 1, 1, 0, 4, 4, 14, 445, NULL, NULL, 1, NULL, 'caught'),
+(255, 469, 2, 6, 60, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 5, 3, 1, 1, 0, 1, 1, 1, 1, 2, 3, 4, 81, NULL, NULL, 1, NULL, 'caught'),
+(255, 474, 8, 8, 114.29, 0, 0, 0, 7, 0, 1, 0, 0, 0, 0, 2, 4, 0, 0, 0, 4, 0, 1, 0, 1, 5, 17, 435, NULL, NULL, 1, NULL, 'caught'),
+(256, 41, 5, 24, 141.18, 1, 0, 0, 17, 2, 2, 0, 0, 0, 0, 5, 9, 0, 0, 0, 4, 0, 1, 5, 4, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(256, 81, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(256, 425, 3, 45, 145.16, 0, 0, 0, 31, 5, 1, 0, 0, 0, 0, 12, 17, 1, 2, 3, 6, 4, 2, 4, 7, 2, 13, 467, NULL, NULL, 0, NULL, 'run_out'),
+(256, 426, 4, 12, 120, 1, 0, 0, 10, 0, 0, 0, 0, 0, 0, 3, 7, 0, 0, 0, 3, 2, 1, 2, 2, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(256, 428, 1, 7, 116.67, 0, 0, 0, 6, 1, 0, 0, 0, 0, 0, 4, 2, 0, 0, 2, 0, 0, 1, 0, 3, 3, 3, 461, NULL, NULL, 1, NULL, 'caught'),
+(256, 429, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(256, 431, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(256, 435, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(256, 436, 2, 38, 111.76, 0, 0, 0, 34, 4, 0, 0, 0, 0, 0, 20, 11, 4, 1, 2, 4, 0, 4, 5, 11, 6, 11, 461, NULL, NULL, 1, NULL, 'caught'),
+(256, 441, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(256, 445, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(257, 55, 5, 8, 61.54, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 6, 4, 3, 0, 0, 0, 2, 0, 2, 3, 4, 9, 503, NULL, NULL, 1, NULL, 'caught_bowled'),
+(257, 526, 6, 38, 118.75, 0, 0, 0, 32, 2, 2, 0, 0, 0, 0, 13, 16, 3, 0, 1, 4, 4, 4, 7, 6, 5, 16, 39, NULL, NULL, 1, NULL, 'caught'),
+(257, 527, 2, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1, 1, 0, 0, 0, 6, 1, 39, NULL, NULL, 1, NULL, 'caught'),
+(257, 528, 8, 18, 105.88, 0, 0, 0, 17, 0, 1, 0, 0, 0, 0, 7, 9, 0, 0, 1, 2, 4, 4, 2, 3, 1, 18, 512, NULL, NULL, 1, NULL, 'caught'),
+(257, 531, 7, 14, 107.69, 0, 0, 0, 13, 2, 0, 0, 0, 0, 0, 3, 8, 1, 0, 0, 5, 1, 1, 2, 1, 1, 13, 512, NULL, NULL, 1, NULL, 'bowled'),
+(257, 533, 10, 7, 116.67, 1, 0, 0, 6, 1, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 1, 0, 2, 1, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(257, 537, 4, 2, 66.67, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 1, 0, 0, 0, 1, 5, 516, NULL, NULL, 1, NULL, 'caught'),
+(257, 538, 11, 1, 100, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(257, 539, 9, 24, 171.43, 0, 0, 0, 14, 2, 2, 0, 0, 0, 0, 7, 2, 0, 0, 0, 0, 1, 1, 1, 6, 1, 20, 516, NULL, NULL, 1, NULL, 'caught'),
+(257, 540, 3, 2, 40, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 2, 1, 0, 1, 0, 1, 0, 0, 0, 1, 4, 4, 514, NULL, NULL, 1, NULL, 'caught'),
+(257, 544, 1, 6, 42.86, 0, 0, 0, 14, 1, 0, 0, 0, 0, 0, 3, 8, 0, 1, 0, 7, 1, 0, 0, 2, 2, 4, 514, NULL, NULL, 1, NULL, 'caught'),
+(258, 39, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(258, 499, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(258, 503, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(258, 504, 2, 8, 100, 0, 0, 0, 8, 0, 1, 0, 0, 0, 0, 4, 3, 2, 0, 0, 3, 0, 1, 0, 1, 4, 3, 538, NULL, NULL, 1, NULL, 'bowled'),
+(258, 507, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(258, 511, 3, 50, 172.41, 0, 0, 0, 29, 2, 4, 0, 0, 0, 0, 13, 11, 1, 4, 0, 4, 4, 3, 3, 5, 2, 12, 539, NULL, NULL, 1, NULL, 'caught'),
+(258, 512, 4, 18, 90, 1, 0, 0, 20, 1, 0, 0, 0, 0, 0, 8, 6, 1, 0, 0, 2, 2, 4, 2, 3, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(258, 513, 5, 33, 206.25, 1, 0, 0, 16, 1, 3, 0, 0, 0, 0, 8, 3, 2, 0, 0, 1, 1, 1, 1, 5, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(258, 514, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(258, 516, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(258, 518, 1, 15, 75, 0, 0, 0, 20, 3, 0, 0, 0, 0, 0, 3, 11, 1, 0, 0, 8, 2, 0, 1, 2, 5, 8, 528, NULL, NULL, 1, NULL, 'caught'),
+(259, 41, 5, 66, 206.25, 0, 0, 0, 32, 4, 6, 0, 0, 0, 0, 13, 16, 1, 1, 0, 10, 1, 5, 5, 6, 5, 19, 210, NULL, NULL, 1, NULL, 'caught'),
+(259, 81, 4, 2, 33.33, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 2, 1, 1, 0, 2, 3, 11, 274, NULL, NULL, 1, NULL, 'caught'),
+(259, 425, 3, 41, 170.83, 0, 0, 0, 24, 2, 3, 0, 0, 0, 0, 13, 6, 5, 1, 1, 2, 2, 5, 1, 2, 2, 10, 282, NULL, NULL, 1, NULL, 'caught'),
+(259, 426, 6, 40, 200, 1, 0, 0, 20, 1, 4, 0, 0, 0, 0, 8, 10, 5, 0, 2, 5, 2, 1, 1, 2, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(259, 427, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(259, 428, 2, 42, 150, 0, 0, 0, 28, 6, 0, 0, 0, 0, 0, 9, 15, 4, 0, 5, 2, 7, 1, 1, 4, 3, 12, 282, NULL, NULL, 1, NULL, 'caught'),
+(259, 429, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(259, 431, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(259, 436, 1, 10, 142.86, 0, 0, 0, 7, 2, 0, 0, 0, 0, 0, 3, 4, 1, 0, 0, 2, 1, 1, 1, 1, 1, 3, 151, NULL, NULL, 1, NULL, 'caught'),
+(259, 441, 7, 5, 166.67, 1, 0, 0, 3, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(259, 445, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(260, 151, 4, 52, 185.71, 0, 0, 0, 28, 3, 4, 0, 0, 0, 0, 14, 10, 5, 1, 0, 5, 1, 3, 4, 5, 2, 18, 429, NULL, NULL, 1, NULL, 'caught_bowled'),
+(260, 210, 8, 4, 50, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 1, 3, 0, 0, 0, 1, 1, 1, 1, 0, 6, 20, 441, NULL, NULL, 1, NULL, 'caught'),
+(260, 273, 2, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 3, 1, 81, NULL, NULL, 1, NULL, 'caught'),
+(260, 274, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(260, 276, 3, 77, 179.07, 0, 0, 0, 43, 9, 4, 0, 0, 0, 0, 18, 23, 3, 2, 4, 10, 3, 4, 6, 9, 2, 13, 445, NULL, NULL, 1, NULL, 'caught'),
+(260, 278, 6, 7, 87.5, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 5, 2, 1, 1, 0, 1, 1, 0, 0, 3, 3, 17, 445, NULL, NULL, 1, NULL, 'leg_before_wicket'),
+(260, 281, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(260, 282, 7, 3, 100, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 4, 18, 429, NULL, NULL, 1, NULL, 'bowled'),
+(260, 283, 1, 38, 200, 0, 0, 0, 19, 2, 3, 0, 0, 0, 0, 11, 7, 2, 0, 1, 4, 1, 3, 1, 6, 4, 10, 441, NULL, NULL, 1, NULL, 'caught'),
+(260, 287, 5, 2, 50, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 1, 3, 0, 0, 0, 0, 1, 1, 2, 0, 4, 14, 431, NULL, NULL, 1, NULL, 'caught'),
+(260, 294, 9, 12, 171.43, 1, 0, 0, 7, 0, 1, 0, 0, 0, 0, 2, 4, 0, 0, 0, 0, 1, 0, 3, 2, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(261, 653, 9, 1, 33.33, 1, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(261, 654, 2, 24, 100, 0, 0, 0, 24, 0, 1, 0, 0, 0, 0, 12, 10, 0, 0, 4, 2, 3, 3, 1, 9, 2, 11, 74, NULL, NULL, 1, NULL, 'bowled'),
+(261, 655, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(261, 656, 1, 68, 158.14, 0, 0, 0, 43, 10, 1, 0, 0, 0, 0, 21, 19, 1, 1, 2, 7, 7, 8, 3, 11, 3, 13, 74, NULL, NULL, 1, NULL, 'caught_bowled'),
+(261, 658, 4, 19, 126.67, 0, 0, 0, 15, 1, 1, 0, 0, 0, 0, 10, 4, 1, 0, 0, 2, 1, 5, 1, 4, 5, 16, 546, NULL, NULL, 1, NULL, 'caught_bowled'),
+(261, 660, 3, 10, 90.91, 0, 0, 0, 11, 1, 0, 0, 0, 0, 0, 4, 5, 0, 0, 0, 4, 0, 1, 1, 3, 6, 14, 17, NULL, NULL, 1, NULL, 'caught'),
+(261, 663, 8, 6, 150, 0, 0, 0, 4, 1, 0, 0, 0, 0, 0, 1, 2, 0, 1, 0, 1, 1, 0, 0, 0, 5, 19, 551, NULL, NULL, 1, NULL, 'bowled'),
+(261, 664, 5, 12, 120, 0, 0, 0, 10, 1, 0, 0, 0, 0, 0, 6, 2, 1, 0, 1, 0, 0, 0, 1, 5, 2, 20, 558, NULL, NULL, 1, NULL, 'caught'),
+(261, 666, 7, 1, 20, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 1, 3, 0, 0, 1, 1, 1, 0, 0, 1, 1, 18, 17, NULL, NULL, 1, NULL, 'caught'),
+(261, 672, 10, 3, 100, 1, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(261, 673, 6, 7, 233.33, 0, 0, 0, 3, 0, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 17, 551, NULL, NULL, 1, NULL, 'bowled'),
+(262, 17, 4, 40, 148.15, 0, 0, 0, 27, 5, 1, 0, 0, 0, 0, 12, 10, 1, 0, 0, 7, 1, 11, 2, 0, 5, 17, 673, NULL, NULL, 1, NULL, 'caught'),
+(262, 74, 7, 1, 33.33, 1, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 1, 1, 0, 0, 0, 1, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(262, 546, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(262, 548, 3, 10, 142.86, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 4, 3, 1, 0, 0, 1, 1, 2, 1, 1, 6, 8, 672, NULL, NULL, 1, NULL, 'caught_bowled'),
+(262, 549, 6, 7, 140, 1, 0, 0, 5, 1, 0, 0, 0, 0, 0, 1, 4, 0, 0, 2, 2, 0, 0, 0, 1, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(262, 551, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(262, 554, 1, 31, 140.91, 0, 0, 0, 22, 2, 2, 0, 0, 0, 0, 11, 4, 0, 1, 0, 3, 0, 1, 1, 9, 2, 7, 673, NULL, NULL, 1, NULL, 'caught'),
+(262, 557, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(262, 558, 5, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 6, 17, 673, NULL, NULL, 1, NULL, 'caught'),
+(262, 559, 2, 63, 128.57, 0, 0, 0, 49, 7, 0, 0, 0, 0, 0, 23, 18, 1, 4, 0, 8, 6, 3, 4, 15, 4, 18, 655, NULL, NULL, 1, NULL, 'caught'),
+(262, 561, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(263, 249, 9, 15, 166.67, 1, 0, 0, 9, 2, 0, 0, 0, 0, 0, 4, 4, 1, 1, 1, 2, 0, 1, 1, 1, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(263, 349, 1, 11, 73.33, 0, 0, 0, 15, 1, 0, 0, 0, 0, 0, 7, 4, 1, 1, 1, 1, 1, 2, 1, 3, 3, 5, 477, NULL, NULL, 1, NULL, 'caught'),
+(263, 350, 2, 8, 80, 0, 0, 0, 10, 0, 1, 0, 0, 0, 0, 4, 4, 0, 0, 0, 3, 0, 2, 1, 2, 6, 3, 484, NULL, NULL, 1, NULL, 'caught'),
+(263, 351, 7, 16, 123.08, 0, 0, 0, 13, 0, 1, 0, 0, 0, 0, 5, 5, 1, 1, 0, 2, 2, 0, 1, 3, 4, 18, 484, NULL, NULL, 1, NULL, 'caught'),
+(263, 352, 5, 37, 137.04, 0, 0, 0, 27, 3, 0, 0, 0, 0, 0, 15, 9, 3, 3, 1, 1, 3, 5, 4, 4, 2, 18, 484, NULL, NULL, 1, NULL, 'caught'),
+(263, 355, 8, 1, 50, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6, 18, 484, NULL, NULL, 1, NULL, 'bowled'),
+(263, 356, 4, 19, 135.71, 0, 0, 0, 14, 3, 0, 0, 0, 0, 0, 3, 8, 0, 0, 1, 3, 3, 1, 1, 2, 2, 10, 495, NULL, NULL, 1, NULL, 'caught'),
+(263, 361, 6, 2, 40, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 2, 2, 0, 1, 0, 1, 1, 0, 0, 1, 6, 12, 495, NULL, NULL, 1, NULL, 'caught'),
+(263, 362, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(263, 363, 10, 2, 50, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6, 20, 477, NULL, NULL, 0, NULL, 'run_out'),
+(263, 365, 3, 29, 131.82, 0, 0, 0, 22, 3, 0, 0, 0, 0, 0, 10, 11, 2, 1, 3, 2, 4, 2, 2, 5, 4, 11, 103, NULL, NULL, 1, NULL, 'caught'),
+(264, 103, 6, 20, 153.85, 0, 0, 0, 13, 3, 0, 0, 0, 0, 0, 7, 5, 1, 1, 2, 1, 1, 3, 1, 2, 3, 16, 351, NULL, NULL, 1, NULL, 'caught'),
+(264, 475, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(264, 477, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(264, 480, 3, 70, 159.09, 0, 0, 0, 44, 6, 3, 0, 0, 0, 0, 13, 23, 2, 2, 4, 5, 3, 4, 11, 5, 2, 13, 362, NULL, NULL, 1, NULL, 'caught'),
+(264, 481, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 365, NULL, NULL, 1, NULL, 'caught'),
+(264, 482, 5, 28, 116.67, 1, 0, 0, 24, 2, 1, 0, 0, 0, 0, 10, 9, 4, 1, 2, 5, 0, 2, 2, 3, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(264, 484, 7, 12, 171.43, 1, 0, 0, 7, 1, 0, 0, 0, 0, 0, 4, 2, 0, 2, 1, 1, 0, 1, 0, 1, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(264, 485, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(264, 492, 4, 6, 85.71, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 3, 3, 0, 1, 3, 0, 0, 1, 0, 1, 6, 9, 363, NULL, NULL, 1, NULL, 'caught'),
+(264, 493, 2, 11, 84.62, 0, 0, 0, 13, 1, 0, 0, 0, 0, 0, 7, 6, 1, 1, 2, 4, 0, 2, 0, 3, 4, 7, 362, NULL, NULL, 1, NULL, 'caught'),
+(264, 495, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(265, 151, 3, 34, 178.95, 0, 0, 0, 19, 3, 2, 0, 0, 0, 0, 13, 5, 3, 1, 0, 2, 1, 3, 2, 6, 4, 11, 421, NULL, NULL, 1, NULL, 'caught'),
+(265, 164, 1, 16, 160, 0, 0, 0, 10, 0, 2, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 4, 0, 3, 6, 3, 405, NULL, NULL, 1, NULL, 'leg_before_wicket'),
+(265, 210, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(265, 274, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(265, 278, 6, 48, 160, 1, 0, 0, 30, 2, 2, 0, 0, 0, 0, 18, 8, 7, 2, 3, 3, 1, 6, 1, 3, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(265, 282, 7, 9, 225, 1, 0, 0, 4, 0, 1, 0, 0, 0, 0, 2, 2, 0, 0, 1, 0, 0, 0, 1, 2, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(265, 283, 2, 20, 153.85, 0, 0, 0, 13, 3, 0, 0, 0, 0, 0, 5, 5, 0, 2, 0, 2, 2, 3, 1, 0, 3, 5, 405, NULL, NULL, 1, NULL, 'bowled'),
+(265, 285, 4, 40, 160, 0, 0, 0, 25, 2, 3, 0, 0, 0, 0, 12, 6, 1, 3, 1, 2, 0, 6, 3, 2, 5, 12, 399, NULL, NULL, 1, NULL, 'bowled'),
+(265, 287, 5, 19, 95, 0, 0, 0, 20, 1, 0, 0, 0, 0, 0, 9, 8, 0, 2, 2, 3, 1, 4, 2, 3, 4, 19, 405, NULL, NULL, 1, NULL, 'caught'),
+(265, 291, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(265, 294, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(266, 399, 4, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 2, 210, NULL, NULL, 1, NULL, 'bowled'),
+(266, 400, 2, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 151, NULL, NULL, 1, NULL, 'bowled'),
+(266, 402, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(266, 405, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(266, 407, 7, 56, 160, 0, 0, 0, 35, 3, 3, 0, 0, 0, 0, 15, 16, 0, 2, 0, 8, 2, 7, 6, 6, 4, 19, 210, NULL, NULL, 1, NULL, 'bowled'),
+(266, 408, 3, 15, 125, 0, 0, 0, 12, 3, 0, 0, 0, 0, 0, 4, 5, 0, 1, 2, 1, 1, 2, 1, 1, 3, 5, 294, NULL, NULL, 1, NULL, 'caught'),
+(266, 409, 1, 5, 100, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 3, 2, 2, 1, 0, 1, 0, 0, 1, 0, 4, 2, 210, NULL, NULL, 1, NULL, 'caught'),
+(266, 411, 8, 12, 150, 1, 0, 0, 8, 0, 1, 0, 0, 0, 0, 5, 1, 0, 0, 0, 0, 0, 2, 1, 3, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(266, 413, 6, 7, 70, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 4, 5, 0, 2, 2, 2, 0, 2, 1, 0, 1, 8, 274, NULL, NULL, 1, NULL, 'caught'),
+(266, 414, 5, 79, 171.74, 0, 0, 0, 46, 9, 3, 0, 0, 0, 0, 15, 24, 7, 2, 8, 9, 2, 3, 5, 3, 6, 18, 282, NULL, NULL, 1, NULL, 'caught'),
+(266, 421, 9, 1, 50, 1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(267, 114, 8, 2, 28.57, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 1, 2, 1, 0, 1, 0, 0, 0, 1, 0, 2, 20, 125, NULL, NULL, 1, NULL, 'run_out'),
+(267, 178, 2, 4, 100, 0, 0, 0, 4, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 4, 632, NULL, NULL, 1, NULL, 'bowled'),
+(267, 237, 9, 5, 250, 1, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 1, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(267, 597, 1, 6, 75, 0, 0, 0, 8, 1, 0, 0, 0, 0, 0, 4, 3, 2, 0, 0, 2, 0, 0, 1, 2, 4, 2, 636, NULL, NULL, 1, NULL, 'caught'),
+(267, 598, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(267, 605, 5, 49, 111.36, 1, 0, 0, 44, 3, 0, 0, 0, 0, 0, 18, 17, 2, 2, 4, 4, 5, 5, 4, 9, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(267, 606, 3, 38, 135.71, 0, 0, 0, 28, 3, 2, 0, 0, 0, 0, 5, 15, 1, 0, 3, 5, 5, 2, 2, 2, 2, 11, 49, NULL, NULL, 1, NULL, 'caught'),
+(267, 607, 4, 3, 100, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 1, 1, 0, 1, 0, 0, 3, 5, 641, NULL, NULL, 1, NULL, 'caught'),
+(267, 611, 6, 31, 134.78, 0, 0, 0, 23, 2, 1, 0, 0, 0, 0, 5, 13, 1, 0, 0, 4, 3, 2, 6, 2, 1, 18, 125, NULL, NULL, 1, NULL, 'caught'),
+(267, 621, 7, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 18, 125, NULL, NULL, 1, NULL, 'leg_before_wicket'),
+(267, 622, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(268, 24, 5, 23, 209.09, 1, 0, 0, 11, 1, 2, 0, 0, 0, 0, 6, 4, 0, 2, 1, 0, 2, 2, 1, 2, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(268, 49, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(268, 125, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(268, 625, 4, 10, 125, 1, 0, 0, 8, 1, 0, 0, 0, 0, 0, 2, 5, 1, 1, 1, 3, 0, 0, 1, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(268, 626, 1, 50, 121.95, 0, 0, 0, 41, 4, 2, 0, 0, 0, 0, 16, 21, 2, 1, 1, 7, 2, 5, 11, 8, 3, 13, 114, NULL, NULL, 1, NULL, 'caught'),
+(268, 632, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(268, 633, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(268, 636, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(268, 638, 3, 1, 50, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 6, 13, 114, NULL, NULL, 1, NULL, 'bowled'),
+(268, 641, 2, 57, 154.05, 0, 0, 0, 37, 6, 2, 0, 0, 0, 0, 17, 17, 4, 1, 1, 11, 1, 3, 4, 9, 2, 14, 237, NULL, NULL, 1, NULL, 'caught'),
+(268, 646, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(269, 2, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(269, 32, 1, 76, 158.33, 0, 0, 0, 48, 11, 3, 18, 10, 19, 0, 15, 22, 2, 0, 5, 8, 5, 5, 4, 8, 6, 13, 795, 'left_arm_orthodox', 28, 1, 'attacking', 'caught'),
+(269, 60, 3, 36, 133.33, 0, 0, 0, 27, 1, 3, 9, 10, 8, 0, 14, 10, 1, 0, 1, 5, 1, 4, 3, 9, 1, 17, 126, 'normal', NULL, 1, 'defensive', 'bowled'),
+(269, 107, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(269, 136, 2, 23, 153.33, 0, 0, 0, 15, 0, 3, 7, 3, 5, 0, 10, 1, 4, 1, 0, 1, 0, 2, 0, 3, 2, 7, 794, 'normal', 793, 1, 'attacking', 'caught'),
+(269, 149, 6, 1, 50, 1, 0, 0, 2, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(269, 154, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(269, 176, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(269, 183, 4, 29, 181.25, 0, 0, 0, 16, 2, 2, 9, 3, 4, 0, 8, 6, 1, 1, 0, 3, 2, 4, 1, 2, 1, 20, 173, NULL, 102, 1, 'attacking', 'caught'),
+(269, 202, 5, 31, 258.33, 1, 0, 0, 12, 2, 3, 5, 4, 3, 0, 7, 3, 0, 1, 0, 1, 0, 3, 2, 3, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(269, 231, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(270, 28, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(270, 84, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(270, 102, 4, 75, 163.04, 1, 0, 0, 46, 7, 5, 20, 13, 12, 0, 16, 21, 1, 1, 2, 11, 3, 1, 5, 13, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(270, 126, 3, 29, 223.08, 0, 0, 0, 13, 1, 4, 5, 3, 4, 1, 5, 3, 1, 1, 0, 2, 1, 0, 0, 3, 2, 6, 154, 'off_cutter', NULL, 1, 'defensive', 'bowled'),
+(270, 173, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(270, 195, 5, 64, 206.45, 1, 0, 0, 31, 4, 5, 16, 10, 4, 1, 15, 13, 1, 0, 0, 8, 1, 2, 4, 12, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(270, 220, 1, 22, 122.22, 0, 0, 0, 18, 3, 0, 9, 3, 6, 0, 8, 10, 1, 0, 3, 3, 3, 1, 1, 6, 4, 9, 176, 'left_arm_orthodox', 32, 1, 'attacking', 'caught'),
+(270, 793, 2, 10, 125, 0, 0, 0, 8, 2, 0, 1, 4, 3, 0, 4, 2, 2, 1, 1, 0, 0, 0, 1, 1, 2, 3, 2, 'out_swinger', 183, 1, 'semi_attacking', 'caught'),
+(270, 794, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(270, 795, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(270, 796, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(271, 705, 6, 2, 66.67, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 17, 512, NULL, NULL, 1, NULL, 'bowled'),
+(271, 706, 8, 3, 75, 1, 0, 0, 4, 0, 0, 0, 0, 0, 0, 2, 1, 1, 0, 0, 1, 0, 0, 0, 1, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(271, 708, 5, 4, 66.67, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 1, 5, 0, 0, 1, 0, 1, 0, 3, 1, 4, 16, 514, NULL, NULL, 1, NULL, 'caught'),
+(271, 709, 1, 44, 112.82, 0, 0, 0, 39, 3, 1, 0, 0, 0, 0, 13, 18, 2, 0, 1, 11, 4, 2, 2, 9, 1, 15, 512, NULL, NULL, 1, NULL, 'caught'),
+(271, 711, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(271, 716, 2, 2, 50, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 3, 514, NULL, NULL, 1, NULL, 'caught'),
+(271, 717, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(271, 718, 4, 38, 146.15, 0, 0, 0, 26, 3, 1, 0, 0, 0, 0, 10, 12, 3, 0, 2, 3, 5, 2, 2, 5, 1, 19, 514, NULL, NULL, 1, NULL, 'caught'),
+(271, 719, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(271, 724, 3, 30, 115.38, 0, 0, 0, 26, 4, 0, 0, 0, 0, 0, 11, 14, 3, 0, 0, 5, 7, 0, 2, 8, 2, 9, 512, NULL, NULL, 1, NULL, 'caught'),
+(271, 725, 7, 24, 200, 1, 0, 0, 12, 4, 0, 0, 0, 0, 0, 1, 10, 0, 0, 0, 5, 3, 1, 2, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(272, 499, 6, 19, 111.76, 0, 0, 0, 17, 1, 1, 0, 0, 0, 0, 6, 7, 0, 0, 0, 5, 1, 3, 1, 3, 4, 18, 711, NULL, NULL, 1, NULL, 'bowled'),
+(272, 503, 7, 8, 114.29, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 2, 3, 0, 0, 0, 1, 2, 2, 0, 0, 2, 17, 705, NULL, NULL, 1, NULL, 'bowled'),
+(272, 504, 1, 13, 76.47, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 3, 12, 0, 0, 4, 3, 2, 1, 3, 2, 4, 7, 705, NULL, NULL, 1, NULL, 'caught'),
+(272, 507, 8, 8, 133.33, 0, 0, 0, 6, 1, 0, 0, 0, 0, 0, 1, 4, 0, 0, 0, 0, 2, 1, 2, 0, 2, 19, 719, NULL, NULL, 1, NULL, 'caught'),
+(272, 510, 9, 6, 150, 1, 0, 0, 4, 0, 0, 0, 0, 0, 0, 2, 2, 0, 1, 0, 1, 1, 0, 0, 1, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(272, 511, 3, 10, 76.92, 0, 0, 0, 13, 0, 1, 0, 0, 0, 0, 3, 5, 1, 1, 0, 2, 2, 1, 1, 0, 4, 8, 717, NULL, NULL, 1, NULL, 'caught_bowled'),
+(272, 512, 4, 14, 127.27, 0, 0, 0, 11, 1, 0, 0, 0, 0, 0, 3, 7, 0, 0, 1, 4, 0, 1, 2, 2, 2, 11, 705, NULL, NULL, 1, NULL, 'caught'),
+(272, 513, 5, 27, 112.5, 0, 0, 0, 24, 2, 1, 0, 0, 0, 0, 9, 11, 0, 0, 0, 5, 3, 3, 3, 6, 3, 15, 706, NULL, NULL, 1, NULL, 'caught'),
+(272, 514, 10, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 19, 719, NULL, NULL, 1, NULL, 'bowled'),
+(272, 516, 11, 1, 50, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 20, 711, NULL, NULL, 1, NULL, 'bowled'),
+(272, 517, 2, 11, 91.67, 0, 0, 0, 12, 0, 1, 0, 0, 0, 0, 3, 3, 0, 0, 0, 1, 1, 1, 1, 2, 6, 4, 705, NULL, NULL, 1, NULL, 'bowled'),
+(273, 448, 1, 35, 125, 0, 0, 0, 28, 3, 1, 0, 0, 0, 0, 9, 13, 5, 0, 2, 9, 0, 1, 2, 3, 1, 13, 249, NULL, NULL, 1, NULL, 'caught'),
+(273, 450, 4, 25, 125, 0, 0, 0, 20, 3, 0, 0, 0, 0, 0, 9, 9, 1, 1, 0, 7, 1, 3, 1, 4, 6, 19, 365, NULL, NULL, 1, NULL, 'caught'),
+(273, 452, 7, 17, 212.5, 1, 0, 0, 8, 2, 0, 0, 0, 0, 0, 5, 2, 1, 0, 0, 1, 1, 0, 0, 4, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(273, 455, 3, 67, 163.41, 0, 0, 0, 41, 9, 2, 0, 0, 0, 0, 12, 26, 0, 1, 4, 10, 10, 2, 2, 9, 3, 17, 362, NULL, NULL, 1, NULL, 'caught'),
+(273, 458, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(273, 461, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(273, 462, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(273, 467, 5, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 4, 17, 362, NULL, NULL, 1, NULL, 'caught'),
+(273, 468, 6, 4, 80, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 2, 0, 0, 0, 2, 4, 18, 351, NULL, NULL, 1, NULL, 'leg_before_wicket'),
+(273, 469, 2, 25, 156.25, 0, 0, 0, 16, 3, 1, 0, 0, 0, 0, 9, 5, 1, 1, 0, 3, 2, 1, 0, 6, 5, 5, 365, NULL, NULL, 1, NULL, 'caught'),
+(273, 474, 8, 1, 100, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(274, 249, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(274, 349, 1, 73, 228.12, 0, 0, 0, 32, 11, 1, 0, 0, 0, 0, 17, 14, 3, 0, 1, 8, 2, 3, 3, 11, 4, 9, 467, NULL, NULL, 1, NULL, 'caught'),
+(274, 350, 2, 39, 108.33, 0, 0, 0, 36, 2, 1, 0, 0, 0, 0, 24, 9, 4, 5, 0, 6, 1, 3, 2, 12, 6, 16, 474, NULL, NULL, 1, NULL, 'caught'),
+(274, 351, 6, 12, 200, 1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 3, 3, 1, 0, 0, 2, 1, 0, 0, 2, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(274, 352, 3, 8, 114.29, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 1, 5, 0, 0, 0, 2, 1, 1, 2, 0, 1, 11, 462, NULL, NULL, 1, NULL, 'run_out'),
+(274, 355, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(274, 356, 4, 15, 125, 0, 0, 0, 12, 1, 0, 0, 0, 0, 0, 6, 5, 1, 0, 1, 3, 0, 0, 1, 5, 2, 14, 462, NULL, NULL, 1, NULL, 'bowled'),
+(274, 361, 5, 29, 152.63, 1, 0, 0, 19, 3, 0, 0, 0, 0, 0, 9, 9, 3, 0, 0, 6, 1, 1, 2, 5, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(274, 362, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(274, 363, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(274, 365, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(275, 103, 5, 24, 218.18, 1, 0, 0, 11, 3, 1, 0, 0, 0, 0, 9, 2, 1, 0, 0, 1, 0, 4, 1, 4, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(275, 475, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(275, 477, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(275, 480, 3, 50, 166.67, 0, 0, 0, 30, 6, 2, 0, 0, 0, 0, 9, 15, 1, 0, 2, 5, 2, 6, 6, 2, 5, 11, 131, NULL, NULL, 1, NULL, 'caught'),
+(275, 481, 2, 113, 198.25, 1, 0, 0, 57, 8, 9, 0, 0, 0, 0, 20, 31, 7, 2, 2, 12, 2, 7, 15, 4, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(275, 482, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(275, 484, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(275, 485, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(275, 492, 4, 27, 135, 0, 0, 0, 20, 2, 1, 0, 0, 0, 0, 7, 10, 0, 0, 2, 6, 0, 3, 2, 4, 4, 17, 131, NULL, NULL, 1, NULL, 'bowled'),
+(275, 493, 1, 1, 50, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 1, 319, NULL, NULL, 1, NULL, 'caught'),
+(275, 495, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(276, 131, 9, 15, 187.5, 0, 0, 0, 8, 1, 1, 0, 0, 0, 0, 3, 5, 0, 1, 0, 2, 1, 0, 2, 2, 5, 15, 480, NULL, NULL, 1, NULL, 'caught'),
+(276, 133, 3, 11, 100, 0, 0, 0, 11, 2, 0, 0, 0, 0, 0, 4, 4, 0, 0, 1, 2, 1, 1, 0, 3, 1, 3, 484, NULL, NULL, 1, NULL, 'bowled'),
+(276, 300, 4, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 484, NULL, NULL, 1, NULL, 'caught');
+INSERT INTO `inning_batsmans` (`scorcardInningId`, `playerId`, `battingOrder`, `runs`, `strikeRate`, `isNotOut`, `isDuck`, `isRetiredHurt`, `ballFaced`, `fours`, `sixes`, `attackIngShot`, `semiAttackingShot`, `defendingShot`, `leaves`, `onSideShot`, `offSideShot`, `squreLegShot`, `fineLegShot`, `thirdManShot`, `coverShot`, `pointsShot`, `midOnShot`, `midOffShot`, `midWicketShot`, `dismissalOverBallNumber`, `dismissalOverNumber`, `dismissalBallerId`, `dismissalDiliveryType`, `dismissalFieldeManId`, `dismissalIsOnStrike`, `dismissalShotType`, `dismissalType`) VALUES
+(276, 303, 11, 2, 100, 1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(276, 304, 7, 10, 200, 0, 0, 0, 5, 2, 0, 0, 0, 0, 0, 3, 1, 1, 0, 0, 1, 0, 0, 0, 2, 2, 13, 480, NULL, NULL, 1, NULL, 'leg_before_wicket'),
+(276, 306, 2, 22, 157.14, 0, 0, 0, 14, 1, 1, 0, 0, 0, 0, 10, 4, 3, 0, 0, 0, 3, 3, 1, 4, 6, 11, 103, NULL, NULL, 1, NULL, 'caught'),
+(276, 309, 1, 4, 200, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 1, 480, NULL, NULL, 1, NULL, 'caught'),
+(276, 310, 6, 42, 144.83, 0, 0, 0, 29, 4, 1, 0, 0, 0, 0, 12, 11, 3, 2, 2, 5, 0, 4, 4, 3, 4, 17, 480, NULL, NULL, 1, NULL, 'caught'),
+(276, 316, 10, 4, 100, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0, 0, 4, 16, 484, NULL, NULL, 1, NULL, 'caught'),
+(276, 317, 5, 33, 150, 0, 0, 0, 22, 7, 0, 0, 0, 0, 0, 6, 15, 1, 1, 1, 7, 1, 2, 6, 2, 4, 7, 475, NULL, NULL, 1, NULL, 'caught'),
+(276, 319, 8, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 13, 480, NULL, NULL, 1, NULL, 'stumped'),
+(277, 24, 6, 16, 106.67, 1, 0, 0, 15, 0, 1, 0, 0, 0, 0, 5, 6, 3, 1, 0, 2, 1, 0, 3, 1, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(277, 49, 5, 25, 156.25, 0, 0, 0, 16, 2, 1, 0, 0, 0, 0, 3, 11, 2, 0, 2, 7, 1, 0, 1, 1, 4, 14, 691, NULL, NULL, 1, NULL, 'caught'),
+(277, 125, 8, 16, 228.57, 0, 0, 0, 7, 1, 1, 0, 0, 0, 0, 3, 3, 1, 1, 0, 1, 1, 0, 1, 1, 6, 20, 686, NULL, NULL, 1, NULL, 'caught'),
+(277, 625, 4, 22, 157.14, 0, 0, 0, 14, 2, 0, 0, 0, 0, 0, 4, 10, 1, 0, 0, 4, 2, 0, 4, 3, 1, 11, 688, NULL, NULL, 1, NULL, 'caught_bowled'),
+(277, 626, 1, 81, 180, 0, 0, 0, 45, 10, 3, 0, 0, 0, 0, 16, 24, 2, 5, 1, 9, 9, 3, 5, 6, 3, 16, 688, NULL, NULL, 1, NULL, 'bowled'),
+(277, 632, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(277, 633, 7, 27, 225, 0, 0, 0, 12, 3, 2, 0, 0, 0, 0, 6, 6, 2, 0, 1, 3, 0, 4, 2, 0, 4, 19, 148, NULL, NULL, 1, NULL, 'caught'),
+(277, 636, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(277, 638, 3, 0, 0, 0, 1, 0, 3, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 4, 6, 684, NULL, NULL, 1, NULL, 'caught'),
+(277, 641, 2, 9, 90, 0, 0, 0, 10, 1, 0, 0, 0, 0, 0, 3, 6, 0, 0, 1, 0, 1, 1, 4, 2, 6, 5, 148, NULL, NULL, 1, NULL, 'caught'),
+(277, 646, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(278, 148, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(278, 679, 5, 13, 130, 0, 0, 0, 10, 3, 0, 0, 0, 0, 0, 4, 3, 1, 0, 0, 1, 1, 3, 1, 0, 3, 12, 49, NULL, NULL, 1, NULL, 'caught'),
+(278, 681, 3, 5, 50, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 4, 3, 2, 0, 0, 1, 1, 1, 1, 1, 2, 10, 633, NULL, NULL, 1, NULL, 'caught'),
+(278, 684, 9, 1, 33.33, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 2, 0, 0, 0, 0, 3, 18, 638, NULL, NULL, 1, NULL, 'caught'),
+(278, 686, 10, 3, 60, 1, 0, 0, 5, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 1, 0, 1, 1, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(278, 687, 1, 47, 223.81, 0, 0, 0, 21, 7, 2, 0, 0, 0, 0, 7, 12, 4, 1, 5, 5, 2, 0, 0, 2, 1, 8, 49, NULL, NULL, 1, NULL, 'bowled'),
+(278, 688, 7, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 13, 125, NULL, NULL, 1, NULL, 'bowled'),
+(278, 689, 2, 33, 173.68, 0, 0, 0, 19, 6, 0, 0, 0, 0, 0, 9, 7, 1, 1, 1, 3, 3, 1, 0, 6, 1, 7, 125, NULL, NULL, 1, NULL, 'caught'),
+(278, 691, 8, 46, 158.62, 1, 0, 0, 29, 4, 1, 0, 0, 0, 0, 14, 12, 3, 1, 0, 4, 0, 5, 8, 5, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(278, 696, 6, 21, 190.91, 0, 0, 0, 11, 2, 1, 0, 0, 0, 0, 2, 8, 1, 0, 1, 3, 2, 0, 2, 1, 1, 17, 125, NULL, NULL, 1, NULL, 'caught'),
+(278, 697, 4, 6, 50, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 4, 3, 1, 0, 1, 1, 0, 1, 1, 2, 1, 13, 125, NULL, NULL, 1, NULL, 'caught'),
+(279, 17, 4, 8, 100, 0, 0, 0, 8, 1, 0, 0, 0, 0, 0, 1, 3, 1, 0, 1, 2, 0, 0, 0, 0, 2, 9, 578, NULL, NULL, 1, NULL, 'caught'),
+(279, 74, 6, 4, 80, 1, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 3, 0, 0, 1, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(279, 546, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(279, 548, 3, 16, 200, 0, 0, 0, 8, 2, 1, 0, 0, 0, 0, 2, 1, 1, 0, 0, 0, 0, 0, 1, 1, 2, 7, 593, NULL, NULL, 1, NULL, 'caught'),
+(279, 549, 5, 15, 166.67, 0, 0, 0, 9, 0, 1, 0, 0, 0, 0, 3, 4, 0, 0, 0, 4, 0, 1, 0, 2, 2, 10, 586, NULL, NULL, 1, NULL, 'caught'),
+(279, 551, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(279, 554, 1, 29, 241.67, 0, 0, 0, 12, 1, 4, 0, 0, 0, 0, 6, 2, 3, 0, 0, 2, 0, 1, 0, 2, 6, 4, 580, NULL, NULL, 1, NULL, 'caught'),
+(279, 557, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(279, 558, 7, 3, 150, 1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(279, 559, 2, 22, 137.5, 0, 0, 0, 16, 4, 0, 0, 0, 0, 0, 6, 4, 1, 0, 0, 3, 0, 0, 1, 5, 3, 6, 584, NULL, NULL, 1, NULL, 'caught'),
+(279, 561, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(280, 577, 3, 7, 175, 0, 0, 0, 4, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 2, 557, NULL, NULL, 1, NULL, 'caught'),
+(280, 578, 6, 1, 33.33, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 3, 5, 74, NULL, NULL, 1, NULL, 'caught'),
+(280, 580, 9, 12, 171.43, 1, 0, 0, 7, 2, 0, 0, 0, 0, 0, 3, 2, 1, 0, 1, 1, 0, 1, 0, 1, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(280, 582, 4, 5, 100, 0, 0, 0, 5, 1, 0, 0, 0, 0, 0, 2, 1, 1, 0, 0, 0, 1, 1, 0, 0, 2, 3, 561, NULL, NULL, 1, NULL, 'caught'),
+(280, 584, 8, 48, 320, 1, 0, 0, 15, 4, 4, 0, 0, 0, 0, 8, 7, 1, 0, 1, 5, 1, 1, 0, 6, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(280, 586, 7, 13, 216.67, 0, 0, 0, 6, 3, 0, 0, 0, 0, 0, 1, 4, 0, 0, 0, 1, 1, 0, 2, 1, 6, 6, 546, NULL, NULL, 1, NULL, 'caught_bowled'),
+(280, 588, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(280, 590, 2, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 2, 1, 551, NULL, NULL, 1, NULL, 'caught'),
+(280, 591, 5, 23, 230, 0, 0, 0, 10, 2, 2, 0, 0, 0, 0, 3, 2, 1, 1, 1, 1, 0, 0, 0, 1, 3, 6, 546, NULL, NULL, 1, NULL, 'caught'),
+(280, 593, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
+(280, 595, 1, 5, 83.33, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 4, 1, 1, 0, 0, 1, 0, 1, 0, 2, 2, 4, 557, NULL, NULL, 1, NULL, 'caught');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inning_batting`
+--
+
+CREATE TABLE `inning_batting` (
+  `scorcardInningId` int(11) NOT NULL,
+  `runs` int(11) NOT NULL,
+  `fours` int(11) NOT NULL,
+  `sixes` int(11) NOT NULL,
+  `runRate` float NOT NULL,
+  `ballFaced` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `inning_batting`
@@ -3040,7 +3619,72 @@ INSERT INTO `inning_batting` (`scorcardInningId`, `runs`, `fours`, `sixes`, `run
 (243, 225, 15, 0, 5.06, 300),
 (244, 173, 14, 0, 3.6, 301),
 (245, 244, 21, 1, 5.2, 303),
-(246, 156, 13, 0, 4.01, 251);
+(246, 156, 13, 0, 4.01, 251),
+(247, 129, 16, 0, 3.3, 240),
+(248, 119, 14, 0, 3.29, 258),
+(249, 276, 34, 0, 3.11, 552),
+(250, 256, 28, 3, 3.54, 475),
+(251, 138, 10, 4, 7.1, 120),
+(252, 140, 12, 11, 12.08, 72),
+(253, 134, 5, 5, 7.05, 120),
+(254, 125, 15, 0, 7.89, 108),
+(255, 128, 9, 3, 7.04, 115),
+(256, 126, 12, 3, 8.6, 98),
+(257, 120, 8, 5, 6.5, 120),
+(258, 124, 7, 8, 8.45, 93),
+(259, 206, 16, 13, 10.65, 120),
+(260, 195, 14, 12, 10.45, 121),
+(261, 151, 14, 4, 7.9, 121),
+(262, 152, 16, 3, 8.37, 114),
+(263, 140, 12, 2, 7.55, 121),
+(264, 147, 14, 4, 8.53, 109),
+(265, 186, 11, 10, 10.1, 121),
+(266, 175, 15, 7, 8.95, 120),
+(267, 138, 11, 3, 7.3, 121),
+(268, 141, 12, 6, 8.91, 99),
+(269, 196, 16, 14, 10.55, 120),
+(270, 200, 17, 14, 11.06, 116),
+(271, 147, 14, 2, 7.75, 120),
+(272, 117, 6, 4, 6.42, 115),
+(273, 174, 20, 4, 9.05, 120),
+(274, 176, 18, 3, 9.75, 112),
+(275, 215, 19, 13, 11, 120),
+(276, 143, 18, 3, 8.82, 100),
+(277, 196, 19, 8, 10.4, 122),
+(278, 175, 22, 4, 9.4, 121),
+(279, 97, 8, 6, 10.1, 60),
+(280, 114, 12, 7, 12, 57);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inning_bowlers`
+--
+
+CREATE TABLE `inning_bowlers` (
+  `scorcardInningId` int(11) NOT NULL,
+  `playerId` int(11) NOT NULL,
+  `runsConceded` int(11) NOT NULL DEFAULT 0,
+  `wickets` int(11) NOT NULL DEFAULT 0,
+  `overBowled` int(11) NOT NULL DEFAULT 0,
+  `maidensOvers` int(11) NOT NULL DEFAULT 0,
+  `dotBalls` int(11) NOT NULL DEFAULT 0,
+  `fourConceded` int(11) NOT NULL DEFAULT 0,
+  `sixConceded` int(11) NOT NULL DEFAULT 0,
+  `noBalls` int(11) NOT NULL DEFAULT 0,
+  `wides` int(11) NOT NULL DEFAULT 0,
+  `slowerDeliveries` int(11) NOT NULL DEFAULT 0,
+  `yorkers` int(11) NOT NULL DEFAULT 0,
+  `economyRate` float NOT NULL DEFAULT 0,
+  `fastestBall` int(11) NOT NULL DEFAULT 0,
+  `slowestBall` int(11) NOT NULL DEFAULT 0,
+  `averageSpeed` int(11) NOT NULL,
+  `overTheWicketBalls` int(11) NOT NULL DEFAULT 0,
+  `aroundTheWicketBalls` int(11) NOT NULL DEFAULT 0,
+  `bouncers` int(11) NOT NULL DEFAULT 0,
+  `beatBats` int(11) NOT NULL DEFAULT 0,
+  `edge` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `inning_bowlers`
@@ -4518,7 +5162,227 @@ INSERT INTO `inning_bowlers` (`scorcardInningId`, `playerId`, `runsConceded`, `w
 (246, 748, 28, 1, 7, 0, 22, 1, 0, 0, 0, 0, 0, 3.65, 0, 0, 0, 3, 41, 0, 0, 0),
 (246, 751, 25, 0, 6, 1, 22, 3, 0, 0, 2, 0, 0, 4.17, 0, 0, 0, 38, 0, 0, 0, 0),
 (246, 754, 39, 1, 10, 0, 36, 3, 0, 1, 6, 0, 0, 3.9, 0, 0, 0, 0, 65, 0, 0, 0),
-(246, 757, 24, 1, 5, 0, 15, 3, 0, 0, 0, 0, 0, 4.8, 0, 0, 0, 28, 2, 0, 0, 0);
+(246, 757, 24, 1, 5, 0, 15, 3, 0, 0, 0, 0, 0, 4.8, 0, 0, 0, 28, 2, 0, 0, 0),
+(247, 372, 5, 1, 1, 0, 7, 0, 0, 0, 0, 0, 0, 3, 135, 126, 129, 10, 0, 0, 2, 0),
+(247, 385, 13, 4, 9, 4, 49, 1, 0, 0, 0, 0, 0, 1.39, 137, 129, 132, 55, 1, 0, 10, 4),
+(247, 396, 45, 1, 13, 0, 53, 6, 0, 0, 0, 0, 0, 3.46, 140, 127, 133, 57, 21, 1, 16, 4),
+(247, 439, 66, 4, 16, 6, 68, 9, 0, 0, 0, 0, 0, 4.12, 135, 126, 131, 77, 19, 2, 7, 7),
+(248, 50, 55, 4, 14, 3, 62, 7, 0, 0, 0, 0, 0, 3.93, 1320, 126, 163, 63, 21, 2, 13, 7),
+(248, 100, 21, 3, 14, 4, 62, 0, 0, 0, 0, 0, 0, 1.52, 140, 130, 135, 75, 8, 3, 14, 5),
+(248, 635, 24, 1, 8, 2, 37, 3, 0, 1, 0, 0, 0, 3, 128, 115, 122, 18, 31, 0, 6, 1),
+(248, 790, 20, 2, 7, 3, 34, 4, 0, 0, 0, 0, 1, 2.86, 138, 130, 133, 37, 5, 1, 2, 2),
+(249, 275, 2, 0, 1, 0, 4, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 6, 0, 3, 0),
+(249, 372, 43, 0, 8, 1, 29, 6, 0, 2, 1, 0, 0, 5.38, 143, 129, 136, 47, 4, 6, 3, 2),
+(249, 385, 55, 3, 20, 3, 91, 7, 0, 0, 0, 0, 0, 2.75, 137, 126, 132, 93, 27, 1, 4, 8),
+(249, 396, 76, 3, 26, 7, 124, 9, 0, 1, 0, 0, 0, 2.92, 142, 117, 132, 128, 28, 1, 13, 6),
+(249, 435, 47, 1, 15, 0, 66, 4, 0, 0, 0, 0, 0, 3.03, 72, 72, 72, 86, 4, 0, 1, 1),
+(249, 439, 57, 2, 21, 7, 99, 8, 0, 0, 0, 0, 0, 2.71, 138, 121, 131, 108, 18, 1, 7, 4),
+(250, 50, 87, 0, 24, 5, 102, 14, 0, 0, 0, 0, 0, 3.65, 143, 126, 133, 113, 29, 1, 6, 8),
+(250, 100, 73, 1, 24, 3, 100, 6, 0, 0, 1, 0, 1, 3.04, 138, 126, 134, 99, 46, 3, 8, 1),
+(250, 104, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0),
+(250, 635, 3, 0, 4, 1, 21, 0, 0, 1, 0, 0, 0, 0.78, 126, 120, 123, 1, 23, 0, 1, 1),
+(250, 789, 22, 0, 2, 0, 5, 0, 3, 0, 0, 0, 0, 11, 0, 0, 0, 9, 3, 0, 1, 1),
+(250, 790, 79, 4, 25, 4, 113, 8, 0, 1, 1, 0, 0, 3.16, 139, 128, 135, 117, 35, 4, 13, 4),
+(251, 705, 21, 1, 4, 0, 9, 0, 0, 0, 0, 0, 0, 5.25, 0, 0, 0, 20, 3, 0, 0, 0),
+(251, 706, 14, 3, 4, 0, 13, 1, 0, 0, 1, 0, 0, 3.5, 0, 0, 0, 17, 7, 0, 0, 0),
+(251, 711, 29, 1, 4, 0, 6, 1, 1, 0, 1, 0, 0, 7.25, 0, 0, 0, 24, 0, 0, 0, 0),
+(251, 719, 38, 1, 4, 0, 6, 5, 1, 0, 0, 0, 0, 9.5, 0, 0, 0, 23, 0, 0, 0, 0),
+(251, 722, 29, 1, 3, 0, 5, 2, 2, 0, 0, 0, 0, 9.67, 0, 0, 0, 18, 0, 0, 0, 0),
+(251, 724, 9, 0, 1, 0, 2, 1, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 5, 0, 0, 0),
+(252, 148, 18, 0, 2, 0, 7, 1, 2, 0, 0, 0, 0, 9, 0, 0, 0, 12, 0, 0, 0, 0),
+(252, 684, 27, 0, 2, 0, 3, 4, 1, 0, 1, 0, 0, 13.5, 0, 0, 0, 13, 0, 0, 0, 0),
+(252, 688, 39, 1, 3, 0, 5, 3, 3, 0, 2, 0, 0, 13, 0, 0, 0, 19, 0, 0, 0, 0),
+(252, 691, 19, 0, 2, 0, 4, 2, 1, 0, 0, 0, 0, 9.5, 0, 0, 0, 12, 0, 0, 0, 0),
+(252, 696, 18, 0, 1, 0, 1, 1, 2, 0, 0, 0, 0, 18, 0, 0, 0, 6, 0, 0, 0, 0),
+(252, 699, 22, 0, 2, 0, 3, 1, 2, 0, 0, 0, 0, 11, 0, 0, 0, 0, 12, 0, 0, 0),
+(253, 326, 32, 1, 4, 0, 7, 0, 3, 0, 0, 0, 0, 8, 0, 0, 0, 1, 23, 0, 0, 0),
+(253, 327, 29, 3, 4, 0, 10, 1, 1, 0, 2, 0, 0, 7.25, 0, 0, 0, 26, 0, 0, 0, 0),
+(253, 329, 35, 1, 4, 0, 5, 1, 1, 0, 1, 0, 0, 8.75, 0, 0, 0, 24, 0, 0, 0, 0),
+(253, 330, 24, 1, 4, 0, 12, 3, 0, 0, 0, 0, 0, 6, 0, 0, 0, 24, 0, 0, 0, 0),
+(253, 331, 17, 0, 4, 0, 8, 0, 0, 0, 0, 0, 0, 4.25, 0, 0, 0, 20, 4, 0, 0, 0),
+(254, 225, 23, 1, 3, 0, 7, 3, 0, 0, 1, 0, 0, 7.67, 0, 0, 0, 19, 0, 0, 0, 0),
+(254, 371, 12, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 12, 0, 0, 0, 6, 0, 0, 0, 0),
+(254, 375, 22, 2, 4, 0, 11, 1, 0, 0, 2, 0, 0, 5.5, 0, 0, 0, 24, 2, 0, 0, 0),
+(254, 380, 33, 1, 3, 0, 7, 5, 0, 0, 2, 0, 0, 11, 0, 0, 0, 19, 0, 0, 0, 0),
+(254, 382, 26, 0, 3, 0, 9, 3, 0, 0, 2, 0, 0, 8.67, 0, 0, 0, 20, 0, 0, 0, 0),
+(254, 386, 26, 0, 4, 0, 6, 1, 0, 0, 2, 0, 0, 6.5, 0, 0, 0, 0, 26, 0, 0, 0),
+(255, 41, 16, 1, 2, 0, 2, 2, 0, 0, 0, 0, 0, 8, 0, 0, 0, 1, 11, 0, 0, 0),
+(255, 81, 9, 1, 1, 0, 2, 0, 1, 0, 0, 0, 0, 9, 0, 0, 0, 6, 0, 0, 0, 0),
+(255, 429, 26, 1, 4, 0, 8, 3, 0, 0, 0, 0, 0, 6.5, 0, 0, 0, 24, 0, 0, 0, 0),
+(255, 431, 21, 0, 2, 0, 3, 2, 1, 0, 0, 0, 0, 10.5, 0, 0, 0, 12, 0, 0, 0, 0),
+(255, 435, 27, 2, 4, 0, 6, 1, 1, 0, 1, 0, 0, 6.75, 0, 0, 0, 25, 0, 0, 0, 0),
+(255, 441, 10, 2, 2, 0, 5, 0, 0, 0, 1, 0, 0, 4.62, 0, 0, 0, 14, 0, 0, 0, 0),
+(255, 445, 21, 2, 4, 0, 6, 1, 0, 0, 0, 0, 0, 5.25, 0, 0, 0, 1, 23, 0, 0, 0),
+(256, 458, 16, 0, 2, 0, 3, 2, 0, 0, 0, 0, 0, 8, 0, 0, 0, 12, 0, 0, 0, 0),
+(256, 461, 32, 2, 3, 0, 5, 2, 1, 0, 1, 0, 0, 10.11, 0, 0, 0, 20, 0, 0, 0, 0),
+(256, 462, 24, 0, 4, 0, 10, 2, 0, 0, 1, 0, 0, 6, 0, 0, 0, 0, 25, 0, 0, 0),
+(256, 467, 33, 0, 4, 0, 8, 4, 0, 2, 2, 0, 0, 8.25, 0, 0, 0, 27, 0, 0, 0, 0),
+(256, 474, 31, 0, 3, 0, 3, 2, 2, 0, 0, 0, 0, 10.33, 0, 0, 0, 18, 0, 0, 0, 0),
+(257, 39, 22, 2, 4, 0, 13, 2, 1, 0, 1, 0, 0, 5.5, 0, 0, 0, 21, 4, 0, 0, 0),
+(257, 503, 19, 1, 4, 0, 13, 1, 1, 0, 0, 0, 0, 4.75, 0, 0, 0, 9, 13, 0, 0, 0),
+(257, 507, 21, 0, 1, 0, 0, 1, 2, 0, 2, 0, 0, 21, 0, 0, 0, 1, 6, 0, 0, 0),
+(257, 512, 20, 2, 3, 0, 6, 1, 1, 0, 0, 0, 0, 6.67, 0, 0, 0, 18, 0, 0, 0, 0),
+(257, 514, 28, 2, 4, 0, 7, 2, 0, 0, 1, 0, 0, 7, 0, 0, 0, 24, 1, 0, 0, 0),
+(257, 516, 14, 2, 4, 0, 13, 1, 0, 0, 0, 0, 0, 3.5, 0, 0, 0, 21, 2, 0, 0, 0),
+(258, 528, 33, 1, 2, 0, 5, 0, 4, 0, 1, 0, 0, 13.2, 0, 0, 0, 0, 15, 0, 0, 0),
+(258, 533, 27, 0, 3, 0, 5, 3, 1, 0, 0, 0, 0, 9, 0, 0, 0, 15, 1, 0, 0, 0),
+(258, 537, 18, 0, 2, 0, 5, 1, 1, 0, 2, 0, 0, 9, 0, 0, 0, 14, 0, 0, 0, 0),
+(258, 538, 20, 1, 4, 2, 13, 2, 1, 0, 1, 0, 0, 5, 0, 0, 0, 21, 2, 0, 0, 0),
+(258, 539, 31, 1, 4, 0, 5, 1, 1, 0, 1, 0, 0, 7.75, 0, 0, 0, 20, 0, 0, 0, 0),
+(259, 151, 36, 1, 4, 0, 8, 5, 1, 0, 0, 0, 0, 9, 0, 0, 0, 21, 3, 0, 0, 0),
+(259, 210, 37, 1, 4, 0, 11, 3, 3, 0, 1, 0, 0, 9.25, 0, 0, 0, 25, 0, 0, 0, 0),
+(259, 274, 42, 1, 4, 0, 4, 2, 2, 0, 1, 0, 0, 10.5, 0, 0, 0, 25, 0, 0, 0, 0),
+(259, 281, 23, 0, 2, 0, 1, 4, 0, 0, 0, 0, 0, 11.5, 0, 0, 0, 3, 9, 0, 0, 0),
+(259, 282, 52, 2, 4, 0, 7, 1, 5, 0, 2, 0, 0, 13, 0, 0, 0, 26, 0, 0, 0, 0),
+(259, 294, 22, 0, 2, 0, 5, 1, 2, 0, 2, 0, 0, 11, 0, 0, 0, 11, 3, 0, 0, 0),
+(260, 41, 16, 0, 1, 0, 1, 0, 2, 0, 1, 0, 0, 16, 0, 0, 0, 0, 7, 0, 0, 0),
+(260, 81, 40, 1, 4, 0, 6, 4, 2, 2, 0, 0, 0, 10, 0, 0, 0, 13, 12, 0, 0, 0),
+(260, 429, 37, 2, 4, 1, 12, 3, 3, 0, 0, 0, 0, 9.25, 0, 0, 0, 23, 1, 0, 0, 0),
+(260, 431, 37, 1, 4, 0, 7, 2, 2, 0, 0, 0, 0, 9.25, 0, 0, 0, 24, 0, 0, 0, 0),
+(260, 441, 48, 2, 4, 0, 4, 3, 3, 0, 1, 0, 0, 12, 0, 0, 0, 20, 5, 0, 0, 0),
+(260, 445, 21, 2, 3, 0, 4, 2, 0, 0, 0, 0, 0, 7, 0, 0, 0, 3, 15, 0, 0, 0),
+(261, 17, 22, 2, 3, 0, 7, 1, 1, 0, 1, 0, 0, 7.33, 0, 0, 0, 11, 8, 0, 0, 0),
+(261, 74, 34, 2, 4, 0, 9, 5, 1, 0, 0, 0, 0, 8.5, 0, 0, 0, 18, 6, 0, 0, 0),
+(261, 546, 28, 1, 4, 0, 4, 2, 0, 0, 0, 0, 0, 7, 0, 0, 0, 2, 22, 0, 0, 0),
+(261, 549, 11, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 5.5, 0, 0, 0, 12, 0, 0, 0, 0),
+(261, 551, 33, 2, 4, 0, 10, 4, 1, 0, 1, 0, 0, 8.25, 0, 0, 0, 23, 0, 0, 0, 0),
+(261, 557, 8, 0, 1, 0, 2, 1, 0, 0, 0, 0, 0, 8, 0, 0, 0, 6, 0, 0, 0, 0),
+(261, 558, 3, 1, 1, 0, 2, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 6, 0, 0, 0, 0),
+(261, 561, 16, 0, 1, 0, 1, 1, 1, 2, 0, 0, 0, 16, 0, 0, 0, 7, 0, 0, 0, 0),
+(262, 653, 29, 0, 3, 0, 4, 4, 0, 0, 1, 0, 0, 9.67, 0, 0, 0, 4, 15, 0, 0, 0),
+(262, 655, 34, 1, 4, 0, 9, 3, 1, 0, 2, 0, 0, 8.5, 0, 0, 0, 17, 9, 0, 0, 0),
+(262, 656, 12, 0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 12, 0, 0, 0, 4, 2, 0, 0, 0),
+(262, 663, 24, 0, 3, 0, 6, 2, 1, 0, 0, 0, 0, 8, 0, 0, 0, 18, 0, 0, 0, 0),
+(262, 672, 26, 1, 4, 0, 6, 1, 0, 0, 0, 0, 0, 6.5, 0, 0, 0, 0, 24, 0, 0, 0),
+(262, 673, 30, 3, 4, 0, 12, 4, 1, 0, 0, 0, 0, 7.5, 0, 0, 0, 13, 11, 0, 0, 0),
+(263, 103, 34, 1, 4, 0, 6, 3, 1, 0, 2, 0, 0, 8.5, 0, 0, 0, 23, 1, 0, 0, 0),
+(263, 475, 20, 0, 2, 0, 1, 2, 0, 0, 1, 0, 0, 10, 0, 0, 0, 3, 5, 0, 0, 0),
+(263, 477, 32, 1, 4, 0, 7, 4, 0, 2, 0, 0, 0, 8, 0, 0, 0, 20, 2, 0, 0, 0),
+(263, 480, 13, 0, 2, 0, 3, 0, 1, 0, 0, 0, 0, 6.5, 0, 0, 0, 4, 8, 0, 0, 0),
+(263, 484, 27, 4, 4, 0, 10, 3, 0, 0, 0, 0, 0, 6.75, 0, 0, 0, 22, 2, 0, 0, 0),
+(263, 495, 20, 2, 4, 0, 6, 0, 0, 0, 1, 0, 0, 5, 0, 0, 0, 25, 0, 0, 0, 0),
+(264, 249, 30, 0, 4, 0, 8, 2, 1, 0, 0, 0, 0, 7.5, 0, 0, 0, 5, 16, 0, 0, 0),
+(264, 351, 14, 1, 2, 0, 4, 1, 0, 0, 0, 0, 0, 7, 0, 0, 0, 8, 3, 0, 0, 0),
+(264, 355, 32, 0, 4, 0, 5, 5, 0, 0, 0, 0, 0, 8, 0, 0, 0, 24, 0, 0, 0, 0),
+(264, 362, 32, 2, 4, 0, 8, 1, 3, 0, 1, 0, 0, 8, 0, 0, 0, 24, 0, 0, 0, 0),
+(264, 363, 18, 1, 2, 0, 4, 2, 0, 0, 0, 0, 0, 8.31, 0, 0, 0, 12, 0, 0, 0, 0),
+(264, 365, 23, 1, 2, 0, 4, 3, 0, 0, 1, 0, 0, 11.5, 0, 0, 0, 13, 0, 0, 0, 0),
+(265, 399, 39, 1, 4, 0, 5, 1, 3, 0, 0, 0, 0, 9.75, 0, 0, 0, 0, 23, 0, 0, 0),
+(265, 402, 51, 0, 4, 0, 4, 4, 2, 2, 3, 0, 0, 12.75, 0, 0, 0, 27, 1, 0, 0, 0),
+(265, 405, 29, 3, 3, 0, 6, 2, 2, 0, 1, 0, 0, 9.67, 0, 0, 0, 12, 7, 0, 0, 0),
+(265, 411, 34, 0, 4, 0, 5, 3, 1, 0, 0, 0, 0, 8.5, 0, 0, 0, 4, 20, 0, 0, 0),
+(265, 414, 12, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 12, 0, 0, 0, 6, 0, 0, 0, 0),
+(265, 421, 27, 1, 4, 0, 5, 0, 1, 0, 0, 0, 0, 6.75, 0, 0, 0, 24, 0, 0, 0, 0),
+(266, 151, 26, 1, 4, 0, 11, 4, 0, 0, 0, 0, 0, 6.5, 0, 0, 0, 24, 0, 0, 0, 0),
+(266, 210, 31, 3, 4, 0, 8, 2, 1, 0, 1, 0, 0, 7.75, 0, 0, 0, 25, 0, 0, 0, 0),
+(266, 274, 29, 1, 3, 0, 6, 2, 2, 0, 0, 0, 0, 9.67, 0, 0, 0, 18, 0, 0, 0, 0),
+(266, 282, 40, 1, 4, 0, 3, 5, 0, 0, 2, 0, 0, 10, 0, 0, 0, 26, 0, 0, 0, 0),
+(266, 291, 21, 0, 2, 0, 2, 0, 2, 0, 0, 0, 0, 10.5, 0, 0, 0, 10, 2, 0, 0, 0),
+(266, 294, 31, 1, 3, 0, 4, 2, 2, 0, 0, 0, 0, 10.33, 0, 0, 0, 18, 0, 0, 0, 0),
+(267, 24, 6, 0, 1, 0, 3, 0, 0, 2, 0, 0, 0, 6, 0, 0, 0, 6, 0, 0, 0, 0),
+(267, 49, 21, 1, 4, 0, 8, 0, 0, 0, 0, 0, 0, 5.25, 0, 0, 0, 13, 11, 0, 0, 0),
+(267, 125, 23, 2, 4, 1, 10, 3, 0, 0, 0, 0, 0, 5.75, 0, 0, 0, 15, 9, 0, 0, 0),
+(267, 632, 36, 1, 4, 0, 8, 2, 2, 0, 1, 0, 0, 9, 0, 0, 0, 23, 2, 0, 0, 0),
+(267, 633, 20, 0, 2, 0, 4, 4, 0, 0, 0, 0, 0, 10, 0, 0, 0, 12, 0, 0, 0, 0),
+(267, 636, 17, 1, 3, 0, 8, 1, 1, 0, 0, 0, 0, 5.67, 0, 0, 0, 18, 0, 0, 0, 0),
+(267, 641, 18, 1, 2, 0, 3, 1, 0, 0, 0, 0, 0, 9, 0, 0, 0, 6, 6, 0, 0, 0),
+(268, 114, 17, 2, 3, 0, 10, 2, 0, 0, 0, 0, 0, 4.86, 0, 0, 0, 21, 0, 0, 0, 0),
+(268, 237, 50, 1, 4, 0, 6, 7, 2, 0, 0, 0, 0, 12.5, 0, 0, 0, 16, 8, 0, 0, 0),
+(268, 597, 11, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 5.5, 0, 0, 0, 12, 0, 0, 0, 0),
+(268, 598, 15, 0, 2, 0, 5, 2, 0, 0, 2, 0, 0, 7.5, 0, 0, 0, 13, 0, 0, 0, 0),
+(268, 607, 19, 0, 1, 0, 0, 1, 2, 0, 0, 0, 0, 19, 0, 0, 0, 0, 6, 0, 0, 0),
+(268, 622, 31, 0, 4, 0, 6, 0, 2, 0, 0, 0, 0, 7.75, 0, 0, 0, 24, 0, 0, 0, 0),
+(269, 84, 35, 0, 4, 0, 10, 4, 1, 0, 4, 0, 1, 8.75, 145, 116, 136, 28, 0, 0, 10, 4),
+(269, 126, 35, 1, 3, 0, 3, 3, 2, 0, 1, 1, 0, 11.67, 128, 106, 124, 5, 13, 0, 3, 0),
+(269, 173, 36, 1, 4, 0, 8, 2, 3, 0, 0, 0, 1, 9, 153, 125, 141, 22, 1, 1, 6, 1),
+(269, 794, 32, 1, 4, 0, 11, 3, 2, 0, 0, 0, 1, 8, 136, 116, 130, 24, 0, 0, 4, 1),
+(269, 795, 43, 1, 3, 0, 7, 4, 3, 0, 1, 0, 0, 14.33, 93, 83, 87, 12, 7, 0, 4, 3),
+(269, 796, 27, 0, 2, 0, 2, 0, 3, 0, 1, 0, 0, 13.5, 88, 84, 86, 13, 0, 0, 1, 1),
+(270, 2, 43, 1, 4, 0, 9, 4, 3, 0, 1, 0, 0, 10.75, 134, 119, 127, 24, 1, 0, 3, 3),
+(270, 107, 26, 0, 2, 0, 4, 4, 1, 0, 0, 0, 0, 12, 95, 92, 94, 13, 0, 0, 0, 0),
+(270, 154, 43, 1, 4, 0, 9, 3, 4, 0, 0, 0, 0, 10.75, 137, 122, 132, 17, 7, 0, 5, 1),
+(270, 176, 40, 1, 4, 0, 3, 1, 3, 0, 0, 0, 0, 10, 95, 93, 94, 15, 9, 0, 0, 0),
+(270, 202, 18, 0, 1, 0, 3, 0, 3, 0, 0, 0, 0, 18, 137, 129, 134, 6, 0, 1, 2, 0),
+(270, 231, 35, 0, 4, 0, 9, 5, 0, 1, 2, 0, 0, 8.75, 144, 128, 138, 19, 8, 0, 5, 0),
+(271, 503, 31, 0, 4, 0, 4, 3, 0, 0, 1, 0, 0, 7.75, 0, 0, 0, 24, 0, 0, 0, 0),
+(271, 507, 26, 0, 3, 0, 2, 1, 1, 0, 0, 0, 0, 8.67, 0, 0, 0, 0, 18, 0, 0, 0),
+(271, 510, 19, 0, 2, 0, 4, 2, 1, 0, 0, 0, 0, 9.5, 0, 0, 0, 12, 0, 0, 0, 0),
+(271, 512, 25, 3, 4, 0, 8, 2, 0, 0, 0, 0, 0, 6.25, 0, 0, 0, 24, 0, 0, 0, 0),
+(271, 514, 33, 3, 4, 0, 10, 5, 0, 0, 1, 0, 0, 8.25, 0, 0, 0, 25, 0, 0, 0, 0),
+(271, 516, 17, 0, 3, 0, 7, 1, 0, 0, 2, 0, 0, 5.67, 0, 0, 0, 20, 0, 0, 0, 0),
+(272, 705, 30, 4, 4, 0, 9, 4, 0, 0, 0, 0, 0, 7.5, 0, 0, 0, 19, 5, 0, 0, 0),
+(272, 706, 18, 1, 4, 0, 10, 1, 0, 0, 0, 0, 0, 4.5, 0, 0, 0, 10, 14, 0, 0, 0),
+(272, 711, 18, 2, 3, 0, 8, 0, 1, 0, 2, 0, 0, 5.68, 0, 0, 0, 17, 4, 0, 0, 0),
+(272, 717, 35, 1, 4, 0, 8, 1, 3, 0, 0, 0, 0, 8.75, 0, 0, 0, 24, 0, 0, 0, 0),
+(272, 719, 19, 2, 4, 0, 9, 0, 0, 0, 1, 0, 0, 4.75, 0, 0, 0, 24, 1, 0, 0, 0),
+(273, 249, 32, 1, 4, 0, 8, 5, 0, 0, 0, 0, 0, 8, 0, 0, 0, 5, 18, 0, 0, 0),
+(273, 351, 36, 1, 4, 0, 2, 4, 0, 0, 0, 0, 0, 9, 0, 0, 0, 24, 0, 0, 0, 0),
+(273, 352, 11, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 11, 0, 0, 0, 2, 5, 0, 0, 0),
+(273, 355, 17, 0, 2, 0, 4, 1, 1, 0, 0, 0, 0, 8.5, 0, 0, 0, 12, 0, 0, 0, 0),
+(273, 362, 37, 2, 4, 0, 9, 4, 2, 0, 0, 0, 0, 9.25, 0, 0, 0, 24, 0, 0, 0, 0),
+(273, 363, 19, 0, 2, 0, 4, 3, 0, 0, 1, 0, 0, 9.5, 0, 0, 0, 13, 0, 0, 0, 0),
+(273, 365, 25, 2, 3, 0, 5, 2, 0, 0, 1, 0, 0, 8.33, 0, 0, 0, 18, 0, 0, 0, 0),
+(274, 458, 14, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 14, 0, 0, 0, 6, 0, 0, 0, 0),
+(274, 461, 48, 0, 3, 0, 1, 6, 0, 0, 0, 0, 0, 13.09, 0, 0, 0, 22, 0, 0, 0, 0),
+(274, 462, 40, 1, 4, 0, 3, 3, 1, 0, 0, 0, 0, 10, 0, 0, 0, 4, 20, 0, 0, 0),
+(274, 467, 21, 1, 3, 0, 5, 2, 0, 0, 1, 0, 0, 7, 0, 0, 0, 19, 0, 0, 0, 0),
+(274, 469, 28, 0, 3, 0, 4, 3, 1, 0, 0, 0, 0, 9.33, 0, 0, 0, 0, 18, 0, 0, 0),
+(274, 474, 26, 1, 4, 0, 10, 3, 0, 0, 0, 0, 0, 6.5, 0, 0, 0, 19, 4, 0, 0, 0),
+(275, 131, 15, 2, 4, 0, 13, 1, 0, 0, 0, 0, 0, 3.75, 0, 0, 0, 14, 9, 0, 0, 0),
+(275, 133, 27, 0, 2, 0, 1, 3, 1, 0, 1, 0, 0, 13.5, 0, 0, 0, 5, 8, 0, 0, 0),
+(275, 303, 45, 0, 4, 0, 5, 4, 2, 0, 2, 0, 0, 11.25, 0, 0, 0, 20, 5, 0, 0, 0),
+(275, 306, 43, 0, 4, 0, 4, 2, 3, 0, 1, 0, 0, 10.75, 0, 0, 0, 24, 0, 0, 0, 0),
+(275, 310, 37, 0, 2, 0, 0, 3, 3, 0, 1, 0, 0, 18.5, 0, 0, 0, 13, 0, 0, 0, 0),
+(275, 316, 47, 0, 3, 0, 7, 5, 3, 0, 0, 0, 0, 15.67, 0, 0, 0, 16, 0, 0, 0, 0),
+(275, 319, 6, 1, 1, 0, 3, 1, 0, 0, 0, 0, 0, 6, 0, 0, 0, 6, 0, 0, 0, 0),
+(276, 103, 19, 1, 2, 0, 3, 3, 0, 0, 0, 0, 0, 9.5, 0, 0, 0, 12, 0, 0, 0, 0),
+(276, 475, 29, 1, 3, 0, 2, 3, 0, 0, 1, 0, 0, 9.67, 0, 0, 0, 1, 18, 0, 0, 0),
+(276, 477, 11, 0, 2, 0, 7, 2, 0, 0, 0, 0, 0, 5.5, 0, 0, 0, 11, 0, 0, 0, 0),
+(276, 480, 25, 5, 3, 0, 9, 4, 0, 0, 0, 0, 0, 6.82, 0, 0, 0, 16, 6, 0, 0, 0),
+(276, 484, 26, 3, 3, 0, 7, 3, 1, 0, 0, 0, 0, 8.67, 0, 0, 0, 18, 0, 0, 0, 0),
+(276, 495, 35, 0, 3, 0, 3, 3, 2, 0, 0, 0, 0, 11.67, 0, 0, 0, 17, 0, 0, 0, 0),
+(277, 148, 36, 2, 4, 0, 7, 3, 1, 0, 1, 0, 0, 9, 0, 0, 0, 12, 12, 0, 0, 0),
+(277, 684, 40, 1, 4, 0, 9, 4, 2, 0, 1, 0, 0, 10, 0, 0, 0, 25, 0, 0, 0, 0),
+(277, 686, 56, 1, 4, 0, 4, 6, 3, 2, 0, 0, 0, 14, 0, 0, 0, 21, 0, 0, 0, 0),
+(277, 688, 32, 2, 4, 0, 9, 1, 1, 2, 3, 0, 0, 8, 0, 0, 0, 18, 10, 0, 0, 0),
+(277, 691, 43, 1, 4, 0, 7, 5, 1, 0, 2, 0, 0, 10.75, 0, 0, 0, 7, 19, 0, 0, 0),
+(278, 49, 28, 2, 4, 0, 8, 3, 0, 0, 0, 0, 0, 7, 0, 0, 0, 13, 11, 0, 0, 0),
+(278, 125, 31, 4, 4, 0, 9, 3, 1, 0, 2, 0, 0, 7.75, 0, 0, 0, 7, 19, 0, 0, 0),
+(278, 632, 41, 0, 4, 0, 7, 4, 1, 0, 3, 0, 0, 10.25, 0, 0, 0, 23, 4, 0, 0, 0),
+(278, 633, 1, 1, 1, 0, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 6, 0, 0, 0, 0),
+(278, 636, 32, 0, 3, 0, 5, 5, 1, 0, 0, 0, 0, 10.67, 0, 0, 0, 9, 8, 0, 0, 0),
+(278, 638, 50, 1, 4, 0, 5, 7, 1, 2, 1, 0, 0, 12.5, 0, 0, 0, 24, 2, 0, 0, 0),
+(279, 578, 5, 1, 1, 0, 2, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 6, 0, 0, 0, 0),
+(279, 580, 14, 1, 2, 0, 7, 3, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 10, 0, 0, 0),
+(279, 584, 14, 1, 2, 0, 1, 1, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 9, 0, 0, 0),
+(279, 586, 6, 1, 1, 0, 2, 0, 0, 0, 1, 0, 0, 6, 0, 0, 0, 7, 0, 0, 0, 0),
+(279, 588, 23, 0, 2, 0, 4, 4, 0, 0, 3, 0, 0, 11.5, 0, 0, 0, 13, 1, 0, 0, 0),
+(279, 591, 24, 0, 1, 0, 2, 0, 4, 0, 0, 0, 0, 24, 0, 0, 0, 6, 0, 0, 0, 0),
+(279, 593, 15, 1, 1, 0, 1, 0, 2, 0, 0, 0, 0, 15, 0, 0, 0, 0, 1, 0, 0, 0),
+(280, 74, 21, 1, 2, 0, 3, 4, 0, 0, 0, 0, 0, 10.5, 0, 0, 0, 10, 0, 0, 0, 0),
+(280, 546, 25, 2, 2, 0, 3, 2, 2, 0, 0, 0, 0, 12.5, 0, 0, 0, 2, 10, 0, 0, 0),
+(280, 551, 23, 1, 2, 0, 3, 1, 2, 0, 0, 0, 0, 11.5, 0, 0, 0, 5, 7, 0, 0, 0),
+(280, 557, 20, 2, 2, 0, 4, 2, 1, 0, 0, 0, 0, 10, 0, 0, 0, 8, 1, 0, 0, 0),
+(280, 558, 14, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 28, 0, 0, 0, 3, 0, 0, 0, 0),
+(280, 561, 11, 1, 1, 0, 3, 1, 1, 0, 0, 0, 0, 11, 0, 0, 0, 6, 0, 0, 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inning_bowling`
+--
+
+CREATE TABLE `inning_bowling` (
+  `scorcardInningId` int(11) NOT NULL,
+  `overs` float NOT NULL,
+  `wickets` int(11) NOT NULL,
+  `maidens` int(11) NOT NULL,
+  `extras` int(11) NOT NULL,
+  `noBalls` int(11) NOT NULL,
+  `byes` int(11) NOT NULL,
+  `legByes` int(11) NOT NULL,
+  `dotBalls` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `inning_bowling`
@@ -4770,7 +5634,101 @@ INSERT INTO `inning_bowling` (`scorcardInningId`, `overs`, `wickets`, `maidens`,
 (243, 50, 2, 2, 28, 0, 0, 5, 0),
 (244, 50, 9, 10, 7, 1, 0, 1, 0),
 (245, 50, 7, 2, 16, 3, 3, 8, 0),
-(246, 41, 10, 2, 11, 1, 0, 2, 0);
+(246, 41, 10, 2, 11, 1, 0, 2, 0),
+(247, 39, 10, 10, 3, 0, 0, 3, 0),
+(248, 42, 10, 12, 22, 1, 14, 7, 0),
+(249, 91, 10, 18, 9, 3, 1, 4, 0),
+(250, 78, 5, 13, 23, 2, 6, 9, 0),
+(251, 20, 7, 0, 4, 0, 1, 1, 0),
+(252, 12, 1, 0, 5, 0, 1, 1, 0),
+(253, 20, 7, 0, 7, 0, 1, 3, 0),
+(254, 18, 4, 0, 17, 0, 0, 0, 0),
+(255, 19, 10, 0, 7, 0, 0, 5, 0),
+(256, 16, 3, 0, 13, 2, 1, 2, 0),
+(257, 20, 9, 0, 10, 0, 0, 6, 0),
+(258, 15, 3, 2, 7, 0, 0, 2, 0),
+(259, 20, 5, 0, 7, 0, 0, 1, 0),
+(260, 20, 8, 1, 14, 2, 4, 6, 0),
+(261, 20, 8, 0, 7, 2, 0, 3, 0),
+(262, 19, 5, 0, 7, 0, 4, 0, 0),
+(263, 20, 9, 0, 11, 2, 2, 3, 0),
+(264, 18, 5, 0, 8, 0, 0, 6, 0),
+(265, 20, 5, 0, 16, 2, 5, 5, 0),
+(266, 20, 7, 0, 4, 0, 1, 0, 0),
+(267, 20, 7, 1, 8, 2, 0, 5, 0),
+(268, 16, 3, 0, 6, 0, 0, 4, 0),
+(269, 20, 4, 0, 15, 0, 1, 2, 0),
+(270, 19, 3, 0, 12, 1, 0, 7, 0),
+(271, 20, 6, 0, 8, 0, 2, 2, 0),
+(272, 19, 10, 0, 6, 0, 0, 3, 0),
+(273, 20, 6, 0, 7, 0, 0, 4, 0),
+(274, 18, 4, 0, 6, 0, 0, 5, 0),
+(275, 20, 3, 0, 5, 0, 0, 0, 0),
+(276, 16, 10, 0, 4, 0, 0, 2, 0),
+(277, 20, 7, 0, 12, 4, 1, 0, 0),
+(278, 20, 8, 0, 13, 2, 1, 4, 0),
+(279, 10, 5, 0, 4, 0, 0, 0, 0),
+(280, 9, 7, 0, 0, 0, 0, 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `match_lineup`
+--
+
+CREATE TABLE `match_lineup` (
+  `matchId` int(11) NOT NULL,
+  `competitorId` int(11) NOT NULL,
+  `playerId` int(11) NOT NULL,
+  `isCaptain` tinyint(1) NOT NULL DEFAULT 0,
+  `isWicketKeeper` tinyint(1) NOT NULL DEFAULT 0,
+  `order` tinyint(4) NOT NULL,
+  `points` int(11) DEFAULT 0,
+  `runsPoints` int(11) NOT NULL DEFAULT 0,
+  `foursPoints` int(11) NOT NULL DEFAULT 0,
+  `sixesPoints` int(11) NOT NULL DEFAULT 0,
+  `numberRunsPoints` int(11) NOT NULL DEFAULT 0,
+  `numberWicketPoints` int(11) NOT NULL DEFAULT 0,
+  `wicketPoints` int(11) NOT NULL DEFAULT 0,
+  `maidenOverPoints` int(11) NOT NULL DEFAULT 0,
+  `lbwOrBowledPoints` int(11) NOT NULL DEFAULT 0,
+  `catchesPoints` int(11) NOT NULL DEFAULT 0,
+  `runOutPoints` int(11) NOT NULL DEFAULT 0,
+  `economyPoints` int(11) DEFAULT NULL,
+  `strikeRatePoints` int(11) NOT NULL,
+  `logTime` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `match_players`
+--
+
+CREATE TABLE `match_players` (
+  `matchId` int(11) NOT NULL,
+  `competitorId` int(11) NOT NULL,
+  `playerId` int(11) NOT NULL,
+  `isSelected` tinyint(1) NOT NULL DEFAULT 0,
+  `isCaptain` tinyint(1) NOT NULL DEFAULT 0,
+  `isWicketKeeper` tinyint(1) NOT NULL DEFAULT 0,
+  `order` int(11) DEFAULT NULL,
+  `credit` decimal(20,1) NOT NULL DEFAULT 7.5,
+  `points` int(11) DEFAULT NULL,
+  `runsPoints` int(11) NOT NULL DEFAULT 0,
+  `foursPoints` int(11) NOT NULL DEFAULT 0,
+  `sixesPoints` int(11) NOT NULL DEFAULT 0,
+  `numberRunsPoints` int(11) NOT NULL DEFAULT 0,
+  `numberWicketPoints` int(11) NOT NULL DEFAULT 0,
+  `wicketPoints` int(11) NOT NULL DEFAULT 0,
+  `maidenOverPoints` int(11) NOT NULL DEFAULT 0,
+  `lbwOrBowledPoints` int(11) NOT NULL DEFAULT 0,
+  `catchesPoints` int(11) NOT NULL DEFAULT 0,
+  `runOutPoints` int(11) NOT NULL DEFAULT 0,
+  `economyPoints` int(11) DEFAULT NULL,
+  `strikeRatePoints` int(11) DEFAULT NULL,
+  `logTime` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `match_players`
@@ -10802,33 +11760,33 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (121, 18, 423, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (121, 18, 424, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 13, 77, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 13, 151, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 13, 164, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 13, 210, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(122, 13, 151, 1, 1, 0, 3, '8.0', 63, 34, 3, 4, 4, 0, 0, 0, 8, 0, 0, 0, 6, '2022-06-06 15:00:57'),
+(122, 13, 164, 1, 0, 0, 1, '7.5', 28, 16, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 4, '2022-06-06 15:00:57'),
+(122, 13, 210, 1, 0, 0, 9, '7.5', 20, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, '2022-06-06 15:00:57'),
 (122, 13, 271, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 13, 272, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 13, 273, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 13, 274, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(122, 13, 274, 1, 0, 0, 8, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:57'),
 (122, 13, 275, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 13, 276, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 13, 277, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 13, 278, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(122, 13, 278, 1, 0, 1, 6, '7.5', 66, 48, 2, 4, 4, 0, 0, 0, 0, 0, 0, 0, 4, '2022-06-06 15:00:57'),
 (122, 13, 279, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 13, 280, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 13, 281, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 13, 282, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 13, 283, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(122, 13, 282, 1, 0, 0, 7, '7.5', 15, 9, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:57'),
+(122, 13, 283, 1, 0, 0, 2, '7.5', 31, 20, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, '2022-06-06 15:00:57'),
 (122, 13, 284, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 13, 285, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(122, 13, 285, 1, 0, 0, 4, '7.5', 60, 40, 2, 6, 4, 0, 0, 0, 0, 0, 0, 0, 4, '2022-06-06 15:00:57'),
 (122, 13, 286, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 13, 287, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(122, 13, 287, 1, 0, 0, 5, '7.5', 24, 19, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:57'),
 (122, 13, 288, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 13, 289, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 13, 290, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 13, 291, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(122, 13, 291, 1, 0, 0, 11, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:57'),
 (122, 13, 292, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 13, 293, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 13, 294, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(122, 13, 294, 1, 0, 0, 10, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:57'),
 (122, 13, 295, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 13, 296, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 13, 297, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
@@ -10837,103 +11795,103 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (122, 18, 396, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 18, 397, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 18, 398, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 18, 399, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 18, 400, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(122, 18, 399, 1, 0, 0, 4, '7.5', 35, 0, 0, 0, -2, 0, 25, 0, 8, 0, 0, 0, 0, '2022-06-06 15:00:57'),
+(122, 18, 400, 1, 0, 0, 2, '7.5', 2, 0, 0, 0, -2, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:57'),
 (122, 18, 401, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 18, 402, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(122, 18, 402, 1, 0, 0, 10, '7.5', -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -6, 0, '2022-06-06 15:00:57'),
 (122, 18, 403, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 18, 404, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 18, 405, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(122, 18, 405, 1, 0, 0, 11, '7.5', 99, 0, 0, 0, 0, 4, 75, 0, 16, 0, 0, 0, 0, '2022-06-06 15:00:57'),
 (122, 18, 406, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 18, 407, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 18, 408, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 18, 409, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(122, 18, 407, 1, 1, 0, 7, '7.5', 81, 56, 3, 6, 8, 0, 0, 0, 0, 0, 0, 0, 4, '2022-06-06 15:00:57'),
+(122, 18, 408, 1, 0, 0, 3, '7.5', 22, 15, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:57'),
+(122, 18, 409, 1, 0, 0, 1, '7.5', 9, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:57'),
 (122, 18, 410, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 18, 411, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(122, 18, 411, 1, 0, 0, 8, '7.5', 18, 12, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:57'),
 (122, 18, 412, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 18, 413, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 18, 414, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(122, 18, 413, 1, 0, 1, 6, '7.5', 9, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, '2022-06-06 15:00:57'),
+(122, 18, 414, 1, 0, 0, 5, '7.5', 108, 79, 9, 6, 8, 0, 0, 0, 0, 0, 0, -4, 6, '2022-06-06 15:00:57'),
 (122, 18, 415, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 18, 416, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 18, 417, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 18, 418, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 18, 419, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 18, 420, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(122, 18, 421, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(122, 18, 421, 1, 0, 0, 9, '7.5', 32, 1, 0, 0, 0, 0, 25, 0, 0, 0, 0, 2, 0, '2022-06-06 15:00:57'),
 (122, 18, 422, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 18, 423, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (122, 18, 424, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(123, 29, 148, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(123, 29, 148, 1, 0, 0, 11, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:57'),
 (123, 29, 678, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(123, 29, 679, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(123, 29, 679, 1, 0, 1, 6, '7.5', 8, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:57'),
 (123, 29, 680, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (123, 29, 681, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (123, 29, 682, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (123, 29, 683, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(123, 29, 684, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(123, 29, 684, 1, 0, 0, 9, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:57'),
 (123, 29, 685, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (123, 29, 686, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(123, 29, 687, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(123, 29, 688, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(123, 29, 689, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(123, 29, 687, 1, 1, 0, 1, '8.5', 34, 21, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 4, '2022-06-06 15:00:57'),
+(123, 29, 688, 1, 0, 0, 8, '8.0', 34, 25, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, '2022-06-06 15:00:57'),
+(123, 29, 689, 1, 0, 0, 2, '8.0', 48, 35, 5, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:57'),
 (123, 29, 690, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(123, 29, 691, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(123, 29, 691, 1, 0, 0, 7, '8.0', 12, 7, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:57'),
 (123, 29, 692, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (123, 29, 693, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(123, 29, 694, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(123, 29, 694, 1, 0, 0, 5, '7.5', 46, 34, 2, 2, 4, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:57'),
 (123, 29, 695, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(123, 29, 696, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(123, 29, 697, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(123, 29, 696, 1, 0, 0, 4, '7.5', 13, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:57'),
+(123, 29, 697, 1, 0, 0, 3, '8.0', 7, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:57'),
 (123, 29, 698, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(123, 29, 699, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(123, 29, 699, 1, 0, 0, 10, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:57'),
 (123, 29, 700, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (123, 29, 701, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (123, 29, 702, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (123, 29, 703, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (123, 29, 704, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
 (123, 30, 95, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(123, 30, 705, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
-(123, 30, 706, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:57'),
+(123, 30, 705, 1, 0, 0, 7, '8.0', 33, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 4, 0, '2022-06-06 15:00:57'),
+(123, 30, 706, 1, 0, 0, 8, '8.0', 97, 0, 0, 0, 0, 4, 75, 0, 8, 0, 0, 6, 0, '2022-06-06 15:00:57'),
 (123, 30, 707, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(123, 30, 708, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(123, 30, 709, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
+(123, 30, 708, 1, 0, 0, 6, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:58'),
+(123, 30, 709, 1, 1, 0, 2, '7.5', 79, 54, 7, 4, 8, 0, 0, 0, 0, 0, 0, 0, 2, '2022-06-06 15:00:58'),
 (123, 30, 710, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(123, 30, 711, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
+(123, 30, 711, 1, 0, 0, 9, '7.5', 29, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:58'),
 (123, 30, 712, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
 (123, 30, 713, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
 (123, 30, 714, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
 (123, 30, 715, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(123, 30, 716, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
+(123, 30, 716, 1, 0, 1, 1, '8.0', 124, 83, 5, 18, 8, 0, 0, 0, 0, 0, 0, 0, 6, '2022-06-06 15:00:58'),
 (123, 30, 717, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(123, 30, 718, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(123, 30, 719, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
+(123, 30, 718, 1, 0, 0, 4, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:58'),
+(123, 30, 719, 1, 0, 0, 11, '7.5', 37, 0, 0, 0, 0, 0, 25, 0, 8, 0, 0, 0, 0, '2022-06-06 15:00:58'),
 (123, 30, 720, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
 (123, 30, 721, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(123, 30, 722, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
+(123, 30, 722, 1, 0, 0, 10, '7.5', 29, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:58'),
 (123, 30, 723, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(123, 30, 724, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(123, 30, 725, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
+(123, 30, 724, 1, 0, 0, 3, '7.5', 7, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:58'),
+(123, 30, 725, 1, 0, 0, 5, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:58'),
 (123, 30, 726, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
 (123, 30, 727, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 24, 17, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 24, 74, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
+(124, 24, 17, 1, 0, 0, 4, '7.5', 107, 40, 5, 2, 4, 0, 50, 0, 0, 0, 0, 0, 2, '2022-06-06 15:00:58'),
+(124, 24, 74, 1, 0, 0, 7, '7.5', 63, 1, 0, 0, 0, 0, 50, 0, 8, 0, 0, 0, 0, '2022-06-06 15:00:58'),
 (124, 24, 257, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 24, 546, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
+(124, 24, 546, 1, 0, 0, 8, '7.5', 31, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 2, 0, '2022-06-06 15:00:58'),
 (124, 24, 547, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 24, 548, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 24, 549, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
+(124, 24, 548, 1, 0, 0, 3, '7.5', 15, 10, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:58'),
+(124, 24, 549, 1, 1, 0, 6, '7.5', 16, 7, 1, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, '2022-06-06 15:00:58'),
 (124, 24, 550, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 24, 551, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
+(124, 24, 551, 1, 0, 0, 9, '7.5', 70, 0, 0, 0, 0, 0, 50, 0, 16, 0, 0, 0, 0, '2022-06-06 15:00:58'),
 (124, 24, 552, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
 (124, 24, 553, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 24, 554, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
+(124, 24, 554, 1, 0, 0, 1, '7.5', 47, 31, 2, 4, 4, 0, 0, 0, 0, 0, 0, 0, 2, '2022-06-06 15:00:58'),
 (124, 24, 555, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
 (124, 24, 556, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 24, 557, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 24, 558, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 24, 559, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
+(124, 24, 557, 1, 0, 0, 11, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:58'),
+(124, 24, 558, 1, 0, 0, 5, '7.5', 33, 0, 0, 0, -2, 0, 25, 0, 0, 0, 0, 6, 0, '2022-06-06 15:00:58'),
+(124, 24, 559, 1, 0, 1, 2, '7.5', 82, 63, 7, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:58'),
 (124, 24, 560, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 24, 561, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
+(124, 24, 561, 1, 0, 0, 10, '7.5', -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -6, 0, '2022-06-06 15:00:58'),
 (124, 24, 562, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
 (124, 24, 563, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
 (124, 24, 564, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
@@ -10945,228 +11903,228 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (124, 24, 570, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
 (124, 24, 571, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
 (124, 24, 572, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 28, 653, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 28, 654, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 28, 655, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 28, 656, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
+(124, 28, 653, 1, 0, 0, 9, '7.5', 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:58'),
+(124, 28, 654, 1, 0, 0, 2, '8.5', 30, 24, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:58'),
+(124, 28, 655, 1, 0, 0, 11, '8.0', 29, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:58'),
+(124, 28, 656, 1, 1, 0, 1, '7.5', 92, 68, 10, 2, 8, 0, 0, 0, 0, 0, 0, -4, 4, '2022-06-06 15:00:58'),
 (124, 28, 657, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 28, 658, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
+(124, 28, 658, 1, 0, 1, 4, '8.0', 26, 19, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:58'),
 (124, 28, 659, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 28, 660, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
+(124, 28, 660, 1, 0, 0, 3, '7.5', 15, 10, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:58'),
 (124, 28, 661, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
 (124, 28, 662, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 28, 663, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 28, 664, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
+(124, 28, 663, 1, 0, 0, 8, '7.5', 11, 6, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:58'),
+(124, 28, 664, 1, 0, 0, 5, '7.5', 17, 12, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:58'),
 (124, 28, 665, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 28, 666, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
+(124, 28, 666, 1, 0, 0, 7, '7.5', 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:58'),
 (124, 28, 667, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
 (124, 28, 668, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
 (124, 28, 669, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
 (124, 28, 670, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
 (124, 28, 671, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 28, 672, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(124, 28, 673, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
+(124, 28, 672, 1, 0, 0, 10, '7.5', 34, 3, 0, 0, 0, 0, 25, 0, 0, 0, 0, 2, 0, '2022-06-06 15:00:58'),
+(124, 28, 673, 1, 0, 0, 6, '8.0', 92, 7, 0, 2, 0, 4, 75, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:58'),
 (124, 28, 674, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
 (124, 28, 675, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
 (124, 28, 676, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
 (124, 28, 677, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:58'),
-(125, 16, 249, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
+(125, 16, 249, 1, 0, 0, 9, '7.5', 21, 15, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:59'),
 (125, 16, 348, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(125, 16, 349, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(125, 16, 350, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(125, 16, 351, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(125, 16, 352, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
+(125, 16, 349, 1, 1, 0, 1, '7.5', 16, 11, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:59'),
+(125, 16, 350, 1, 0, 0, 2, '7.5', 14, 8, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:59'),
+(125, 16, 351, 1, 0, 0, 7, '7.5', 49, 16, 0, 2, 0, 0, 25, 0, 0, 0, 0, 2, 0, '2022-06-06 15:00:59'),
+(125, 16, 352, 1, 0, 0, 5, '7.5', 50, 37, 3, 0, 4, 0, 0, 0, 0, 0, 0, 0, 2, '2022-06-06 15:00:59'),
 (125, 16, 353, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
 (125, 16, 354, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(125, 16, 355, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(125, 16, 356, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
+(125, 16, 355, 1, 0, 0, 8, '7.5', 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:59'),
+(125, 16, 356, 1, 0, 0, 4, '7.5', 28, 19, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, '2022-06-06 15:00:59'),
 (125, 16, 357, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
 (125, 16, 358, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
 (125, 16, 359, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
 (125, 16, 360, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(125, 16, 361, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(125, 16, 362, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(125, 16, 363, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
+(125, 16, 361, 1, 0, 1, 6, '7.5', 6, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:59'),
+(125, 16, 362, 1, 0, 0, 11, '7.5', 54, 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:59'),
+(125, 16, 363, 1, 0, 0, 10, '7.5', 31, 2, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:59'),
 (125, 16, 364, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(125, 16, 365, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
+(125, 16, 365, 1, 0, 0, 3, '7.5', 59, 29, 3, 0, 0, 0, 25, 0, 0, 0, 0, -4, 2, '2022-06-06 15:00:59'),
 (125, 16, 366, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
 (125, 16, 367, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(125, 21, 103, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(125, 21, 475, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
+(125, 21, 103, 1, 0, 0, 6, '8.0', 56, 20, 3, 0, 0, 0, 25, 0, 0, 0, 0, 0, 4, '2022-06-06 15:00:59'),
+(125, 21, 475, 1, 0, 0, 9, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:59'),
 (125, 21, 476, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(125, 21, 477, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
+(125, 21, 477, 1, 0, 0, 10, '7.5', 29, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:59'),
 (125, 21, 478, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
 (125, 21, 479, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(125, 21, 480, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(125, 21, 481, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(125, 21, 482, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
+(125, 21, 480, 1, 1, 0, 3, '8.0', 100, 70, 6, 6, 8, 0, 0, 0, 0, 0, 0, 2, 4, '2022-06-06 15:00:59'),
+(125, 21, 481, 1, 0, 0, 1, '7.5', 2, 0, 0, 0, -2, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:59'),
+(125, 21, 482, 1, 0, 0, 5, '7.5', 36, 28, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:59'),
 (125, 21, 483, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(125, 21, 484, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(125, 21, 485, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
+(125, 21, 484, 1, 0, 0, 7, '7.5', 135, 12, 1, 0, 0, 8, 100, 0, 8, 0, 0, 2, 0, '2022-06-06 15:00:59'),
+(125, 21, 485, 1, 0, 1, 8, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:59'),
 (125, 21, 486, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
 (125, 21, 487, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
 (125, 21, 488, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
 (125, 21, 489, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
 (125, 21, 490, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
 (125, 21, 491, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(125, 21, 492, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(125, 21, 493, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
+(125, 21, 492, 1, 0, 0, 4, '7.5', 11, 6, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:59'),
+(125, 21, 493, 1, 0, 0, 2, '8.0', 16, 11, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:59'),
 (125, 21, 494, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(125, 21, 495, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
+(125, 21, 495, 1, 0, 0, 11, '7.5', 60, 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 6, 0, '2022-06-06 15:00:59'),
 (125, 21, 496, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
 (125, 21, 497, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(126, 19, 41, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(126, 19, 81, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
+(126, 19, 41, 1, 0, 0, 5, '8.0', 61, 24, 2, 4, 0, 0, 25, 0, 0, 0, 0, 0, 2, '2022-06-06 15:01:00'),
+(126, 19, 81, 1, 0, 0, 6, '8.5', 29, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:00'),
 (126, 19, 101, 0, 0, 0, NULL, '9.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(126, 19, 425, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(126, 19, 426, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
+(126, 19, 425, 1, 0, 0, 3, '7.5', 62, 45, 5, 2, 4, 0, 0, 0, 0, 0, 0, 0, 2, '2022-06-06 15:01:00'),
+(126, 19, 426, 1, 1, 0, 4, '7.5', 16, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:00'),
 (126, 19, 427, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(126, 19, 428, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(126, 19, 429, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
+(126, 19, 428, 1, 0, 0, 1, '8.0', 12, 7, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:00'),
+(126, 19, 429, 1, 0, 0, 10, '8.0', 31, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 2, 0, '2022-06-06 15:01:00'),
 (126, 19, 430, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(126, 19, 431, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
+(126, 19, 431, 1, 0, 0, 8, '8.0', 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, 0, '2022-06-06 15:01:00'),
 (126, 19, 432, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (126, 19, 433, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (126, 19, 434, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(126, 19, 435, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(126, 19, 436, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
+(126, 19, 435, 1, 0, 0, 11, '7.5', 56, 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 2, 0, '2022-06-06 15:01:00'),
+(126, 19, 436, 1, 0, 1, 2, '8.0', 50, 38, 4, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:00'),
 (126, 19, 437, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (126, 19, 438, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (126, 19, 439, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (126, 19, 440, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(126, 19, 441, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
+(126, 19, 441, 1, 0, 0, 7, '7.5', 68, 0, 0, 0, 0, 0, 50, 0, 8, 0, 0, 6, 0, '2022-06-06 15:01:00'),
 (126, 19, 442, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (126, 19, 443, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (126, 19, 444, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(126, 19, 445, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
+(126, 19, 445, 1, 0, 0, 9, '7.5', 66, 0, 0, 0, 0, 0, 50, 0, 8, 0, 0, 4, 0, '2022-06-06 15:01:00'),
 (126, 19, 446, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (126, 20, 209, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (126, 20, 447, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(126, 20, 448, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
+(126, 20, 448, 1, 0, 0, 1, '7.5', 2, 0, 0, 0, -2, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:59'),
 (126, 20, 449, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(126, 20, 450, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
+(126, 20, 450, 1, 1, 0, 5, '8.0', 30, 25, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:59'),
 (126, 20, 451, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(126, 20, 452, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
+(126, 20, 452, 1, 0, 1, 3, '7.5', 72, 50, 6, 2, 8, 0, 0, 0, 0, 0, 0, 0, 2, '2022-06-06 15:00:59'),
 (126, 20, 453, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
 (126, 20, 454, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(126, 20, 455, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
+(126, 20, 455, 1, 0, 0, 4, '7.5', 26, 19, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:59'),
 (126, 20, 456, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
 (126, 20, 457, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(126, 20, 458, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
+(126, 20, 458, 1, 0, 0, 11, '7.5', 6, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:00:59'),
 (126, 20, 459, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
 (126, 20, 460, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(126, 20, 461, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
-(126, 20, 462, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
+(126, 20, 461, 1, 0, 0, 10, '8.0', 57, 5, 0, 0, 0, 0, 50, 0, 0, 0, 0, -2, 0, '2022-06-06 15:00:59'),
+(126, 20, 462, 1, 0, 0, 9, '7.5', 7, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, '2022-06-06 15:00:59'),
 (126, 20, 463, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
 (126, 20, 464, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:00:59'),
 (126, 20, 465, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (126, 20, 466, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(126, 20, 467, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(126, 20, 468, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(126, 20, 469, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
+(126, 20, 467, 1, 0, 0, 7, '8.0', 7, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:00'),
+(126, 20, 468, 1, 0, 0, 6, '8.0', 14, 9, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:00'),
+(126, 20, 469, 1, 0, 0, 2, '8.0', 8, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, '2022-06-06 15:01:00'),
 (126, 20, 470, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (126, 20, 471, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (126, 20, 472, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (126, 20, 473, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(126, 20, 474, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 22, 39, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
+(126, 20, 474, 1, 0, 0, 8, '8.0', 12, 8, 0, 2, 0, 0, 0, 0, 0, 0, 0, -2, 0, '2022-06-06 15:01:00'),
+(127, 22, 39, 1, 0, 0, 7, '7.5', 58, 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 4, 0, '2022-06-06 15:01:00'),
 (127, 22, 498, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 22, 499, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
+(127, 22, 499, 1, 0, 0, 6, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:00'),
 (127, 22, 500, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (127, 22, 501, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (127, 22, 502, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 22, 503, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 22, 504, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
+(127, 22, 503, 1, 1, 0, 8, '7.5', 35, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 6, 0, '2022-06-06 15:01:00'),
+(127, 22, 504, 1, 0, 1, 2, '7.5', 14, 8, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:00'),
 (127, 22, 505, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (127, 22, 506, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 22, 507, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
+(127, 22, 507, 1, 0, 0, 9, '7.5', -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -6, 0, '2022-06-06 15:01:00'),
 (127, 22, 508, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (127, 22, 509, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (127, 22, 510, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 22, 511, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 22, 512, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 22, 513, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 22, 514, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
+(127, 22, 511, 1, 0, 0, 3, '7.5', 78, 50, 2, 8, 8, 0, 0, 0, 0, 0, 0, 0, 6, '2022-06-06 15:01:00'),
+(127, 22, 512, 1, 0, 0, 4, '7.5', 83, 18, 1, 0, 0, 0, 50, 0, 8, 0, 0, 2, 0, '2022-06-06 15:01:00'),
+(127, 22, 513, 1, 0, 0, 5, '7.5', 54, 33, 1, 6, 4, 0, 0, 0, 0, 0, 0, 0, 6, '2022-06-06 15:01:00'),
+(127, 22, 514, 1, 0, 0, 10, '7.5', 56, 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 2, 0, '2022-06-06 15:01:00'),
 (127, 22, 515, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 22, 516, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
+(127, 22, 516, 1, 0, 0, 11, '7.5', 60, 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 6, 0, '2022-06-06 15:01:00'),
 (127, 22, 517, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 22, 518, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
+(127, 22, 518, 1, 0, 0, 1, '7.5', 22, 15, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:00'),
 (127, 22, 519, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (127, 22, 520, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (127, 22, 521, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (127, 22, 522, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 23, 55, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
+(127, 23, 55, 1, 1, 1, 5, '8.0', 10, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, '2022-06-06 15:01:00'),
 (127, 23, 523, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (127, 23, 524, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (127, 23, 525, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 23, 526, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 23, 527, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 23, 528, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
+(127, 23, 526, 1, 0, 0, 6, '7.5', 52, 38, 2, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:00'),
+(127, 23, 527, 1, 0, 0, 2, '7.5', 2, 0, 0, 0, -2, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:00'),
+(127, 23, 528, 1, 0, 0, 8, '8.5', 43, 18, 0, 2, 0, 0, 25, 0, 0, 0, 0, -6, 0, '2022-06-06 15:01:00'),
 (127, 23, 529, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (127, 23, 530, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 23, 531, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
+(127, 23, 531, 1, 0, 0, 7, '8.0', 20, 14, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:00'),
 (127, 23, 532, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 23, 533, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
+(127, 23, 533, 1, 0, 0, 10, '7.5', 12, 7, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:00'),
 (127, 23, 534, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (127, 23, 535, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (127, 23, 536, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 23, 537, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 23, 538, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 23, 539, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 23, 540, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
+(127, 23, 537, 1, 0, 0, 4, '7.5', 6, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:00'),
+(127, 23, 538, 1, 0, 0, 11, '7.5', 68, 1, 0, 0, 0, 0, 25, 24, 8, 0, 0, 6, 0, '2022-06-06 15:01:00'),
+(127, 23, 539, 1, 0, 0, 9, '7.5', 65, 24, 2, 4, 0, 0, 25, 0, 0, 0, 0, 0, 6, '2022-06-06 15:01:00'),
+(127, 23, 540, 1, 0, 0, 3, '8.0', 6, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:00'),
 (127, 23, 541, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (127, 23, 542, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (127, 23, 543, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
-(127, 23, 544, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
+(127, 23, 544, 1, 0, 0, 1, '7.5', 5, 6, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, -6, '2022-06-06 15:01:00'),
 (127, 23, 545, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:00'),
 (128, 15, 323, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (128, 15, 324, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 15, 325, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 15, 326, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 15, 327, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(128, 15, 325, 1, 0, 0, 1, '8.5', 2, 0, 0, 0, -2, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
+(128, 15, 326, 1, 0, 0, 9, '7.5', 29, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
+(128, 15, 327, 1, 0, 0, 11, '7.5', 83, 0, 0, 0, 0, 4, 75, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
 (128, 15, 328, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 15, 329, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 15, 330, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 15, 331, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 15, 332, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(128, 15, 329, 1, 1, 0, 7, '8.0', 29, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
+(128, 15, 330, 1, 0, 0, 10, '7.5', 31, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 2, 0, '2022-06-06 15:01:01'),
+(128, 15, 331, 1, 0, 0, 8, '8.5', 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, '2022-06-06 15:01:01'),
+(128, 15, 332, 1, 0, 1, 3, '7.5', 63, 49, 6, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
 (128, 15, 333, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (128, 15, 334, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 15, 335, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 15, 336, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(128, 15, 335, 1, 0, 0, 5, '8.0', 42, 28, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, '2022-06-06 15:01:01'),
+(128, 15, 336, 1, 0, 0, 4, '7.5', 12, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, '2022-06-06 15:01:01'),
 (128, 15, 337, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (128, 15, 338, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (128, 15, 339, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (128, 15, 340, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (128, 15, 341, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (128, 15, 342, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 15, 343, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01');
-INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`, `isCaptain`, `isWicketKeeper`, `order`, `credit`, `points`, `runsPoints`, `foursPoints`, `sixesPoints`, `numberRunsPoints`, `numberWicketPoints`, `wicketPoints`, `maidenOverPoints`, `lbwOrBowledPoints`, `catchesPoints`, `runOutPoints`, `economyPoints`, `strikeRatePoints`, `logTime`) VALUES
+(128, 15, 343, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (128, 15, 344, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (128, 15, 345, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 15, 346, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 15, 347, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 17, 225, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(128, 15, 346, 1, 0, 0, 2, '7.5', 27, 21, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
+(128, 15, 347, 1, 0, 0, 6, '8.0', 28, 17, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, '2022-06-06 15:01:01'),
+(128, 17, 225, 1, 0, 0, 11, '7.5', 29, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
 (128, 17, 368, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (128, 17, 369, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 17, 370, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 17, 371, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(128, 17, 370, 1, 0, 0, 5, '7.5', 33, 26, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
+(128, 17, 371, 1, 0, 0, 10, '7.5', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -4, 0, '2022-06-06 15:01:01'),
 (128, 17, 372, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (128, 17, 373, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (128, 17, 374, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 17, 375, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 17, 376, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 17, 377, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(128, 17, 375, 1, 0, 0, 6, '7.5', 143, 51, 0, 6, 8, 0, 50, 0, 16, 0, 0, 4, 4, '2022-06-06 15:01:01'),
+(128, 17, 376, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01');
+INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`, `isCaptain`, `isWicketKeeper`, `order`, `credit`, `points`, `runsPoints`, `foursPoints`, `sixesPoints`, `numberRunsPoints`, `numberWicketPoints`, `wicketPoints`, `maidenOverPoints`, `lbwOrBowledPoints`, `catchesPoints`, `runOutPoints`, `economyPoints`, `strikeRatePoints`, `logTime`) VALUES
+(128, 17, 377, 1, 0, 0, 1, '8.5', 6, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
 (128, 17, 378, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 17, 379, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 17, 380, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(128, 17, 379, 1, 0, 0, 4, '7.5', 15, 10, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
+(128, 17, 380, 1, 0, 0, 7, '8.5', 64, 24, 1, 2, 0, 0, 25, 0, 8, 0, 0, -2, 2, '2022-06-06 15:01:01'),
 (128, 17, 381, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 17, 382, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(128, 17, 382, 1, 0, 0, 8, '7.5', 8, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
 (128, 17, 383, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 17, 384, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(128, 17, 384, 1, 0, 1, 3, '7.5', 16, 10, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
 (128, 17, 385, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 17, 386, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(128, 17, 386, 1, 1, 0, 9, '7.5', 11, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, '2022-06-06 15:01:01'),
 (128, 17, 387, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(128, 17, 388, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(128, 17, 388, 1, 0, 0, 2, '8.0', 6, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
 (128, 17, 389, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (128, 17, 390, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (128, 17, 391, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
@@ -11175,25 +12133,25 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (128, 17, 394, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (128, 17, 395, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 26, 30, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 26, 114, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 26, 178, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(129, 26, 114, 1, 0, 0, 8, '8.5', 70, 2, 0, 0, 0, 0, 50, 0, 8, 0, 0, 6, 0, '2022-06-06 15:01:01'),
+(129, 26, 178, 1, 0, 1, 2, '7.5', 9, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
 (129, 26, 206, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 26, 237, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 26, 597, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 26, 598, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(129, 26, 237, 1, 0, 0, 9, '7.5', 29, 5, 1, 0, 0, 0, 25, 0, 0, 0, 0, -6, 0, '2022-06-06 15:01:01'),
+(129, 26, 597, 1, 1, 0, 1, '8.0', 15, 6, 1, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, '2022-06-06 15:01:01'),
+(129, 26, 598, 1, 0, 0, 11, '8.0', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
 (129, 26, 599, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 26, 600, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 26, 601, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 26, 602, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 26, 603, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 26, 604, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 26, 605, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 26, 606, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 26, 607, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(129, 26, 605, 1, 0, 0, 5, '7.5', 60, 49, 3, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
+(129, 26, 606, 1, 0, 0, 3, '7.5', 55, 38, 3, 4, 4, 0, 0, 0, 0, 0, 0, 0, 2, '2022-06-06 15:01:01'),
+(129, 26, 607, 1, 0, 0, 4, '7.5', 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, -6, 0, '2022-06-06 15:01:01'),
 (129, 26, 608, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 26, 609, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 26, 610, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 26, 611, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(129, 26, 611, 1, 0, 0, 6, '7.5', 45, 31, 2, 2, 4, 0, 0, 0, 0, 0, 0, 0, 2, '2022-06-06 15:01:01'),
 (129, 26, 612, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 26, 613, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 26, 614, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
@@ -11203,35 +12161,35 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (129, 26, 618, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 26, 619, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 26, 620, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 26, 621, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 26, 622, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(129, 26, 621, 1, 0, 0, 7, '7.5', 2, 0, 0, 0, -2, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
+(129, 26, 622, 1, 0, 0, 10, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
 (129, 26, 623, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 27, 24, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 27, 49, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 27, 125, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(129, 27, 24, 1, 0, 0, 5, '7.5', 40, 23, 1, 4, 0, 0, 0, 0, 0, 0, 0, 2, 6, '2022-06-06 15:01:01'),
+(129, 27, 49, 1, 0, 0, 8, '8.0', 33, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 4, 0, '2022-06-06 15:01:01'),
+(129, 27, 125, 1, 1, 0, 7, '8.0', 78, 0, 0, 0, 0, 0, 50, 12, 8, 0, 0, 4, 0, '2022-06-06 15:01:01'),
 (129, 27, 624, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 27, 625, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 27, 626, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(129, 27, 625, 1, 0, 0, 4, '7.5', 15, 10, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
+(129, 27, 626, 1, 0, 0, 1, '7.5', 70, 50, 4, 4, 8, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
 (129, 27, 627, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 27, 628, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 27, 629, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 27, 630, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 27, 631, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 27, 632, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 27, 633, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(129, 27, 632, 1, 0, 0, 11, '7.5', 37, 0, 0, 0, 0, 0, 25, 0, 8, 0, 0, 0, 0, '2022-06-06 15:01:01'),
+(129, 27, 633, 1, 0, 0, 6, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
 (129, 27, 634, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 27, 635, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 27, 636, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(129, 27, 636, 1, 0, 0, 10, '7.5', 33, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 4, 0, '2022-06-06 15:01:01'),
 (129, 27, 637, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 27, 638, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(129, 27, 638, 1, 0, 0, 3, '7.5', 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
 (129, 27, 639, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 27, 640, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 27, 641, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(129, 27, 641, 1, 0, 0, 2, '7.5', 108, 57, 6, 4, 8, 0, 25, 0, 0, 0, 0, 0, 4, '2022-06-06 15:01:01'),
 (129, 27, 642, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 27, 643, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 27, 644, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 27, 645, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
-(129, 27, 646, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
+(129, 27, 646, 1, 0, 1, 9, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:01'),
 (129, 27, 647, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 27, 648, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 27, 649, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
@@ -11239,116 +12197,116 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (129, 27, 651, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (129, 27, 652, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:01'),
 (130, 13, 77, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 13, 151, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
+(130, 13, 151, 1, 1, 0, 4, '8.0', 106, 52, 3, 8, 8, 0, 25, 0, 0, 0, 0, 0, 6, '2022-06-06 15:01:02'),
 (130, 13, 164, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 13, 210, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
+(130, 13, 210, 1, 0, 0, 8, '7.5', 33, 4, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:02'),
 (130, 13, 271, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (130, 13, 272, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 13, 273, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 13, 274, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
+(130, 13, 273, 1, 0, 0, 2, '7.5', 2, 0, 0, 0, -2, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:02'),
+(130, 13, 274, 1, 0, 0, 10, '7.5', 27, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, -2, 0, '2022-06-06 15:01:02'),
 (130, 13, 275, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 13, 276, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
+(130, 13, 276, 1, 0, 1, 3, '7.5', 112, 77, 9, 8, 8, 0, 0, 0, 0, 0, 0, 0, 6, '2022-06-06 15:01:02'),
 (130, 13, 277, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 13, 278, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
+(130, 13, 278, 1, 0, 0, 6, '7.5', 11, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:02'),
 (130, 13, 279, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (130, 13, 280, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 13, 281, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 13, 282, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 13, 283, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
+(130, 13, 281, 1, 0, 0, 11, '7.5', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -4, 0, '2022-06-06 15:01:02'),
+(130, 13, 282, 1, 0, 0, 7, '7.5', 51, 3, 0, 0, 0, 0, 50, 0, 0, 0, 0, -6, 0, '2022-06-06 15:01:02'),
+(130, 13, 283, 1, 0, 0, 1, '7.5', 60, 38, 2, 6, 4, 0, 0, 0, 0, 0, 0, 0, 6, '2022-06-06 15:01:02'),
 (130, 13, 284, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (130, 13, 285, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (130, 13, 286, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 13, 287, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
+(130, 13, 287, 1, 0, 0, 5, '7.5', 6, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:02'),
 (130, 13, 288, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (130, 13, 289, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (130, 13, 290, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (130, 13, 291, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (130, 13, 292, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (130, 13, 293, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 13, 294, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
+(130, 13, 294, 1, 0, 0, 9, '7.5', 16, 12, 0, 2, 0, 0, 0, 0, 0, 0, 0, -2, 0, '2022-06-06 15:01:02'),
 (130, 13, 295, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (130, 13, 296, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (130, 13, 297, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (130, 13, 298, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (130, 13, 299, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 19, 41, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 19, 81, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
+(130, 19, 41, 1, 0, 0, 5, '8.0', 100, 66, 4, 12, 8, 0, 0, 0, 0, 0, 0, 0, 6, '2022-06-06 15:01:02'),
+(130, 19, 81, 1, 0, 0, 4, '8.5', 6, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:02'),
 (130, 19, 101, 0, 0, 0, NULL, '9.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 19, 425, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 19, 426, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 19, 427, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 19, 428, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 19, 429, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
+(130, 19, 425, 1, 0, 0, 3, '7.5', 63, 41, 2, 6, 4, 0, 0, 0, 0, 0, 0, 0, 6, '2022-06-06 15:01:02'),
+(130, 19, 426, 1, 1, 0, 6, '7.5', 63, 40, 1, 8, 4, 0, 0, 0, 0, 0, 0, 0, 6, '2022-06-06 15:01:02'),
+(130, 19, 427, 1, 0, 0, 8, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:02'),
+(130, 19, 428, 1, 0, 0, 2, '8.0', 58, 42, 6, 0, 4, 0, 0, 0, 0, 0, 0, 0, 2, '2022-06-06 15:01:02'),
+(130, 19, 429, 1, 0, 0, 11, '8.0', 12, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, '2022-06-06 15:01:02'),
 (130, 19, 430, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 19, 431, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
+(130, 19, 431, 1, 0, 0, 9, '8.0', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:02'),
 (130, 19, 432, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (130, 19, 433, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (130, 19, 434, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (130, 19, 435, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 19, 436, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
+(130, 19, 436, 1, 0, 1, 1, '8.0', 16, 10, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:02'),
 (130, 19, 437, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (130, 19, 438, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (130, 19, 439, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (130, 19, 440, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 19, 441, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
+(130, 19, 441, 1, 0, 0, 7, '7.5', 56, 5, 1, 0, 0, 0, 50, 0, 0, 0, 0, -4, 0, '2022-06-06 15:01:02'),
 (130, 19, 442, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (130, 19, 443, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (130, 19, 444, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(130, 19, 445, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
+(130, 19, 445, 1, 0, 0, 10, '7.5', 64, 0, 0, 0, 0, 0, 50, 0, 8, 0, 0, 2, 0, '2022-06-06 15:01:02'),
 (130, 19, 446, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(131, 27, 24, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(131, 27, 49, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(131, 27, 125, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(131, 27, 24, 1, 0, 0, 6, '7.5', 22, 16, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:03'),
+(131, 27, 49, 1, 0, 0, 5, '8.0', 45, 25, 2, 2, 0, 0, 0, 0, 8, 0, 0, 0, 4, '2022-06-06 15:01:03'),
+(131, 27, 125, 1, 1, 0, 8, '8.0', 31, 16, 1, 2, 0, 0, 0, 0, 8, 0, 0, 0, 0, '2022-06-06 15:01:03'),
 (131, 27, 624, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(131, 27, 625, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(131, 27, 626, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(131, 27, 625, 1, 0, 0, 4, '7.5', 32, 22, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, '2022-06-06 15:01:03'),
+(131, 27, 626, 1, 0, 0, 1, '7.5', 115, 81, 10, 6, 8, 0, 0, 0, 0, 0, 0, 0, 6, '2022-06-06 15:01:03'),
 (131, 27, 627, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (131, 27, 628, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (131, 27, 629, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (131, 27, 630, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (131, 27, 631, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(131, 27, 632, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(131, 27, 633, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(131, 27, 632, 1, 0, 0, 11, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:03'),
+(131, 27, 633, 1, 0, 0, 7, '7.5', 44, 27, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 6, '2022-06-06 15:01:03'),
 (131, 27, 634, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (131, 27, 635, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(131, 27, 636, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(131, 27, 636, 1, 0, 0, 10, '7.5', 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, 0, '2022-06-06 15:01:03'),
 (131, 27, 637, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(131, 27, 638, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(131, 27, 638, 1, 0, 0, 3, '7.5', 2, 0, 0, 0, -2, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:03'),
 (131, 27, 639, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (131, 27, 640, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(131, 27, 641, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(131, 27, 641, 1, 0, 0, 2, '7.5', 14, 9, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:03'),
 (131, 27, 642, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (131, 27, 643, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (131, 27, 644, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (131, 27, 645, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(131, 27, 646, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(131, 27, 646, 1, 0, 1, 9, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:03'),
 (131, 27, 647, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (131, 27, 648, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (131, 27, 649, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (131, 27, 650, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (131, 27, 651, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (131, 27, 652, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(131, 29, 148, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
+(131, 29, 148, 1, 0, 0, 11, '7.5', 54, 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:02'),
 (131, 29, 678, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(131, 29, 679, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
+(131, 29, 679, 1, 0, 1, 5, '7.5', 20, 13, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:02'),
 (131, 29, 680, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(131, 29, 681, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
+(131, 29, 681, 1, 0, 0, 3, '7.5', 3, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -6, '2022-06-06 15:01:02'),
 (131, 29, 682, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
 (131, 29, 683, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(131, 29, 684, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
+(131, 29, 684, 1, 0, 0, 9, '7.5', 30, 1, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:02'),
 (131, 29, 685, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(131, 29, 686, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(131, 29, 687, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(131, 29, 688, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:02'),
-(131, 29, 689, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(131, 29, 686, 1, 0, 0, 10, '7.5', 26, 3, 0, 0, 0, 0, 25, 0, 0, 0, 0, -6, 0, '2022-06-06 15:01:02'),
+(131, 29, 687, 1, 1, 0, 1, '8.5', 72, 47, 7, 4, 4, 0, 0, 0, 0, 0, 0, 0, 6, '2022-06-06 15:01:02'),
+(131, 29, 688, 1, 0, 0, 7, '8.0', 60, 0, 0, 0, -2, 0, 50, 0, 8, 0, 0, 0, 0, '2022-06-06 15:01:02'),
+(131, 29, 689, 1, 0, 0, 2, '8.0', 53, 33, 6, 0, 4, 0, 0, 0, 0, 0, 0, 0, 6, '2022-06-06 15:01:03'),
 (131, 29, 690, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(131, 29, 691, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(131, 29, 691, 1, 0, 0, 8, '8.0', 87, 46, 4, 2, 4, 0, 25, 0, 0, 0, 0, -2, 4, '2022-06-06 15:01:03'),
 (131, 29, 692, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (131, 29, 693, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (131, 29, 694, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (131, 29, 695, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(131, 29, 696, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(131, 29, 697, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(131, 29, 696, 1, 0, 0, 6, '7.5', 35, 21, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 6, '2022-06-06 15:01:03'),
+(131, 29, 697, 1, 0, 0, 4, '8.0', 4, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -6, '2022-06-06 15:01:03'),
 (131, 29, 698, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (131, 29, 699, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (131, 29, 700, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
@@ -11356,74 +12314,74 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (131, 29, 702, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (131, 29, 703, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (131, 29, 704, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 14, 131, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 14, 133, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 14, 300, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(132, 14, 131, 1, 0, 0, 9, '7.5', 86, 15, 1, 2, 0, 0, 50, 0, 8, 0, 0, 6, 0, '2022-06-06 15:01:03'),
+(132, 14, 133, 1, 1, 0, 3, '8.5', 11, 11, 2, 0, 0, 0, 0, 0, 0, 0, 0, -6, 0, '2022-06-06 15:01:03'),
+(132, 14, 300, 1, 0, 0, 4, '8.5', 2, 0, 0, 0, -2, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:03'),
 (132, 14, 301, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (132, 14, 302, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 14, 303, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 14, 304, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(132, 14, 303, 1, 0, 0, 11, '8.0', 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, -4, 0, '2022-06-06 15:01:03'),
+(132, 14, 304, 1, 0, 1, 7, '7.5', 16, 10, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:03'),
 (132, 14, 305, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 14, 306, 0, 0, 0, NULL, '9.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(132, 14, 306, 1, 0, 0, 2, '9.0', 31, 22, 1, 2, 0, 0, 0, 0, 0, 0, 0, -2, 4, '2022-06-06 15:01:03'),
 (132, 14, 307, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (132, 14, 308, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 14, 309, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 14, 310, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(132, 14, 309, 1, 0, 0, 1, '7.5', 9, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:03'),
+(132, 14, 310, 1, 0, 0, 6, '8.0', 52, 42, 4, 2, 4, 0, 0, 0, 0, 0, 0, -6, 2, '2022-06-06 15:01:03'),
 (132, 14, 311, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (132, 14, 312, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (132, 14, 313, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (132, 14, 314, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (132, 14, 315, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 14, 316, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 14, 317, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(132, 14, 316, 1, 0, 0, 10, '7.5', 2, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, -6, 0, '2022-06-06 15:01:03'),
+(132, 14, 317, 1, 0, 0, 5, '8.0', 50, 33, 7, 0, 4, 0, 0, 0, 0, 0, 0, 0, 2, '2022-06-06 15:01:03'),
 (132, 14, 318, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 14, 319, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(132, 14, 319, 1, 0, 0, 8, '7.5', 29, 0, 0, 0, -2, 0, 25, 0, 0, 0, 0, 2, 0, '2022-06-06 15:01:03'),
 (132, 14, 320, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (132, 14, 321, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (132, 14, 322, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 21, 103, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 21, 475, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(132, 21, 103, 1, 0, 0, 5, '8.0', 39, 24, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 6, '2022-06-06 15:01:03'),
+(132, 21, 475, 1, 0, 0, 9, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:03'),
 (132, 21, 476, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 21, 477, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(132, 21, 477, 1, 0, 0, 10, '7.5', 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, '2022-06-06 15:01:03'),
 (132, 21, 478, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (132, 21, 479, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 21, 480, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 21, 481, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 21, 482, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(132, 21, 480, 1, 1, 0, 3, '8.0', 227, 50, 6, 4, 8, 16, 125, 0, 8, 0, 0, 2, 4, '2022-06-06 15:01:03'),
+(132, 21, 481, 1, 0, 0, 2, '7.5', 165, 113, 8, 18, 16, 0, 0, 0, 0, 0, 0, 0, 6, '2022-06-06 15:01:03'),
+(132, 21, 482, 1, 0, 0, 6, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:03'),
 (132, 21, 483, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 21, 484, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 21, 485, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(132, 21, 484, 1, 0, 0, 8, '7.5', 91, 0, 0, 0, 0, 4, 75, 0, 8, 0, 0, 0, 0, '2022-06-06 15:01:03'),
+(132, 21, 485, 1, 0, 1, 7, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:03'),
 (132, 21, 486, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (132, 21, 487, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (132, 21, 488, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (132, 21, 489, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (132, 21, 490, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (132, 21, 491, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 21, 492, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 21, 493, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(132, 21, 492, 1, 0, 0, 4, '7.5', 37, 27, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, '2022-06-06 15:01:03'),
+(132, 21, 493, 1, 0, 0, 1, '8.0', 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:03'),
 (132, 21, 494, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(132, 21, 495, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
+(132, 21, 495, 1, 0, 0, 11, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:03'),
 (132, 21, 496, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
 (132, 21, 497, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:03'),
-(133, 24, 17, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(133, 24, 74, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(133, 24, 17, 1, 0, 0, 4, '7.5', 13, 8, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
+(133, 24, 74, 1, 0, 0, 6, '7.5', 8, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
 (133, 24, 257, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(133, 24, 546, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(133, 24, 546, 1, 0, 0, 8, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
 (133, 24, 547, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(133, 24, 548, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(133, 24, 549, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(133, 24, 548, 1, 0, 0, 3, '7.5', 24, 16, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
+(133, 24, 549, 1, 0, 0, 5, '7.5', 21, 15, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
 (133, 24, 550, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(133, 24, 551, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(133, 24, 551, 1, 0, 0, 9, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
 (133, 24, 552, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (133, 24, 553, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(133, 24, 554, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(133, 24, 554, 1, 1, 0, 1, '7.5', 48, 29, 1, 8, 0, 0, 0, 0, 0, 0, 0, 0, 6, '2022-06-06 15:01:04'),
 (133, 24, 555, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (133, 24, 556, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(133, 24, 557, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(133, 24, 558, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(133, 24, 559, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(133, 24, 557, 1, 0, 0, 11, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
+(133, 24, 558, 1, 0, 0, 7, '7.5', 7, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
+(133, 24, 559, 1, 0, 1, 2, '7.5', 32, 22, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, '2022-06-06 15:01:04'),
 (133, 24, 560, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(133, 24, 561, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(133, 24, 561, 1, 0, 0, 10, '7.5', 27, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, -2, 0, '2022-06-06 15:01:04'),
 (133, 24, 562, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (133, 24, 563, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (133, 24, 564, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
@@ -11439,126 +12397,126 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (133, 25, 574, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (133, 25, 575, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (133, 25, 576, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(133, 25, 577, 0, 0, 0, NULL, '9.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(133, 25, 578, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(133, 25, 577, 1, 0, 0, 3, '9.5', 13, 7, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
+(133, 25, 578, 1, 0, 0, 6, '8.0', 36, 1, 0, 0, 0, 0, 25, 0, 0, 0, 0, 6, 0, '2022-06-06 15:01:04'),
 (133, 25, 579, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(133, 25, 580, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(133, 25, 580, 1, 0, 0, 9, '8.5', 45, 12, 2, 0, 0, 0, 25, 0, 0, 0, 0, 2, 0, '2022-06-06 15:01:04'),
 (133, 25, 581, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(133, 25, 582, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(133, 25, 582, 1, 1, 0, 4, '7.5', 10, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
 (133, 25, 583, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(133, 25, 584, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(133, 25, 584, 1, 0, 0, 8, '7.5', 101, 48, 4, 8, 4, 0, 25, 0, 0, 0, 0, 2, 6, '2022-06-06 15:01:04'),
 (133, 25, 585, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(133, 25, 586, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(133, 25, 586, 1, 0, 0, 7, '8.5', 47, 13, 3, 0, 0, 0, 25, 0, 0, 0, 0, 2, 0, '2022-06-06 15:01:04'),
 (133, 25, 587, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(133, 25, 588, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(133, 25, 588, 1, 0, 0, 11, '7.5', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -4, 0, '2022-06-06 15:01:04'),
 (133, 25, 589, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(133, 25, 590, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(133, 25, 591, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(133, 25, 590, 1, 0, 1, 2, '7.5', 2, 0, 0, 0, -2, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
+(133, 25, 591, 1, 0, 0, 5, '8.0', 33, 23, 2, 4, 0, 0, 0, 0, 0, 0, 0, -6, 6, '2022-06-06 15:01:04'),
 (133, 25, 592, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(133, 25, 593, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(133, 25, 593, 1, 0, 0, 10, '7.5', 23, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, -6, 0, '2022-06-06 15:01:04'),
 (133, 25, 594, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(133, 25, 595, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(133, 25, 595, 1, 0, 0, 1, '8.5', 9, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
 (133, 25, 596, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (134, 22, 39, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (134, 22, 498, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 22, 499, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(134, 22, 499, 1, 0, 0, 6, '7.5', 26, 19, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
 (134, 22, 500, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (134, 22, 501, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (134, 22, 502, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 22, 503, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 22, 504, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(134, 22, 503, 1, 1, 0, 7, '7.5', 13, 8, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
+(134, 22, 504, 1, 0, 1, 1, '7.5', 17, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
 (134, 22, 505, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (134, 22, 506, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 22, 507, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(134, 22, 507, 1, 0, 0, 8, '7.5', 13, 8, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
 (134, 22, 508, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (134, 22, 509, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 22, 510, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 22, 511, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 22, 512, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 22, 513, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 22, 514, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(134, 22, 510, 1, 0, 0, 9, '7.5', 10, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
+(134, 22, 511, 1, 0, 0, 3, '7.5', 16, 10, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
+(134, 22, 512, 1, 0, 0, 4, '7.5', 108, 14, 1, 0, 0, 4, 75, 0, 8, 0, 0, 2, 0, '2022-06-06 15:01:04'),
+(134, 22, 513, 1, 0, 0, 5, '7.5', 35, 27, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
+(134, 22, 514, 1, 0, 0, 10, '7.5', 81, 0, 0, 0, -2, 4, 75, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
 (134, 22, 515, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 22, 516, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 22, 517, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(134, 22, 516, 1, 0, 0, 11, '7.5', 9, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, '2022-06-06 15:01:04'),
+(134, 22, 517, 1, 0, 0, 2, '7.5', 17, 11, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
 (134, 22, 518, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (134, 22, 519, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (134, 22, 520, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (134, 22, 521, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (134, 22, 522, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (134, 30, 95, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 30, 705, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 30, 706, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(134, 30, 705, 1, 0, 0, 6, '8.0', 22, 2, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, '2022-06-06 15:01:04'),
+(134, 30, 706, 1, 0, 0, 8, '8.0', 7, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
 (134, 30, 707, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 30, 708, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 30, 709, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(134, 30, 708, 1, 0, 0, 5, '7.5', 8, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
+(134, 30, 709, 1, 1, 0, 1, '7.5', 57, 44, 3, 2, 4, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
 (134, 30, 710, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 30, 711, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(134, 30, 711, 1, 0, 0, 9, '7.5', 20, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, '2022-06-06 15:01:04'),
 (134, 30, 712, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (134, 30, 713, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (134, 30, 714, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (134, 30, 715, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 30, 716, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 30, 717, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 30, 718, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 30, 719, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(134, 30, 716, 1, 0, 1, 2, '8.0', 6, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
+(134, 30, 717, 1, 0, 0, 10, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
+(134, 30, 718, 1, 0, 0, 4, '7.5', 53, 38, 3, 2, 4, 0, 0, 0, 0, 0, 0, 0, 2, '2022-06-06 15:01:04'),
+(134, 30, 719, 1, 0, 0, 11, '7.5', 68, 0, 0, 0, 0, 0, 50, 0, 8, 0, 0, 6, 0, '2022-06-06 15:01:04'),
 (134, 30, 720, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (134, 30, 721, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (134, 30, 722, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (134, 30, 723, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 30, 724, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(134, 30, 725, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(134, 30, 724, 1, 0, 0, 3, '7.5', 42, 30, 4, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
+(134, 30, 725, 1, 0, 0, 7, '7.5', 38, 24, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, '2022-06-06 15:01:04'),
 (134, 30, 726, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (134, 30, 727, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(135, 16, 249, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(135, 16, 249, 1, 0, 0, 9, '7.5', 29, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
 (135, 16, 348, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(135, 16, 349, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(135, 16, 350, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(135, 16, 351, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(135, 16, 352, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(135, 16, 349, 1, 1, 0, 1, '7.5', 104, 73, 11, 2, 8, 0, 0, 0, 0, 0, 0, 0, 6, '2022-06-06 15:01:04'),
+(135, 16, 350, 1, 0, 0, 2, '7.5', 51, 39, 2, 2, 4, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
+(135, 16, 351, 1, 0, 0, 6, '7.5', 51, 12, 0, 2, 0, 0, 25, 0, 8, 0, 0, 0, 0, '2022-06-06 15:01:04'),
+(135, 16, 352, 1, 0, 0, 3, '7.5', 11, 8, 1, 0, 0, 0, 0, 0, 0, 0, 0, -2, 0, '2022-06-06 15:01:04'),
 (135, 16, 353, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (135, 16, 354, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(135, 16, 355, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(135, 16, 356, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(135, 16, 355, 1, 0, 0, 7, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
+(135, 16, 356, 1, 0, 0, 4, '7.5', 20, 15, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
 (135, 16, 357, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (135, 16, 358, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (135, 16, 359, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (135, 16, 360, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(135, 16, 361, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(135, 16, 362, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(135, 16, 363, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(135, 16, 361, 1, 0, 1, 5, '7.5', 40, 29, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, '2022-06-06 15:01:04'),
+(135, 16, 362, 1, 0, 0, 11, '7.5', 54, 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
+(135, 16, 363, 1, 0, 0, 10, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
 (135, 16, 364, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(135, 16, 365, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(135, 16, 365, 1, 0, 0, 8, '7.5', 54, 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
 (135, 16, 366, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (135, 16, 367, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
 (135, 20, 209, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
 (135, 20, 447, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
-(135, 20, 448, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:04'),
+(135, 20, 448, 1, 0, 0, 1, '7.5', 48, 35, 3, 2, 4, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:04'),
 (135, 20, 449, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
-(135, 20, 450, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
+(135, 20, 450, 1, 1, 0, 4, '8.0', 32, 25, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:05'),
 (135, 20, 451, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
-(135, 20, 452, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
+(135, 20, 452, 1, 0, 1, 7, '7.5', 23, 17, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:05'),
 (135, 20, 453, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
 (135, 20, 454, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
-(135, 20, 455, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
+(135, 20, 455, 1, 0, 0, 3, '7.5', 96, 67, 9, 4, 8, 0, 0, 0, 0, 0, 0, 0, 4, '2022-06-06 15:01:05'),
 (135, 20, 456, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
 (135, 20, 457, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
-(135, 20, 458, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
+(135, 20, 458, 1, 0, 0, 11, '7.5', -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -6, 0, '2022-06-06 15:01:05'),
 (135, 20, 459, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
 (135, 20, 460, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
-(135, 20, 461, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
-(135, 20, 462, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
+(135, 20, 461, 1, 0, 0, 10, '8.0', -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -6, 0, '2022-06-06 15:01:05'),
+(135, 20, 462, 1, 0, 0, 9, '7.5', 37, 0, 0, 0, 0, 0, 25, 0, 8, 0, 0, 0, 0, '2022-06-06 15:01:05'),
 (135, 20, 463, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
 (135, 20, 464, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
 (135, 20, 465, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
 (135, 20, 466, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
-(135, 20, 467, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
-(135, 20, 468, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
-(135, 20, 469, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
+(135, 20, 467, 1, 0, 0, 5, '8.0', 29, 0, 0, 0, -2, 0, 25, 0, 0, 0, 0, 2, 0, '2022-06-06 15:01:05'),
+(135, 20, 468, 1, 0, 0, 6, '8.0', 8, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:01:05'),
+(135, 20, 469, 1, 0, 0, 2, '8.0', 38, 25, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 4, '2022-06-06 15:01:05'),
 (135, 20, 470, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
 (135, 20, 471, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
 (135, 20, 472, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
 (135, 20, 473, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
-(135, 20, 474, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
+(135, 20, 474, 1, 0, 0, 8, '8.0', 32, 1, 0, 0, 0, 0, 25, 0, 0, 0, 0, 2, 0, '2022-06-06 15:01:05'),
 (136, 14, 131, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
 (136, 14, 133, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
 (136, 14, 300, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
@@ -11603,8 +12561,7 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (136, 16, 363, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
 (136, 16, 364, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
 (136, 16, 365, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
-(136, 16, 366, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05');
-INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`, `isCaptain`, `isWicketKeeper`, `order`, `credit`, `points`, `runsPoints`, `foursPoints`, `sixesPoints`, `numberRunsPoints`, `numberWicketPoints`, `wicketPoints`, `maidenOverPoints`, `lbwOrBowledPoints`, `catchesPoints`, `runOutPoints`, `economyPoints`, `strikeRatePoints`, `logTime`) VALUES
+(136, 16, 366, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
 (136, 16, 367, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
 (137, 17, 225, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
 (137, 17, 368, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
@@ -11634,7 +12591,8 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (137, 17, 392, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
 (137, 17, 393, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
 (137, 17, 394, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
-(137, 17, 395, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
+(137, 17, 395, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05');
+INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`, `isCaptain`, `isWicketKeeper`, `order`, `credit`, `points`, `runsPoints`, `foursPoints`, `sixesPoints`, `numberRunsPoints`, `numberWicketPoints`, `wicketPoints`, `maidenOverPoints`, `lbwOrBowledPoints`, `catchesPoints`, `runOutPoints`, `economyPoints`, `strikeRatePoints`, `logTime`) VALUES
 (137, 19, 41, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
 (137, 19, 81, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
 (137, 19, 101, 0, 0, 0, NULL, '9.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:05'),
@@ -12067,8 +13025,7 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (145, 27, 634, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:09'),
 (145, 27, 635, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:09'),
 (145, 27, 636, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:09'),
-(145, 27, 637, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:09');
-INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`, `isCaptain`, `isWicketKeeper`, `order`, `credit`, `points`, `runsPoints`, `foursPoints`, `sixesPoints`, `numberRunsPoints`, `numberWicketPoints`, `wicketPoints`, `maidenOverPoints`, `lbwOrBowledPoints`, `catchesPoints`, `runOutPoints`, `economyPoints`, `strikeRatePoints`, `logTime`) VALUES
+(145, 27, 637, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:09'),
 (145, 27, 638, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:09'),
 (145, 27, 639, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:09'),
 (145, 27, 640, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:09'),
@@ -12098,7 +13055,8 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (145, 29, 688, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:09'),
 (145, 29, 689, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:09'),
 (145, 29, 690, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:09'),
-(145, 29, 691, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:09'),
+(145, 29, 691, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:09');
+INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`, `isCaptain`, `isWicketKeeper`, `order`, `credit`, `points`, `runsPoints`, `foursPoints`, `sixesPoints`, `numberRunsPoints`, `numberWicketPoints`, `wicketPoints`, `maidenOverPoints`, `lbwOrBowledPoints`, `catchesPoints`, `runOutPoints`, `economyPoints`, `strikeRatePoints`, `logTime`) VALUES
 (145, 29, 692, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:09'),
 (145, 29, 693, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:09'),
 (145, 29, 694, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:09'),
@@ -12531,8 +13489,7 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (153, 21, 494, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:11'),
 (153, 21, 495, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:11'),
 (153, 21, 496, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:11'),
-(153, 21, 497, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:11');
-INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`, `isCaptain`, `isWicketKeeper`, `order`, `credit`, `points`, `runsPoints`, `foursPoints`, `sixesPoints`, `numberRunsPoints`, `numberWicketPoints`, `wicketPoints`, `maidenOverPoints`, `lbwOrBowledPoints`, `catchesPoints`, `runOutPoints`, `economyPoints`, `strikeRatePoints`, `logTime`) VALUES
+(153, 21, 497, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:11'),
 (154, 24, 17, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:11'),
 (154, 24, 74, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:11'),
 (154, 24, 257, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:11'),
@@ -12562,7 +13519,8 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (154, 24, 569, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:11'),
 (154, 24, 570, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:11'),
 (154, 24, 571, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:11'),
-(154, 24, 572, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:11'),
+(154, 24, 572, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:11');
+INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`, `isCaptain`, `isWicketKeeper`, `order`, `credit`, `points`, `runsPoints`, `foursPoints`, `sixesPoints`, `numberRunsPoints`, `numberWicketPoints`, `wicketPoints`, `maidenOverPoints`, `lbwOrBowledPoints`, `catchesPoints`, `runOutPoints`, `economyPoints`, `strikeRatePoints`, `logTime`) VALUES
 (154, 28, 653, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:11'),
 (154, 28, 654, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:11'),
 (154, 28, 655, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:11'),
@@ -12995,8 +13953,7 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (162, 27, 628, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:13'),
 (162, 27, 629, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:13'),
 (162, 27, 630, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:13'),
-(162, 27, 631, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:13');
-INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`, `isCaptain`, `isWicketKeeper`, `order`, `credit`, `points`, `runsPoints`, `foursPoints`, `sixesPoints`, `numberRunsPoints`, `numberWicketPoints`, `wicketPoints`, `maidenOverPoints`, `lbwOrBowledPoints`, `catchesPoints`, `runOutPoints`, `economyPoints`, `strikeRatePoints`, `logTime`) VALUES
+(162, 27, 631, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:13'),
 (162, 27, 632, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:13'),
 (162, 27, 633, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:14'),
 (162, 27, 634, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:14'),
@@ -13026,7 +13983,8 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (163, 28, 658, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:14'),
 (163, 28, 659, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:14'),
 (163, 28, 660, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:14'),
-(163, 28, 661, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:14'),
+(163, 28, 661, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:14');
+INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`, `isCaptain`, `isWicketKeeper`, `order`, `credit`, `points`, `runsPoints`, `foursPoints`, `sixesPoints`, `numberRunsPoints`, `numberWicketPoints`, `wicketPoints`, `maidenOverPoints`, `lbwOrBowledPoints`, `catchesPoints`, `runOutPoints`, `economyPoints`, `strikeRatePoints`, `logTime`) VALUES
 (163, 28, 662, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:14'),
 (163, 28, 663, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:14'),
 (163, 28, 664, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:14'),
@@ -13459,8 +14417,7 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (171, 16, 360, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:16'),
 (171, 16, 361, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:16'),
 (171, 16, 362, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:16'),
-(171, 16, 363, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:16');
-INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`, `isCaptain`, `isWicketKeeper`, `order`, `credit`, `points`, `runsPoints`, `foursPoints`, `sixesPoints`, `numberRunsPoints`, `numberWicketPoints`, `wicketPoints`, `maidenOverPoints`, `lbwOrBowledPoints`, `catchesPoints`, `runOutPoints`, `economyPoints`, `strikeRatePoints`, `logTime`) VALUES
+(171, 16, 363, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:16'),
 (171, 16, 364, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:16'),
 (171, 16, 365, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:16'),
 (171, 16, 366, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:16'),
@@ -13490,7 +14447,8 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (171, 18, 418, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:16'),
 (171, 18, 419, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:16'),
 (171, 18, 420, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:16'),
-(171, 18, 421, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:16'),
+(171, 18, 421, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:16');
+INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`, `isCaptain`, `isWicketKeeper`, `order`, `credit`, `points`, `runsPoints`, `foursPoints`, `sixesPoints`, `numberRunsPoints`, `numberWicketPoints`, `wicketPoints`, `maidenOverPoints`, `lbwOrBowledPoints`, `catchesPoints`, `runOutPoints`, `economyPoints`, `strikeRatePoints`, `logTime`) VALUES
 (171, 18, 422, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:16'),
 (171, 18, 423, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:16'),
 (171, 18, 424, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:16'),
@@ -13923,8 +14881,7 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (179, 15, 336, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:20'),
 (179, 15, 337, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:20'),
 (179, 15, 338, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:20'),
-(179, 15, 339, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:20');
-INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`, `isCaptain`, `isWicketKeeper`, `order`, `credit`, `points`, `runsPoints`, `foursPoints`, `sixesPoints`, `numberRunsPoints`, `numberWicketPoints`, `wicketPoints`, `maidenOverPoints`, `lbwOrBowledPoints`, `catchesPoints`, `runOutPoints`, `economyPoints`, `strikeRatePoints`, `logTime`) VALUES
+(179, 15, 339, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:20'),
 (179, 15, 340, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:20'),
 (179, 15, 341, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:20'),
 (179, 15, 342, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:20'),
@@ -13954,7 +14911,8 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (180, 16, 365, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:21'),
 (180, 16, 366, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:21'),
 (180, 16, 367, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:21'),
-(180, 19, 41, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:21'),
+(180, 19, 41, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:21');
+INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`, `isCaptain`, `isWicketKeeper`, `order`, `credit`, `points`, `runsPoints`, `foursPoints`, `sixesPoints`, `numberRunsPoints`, `numberWicketPoints`, `wicketPoints`, `maidenOverPoints`, `lbwOrBowledPoints`, `catchesPoints`, `runOutPoints`, `economyPoints`, `strikeRatePoints`, `logTime`) VALUES
 (180, 19, 81, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:21'),
 (180, 19, 101, 0, 0, 0, NULL, '9.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:21'),
 (180, 19, 425, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:21'),
@@ -14280,13 +15238,13 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (186, 20, 472, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
 (186, 20, 473, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
 (186, 20, 474, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
-(186, 21, 103, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
+(186, 21, 103, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
 (186, 21, 475, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
 (186, 21, 476, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
 (186, 21, 477, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
 (186, 21, 478, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
 (186, 21, 479, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
-(186, 21, 480, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
+(186, 21, 480, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
 (186, 21, 481, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
 (186, 21, 482, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
 (186, 21, 483, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
@@ -14299,7 +15257,7 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (186, 21, 490, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
 (186, 21, 491, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
 (186, 21, 492, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
-(186, 21, 493, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
+(186, 21, 493, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
 (186, 21, 494, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
 (186, 21, 495, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
 (186, 21, 496, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:23'),
@@ -14387,8 +15345,7 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (188, 17, 389, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:24'),
 (188, 17, 390, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:24'),
 (188, 17, 391, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:24'),
-(188, 17, 392, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:24');
-INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`, `isCaptain`, `isWicketKeeper`, `order`, `credit`, `points`, `runsPoints`, `foursPoints`, `sixesPoints`, `numberRunsPoints`, `numberWicketPoints`, `wicketPoints`, `maidenOverPoints`, `lbwOrBowledPoints`, `catchesPoints`, `runOutPoints`, `economyPoints`, `strikeRatePoints`, `logTime`) VALUES
+(188, 17, 392, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:24'),
 (188, 17, 393, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:24'),
 (188, 17, 394, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:24'),
 (188, 17, 395, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:24'),
@@ -14418,7 +15375,8 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (188, 18, 419, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:24'),
 (188, 18, 420, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:24'),
 (188, 18, 421, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:24'),
-(188, 18, 422, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:24'),
+(188, 18, 422, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:24');
+INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`, `isCaptain`, `isWicketKeeper`, `order`, `credit`, `points`, `runsPoints`, `foursPoints`, `sixesPoints`, `numberRunsPoints`, `numberWicketPoints`, `wicketPoints`, `maidenOverPoints`, `lbwOrBowledPoints`, `catchesPoints`, `runOutPoints`, `economyPoints`, `strikeRatePoints`, `logTime`) VALUES
 (188, 18, 423, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:24'),
 (188, 18, 424, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:24'),
 (189, 24, 17, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:24'),
@@ -14609,16 +15567,16 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (192, 15, 345, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
 (192, 15, 346, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
 (192, 15, 347, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
-(192, 19, 41, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
+(192, 19, 41, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
 (192, 19, 81, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
 (192, 19, 101, 0, 0, 0, NULL, '9.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
-(192, 19, 425, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
-(192, 19, 426, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
+(192, 19, 425, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
+(192, 19, 426, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
 (192, 19, 427, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
 (192, 19, 428, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
 (192, 19, 429, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
 (192, 19, 430, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
-(192, 19, 431, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
+(192, 19, 431, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
 (192, 19, 432, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
 (192, 19, 433, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
 (192, 19, 434, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
@@ -14634,9 +15592,9 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (192, 19, 444, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
 (192, 19, 445, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
 (192, 19, 446, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:25'),
-(193, 14, 131, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:26'),
+(193, 14, 131, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:26'),
 (193, 14, 133, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:26'),
-(193, 14, 300, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:26'),
+(193, 14, 300, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:26'),
 (193, 14, 301, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:26'),
 (193, 14, 302, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:26'),
 (193, 14, 303, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:26'),
@@ -14717,9 +15675,9 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (194, 17, 372, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:26'),
 (194, 17, 373, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:26'),
 (194, 17, 374, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:26'),
-(194, 17, 375, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:26'),
+(194, 17, 375, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:26'),
 (194, 17, 376, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:26'),
-(194, 17, 377, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:26'),
+(194, 17, 377, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:26'),
 (194, 17, 378, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:26'),
 (194, 17, 379, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:26'),
 (194, 17, 380, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:26'),
@@ -14739,7 +15697,7 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (194, 17, 394, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:26'),
 (194, 17, 395, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:26'),
 (195, 13, 77, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
-(195, 13, 151, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
+(195, 13, 151, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (195, 13, 164, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (195, 13, 210, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (195, 13, 271, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
@@ -14780,7 +15738,7 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (195, 20, 452, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (195, 20, 453, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (195, 20, 454, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
-(195, 20, 455, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
+(195, 20, 455, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (195, 20, 456, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (195, 20, 457, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (195, 20, 458, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
@@ -14793,7 +15751,7 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (195, 20, 465, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (195, 20, 466, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (195, 20, 467, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
-(195, 20, 468, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
+(195, 20, 468, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (195, 20, 469, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (195, 20, 470, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (195, 20, 471, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
@@ -14806,7 +15764,7 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (196, 23, 525, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (196, 23, 526, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (196, 23, 527, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
-(196, 23, 528, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
+(196, 23, 528, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (196, 23, 529, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (196, 23, 530, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (196, 23, 531, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
@@ -14818,7 +15776,7 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (196, 23, 537, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (196, 23, 538, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (196, 23, 539, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
-(196, 23, 540, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
+(196, 23, 540, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (196, 23, 541, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (196, 23, 542, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (196, 23, 543, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
@@ -14851,10 +15809,9 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (196, 28, 677, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:27'),
 (197, 25, 573, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
 (197, 25, 574, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
-(197, 25, 575, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28');
-INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`, `isCaptain`, `isWicketKeeper`, `order`, `credit`, `points`, `runsPoints`, `foursPoints`, `sixesPoints`, `numberRunsPoints`, `numberWicketPoints`, `wicketPoints`, `maidenOverPoints`, `lbwOrBowledPoints`, `catchesPoints`, `runOutPoints`, `economyPoints`, `strikeRatePoints`, `logTime`) VALUES
+(197, 25, 575, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
 (197, 25, 576, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
-(197, 25, 577, 0, 0, 0, NULL, '9.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
+(197, 25, 577, 0, 0, 0, NULL, '9.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
 (197, 25, 578, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
 (197, 25, 579, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
 (197, 25, 580, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
@@ -14874,15 +15831,16 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (197, 25, 594, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
 (197, 25, 595, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
 (197, 25, 596, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
-(197, 27, 24, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
-(197, 27, 49, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
-(197, 27, 125, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
+(197, 27, 24, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
+(197, 27, 49, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
+(197, 27, 125, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
 (197, 27, 624, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
 (197, 27, 625, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
 (197, 27, 626, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
 (197, 27, 627, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
 (197, 27, 628, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
-(197, 27, 629, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
+(197, 27, 629, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28');
+INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`, `isCaptain`, `isWicketKeeper`, `order`, `credit`, `points`, `runsPoints`, `foursPoints`, `sixesPoints`, `numberRunsPoints`, `numberWicketPoints`, `wicketPoints`, `maidenOverPoints`, `lbwOrBowledPoints`, `catchesPoints`, `runOutPoints`, `economyPoints`, `strikeRatePoints`, `logTime`) VALUES
 (197, 27, 630, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
 (197, 27, 631, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
 (197, 27, 632, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
@@ -14908,7 +15866,7 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (197, 27, 652, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:28'),
 (198, 26, 30, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
 (198, 26, 114, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
-(198, 26, 178, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
+(198, 26, 178, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
 (198, 26, 206, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
 (198, 26, 237, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
 (198, 26, 597, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
@@ -14943,17 +15901,17 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (198, 30, 706, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
 (198, 30, 707, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
 (198, 30, 708, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
-(198, 30, 709, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
+(198, 30, 709, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
 (198, 30, 710, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
-(198, 30, 711, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
+(198, 30, 711, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
 (198, 30, 712, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
 (198, 30, 713, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
 (198, 30, 714, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
 (198, 30, 715, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
-(198, 30, 716, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
+(198, 30, 716, 0, 0, 0, NULL, '8.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
 (198, 30, 717, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
 (198, 30, 718, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
-(198, 30, 719, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
+(198, 30, 719, 0, 0, 0, NULL, '8.0', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
 (198, 30, 720, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
 (198, 30, 721, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
 (198, 30, 722, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:01:29'),
@@ -15268,40 +16226,211 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (207, 32, 760, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:03:41'),
 (207, 32, 761, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:03:41'),
 (207, 32, 781, 1, 0, 0, 3, '7.5', 1, 0, 0, 0, -3, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-06 15:03:41'),
-(208, 34, 77, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 34, 275, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
+(208, 34, 77, 1, 0, 0, 5, '7.5', 56, 17, 3, 0, 0, 0, 0, 0, 0, 32, 0, NULL, 0, '2022-06-06 15:04:02'),
+(208, 34, 275, 1, 0, 0, 4, '7.5', 160, 126, 14, 0, 8, 0, 0, 0, 0, 8, 0, NULL, 0, '2022-06-06 15:04:02'),
 (208, 34, 285, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 34, 372, 1, 1, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 34, 376, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 34, 385, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 34, 396, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 34, 435, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 34, 439, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 34, 534, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 34, 581, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
+(208, 34, 372, 1, 1, 0, 6, '7.5', 90, 55, 5, 6, 4, 0, 16, 0, 0, 0, 0, NULL, 0, '2022-06-06 15:04:02'),
+(208, 34, 376, 1, 0, 0, 1, '7.5', 55, 45, 6, 0, 0, 0, 0, 0, 0, 0, 0, NULL, 0, '2022-06-06 15:04:02'),
+(208, 34, 385, 1, 0, 0, 8, '7.5', 116, 0, 0, 0, -4, 4, 64, 0, 32, 16, 0, NULL, 0, '2022-06-06 15:04:02'),
+(208, 34, 396, 1, 0, 0, 9, '7.5', 38, 9, 1, 0, 0, 0, 16, 0, 8, 0, 0, NULL, 0, '2022-06-06 15:04:02'),
+(208, 34, 435, 1, 0, 0, 11, '7.5', 13, 8, 1, 0, 0, 0, 0, 0, 0, 0, 0, NULL, 0, '2022-06-06 15:04:02'),
+(208, 34, 439, 1, 0, 0, 10, '7.5', 87, 7, 0, 0, 0, 4, 64, 0, 8, 0, 0, NULL, 0, '2022-06-06 15:04:02'),
+(208, 34, 534, 1, 0, 0, 2, '7.5', 64, 52, 8, 0, 0, 0, 0, 0, 0, 0, 0, NULL, 0, '2022-06-06 15:04:02'),
+(208, 34, 581, 1, 0, 0, 12, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, 0, '2022-06-06 15:04:02'),
 (208, 34, 583, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 34, 628, 1, 0, 1, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 34, 640, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 35, 1, 1, 1, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 35, 50, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 35, 100, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 35, 104, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 35, 129, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
+(208, 34, 628, 1, 0, 1, 7, '7.5', 86, 39, 3, 0, 0, 0, 0, 0, 0, 40, 0, NULL, 0, '2022-06-06 15:04:02'),
+(208, 34, 640, 1, 0, 0, 3, '7.5', 36, 17, 1, 0, 0, 0, 0, 0, 0, 8, 6, NULL, 0, '2022-06-06 15:04:02'),
+(208, 35, 1, 1, 1, 0, 3, '7.5', 23, 17, 2, 0, 0, 0, 0, 0, 0, 0, 0, NULL, 0, '2022-06-06 15:04:02'),
+(208, 35, 50, 1, 0, 0, 9, '7.5', 91, 47, 8, 0, 0, 0, 0, 0, 16, 16, 0, NULL, 0, '2022-06-06 15:04:02'),
+(208, 35, 100, 1, 0, 0, 11, '7.5', 40, 18, 2, 0, 0, 0, 0, 0, 16, 0, 0, NULL, 0, '2022-06-06 15:04:02'),
+(208, 35, 104, 1, 0, 0, 5, '7.5', 172, 121, 15, 0, 8, 0, 0, 0, 0, 24, 0, NULL, 0, '2022-06-06 15:04:02'),
+(208, 35, 129, 1, 0, 0, 4, '7.5', 21, 16, 1, 0, 0, 0, 0, 0, 0, 0, 0, NULL, 0, '2022-06-06 15:04:02'),
 (208, 35, 448, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 35, 491, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
+(208, 35, 491, 1, 0, 0, 2, '7.5', 6, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, 0, '2022-06-06 15:04:02'),
 (208, 35, 529, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 35, 635, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
+(208, 35, 635, 1, 0, 0, 7, '7.5', 62, 42, 4, 0, -4, 0, 16, 0, 0, 0, 0, NULL, 0, '2022-06-06 15:04:02'),
 (208, 35, 782, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
 (208, 35, 783, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 35, 784, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 35, 785, 1, 0, 1, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
+(208, 35, 784, 1, 0, 0, 1, '7.5', 21, 15, 2, 0, 0, 0, 0, 0, 0, 0, 0, NULL, 0, '2022-06-06 15:04:02'),
+(208, 35, 785, 1, 0, 1, 6, '7.5', 164, 110, 14, 0, 4, 0, 0, 0, 0, 32, 0, NULL, 0, '2022-06-06 15:04:02'),
 (208, 35, 786, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
 (208, 35, 787, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
 (208, 35, 788, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 35, 789, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 35, 790, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
+(208, 35, 789, 1, 0, 0, 10, '7.5', 16, 11, 1, 0, 0, 0, 0, 0, 0, 0, 0, NULL, 0, '2022-06-06 15:04:02'),
+(208, 35, 790, 1, 0, 0, 8, '7.5', 23, 6, 1, 0, -4, 0, 0, 0, 16, 0, 0, NULL, 0, '2022-06-06 15:04:02'),
 (208, 35, 791, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
-(208, 35, 792, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02');
+(208, 35, 792, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:02'),
+(209, 34, 77, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 34, 275, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 34, 285, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 34, 372, 1, 1, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 34, 376, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 34, 385, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 34, 396, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 34, 435, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 34, 439, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 34, 534, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 34, 581, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 34, 583, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 34, 628, 1, 0, 1, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 34, 640, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 35, 1, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 35, 50, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 35, 100, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 35, 104, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 35, 129, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 35, 448, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 35, 491, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 35, 529, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 35, 635, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 35, 782, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 35, 783, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 35, 784, 1, 1, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 35, 785, 1, 0, 1, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 35, 786, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 35, 787, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 35, 788, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 35, 789, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 35, 790, 1, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 35, 791, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(209, 35, 792, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:20'),
+(210, 34, 77, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 34, 275, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 34, 285, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 34, 372, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 34, 376, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 34, 385, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 34, 396, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 34, 435, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 34, 439, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 34, 534, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 34, 581, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 34, 583, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 34, 628, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 34, 640, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 35, 1, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 35, 50, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 35, 100, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 35, 104, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 35, 129, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 35, 448, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 35, 491, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 35, 529, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 35, 635, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 35, 782, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 35, 783, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 35, 784, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 35, 785, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 35, 786, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 35, 787, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 35, 788, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 35, 789, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21');
+INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`, `isCaptain`, `isWicketKeeper`, `order`, `credit`, `points`, `runsPoints`, `foursPoints`, `sixesPoints`, `numberRunsPoints`, `numberWicketPoints`, `wicketPoints`, `maidenOverPoints`, `lbwOrBowledPoints`, `catchesPoints`, `runOutPoints`, `economyPoints`, `strikeRatePoints`, `logTime`) VALUES
+(210, 35, 790, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 35, 791, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(210, 35, 792, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-06 15:04:21'),
+(211, 36, 28, 1, 0, 0, 6, '7.5', 12, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, '2022-06-09 13:35:17'),
+(211, 36, 84, 1, 0, 0, 8, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-09 13:35:20'),
+(211, 36, 102, 1, 0, 0, 4, '7.5', 116, 75, 7, 10, 8, 0, 0, 0, 0, 8, 0, 0, 4, '2022-06-09 13:35:15'),
+(211, 36, 126, 1, 0, 0, 3, '7.5', 77, 29, 1, 8, 0, 0, 25, 0, 8, 0, 0, -4, 6, '2022-06-09 13:35:18'),
+(211, 36, 173, 1, 0, 0, 10, '7.5', 29, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, '2022-06-09 13:35:22'),
+(211, 36, 195, 1, 0, 0, 5, '7.5', 96, 64, 4, 10, 8, 0, 0, 0, 0, 0, 0, 0, 6, '2022-06-09 13:35:15'),
+(211, 36, 220, 1, 0, 1, 1, '7.5', 29, 22, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-09 13:35:12'),
+(211, 36, 793, 1, 1, 0, 2, '7.5', 24, 10, 2, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, '2022-06-09 13:35:13'),
+(211, 36, 794, 1, 0, 0, 7, '7.5', 29, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, '2022-06-09 13:35:19'),
+(211, 36, 795, 1, 0, 0, 9, '7.5', 23, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, -6, 0, '2022-06-09 13:35:21'),
+(211, 36, 796, 1, 0, 0, 11, '7.5', -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -6, 0, '2022-06-09 13:35:23'),
+(211, 37, 2, 1, 0, 0, 9, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-09 13:33:03'),
+(211, 37, 22, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(211, 37, 32, 1, 0, 0, 1, '7.5', 117, 76, 11, 6, 8, 0, 0, 0, 0, 8, 0, 0, 4, '2022-06-09 13:33:03'),
+(211, 37, 56, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(211, 37, 60, 1, 0, 0, 3, '7.5', 53, 36, 1, 6, 4, 0, 0, 0, 0, 0, 0, 0, 2, '2022-06-09 13:33:03'),
+(211, 37, 92, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(211, 37, 107, 1, 0, 0, 11, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-09 13:33:03'),
+(211, 37, 136, 1, 0, 0, 2, '7.5', 37, 23, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 4, '2022-06-09 13:33:03'),
+(211, 37, 149, 1, 0, 0, 6, '7.5', 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-09 13:33:03'),
+(211, 37, 154, 1, 0, 0, 8, '7.5', 35, 0, 0, 0, 0, 0, 25, 0, 8, 0, 0, -2, 0, '2022-06-09 13:33:03'),
+(211, 37, 176, 1, 0, 0, 7, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-09 13:33:03'),
+(211, 37, 183, 1, 1, 1, 4, '7.5', 53, 29, 2, 4, 0, 0, 0, 0, 0, 8, 0, 0, 6, '2022-06-09 13:33:03'),
+(211, 37, 202, 1, 0, 0, 5, '7.5', 53, 31, 2, 6, 4, 0, 0, 0, 0, 0, 0, 0, 6, '2022-06-09 13:33:03'),
+(211, 37, 227, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(211, 37, 231, 1, 0, 0, 10, '7.5', 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '2022-06-09 13:33:03'),
+(211, 37, 233, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(212, 37, 2, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(212, 37, 22, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(212, 37, 32, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(212, 37, 56, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(212, 37, 60, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(212, 37, 92, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(212, 37, 107, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(212, 37, 136, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(212, 37, 149, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(212, 37, 154, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(212, 37, 176, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(212, 37, 183, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(212, 37, 202, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(212, 37, 227, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(212, 37, 231, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(212, 37, 233, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(213, 37, 2, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(213, 37, 22, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(213, 37, 32, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(213, 37, 56, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(213, 37, 60, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(213, 37, 92, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(213, 37, 107, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(213, 37, 136, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(213, 37, 149, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(213, 37, 154, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(213, 37, 176, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(213, 37, 183, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(213, 37, 202, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(213, 37, 227, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(213, 37, 231, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:03'),
+(213, 37, 233, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(214, 37, 2, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(214, 37, 22, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(214, 37, 32, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(214, 37, 56, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(214, 37, 60, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(214, 37, 92, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(214, 37, 107, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(214, 37, 136, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(214, 37, 149, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(214, 37, 154, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(214, 37, 176, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(214, 37, 183, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(214, 37, 202, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(214, 37, 227, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(214, 37, 231, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(214, 37, 233, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(215, 37, 2, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(215, 37, 22, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(215, 37, 32, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(215, 37, 56, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(215, 37, 60, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(215, 37, 92, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(215, 37, 107, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(215, 37, 136, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(215, 37, 149, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(215, 37, 154, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(215, 37, 176, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(215, 37, 183, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(215, 37, 202, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(215, 37, 227, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(215, 37, 231, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
+(215, 37, 233, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `match_status`
+--
+
+CREATE TABLE `match_status` (
+  `statusId` int(11) NOT NULL,
+  `statusString` tinytext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `match_status`
@@ -15314,12 +16443,70 @@ INSERT INTO `match_status` (`statusId`, `statusString`) VALUES
 (4, 'ended'),
 (5, 'cancelled');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `notificationId` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `isReaded` tinyint(1) NOT NULL DEFAULT 0,
+  `notificationType` int(11) NOT NULL,
+  `notificationMessage` varchar(2000) NOT NULL,
+  `creationTime` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notification_type`
+--
+
+CREATE TABLE `notification_type` (
+  `notificationType` int(11) NOT NULL,
+  `notificationTypeString` varchar(30) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `playerImages`
+--
+
+CREATE TABLE `playerImages` (
+  `ucPlayerId` int(11) NOT NULL,
+  `name` tinytext NOT NULL,
+  `dateOfBirth` varchar(15) NOT NULL,
+  `imageId` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 --
 -- Dumping data for table `playerImages`
 --
 
 INSERT INTO `playerImages` (`ucPlayerId`, `name`, `dateOfBirth`, `imageId`) VALUES
 (6635, 'Usman Khawaja', '535228200000', 170640);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `players`
+--
+
+CREATE TABLE `players` (
+  `playerId` int(11) NOT NULL,
+  `playerRadarId` int(11) NOT NULL,
+  `playerFirstName` varchar(200) NOT NULL,
+  `playerLastName` varchar(200) NOT NULL,
+  `playerCountryCode` varchar(30) DEFAULT NULL,
+  `playerRole` int(11) NOT NULL DEFAULT 0,
+  `playerDOB` date DEFAULT NULL,
+  `playerBattingStyleId` int(11) DEFAULT NULL,
+  `playerBowlingStyleId` int(11) DEFAULT NULL,
+  `playerCountry` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `players`
@@ -16118,7 +17305,22 @@ INSERT INTO `players` (`playerId`, `playerRadarId`, `playerFirstName`, `playerLa
 (789, 736044, 'Ajaz', 'Patel', 'NZL', 2, '1988-10-21', NULL, NULL, 'New Zealand'),
 (790, 738736, 'Kyle', 'Jamieson', 'NZL', 2, '1994-12-30', NULL, NULL, 'New Zealand'),
 (791, 1342846, 'Blair', 'Tickner', 'NZL', 2, '1993-10-13', NULL, NULL, 'New Zealand'),
-(792, 1381033, 'Rachin', 'Ravindra', 'NZL', 3, '1999-11-18', NULL, NULL, 'New Zealand');
+(792, 1381033, 'Rachin', 'Ravindra', 'NZL', 3, '1999-11-18', NULL, NULL, 'New Zealand'),
+(793, 678574, 'Temba', 'Bavuma', 'ZAF', 1, '1990-05-17', 1, 2, 'South Africa'),
+(794, 645692, 'Wayne', 'Parnell', 'ZAF', 2, '1989-07-30', 2, 16, 'South Africa'),
+(795, 646428, 'Keshav', 'Maharaj', 'ZAF', 2, '1990-02-07', 1, 6, 'South Africa'),
+(796, 680256, 'Tabraiz', 'Shamsi', 'ZAF', 2, '1990-02-18', 1, 15, 'South Africa');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `player_batting_style`
+--
+
+CREATE TABLE `player_batting_style` (
+  `playerBattingStyleId` int(11) NOT NULL,
+  `battingStyleString` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `player_batting_style`
@@ -16127,6 +17329,17 @@ INSERT INTO `players` (`playerId`, `playerRadarId`, `playerFirstName`, `playerLa
 INSERT INTO `player_batting_style` (`playerBattingStyleId`, `battingStyleString`) VALUES
 (2, 'left_handed_batsman'),
 (1, 'right_handed_batsman');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `player_bowling_style`
+--
+
+CREATE TABLE `player_bowling_style` (
+  `playerBowlingStyleId` int(11) NOT NULL,
+  `playerBowlingStyleString` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `player_bowling_style`
@@ -16150,6 +17363,17 @@ INSERT INTO `player_bowling_style` (`playerBowlingStyleId`, `playerBowlingStyleS
 (15, 'slow_left_arm_chinaman'),
 (6, 'slow_left_arm_orthodox');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `player_roles`
+--
+
+CREATE TABLE `player_roles` (
+  `roleId` int(11) NOT NULL,
+  `roleString` tinytext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 --
 -- Dumping data for table `player_roles`
 --
@@ -16159,6 +17383,29 @@ INSERT INTO `player_roles` (`roleId`, `roleString`) VALUES
 (2, 'bowler'),
 (3, 'all_rounder'),
 (4, 'wicket_keeper');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `player_statistics_batting`
+--
+
+CREATE TABLE `player_statistics_batting` (
+  `playerId` int(11) NOT NULL,
+  `type` varchar(30) NOT NULL,
+  `matches` int(11) DEFAULT NULL,
+  `innings` int(11) DEFAULT NULL,
+  `ballFaced` int(11) DEFAULT NULL,
+  `notOuts` int(11) DEFAULT NULL,
+  `runs` int(11) DEFAULT NULL,
+  `average` float DEFAULT NULL,
+  `strikeRate` float DEFAULT NULL,
+  `highestScore` int(11) DEFAULT NULL,
+  `hundreds` int(11) DEFAULT NULL,
+  `fifties` int(11) DEFAULT NULL,
+  `fours` int(11) DEFAULT NULL,
+  `sixes` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `player_statistics_batting`
@@ -17160,7 +18407,59 @@ INSERT INTO `player_statistics_batting` (`playerId`, `type`, `matches`, `innings
 (239, 'list_a', 79, 43, 458, 17, 507, 19.5, 110.69, 50, 0, 1, 38, 13),
 (239, 'odi', 40, 17, 165, 7, 168, 16.8, 101.81, 36, 0, 0, 11, 4),
 (239, 't20', 129, 53, 243, 31, 295, 13.4, 121.39, 18, 0, 0, 21, 8),
-(239, 't20i', 31, 10, 33, 9, 33, 33, 100, 10, 0, 0, 1, 1);
+(239, 't20i', 31, 10, 33, 9, 33, 33, 100, 10, 0, 0, 1, 1),
+(793, 'first_class', 160, 270, 17001, 33, 8796, 37.11, 51.73, 180, 15, 46, 1108, 37),
+(793, 'list_a', 110, 96, 3339, 11, 2732, 32.14, 81.82, 117, 4, 10, 214, 26),
+(793, 'odi', 19, 18, 877, 2, 722, 45.12, 82.32, 113, 2, 2, 59, 5),
+(793, 't20', 96, 86, 1777, 13, 2228, 30.52, 125.38, 104, 1, 8, 185, 53),
+(793, 't20i', 21, 20, 407, 2, 501, 27.83, 123.09, 72, 0, 1, 43, 12),
+(793, 'test', 51, 87, 5460, 11, 2612, 34.36, 47.83, 102, 1, 19, 325, 5),
+(794, 'first_class', 84, 113, 5214, 14, 2728, 27.55, 52.32, 111, 2, 17, 352, 25),
+(794, 'list_a', 174, 120, 2452, 32, 2127, 24.17, 86.74, 129, 2, 6, 174, 39),
+(794, 'odi', 67, 39, 664, 14, 518, 20.72, 78.01, 56, 0, 1, 39, 8),
+(794, 't20', 230, 140, 1393, 49, 1749, 19.21, 125.55, 99, 0, 5, 146, 62),
+(794, 't20i', 40, 13, 96, 9, 114, 28.5, 118.75, 29, 0, 0, 10, 3),
+(794, 'test', 6, 4, 180, 0, 67, 16.75, 37.22, 23, 0, 0, 11, 0),
+(795, 'first_class', 145, 209, 5507, 27, 3755, 20.63, 68.18, 114, 2, 16, 456, 102),
+(795, 'list_a', 117, 69, 953, 19, 854, 17.08, 89.61, 50, 0, 1, 73, 22),
+(795, 'odi', 21, 11, 152, 2, 153, 17, 100.65, 28, 0, 0, 21, 1),
+(795, 't20', 112, 55, 433, 28, 524, 19.4, 121.01, 45, 0, 0, 48, 16),
+(795, 't20i', 8, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(795, 'test', 42, 66, 1595, 6, 953, 15.88, 59.74, 84, 0, 4, 112, 21),
+(796, 'first_class', 84, 101, 1189, 29, 568, 7.88, 47.77, 36, 0, 0, 71, 3),
+(796, 'list_a', 117, 37, 232, 18, 141, 7.42, 60.77, 15, 0, 0, 15, 1),
+(796, 'odi', 35, 6, 26, 5, 12, 12, 46.15, 9, 0, 0, 0, 0),
+(796, 't20', 175, 35, 124, 22, 66, 5.07, 53.22, 15, 0, 0, 1, 1),
+(796, 't20i', 47, 9, 19, 6, 4, 1.33, 21.05, 2, 0, 0, 0, 0),
+(796, 'test', 2, 4, 48, 3, 20, 20, 41.66, 18, 0, 0, 2, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `player_statistics_bowling`
+--
+
+CREATE TABLE `player_statistics_bowling` (
+  `playerId` int(11) NOT NULL,
+  `type` varchar(30) NOT NULL,
+  `matches` int(11) DEFAULT NULL,
+  `innings` int(11) DEFAULT NULL,
+  `overs` float DEFAULT NULL,
+  `ballsBalled` int(11) DEFAULT NULL,
+  `maidens` int(11) DEFAULT NULL,
+  `runs` int(11) DEFAULT NULL,
+  `wickets` int(11) DEFAULT NULL,
+  `average` float DEFAULT NULL,
+  `strikeRate` float DEFAULT NULL,
+  `economy` float DEFAULT NULL,
+  `bestBowling` int(11) DEFAULT NULL,
+  `fourWicketHauls` int(11) DEFAULT NULL,
+  `fiverWicketHauls` int(11) DEFAULT NULL,
+  `tenWicketHauls` int(11) DEFAULT NULL,
+  `catches` int(11) DEFAULT NULL,
+  `stumping` int(11) DEFAULT NULL,
+  `runOuts` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `player_statistics_bowling`
@@ -18162,7 +19461,51 @@ INSERT INTO `player_statistics_bowling` (`playerId`, `type`, `matches`, `innings
 (239, 'list_a', 79, 77, 622, 3732, 36, 3264, 112, 29.14, 33.32, 5.24, 5, 1, 1, 0, 29, 0, 1),
 (239, 'odi', 40, 39, 300.1, 1801, 7, 1581, 41, 38.56, 43.92, 5.26, 3, 0, 0, 0, 21, 0, 0),
 (239, 't20', 129, 126, 455.4, 2734, 10, 3535, 139, 25.43, 19.66, 7.75, 5, 3, 1, 0, 32, 0, 9),
-(239, 't20i', 31, 31, 108.5, 653, 2, 854, 32, 26.68, 20.4, 7.84, 4, 1, 0, 0, 6, 0, 3);
+(239, 't20i', 31, 31, 108.5, 653, 2, 854, 32, 26.68, 20.4, 7.84, 4, 1, 0, 0, 6, 0, 3),
+(793, 'first_class', 160, 23, 83.2, 500, 10, 325, 7, 46.42, 71.42, 3.9, 2, 0, 0, 0, 92, 0, 20),
+(793, 'list_a', 110, 2, 6.4, 40, 0, 26, 0, 0, 0, 3.9, 0, 0, 0, 0, 36, 0, 12),
+(793, 'odi', 19, 1, 6.1, 37, 0, 22, 0, 0, 0, 3.56, 0, 0, 0, 0, 17, 0, 0),
+(793, 't20', 96, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 42, 0, 7),
+(793, 't20i', 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 3),
+(793, 'test', 51, 5, 16, 96, 1, 61, 1, 61, 96, 3.81, 1, 0, 0, 0, 26, 0, 8),
+(794, 'first_class', 84, 145, 2105.5, 12635, 448, 7240, 242, 29.91, 52.21, 3.43, 12, 7, 9, 2, 25, 0, 0),
+(794, 'list_a', 174, 168, 1287.2, 7724, 60, 7002, 239, 29.29, 32.31, 5.43, 6, 6, 5, 0, 33, 0, 10),
+(794, 'odi', 67, 63, 489, 2934, 20, 2749, 95, 28.93, 30.88, 5.62, 5, 3, 2, 0, 12, 0, 6),
+(794, 't20', 230, 224, 763, 4578, 9, 5985, 227, 26.36, 20.16, 7.84, 4, 4, 0, 0, 48, 0, 9),
+(794, 't20i', 40, 39, 124.5, 749, 3, 1038, 41, 25.31, 18.26, 8.31, 4, 1, 0, 0, 5, 0, 1),
+(794, 'test', 6, 10, 92.4, 556, 11, 414, 15, 27.6, 37.06, 4.46, 6, 1, 0, 0, 3, 0, 0),
+(795, 'first_class', 145, 247, 5035.1, 30211, 996, 15062, 555, 27.13, 54.43, 2.99, 13, 18, 34, 7, 54, 0, 3),
+(795, 'list_a', 117, 115, 944.4, 5668, 25, 4504, 150, 30.02, 37.78, 4.76, 5, 5, 2, 0, 41, 0, 4),
+(795, 'odi', 21, 21, 185.1, 1111, 3, 884, 25, 35.36, 44.44, 4.77, 3, 0, 0, 0, 3, 0, 0),
+(795, 't20', 112, 106, 390.1, 2341, 5, 2562, 89, 28.78, 26.3, 6.56, 4, 1, 0, 0, 36, 0, 4),
+(795, 't20i', 8, 8, 29.1, 175, 1, 170, 6, 28.33, 29.16, 5.82, 2, 0, 0, 0, 5, 0, 0),
+(795, 'test', 42, 76, 1468.3, 8811, 286, 4601, 150, 30.67, 58.74, 3.13, 12, 4, 9, 1, 13, 0, 0),
+(796, 'first_class', 84, 146, 2594.3, 15567, 417, 8858, 333, 26.6, 46.74, 3.41, 13, 13, 21, 5, 21, 0, 1),
+(796, 'list_a', 117, 110, 912.5, 5477, 30, 4665, 159, 29.33, 34.44, 5.11, 5, 3, 3, 0, 23, 0, 1),
+(796, 'odi', 35, 33, 295.1, 1771, 7, 1538, 45, 34.17, 39.35, 5.21, 5, 1, 1, 0, 6, 0, 0),
+(796, 't20', 175, 170, 620.5, 3725, 3, 4407, 201, 21.92, 18.53, 7.09, 4, 5, 0, 0, 26, 0, 4),
+(796, 't20i', 47, 47, 175, 1050, 1, 1181, 57, 20.71, 18.42, 6.74, 4, 2, 0, 0, 11, 0, 0),
+(796, 'test', 2, 4, 80.3, 483, 10, 278, 6, 46.33, 80.5, 3.45, 4, 0, 0, 0, 0, 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `scorcard_details`
+--
+
+CREATE TABLE `scorcard_details` (
+  `scorcardId` int(11) NOT NULL,
+  `matchId` int(11) NOT NULL,
+  `tossWonBy` int(11) DEFAULT NULL,
+  `tossDecision` varchar(20) DEFAULT NULL,
+  `winnerId` int(11) DEFAULT NULL,
+  `isTie` tinyint(1) NOT NULL DEFAULT 0,
+  `isDraw` tinyint(1) NOT NULL DEFAULT 0,
+  `manOfMatch` int(11) DEFAULT NULL,
+  `isPointsCalculated` tinyint(1) NOT NULL DEFAULT 0,
+  `matchResultString` varchar(1000) DEFAULT NULL,
+  `logTime` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `scorcard_details`
@@ -18291,7 +19634,40 @@ INSERT INTO `scorcard_details` (`scorcardId`, `matchId`, `tossWonBy`, `tossDecis
 (120, 204, 33, 'bat', 33, 0, 0, 219, 0, 'West Indies beat Netherlands by 20 runs', '2022-06-06 15:03:05'),
 (121, 205, 32, 'bat', 31, 0, 0, 779, 0, 'Pakistan Women beat Sri Lanka Women by 8 wickets', '2022-06-06 15:03:25'),
 (122, 206, 31, 'bat', 31, 0, 0, 777, 0, 'Pakistan Women beat Sri Lanka Women by 73 runs', '2022-06-06 15:03:40'),
-(123, 207, 32, 'bat', 32, 0, 0, 743, 0, 'Sri Lanka Women beat Pakistan Women by 93 runs', '2022-06-06 15:03:55');
+(123, 207, 32, 'bat', 32, 0, 0, 743, 0, 'Sri Lanka Women beat Pakistan Women by 93 runs', '2022-06-06 15:03:55'),
+(124, 208, 35, 'bat', 34, 0, 0, 275, 0, 'England beat New Zealand by 5 wickets', '2022-06-06 15:04:20'),
+(125, 123, 30, 'bowl', 30, 0, 0, NULL, 0, 'Hampshire beat Middlesex by 9 wickets', '2022-06-09 12:51:01'),
+(126, 128, 17, 'bat', 15, 0, 0, NULL, 0, 'Warwickshire beat Durham by 6 wickets', '2022-06-09 12:51:05'),
+(127, 126, 20, 'bat', 19, 0, 0, NULL, 0, 'Lancashire beat Leicestershire by 7 wickets', '2022-06-09 12:51:05'),
+(128, 127, 22, 'bowl', 22, 0, 0, NULL, 0, 'Essex beat Kent by 7 wickets', '2022-06-09 12:51:07'),
+(129, 130, 13, 'bowl', 19, 0, 0, 41, 0, 'Lancashire beat Yorkshire by 4 runs', '2022-06-09 12:51:07'),
+(130, 124, 24, 'bowl', 24, 0, 0, NULL, 0, 'Gloucestershire beat Glamorgan by 5 wickets', '2022-06-09 12:51:08'),
+(131, 125, 16, 'bat', 21, 0, 0, NULL, 0, 'Northamptonshire beat Derbyshire by 5 wickets', '2022-06-09 12:51:08'),
+(132, 122, 18, 'bowl', 13, 0, 0, NULL, 0, 'Yorkshire beat Nottinghamshire by 23 runs', '2022-06-09 12:51:09'),
+(133, 129, 27, 'bowl', 27, 0, 0, NULL, 0, 'Surrey beat Sussex by 7 wickets', '2022-06-09 12:51:10'),
+(134, 211, 36, 'bowl', 36, 0, 0, 195, 0, 'South Africa beat India by 7 wickets', '2022-06-09 20:05:13'),
+(136, 134, 30, 'bat', 30, 0, 0, NULL, 0, 'Hampshire beat Essex by 32 runs', '2022-06-09 20:05:22'),
+(137, 135, 16, 'bowl', 16, 0, 0, NULL, 0, 'Derbyshire beat Leicestershire by 6 wickets', '2022-06-10 04:58:20'),
+(138, 132, 21, 'bat', 21, 0, 0, NULL, 0, 'Northamptonshire beat Worcestershire by 73 runs', '2022-06-10 04:58:21'),
+(139, 131, 29, 'bowl', 27, 0, 0, NULL, 0, 'Surrey beat Middlesex by 20 runs', '2022-06-10 04:58:24'),
+(140, 133, 25, 'bowl', 25, 0, 0, NULL, 0, 'Somerset beat Gloucestershire by 3 wickets (D/L method)', '2022-06-10 04:58:26');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `scorcard_innings`
+--
+
+CREATE TABLE `scorcard_innings` (
+  `scorcardInningId` int(11) NOT NULL,
+  `scorcardId` int(11) NOT NULL,
+  `inningNumber` int(11) NOT NULL,
+  `battingTeam` int(11) NOT NULL,
+  `bowlingTeam` int(11) NOT NULL,
+  `runs` int(11) NOT NULL,
+  `wickets` int(11) NOT NULL,
+  `oversPlayed` decimal(10,0) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `scorcard_innings`
@@ -18543,7 +19919,73 @@ INSERT INTO `scorcard_innings` (`scorcardInningId`, `scorcardId`, `inningNumber`
 (243, 122, 1, 31, 32, 253, 2, '50'),
 (244, 122, 2, 32, 31, 180, 9, '50'),
 (245, 123, 1, 32, 31, 260, 7, '50'),
-(246, 123, 2, 31, 32, 167, 10, '41');
+(246, 123, 2, 31, 32, 167, 10, '41'),
+(247, 124, 1, 35, 34, 132, 10, '40'),
+(248, 124, 2, 34, 35, 141, 10, '42'),
+(249, 124, 3, 35, 34, 285, 10, '91'),
+(250, 124, 4, 34, 35, 279, 5, '78'),
+(251, 125, 1, 29, 30, 142, 7, '20'),
+(252, 125, 2, 30, 29, 145, 1, '12'),
+(253, 126, 1, 17, 15, 141, 7, '20'),
+(254, 126, 2, 15, 17, 142, 4, '18'),
+(255, 127, 1, 20, 19, 135, 10, '19'),
+(256, 127, 2, 19, 20, 139, 3, '16'),
+(257, 128, 1, 23, 22, 130, 9, '20'),
+(258, 128, 2, 22, 23, 131, 3, '15'),
+(259, 129, 1, 19, 13, 213, 5, '20'),
+(260, 129, 2, 13, 19, 209, 8, '20'),
+(261, 130, 1, 28, 24, 158, 8, '20'),
+(262, 130, 2, 24, 28, 159, 5, '19'),
+(263, 131, 1, 16, 21, 151, 9, '20'),
+(264, 131, 2, 21, 16, 155, 5, '18'),
+(265, 132, 1, 13, 18, 202, 5, '20'),
+(266, 132, 2, 18, 13, 179, 7, '20'),
+(267, 133, 1, 26, 27, 146, 7, '20'),
+(268, 133, 2, 27, 26, 147, 3, '16'),
+(269, 134, 1, 37, 36, 211, 4, '20'),
+(270, 134, 2, 36, 37, 212, 3, '19'),
+(271, 136, 1, 30, 22, 155, 6, '20'),
+(272, 136, 2, 22, 30, 123, 10, '19'),
+(273, 137, 1, 20, 16, 181, 6, '20'),
+(274, 137, 2, 16, 20, 182, 4, '18'),
+(275, 138, 1, 21, 14, 220, 3, '20'),
+(276, 138, 2, 14, 21, 147, 10, '16'),
+(277, 139, 1, 27, 29, 208, 7, '20'),
+(278, 139, 2, 29, 27, 188, 8, '20'),
+(279, 140, 1, 24, 25, 101, 5, '10'),
+(280, 140, 2, 25, 24, 114, 7, '9');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `team_type`
+--
+
+CREATE TABLE `team_type` (
+  `teamType` int(11) NOT NULL,
+  `teamTypeString` tinytext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `team_type`
+--
+
+INSERT INTO `team_type` (`teamType`, `teamTypeString`) VALUES
+(1, 'HEAD_TO_HEAD'),
+(2, 'MEGA_CONTEST');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tournament_category`
+--
+
+CREATE TABLE `tournament_category` (
+  `categoryId` int(11) NOT NULL,
+  `categoryRadarId` int(11) NOT NULL,
+  `categoryString` varchar(50) NOT NULL,
+  `logTime` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tournament_category`
@@ -18553,6 +19995,19 @@ INSERT INTO `tournament_category` (`categoryId`, `categoryRadarId`, `categoryStr
 (1, 497, 'India', '2022-05-12 13:19:41'),
 (2, 105, 'International', '2022-06-06 14:50:46'),
 (3, 89, 'England', '2022-06-06 14:51:07');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tournament_competitor`
+--
+
+CREATE TABLE `tournament_competitor` (
+  `tournamentCompetitorId` int(11) NOT NULL,
+  `tournamentId` int(11) NOT NULL,
+  `competitorId` int(11) NOT NULL,
+  `isPlayerArrived` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tournament_competitor`
@@ -18596,7 +20051,22 @@ INSERT INTO `tournament_competitor` (`tournamentCompetitorId`, `tournamentId`, `
 (35, 6, 31, 1),
 (36, 6, 32, 1),
 (37, 7, 34, 1),
-(38, 7, 35, 1);
+(38, 7, 35, 1),
+(39, 8, 36, 0),
+(40, 8, 37, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tournament_competitor_player`
+--
+
+CREATE TABLE `tournament_competitor_player` (
+  `tournamentCompetitorPlayerId` int(11) NOT NULL,
+  `tournamentCompetitorId` int(11) NOT NULL,
+  `playerId` int(11) NOT NULL,
+  `credit` decimal(40,1) NOT NULL DEFAULT 0.0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tournament_competitor_player`
@@ -19493,7 +20963,58 @@ INSERT INTO `tournament_competitor_player` (`tournamentCompetitorPlayerId`, `tou
 (888, 38, 790, '0.0'),
 (889, 38, 491, '0.0'),
 (890, 38, 791, '0.0'),
-(891, 38, 792, '0.0');
+(891, 38, 792, '0.0'),
+(892, 40, 149, '0.0'),
+(893, 40, 2, '0.0'),
+(894, 40, 56, '0.0'),
+(895, 40, 154, '0.0'),
+(896, 40, 107, '0.0'),
+(897, 40, 227, '0.0'),
+(898, 40, 176, '0.0'),
+(899, 40, 202, '0.0'),
+(900, 40, 60, '0.0'),
+(901, 40, 231, '0.0'),
+(902, 40, 32, '0.0'),
+(903, 40, 183, '0.0'),
+(904, 40, 136, '0.0'),
+(905, 40, 92, '0.0'),
+(906, 40, 233, '0.0'),
+(907, 40, 22, '0.0'),
+(908, 39, 220, '0.0'),
+(909, 39, 793, '0.0'),
+(910, 39, 102, '0.0'),
+(911, 39, 195, '0.0'),
+(912, 39, 28, '0.0'),
+(913, 39, 126, '0.0'),
+(914, 39, 794, '0.0'),
+(915, 39, 84, '0.0'),
+(916, 39, 795, '0.0'),
+(917, 39, 173, '0.0'),
+(918, 39, 796, '0.0');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tournament_information`
+--
+
+CREATE TABLE `tournament_information` (
+  `tournamentId` int(11) NOT NULL,
+  `tournamentRadarId` int(11) NOT NULL,
+  `currentSeasonRadarId` int(11) NOT NULL,
+  `tournamentName` varchar(500) NOT NULL,
+  `currentSeasonName` varchar(500) NOT NULL,
+  `seasonStartDate` date NOT NULL,
+  `seasonEndDate` date NOT NULL,
+  `tournamentMatchType` int(11) NOT NULL,
+  `tournamentCategory` int(11) NOT NULL,
+  `tournamentPlayersGender` tinytext DEFAULT NULL,
+  `tournamentCountry` varchar(30) DEFAULT NULL,
+  `tournamentCountryCode` varchar(20) DEFAULT NULL,
+  `isCompetitorsArrived` tinyint(1) NOT NULL DEFAULT 0,
+  `isMatchesArrived` tinyint(1) NOT NULL DEFAULT 0,
+  `logTime` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tournament_information`
@@ -19506,7 +21027,30 @@ INSERT INTO `tournament_information` (`tournamentId`, `tournamentRadarId`, `curr
 (4, 36621, 93285, 'T20 Series Pakistan vs Sri Lanka, Women', 'T20 Series Pakistan vs Sri Lanka, Women 2022', '2022-05-24', '2022-05-29', 3, 2, 'women', 'International', NULL, 1, 1, '2022-06-06 15:01:32'),
 (5, 36503, 93563, 'ODI Series Netherlands vs. West Indies', 'ODI Series Netherlands vs. West Indies 2022', '2022-05-31', '2022-06-04', 2, 2, 'men', 'International', NULL, 1, 1, '2022-06-06 15:02:17'),
 (6, 36683, 93565, 'ODI Series Pakistan vs Sri Lanka Women', 'ODI Series Pakistan vs Sri Lanka Women 2022', '2022-06-01', '2022-06-06', 2, 2, 'women', 'International', NULL, 1, 1, '2022-06-06 15:03:08'),
-(7, 34336, 93567, 'Test Series England vs. New Zealand', 'Test Series England vs. New Zealand 2022', '2022-06-02', '2022-06-23', 4, 2, 'men', 'International', NULL, 1, 1, '2022-06-06 15:03:58');
+(7, 34336, 93567, 'Test Series England vs. New Zealand', 'Test Series England vs. New Zealand 2022', '2022-06-02', '2022-06-23', 4, 2, 'men', 'International', NULL, 1, 1, '2022-06-06 15:03:58'),
+(8, 29968, 93823, 'T20I Series India vs South Africa', 'T20I Series India vs South Africa 2022', '2022-06-09', '2022-06-20', 3, 2, 'men', 'International', NULL, 1, 1, '2022-06-09 13:33:02');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tournament_matches`
+--
+
+CREATE TABLE `tournament_matches` (
+  `matchId` int(11) NOT NULL,
+  `matchRadarId` int(11) NOT NULL,
+  `matchTournamentId` int(11) NOT NULL,
+  `matchStartTime` varchar(15) NOT NULL,
+  `isPointsCalculated` tinyint(1) NOT NULL DEFAULT 0,
+  `competitor1` int(11) NOT NULL,
+  `competitor2` int(11) NOT NULL,
+  `tossWonBy` int(11) DEFAULT NULL,
+  `tossDecision` tinytext DEFAULT NULL,
+  `venueId` int(11) DEFAULT NULL,
+  `matchStatus` int(11) NOT NULL,
+  `isLineUpOut` tinyint(1) NOT NULL DEFAULT 0,
+  `logTime` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tournament_matches`
@@ -19634,20 +21178,20 @@ INSERT INTO `tournament_matches` (`matchId`, `matchRadarId`, `matchTournamentId`
 (119, 33323381, 3, '1654435800000', 1, 17, 21, 17, 'bat', 25, 4, 1, '2022-06-06 15:00:30'),
 (120, 33335727, 3, '1654435800000', 1, 14, 20, 14, 'bowl', 27, 4, 1, '2022-06-06 15:00:44'),
 (121, 33323355, 3, '1654443000000', 0, 15, 18, NULL, NULL, 13, 5, 0, '2022-06-06 15:00:56'),
-(122, 33323389, 3, '1654536600000', 0, 13, 18, NULL, NULL, 10, 2, 0, '2022-06-06 15:00:57'),
-(123, 33323395, 3, '1654615800000', 0, 29, 30, NULL, NULL, 12, 2, 0, '2022-06-06 15:00:57'),
-(124, 33323397, 3, '1654623000000', 0, 28, 24, NULL, NULL, 26, 2, 0, '2022-06-06 15:00:58'),
-(125, 33323411, 3, '1654623000000', 0, 21, 16, NULL, NULL, 17, 2, 0, '2022-06-06 15:00:59'),
-(126, 33323415, 3, '1654623000000', 0, 20, 19, NULL, NULL, 14, 2, 0, '2022-06-06 15:00:59'),
-(127, 33335473, 3, '1654624800000', 0, 22, 23, NULL, NULL, 24, 2, 0, '2022-06-06 15:01:00'),
-(128, 33323423, 3, '1654709400000', 0, 17, 15, NULL, NULL, 25, 2, 0, '2022-06-06 15:01:01'),
-(129, 33335479, 3, '1654709400000', 0, 27, 26, NULL, NULL, 16, 2, 0, '2022-06-06 15:01:01'),
-(130, 33335729, 3, '1654709400000', 0, 13, 19, NULL, NULL, 10, 2, 0, '2022-06-06 15:01:02'),
-(131, 33323429, 3, '1654794900000', 0, 29, 27, NULL, NULL, 28, 2, 0, '2022-06-06 15:01:02'),
-(132, 33323439, 3, '1654795800000', 0, 21, 14, NULL, NULL, 17, 2, 0, '2022-06-06 15:01:03'),
-(133, 33335525, 3, '1654795800000', 0, 24, 25, NULL, NULL, 20, 2, 0, '2022-06-06 15:01:04'),
-(134, 33323441, 3, '1654797600000', 0, 30, 22, NULL, NULL, 21, 2, 0, '2022-06-06 15:01:04'),
-(135, 33335735, 3, '1654797600000', 0, 16, 20, NULL, NULL, 22, 2, 0, '2022-06-06 15:01:04'),
+(122, 33323389, 3, '1654536600000', 1, 13, 18, 18, 'bowl', 10, 4, 1, '2022-06-06 15:00:57'),
+(123, 33323395, 3, '1654615800000', 1, 29, 30, 30, 'bowl', 12, 4, 1, '2022-06-06 15:00:57'),
+(124, 33323397, 3, '1654623000000', 1, 28, 24, 24, 'bowl', 26, 4, 1, '2022-06-06 15:00:58'),
+(125, 33323411, 3, '1654623000000', 1, 21, 16, 16, 'bat', 17, 4, 1, '2022-06-06 15:00:59'),
+(126, 33323415, 3, '1654623000000', 1, 20, 19, 20, 'bat', 14, 4, 1, '2022-06-06 15:00:59'),
+(127, 33335473, 3, '1654624800000', 1, 22, 23, 22, 'bowl', 24, 4, 1, '2022-06-06 15:01:00'),
+(128, 33323423, 3, '1654709400000', 1, 17, 15, 17, 'bat', 25, 4, 1, '2022-06-06 15:01:01'),
+(129, 33335479, 3, '1654709400000', 1, 27, 26, 27, 'bowl', 16, 4, 1, '2022-06-06 15:01:01'),
+(130, 33335729, 3, '1654709400000', 1, 13, 19, 13, 'bowl', 10, 4, 1, '2022-06-06 15:01:02'),
+(131, 33323429, 3, '1654794900000', 1, 29, 27, 29, 'bowl', 28, 4, 1, '2022-06-06 15:01:02'),
+(132, 33323439, 3, '1654795800000', 1, 21, 14, 21, 'bat', 17, 4, 1, '2022-06-06 15:01:03'),
+(133, 33335525, 3, '1654795800000', 1, 24, 25, 25, 'bowl', 20, 4, 1, '2022-06-06 15:01:04'),
+(134, 33323441, 3, '1654797600000', 1, 30, 22, 30, 'bat', 21, 4, 1, '2022-06-06 15:01:04'),
+(135, 33335735, 3, '1654797600000', 1, 16, 20, 16, 'bowl', 22, 4, 1, '2022-06-06 15:01:04'),
 (136, 33335737, 3, '1654878600000', 0, 14, 16, NULL, NULL, 27, 2, 0, '2022-06-06 15:01:05'),
 (137, 33323489, 3, '1654882200000', 0, 17, 19, NULL, NULL, 25, 2, 0, '2022-06-06 15:01:05'),
 (138, 33323491, 3, '1654882200000', 0, 28, 30, NULL, NULL, 26, 2, 0, '2022-06-06 15:01:05'),
@@ -19720,7 +21264,52 @@ INSERT INTO `tournament_matches` (`matchId`, `matchRadarId`, `matchTournamentId`
 (205, 33742027, 6, '1654057800000', 1, 31, 32, 32, 'bat', 31, 4, 1, '2022-06-06 15:03:12'),
 (206, 33742029, 6, '1654230600000', 1, 31, 32, 31, 'bat', 31, 4, 1, '2022-06-06 15:03:25'),
 (207, 33742037, 6, '1654403400000', 1, 31, 32, 32, 'bat', 31, 4, 1, '2022-06-06 15:03:41'),
-(208, 33605411, 7, '1654164000000', 0, 34, 35, 35, 'bat', 28, 4, 1, '2022-06-06 15:04:02');
+(208, 33605411, 7, '1654164000000', 1, 34, 35, 35, 'bat', 28, 4, 1, '2022-06-06 15:04:02'),
+(209, 33605413, 7, '1654855200000', 0, 34, 35, 34, 'bowl', 19, 3, 1, '2022-06-06 15:04:20'),
+(210, 33605415, 7, '1655978400000', 0, 34, 35, NULL, NULL, 10, 2, 0, '2022-06-06 15:04:20'),
+(211, 33878427, 8, '1654781400000', 1, 37, 36, 36, 'bowl', 33, 4, 1, '2022-06-09 13:33:03'),
+(212, 33878429, 8, '1655040600000', 0, 37, 36, NULL, NULL, 34, 2, 0, '2022-06-09 13:33:03'),
+(213, 33878431, 8, '1655213400000', 0, 37, 36, NULL, NULL, 35, 2, 0, '2022-06-09 13:33:03'),
+(214, 33878433, 8, '1655472600000', 0, 37, 36, NULL, NULL, 36, 2, 0, '2022-06-09 13:33:04'),
+(215, 33878435, 8, '1655645400000', 0, 37, 36, NULL, NULL, 37, 2, 0, '2022-06-09 13:33:04');
+
+--
+-- Triggers `tournament_matches`
+--
+DELIMITER $$
+CREATE TRIGGER `storeCreditsForPlayers` AFTER INSERT ON `tournament_matches` FOR EACH ROW BEGIN
+CALL calculateCreditsForPlayers(NEW.matchId, 1);
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `storePointsForTeamsAndCreditsForPlayers` AFTER UPDATE ON `tournament_matches` FOR EACH ROW BEGIN
+DECLARE isMatchCancelledOrAbandoned INT DEFAULT 0;
+IF NEW.isPointsCalculated = 1 THEN
+	CALL storePointsForUserTeams(OLD.matchId);
+	CALL calculateCreditsForPlayers(OLD.matchId, 0);
+ELSE
+	SELECT match_status.statusString IN ('cancelled', 'abandoned') INTO isMatchCancelledOrAbandoned FROM match_status WHERE match_status.statusId = NEW.matchStatus;
+
+	IF isMatchCancelledOrAbandoned = 1 THEN
+		CALL calculateCreditsForPlayers(OLD.matchId, 0);
+    END IF;
+END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tournament_type`
+--
+
+CREATE TABLE `tournament_type` (
+  `tournamentTypeId` int(11) NOT NULL,
+  `tournamnetTypeString` varchar(50) NOT NULL,
+  `logTime` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tournament_type`
@@ -19732,13 +21321,179 @@ INSERT INTO `tournament_type` (`tournamentTypeId`, `tournamnetTypeString`, `logT
 (3, 't20i', '2022-06-06 15:01:32'),
 (4, 'test', '2022-06-06 15:03:58');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `userBankDetails`
+--
+
+CREATE TABLE `userBankDetails` (
+  `userId` int(10) NOT NULL,
+  `bankName` varchar(300) NOT NULL,
+  `AccountNumber` varchar(20) NOT NULL,
+  `IFSCCode` varchar(20) NOT NULL,
+  `UPIId` varchar(300) DEFAULT NULL,
+  `bankProof` longblob NOT NULL,
+  `isVerified` tinyint(1) NOT NULL DEFAULT 0,
+  `insertedTime` timestamp NOT NULL DEFAULT current_timestamp(),
+  `lastUpdatedAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `userBankDetails`
+--
+
+INSERT INTO `userBankDetails` (`userId`, `bankName`, `AccountNumber`, `IFSCCode`, `UPIId`, `bankProof`, `isVerified`, `insertedTime`, `lastUpdatedAt`) VALUES
+(1, 'SBI', '123456789101', 'IFSCCODE', '1234567890@PAYTM', 0xffd8ffe000104a46494600010100000100010000ffdb0084000a070815151417151514181817191a211c191a1a1a1d1c1d191d20201b1c1d1c201a21202c25222128201a1c253524282d2f3232321a25383d38313c2c31322f010b0b0b0f0e0f1d11111d31282329333131333131333c33333131312f313331313131333a33313131333131313131313131313131313131313131313131313131ffc000110800b7011303012200021101031101ffc4001b00000105010100000000000000000000000400020305060107ffc4004310000102040404030702050205030501000102110003213104124151052261711381910632a1b1c1d1f042e114235292f16282071553a2d23372c2254373b2f216ffc400190100030101010000000000000000000000000102030405ffc4002911000202020202010401050100000000000001021112210331415122043261711391a1d1e1f181ffda000c03010002110311003f00ce22799600615e652810a7a9248ee45b68e49c3aa6cbf1cfb856def3a80fd4425dcaaa0d1ade7158b5ee15901ad81372c586cdeb131250a0b420380328605ae5c83e7a33d3a4611845767ab39ca5d748b39f8708f7c9086b9621c2b4b13615037bbd25953d15c93014a6c2c68da1a54b38ec34786a3894c9b2ca1494902854c0a833b02545e80b0ad80f38a4cdcaaa140e42d422af6cc03871bb444aae9170726ad96071ea0d9660644c01c0ca4d08a31e51cac5c967bc73f885cc04142b3ac8484976e621245e9ccfd37b880118a75abc3a05172e0a88dcb9e6b5aa5d86a5e3986c54c24852d2599aa410c5c54db4d34e90afd861ebc9758be1535195416824b158218b015ca9372e59ba8aec34fc087e442828fbc4bb1551c8704695a338e910231d349ceae52fef020bbffee7a3d40f4678ee2b88cc5e44a94aca853857ba6ba16ff35f387f0bd684e13495ecb2e178599282552cb120e53cad94356f94103422ca16b45b9e2f312a65e5625c12a601b96d6ca4bd893ca3778ad4191312e0d5540145c50960750035e9f6370f29290166873a729be64904a3282e01b8a758e9e3f48f3f9fdc91a74cda7dff0068e89cd024b980d069f38e678de8e4c837c68e78b01e78e6683116416a5c31532201321cf05058ecef141c57da395254900a663e60acaaf75408604807fd54bd368bd4464bda39613314939652555965921254ceb52b4d59cd6ec0c2969687149bd83271eb9a722d33949cea504b32d2f98d54dca40208b5c8ea2971eac84958cd72ca7a38a3b31cc06ed57ed1262b033c273950253c80a15994a0e4e87330bbbd035a02405d42cb140765302096040d4b3b917166a16e69db3b78da881ff144829cd47f2ad2f7fade20c454b2453cc3f562614d20050b281d8d371fe60a4033324b6e634ecc6e03f53537687a5b077274c8f879ca4b3951a04b7bcedd2c1be30762a6a8321dc024ec4ebe674afd044986c04b44c2f3095572822a4b56bfee178e623872b98210733b5199b40eeceff31de3094e2e46ca128c7a2a15883a5122e455bc9f576f382829920007ba837a0689d7c2ca02921614a22aca4802f7abd7b5eed1593b0b325fbd6ddc10e45a354e32e99cf2ca2eda393b1072e44b30d45cddabb47301853316125c0635eba0700dfb4765ca0a398a800edcb95c9a3021c33eec60f54f4cb52908191d810684558eb7b6d478a94a9631ecc62b27727a2d30fc3652125207f3082f98bb101816dcedd44516270ea96a293715a023cada8aebde3b81c62cac92a2686b721fbf52f589f1929492854c2a51525d7ca392b4466735bd3af908e38ca126a4eecbfa89c27058c6a8124629403b12cabfd0c473d6146b46d5afd2fa43d32c04a8a5455a94e5232b38fcfda0355ef1bc526f472a4aad09696a4246c4b75af95b7b4253b0ad3487a9019d398b2466a58967ae836f28b191d7f0428765ebf48ec161668e4f0d2a42132c9331d9490d40e002f7b924b8b026ced36130ea09330a52b4a4a4172e9caee085034a857f6de170ac7ad6a58f0c2d6a04b840a166a9201a80def0a9ec4498f5ad3cc04c026a40515104100bb06596bbfd03b47338eacf5a336da8a19c4512523914b24b90858a8cd525c129666f31d223463c95a54b53a18256c56deede828a246cdd1a015ad4ae56240248d59dacdafe347251ca4b28ee0efa354d0d5eb12d5ad9a258ba4ffc96731695252a968525a80101c8d5d4097f4a758810ceace5cb3d0b16b31203bb7a53ac0e853a0a54a506539a90cce092f41a7ac492d01598252ee18aaae1dec0162e1b4f9c678d68d54ed04ca9c0a4819804a493505cd34a76bef054ac51e5afbc016a849203331a5e9f95aaf0329016a5258821d9c0d88efe705cd438492ace950f2befd8eb1328a3587236189c6e55294c260720855281edca2c490fe8d06e1e799c2502ac991ca4273365b0258bb8ab57f51d22bb0f80f13f53252a0142d94170a53d8d5a8e056912cd94897444d39f33124900809357090492a0cc2a5c778d78fe3472f354ee96fd9b0c3aca50412c5f660fa917a0fa44b271695152754b021886a6e6f15dc392812f32d648cb9b311ca9b16b9600eb6a4660717982628021285124a68c9b9a1627f711d6f962a8f363f4d39b957837c16f0d4ac451cbe321530a12094a47bffa49a53e5fddd22c30d3c1517b3c6aa9ab473c938ba659225bda3aa4b18964900523aa4bc4d8511a94007516140fdcb0f898abe37c0a5cc266280609399dcf47ca05c25c022a0b5da1fed1a1464a923dc23f987f500e9aa6a2a03abfdbd699ac0717992a54c13b3cc94b703992e145aa9a02007a3728cb4d2264ca8f6506251926644f3a4281a820b94a5dc06ddbeb102890c0a9b4617ab6bf1f28b53c46514af249652b332d4a7604a8f4ab9177b768a65821ebab1dfa5ede558e66f677c12ae88b91f32ce604d4336ae7cefeb1a147852d9804a8b07719c51c06fb6e3a467569fd44336cf51f1f8f48370985502a52d556e404839890466a746afda239526bb35e16d49ebfd06af88ca20a4b877ab003422ad4f8fca2b71fc42aa29cc335df707e346a8862c9502a373626ccef681e6cc2b7e51fbefdda171f1c5333e7e69340e662d2e42887b807a6b05495a94a095e75a18860721aa4bb3d007353b41781c37887dd0a616529b29bd5db41610fc6e2d52d2e82e5e93328b3330a505c5cfbb1a39ef14959c4b6adbd13a10a504a02d2529009cb2dc2580b172e4972e3a9ef04c40525b2021458ac172741d9b6d9e2ae463e654052b537ecd6d035a24c4f120b0a0a969b00921c1046a48353de23f8a699a4b920d0f1304b6609048b867f5ad7ab47578a2ae459514134ad47fab47a8b13a4564d0394837b8d8fef05c994a50a04e617ad5b4e9a9da37c176ce5949fb3abc2ac15146720077b72f5f235102642a24bd010ea3d7a5f48b2958b52689210c58ebdea5ee055a91d5ad292ce549bb003524d1c6e76f487193232aec0a7c977c882323056bd8f734f8e96b0e17c366cc42884125f2d1ff4e50c4005c730771b17bc1067a932d25c849b0000396c1ba6b4eb589f84f1a4ca7191904a49006c5b33bfbce7a586d0e326fb45c649ca8cce213954a4a8d41637fb428d563f83ca9f315390bf092b2e10a4104685c75209f3851792f669833b804ca089b99d59d1900e6749a549b10e038bb8d4446a1312532b2027dc19854e772001b90c5c7d22cb86e1e678d9a5cb2e967014974e8a532bddbd7358be81e07f68263ba9295a145682c7292a29291993cce684d9df974a9c14735b3d19722e395c51160f0eb96a53a161494e74a7990490db1a5142fe7ab85c41130cc5afc35829292a0a3ee66b0ad6aa07d609ff009c4c1312660526625245125249e5670cdfa0386fd20690363f8ccc2a0a4ad5998a01353ae5b8d1cf5f9c2a49e3b0c9b8b9baff00c204cc4ccccb0e1b5cccdd1ba92cc041002658cac936248df727f3e1004a200402e4384b6e0172cfa51ffcc4e12e92e92c68c1d8eb42d5dfb5226492348c9b5b4ac330eb233e6c844c142c960545dd3622c682dd208c3d000c08209efa06dfd358ae5e1d99c04b31cca3a9d006ede87ca796572ca5616333d6eef4662ddab7b4672f97936e3f8f48b8c362390a6580a4ac8cc8a1346cb53a5c003b369117f10a4aec94d0a430e505cba407a0bfa44186502ca1d7302d57b9767d7f183b992b51cb47f786a34d77eaf1937e19d1c714f64b88c42cbb074b01cbfd26ee4d0d5b48ab9e9292e4005eceff009478b596a62941219e86b63a53a8f386cd9191414ae648cc5ade8db3c109ee8b9c715f140984c6aa512400acc2a0964eb56b83dbf68d3e066e6082404970c33667142486edada33588924559ecacd4019acc3573a7a45e7b278839bc39ac9491c855ca4d5d29a9620825a9a4767072786797f5df4e9ace2b66a30d308f7a08131cc357842d4bed0d12d4348ead33cada03f6832f82a0bcc12699839ca742402090ff00168f329c55972294410588dc69477fc11e87c6b894c9644b4cb3ce3956066a8ba72b5c86eb53b571d8bc3cb42e64cc8921342952c254091ef64e6b93a96ac6535b34834544f565f743546aeedbfde084a145014a2e439c8fad9ddba83ea346800f3a8d7f361126550052e7290ee353f2d0c60d1d7c7349b6d0e9d35468051370d63ddc930a44b4e6fe62dc0a3025c86b03b68750f0d9a84864853d1dc50d2a497b7ec3c855ce198292f415cd5ab54fef14a36b413e4a76f61d3ca544048605923607776ee752c6059f462080038a38eff310ec2cf3562c18387f78d80716b9af7893153980000277b817dfbc249c5d1972494a3900a8a9342e356fbc352b2414bdcdb7d042673b9d3589d1872957380e4512e2e6cff9b46da4728295472f134e9605ab77fda3b2f0aa50e54927b3c55aa2324405305e1d2b0c524837dec5aafd480dd6387085ca494020ff0050fbfc2f5116782c2a4a9394e721824ba51566a9e81ab5eb12e511e37a60082a6ce41ca9672454697a1a97fc06090d325a7283450170c97240ebf6f38b09bc3824a9095032f289a83a148290b4b917ccae9a768184a9899cb9400484a944e51d335e8d76140066688916b8d69d7fd1bc4e52a5a4ca523dd007f514bab3075684258302454f68b0f67882801d054bf1121d21c0ca9502e455c81a8aa6e0c0d89c29016a0ca094e658528073a6500b9353f08afc3ac90e8591949705ff0050ca48ab02c348232d5892790663a64b54c529897d489849a0b90c3d23b0078c534ce43695a4280d2dfa353809c262532a4812b95d65dcaf29ba9407290ea0e1a86fcad037135a84a51083e212820e6512520a4a770a767cc0f4378b0e2a94256908968096010145b3b8fe80404bb1a003de76a88a6e272959579949242464398a8b8b97777a91ad40eb096499d6f1946efb0ce3f8993365227212d9263288a3a5614e5fba81ff00314c2423c4965614d94acb06565f75219ee4babd20638bcc896289f0f212e5c28e60cab50e52e77bf77a19132604ea40045adb0eb0e6fc8b8a36927d59363b2954b484e54249203b96d7980a9760f4a352eeef1d2c94a8aa8e181bb0a0e87e1530197f10967cac3605eace37fa43d0b05659240486a87249625dad400537d23371b5b3aa1356d25dbafe81ac864b4a019d828921dc3d4b06603e30dc69999d04a52c5c0abb7fa73576a778970588972d6b4ac256953165248ab54bb3a6a10fa4331388191331810161c8a161ca08069a3ef5bc4a8ed31ce6a9c578f44ea28390a11e1aaf314a739c2b40872e19fd212a7a95460928365660a068e0b1d08fcd7a89d3140176d32d03077ad2ec6fdb6888cc6ccc37a1a8a1dd80be5eb58ce4f266bc69c5536188ce0e8a24d52df21faa8ad2059d3c864a25ac3b7bc094ecc01b51b6d1c43c2d4593a9a83fd5d7a163a6d0a762878802c1ca400aeac6aab54e9d691115be8de4fe1a74453254c0405390a6297ad2a330ca3562dbd22eb86ad2974ad0a5ad24784a13112d4963cb954a47357290936cb016271e54ec3330eec2a6829bd9a06c26202579d292542adb2ae92c694a7da2d49dfa3394138d376cf5fe078d4cf929980281aa4851054149394b90055c6c3b083f20da331ecc7b4426a4a573332f330190860e7de5b9492431b263531d49dab3c99c71934c1f1b273214ca085351640213d48378f15e393261094907c22a2412017362acc07ba59d83375a18f68c7f1295243cd989406fd46a7b0b98f29f6a78819ca3954b4ca528a920a72d000372c2c40eaf47a92950a3c79746511332b9a3d83f4e906ca5bcb09245fd7bd5eef11a70c1239833541739ab60ccd13e194a531ca962ec48d8f335da8633934d59bf1c1a74ff00a15b894d69aee2d1182ec29f4ef1638b9e84928602f57723b743106164a54a2a495b0d807ea2a58535f368a8cbe36ce7e48a73a4ec8f0f2a624948196a9beb7cbd4f94198ac1152da80b90f6008f2de8ccfeb0109cd33317a5803ad8f317d1ea35853a79528306e9f4b6ef038c9cac9724a18d793830e1248510f561bf5b798827842f2acaf384b170a3a1adbafca025a9599f67b7d2202635c6d559cdbbb2c97310ea484070f5a2ac6f6b56065cee51cc5c306d1852fe5102563e06dbc2425c87b6a7e7028d062828e34adbc419c27ab3bee469487c950ce024a9208a30cd5cb50dd4fde0329d8fc3f2d48225aa81920e5bb9eb7bbc149740f6cb9ce1d4a9a5ce553155c970e961a049703700bb342c4714438cb6219dca69d58f306a3107e915d2c2d482e4100d98926b72740e695be9580800f7eda7ccc64e2a4dd9a2934951753f8b4c528b384114d4b07fd4c3527d4ef15bc2b11e1ac15a3327324949d59409f838f3876192e5c1034048bda8dac168c28209cd968e97b937662c2df94814a31d054aed2b1dff00324ba8a854a946a2b55121f986863900cd564252565c5e90a36c88ce5e8d04ce2085932d494d0d084b66167d4ebee8019e9d12d683ca02cbbe6052a2e19c5480cd7f5d03c54619056c32a9414aa1a02ec59ab453bdcd60b2a988026151672338720a9d885d696ed5d2309277b3d1838f8fd2ff00253a5425a8268594ca06b6550fa65df58b19212899352963984b297db5edccd4ee229f8bad466a8921d81a060e3a76884cd524e6ceaf758548a6d7b3e91a76bf665f64bf4cb9c328d5440752b303a0009a91ae97da3b8149512a6f796a576150f150999952194a0c9fea37edb42913169486510e37223392d33a61c894937ebfb9a09f24a40995e5352354ea6d4a31ff006c0b895b4ae5a68763cd42da522b8e2165c788a63421fe62033314000e59f7dab685183f21cbcd1dd2ed1aa9b358672c1d24f43a0f577fbc572b88a988a04e6cc054ef4af7bb4542e7a8d493eb588d730ee5f52e6b0e1c697667c9f53293f8e8bc97c40e605567a7e7e5e2554c51981ce6cb40285ea2c7a803e3bc502145ef13226107de20ece60941781c39e4d54bd9a64ca0b6607355c8a7c76899529240505d4002beef624b01d3b46791895ffd457f710610c4ac9233af2ed98fde30c25eceb5cf1f469141594805934a39671ab6f78d7fb1dc495e24b9614b5850578814688342141cdae35358f3142d63ff00b8af53f78761316b44c0a75120d398bf9178be3b467cd28cd75b3d77db8c227209c50a265a5905297292540bda9a32ba1dc3f9962312b565cca0026d4ddaea17ee768bf9bc4a6996a69b3540a6a3c45ea2a284d6b1e7f3d6b26ead59c9ed1ac95b3938e548bb9e7350855ae06a6079f89283c8e3972d53a1beb437803c4253552bfb8fe3440a98773e64fe3c28c5743e5e4f28202c82e49aea2f05a38832324b9757a12028fa017a9f58a65acee4f9c7028ee7d635714fb39632947a35384c285cb19ca7352b9c272862c1b5552c368892a972d272e76531cce85161fe9a1bbdfa6d19bf1156cc7d4c3c1245cbdee633c3db3472c9245c2f112d9aa5c92f40c2ac18021cef0222412e5292db11a1b7ca0143b8afc6084e3943dd52bc898beba3150fc93f82def299857773a344c898948a9a1b802a6d473a38f8456cdc42945d44926e4d4fac46564ea61f6b64b8ec3973055998e8d5158e210fcc4d35d22bf31dcfac1699ab40a28d459cb3186dd7418e8b52b98064c85af51e869ad0f981b43311870567297b04a6a5468ccc4d2b46368ac46317fd47f29f284bc512acd994fbbb13e910a2d32949d51672e6250ce15d0a5419c6afa1be947b188312149582aa8201be86054973df789b2e6352c3a9768a50a76373b544ff00c423fad47ba95f685017866143c57b2297a357c2912d0a403990a4af954a4be64922c82e08012ae603bde34cb932d495a42824175a28e824e4ce85248715622ac0aed4ae0978f98b0904b64f759dc5aaefd2fd4e91733f8dada5928974b10145e8502eaeba35835a89b3a229f832bc4d396603604333bb0234d5b6ec2209aa74a1edbf6a7ad209e2a8e6363415b1b457e6395bafde1476827a93d04cf5dc070ea6f898d0fb03c125e3718244d2b0832d4a74100ba59aa52695da32e576ef1bbff8387ffaa27ffc333ff8c142cd8e9f85e0282b489b8d2a492962124660e3fa3711854249c832a8bbb002e761bc6e38bfb5381578d2d3c2252567c44899e2d429d490b6f0ea41e667f38b99ded04dc1704e1cb9012262cad216a485142732cab283472c2bb0801b3cbd328939520a955a00eaa5e803c42054ee2e36e863d87053d1238661f108c7270733153173274f187338cd9854b265b8042024b86ff416fd4e2f11181c7710e1a0cd4ce98b046255e0ae489e129cf2d652a480cb2950a3b853580802ed9e5c8429b38072db331cbb5d99e91d5ab9c3f6f9c7b5af8ec9462e6ca9fc490b900ae5af05fc0ad908008ca141249090012a6292013404378cf1112c4e98252b34a0b3e1aaae5014ac86b5f758d6b0bc94a5a37380f67f0323052719c40cd578e5a5cb92c185482554ab07b8bb318a7e2d82c24cc522560264c2899901f1011956a20302c0b070e5b76260de03edaccc3615187c5e11389c192af0fc44b595cc12a50295e524b0b8347019aef8ce193c3788e0e6e08aa5271894a5529401284aa64acc965b94b8229705258b504b894a75b662f8ff000c56127af0eb20aa5e57521f29cc94ac31203d143d200964819995941f798b03b6666bc7a37b5fc49589e348e1b3d60e1533e5108ca91532925b30198e62b526a7f5f4105e27dacc6238a8c12654b18713132861fc31cd2c903c41476ca4aa9ca05c50c18a452e46cc662716512d0a4a89043737e5768afe1585cf8cc3cb98839264f969505382a42e6252a1bb104871bc7a4e03072e462f8acc932d331784968561a5b384a96852d4c917629090d501c6b192c0fb618bc6627052f1052b4271b29495896905fc49632e6019921560c7983bd21b5666a5569157ed9f0e97271f8895291965a14908402a2dfcb42b573724f9c67142b50dd23dc7da5030c8e218cc1244cc5e7089eb3ef61a5e44394218b8ca12a7eae5c2328f0d9d35c925ca897528924926a49275261a443decf4097ecdf0b9581c2e2b16bc5255884da51410142a6850e037530a7fb1386462387cd933153f058b9894b2f9563562521370f60082931718de2b87c3f06e1a7118346282924252a5e4092012fee977b452e0fdad5e378870e9624a24489339025ca965c07a392c1d8060c035778a24cc7b61c3d3231b89972a594ca97372a7de29486142a2fbea758a84a8bd05e8d727a523dbb86fb4b3a6f1a9f805841c290b4f85912c484852944b3a8a8953825ab68cd7b2e3f83e1dc43198696956265620c942d49ce65ca065f33765a893ab0770968068f3528293954920ec4107d0c5bf11f66e6c9c2c8c528a4a310f9529cd9d395df3029616d0c6e17c4a6e3783cec5e2b2aa7616621587c47869492acc874b0194d4e5a06a870e9827dabf6b7189e11829a268cf890b4ce564432c10a0cd95934d9a011e55864296484851203b24134b587788a65091b47a8715e2d3785f0de1c302132862258993a6e44a8ae614a159495023f52ae1d9200663047b413e4266f08e258ac381327027112d08aac84a724cc9a94a9492c5c90522ac200a3c9d52ca58ad0a00d4382337624561cb9c498f54f6c7113b1b82c4cec3711462b0a99895ae52a4a65cc929049094a8a412050d402420b1350af26862685080784f0f49a758620d44b0d5a30a5ab48330d21459d048259c8601efcecce3ef0ee1dc3d736c424060544b6961a92c23452a5ca95ca9582e1aab70e0390ced520963414348c3979d47e2b6cd78b8652f974bf266f152322d49331c83564923c8b428b59920b965cf21e8525c1ecedf210a33fe6669fc5f829672d19f95c248a137fcd3ca2e30b8644e51cd3482940344a955721980d00edcfd22aa74c7401e1a43327331770d4db4f8bc5c7b3d3c00b20cb4ac8e5cc3a65090417fff00b68eaa56619333bc5119662924bb501a8b0ea018ae316b8c94b98b52b296087357605ae7b98adc8694869036df623ee8ef165ecff1d9b829c27c8cbe20494f327306533d1c6d15fe19b36b1df015fd2610c536695a94a375124b52a4927e71618de3d3a6e1a4e11651e14824cb64b2aaeeea7adce9022309308242091f7ff10bfe5d33fa0fcfe50ad0f193e916fecffb638ac1a0cb9650b94a2e65cd405a01fea02841ec5ba443c67da4c4e2e72274d9873a034bc832096c5c6402c5d8bbbb815a080cf069c2e86ee40fac4c3834d61cbaee3d1de25ca3eca5092f05fa7fe25f102829cd2c2c8ca6689491348ef6ff00b631e7dedff0c5ba3d9c9d7f0d406e5923d544433fe504280b9d1883f105be30648307e4b9e0bff11f1d869499293296840647888cc50058029526834778a3e33c7311899dfc44e9a553014e5218640924a4200a000d7b9ab9305a380cc3eec951ee523e2e60d95c026ffd203cc1f8bc52df484d576c878ffb678bc6a1089c11c8b0b0b42324c2a4852412a074cc4d00ac5ee07fe23711f0c214a495b65130ca1e201d55eebebeefc60793c027692ffee4fcb34163814e1532cff723ff002878b26d14184c7e330d3ce224ad62639ccb242bc4cc4121693ef026b5abd686b07715f6c71d883254bf08093353350944b4806620ba545c956f4043bc5a2382cf3988965800f54d89efd207c4fb3f3d258ca23fdc8ffca27cd0eb565361bdaec6cac54dc5a54913268698928fe5a80000743dc350bea77319dc4a8ad4a5654a5c9395032a52e5d923415a0d2362be0337fe99fee4fde075fb3f32a3c3a8d9497f9c30a453710e3d3e6e1e4616614f8721fc364b2aa1aaa7ad203e1d8e5c89b2e74b6cf29616970e1c59c45eaf804c1796b07674fde223ececd3607cca3ef00a8870bed462518d5639393c7515124a39398653cafb758e704f69f15849ab9b2561266126620a73256e49aa0ec49620821ef0f3ececfb84381b948ffe50c57b3d8815f054a1ba4850f504c30d137b47ed8e2f1a94a2729225a4b8972d3910ff00d443924d752c3489386fb6f8b93853844f86a94ca09f11199480b7cd954e355135767da9150ac02d24ba143d212304aa9293b0a03f10610171ecf7b738cc1cbf065ad0b962a944c4e70837394b822b56767d2f0262bdadc5ccc5a316b9af39079094a72a05795286602a7aeaef58006055dbbd3e30e4f099a6a329df9d21bc8910c28b8e35edd62f13295255e14b96b2f304a9611e21a1e72e49a81b3eb1978b54f049a47b87a553eb7af94355c1e6d790d36afc042ca218b7e0ac89b0ca48502a0e3682070c9962923f3a430e1543f490d7fa6b05a684d3468311c4908484225a4ba41a3a59c07a7df67da29df3100a8f997687959342901b4ebd7ad61a6497fcefe70a1051439ca7308ca7fea8fee23eb0a064ca56f1c878a27e41d2b0aa530651248a0617e913a785ac1a860d62a63dd9dfd62d1381580e507293ef14900eaeea0079c3a6e1503de9a84b59895f76c808f5311b7d33a7e11f000be14861d9dca4a83ea029f6d5b788656125b15177eac01bbd0f46d7f626662242794ae74c0096ca1281f12a3f010d471a09494cbc3a58ff005152bd41e5f840a32aec338a7692224489655ca527a5332af50343f58b1fe0e6366f0f20d0ad92dd94a6a747302489f8b98724a5e51729434b1e8961eb00ce9242c8510a2f5295383fee06b038a6e814df745c2e64b039e64a0406394667eec9ca48afead623fe2a57ba133567a108146bfbdb6f01c9c33b323cebf58b093c395faedf9f68171a07ccdf938316b1ee225a68ceaccb201a6f97e1124af1954f1263359202074f740f9c5848c02125d9cf5307213a02df58d571a30972365661f83aa85730f9873ea493f18b191c3658d0a8ee49f94152e5eff282125880c6bb5a9b9b08749137262448006800f268270c8142eef5d3e910e5750398b0fd3a1ef47f289fc30a4e5a807549623b34592d050416f79bb37d5e193f106ce2b6a472420a125e61539775353d008131a82a20f88ad084a480edbee3a421969c348522693d05b673e711cefe64acc0732287cbeacd13f06e6925c10e4d084b9a0714a6f026044c13081300047ba52e97a1dddc07142d5b473c9edb5e0de3158a4fc8015b317f31f0f2ef11ac960c5f576ab7988763e578534b964901831033137d5a8c2f095f1d83796b1a2926ad19b4d3a205177e5aec5c7ca079b8714a11b100b528cf1319c1d4c416bb17e67662c5dc51e3816faa496e673573debe6d0c4c0ca14c4e7346150e6be5686001e806eefb75d2269eba80c962eeacd51b3268f7de94a1d3ab0f55327a9a1b59bd34856d698e955822d09986ae4d8924bf67f281a7f0f4a882948093a163deac47568331080e5882cd649005016724b9ebd63b2e51297f1001a072f6bb3bf4f584e5e4315d1533b86a5c6501b5b83ea1c79340cbe1a9d09fed25bce2dd739a84a8805c55afeb0d33d245455fafda2d12ca15e1c268260ffb87ed1d4aa60a059a7fa89f818ba4096a2028801ee52ff204c37f87492c00ee3a9a5c3c0229d3899835f51132388af54a09ecc7e1164b9093d7cb4ef03af080fe9f4afd616286a525d32038a06f2d34b6527ea4c3c4e947312829240b65229d1beb587a30634591ddc5e271c1662bdd5255d969858a294e5ec1f34ad95fd9fbc289bfff003d88fe8579149f942858a1e720144c592ea566efafac7312cae90c408794155caa96724863b08ba2320232c3e9e9584b92cb01945342f6a7c479d60e12520d476ff105658311a90148e1e49a14e5a7bd7dd8da9168a929cd9920206c2a3d76fcd621528086a16731dac037d5e0aa0c9f41465f324e62181a518dabde90524ec20043b3fccc1520a98b01d1de973a11a0f9c3ba1256168104a1f680652c82494829670c6aa3b1b01a005e0bc329c39190b0bd7e4f6862084ccb0d7417a6ff002823c46a1710161e5842b31fe61a8048e66fe90a0451d8b1f58226cd4206751ca901cb9b5ae7a7d215d8da4ba274cd07563da269135473721001604915dcb69114bcaa095000d1c2abaecf0a6e2b2d0bf92547ff00d53487f927f04d39449039aa0d40b36e48681d680e41aef5f8b08e7f1de2241212855f2005c77727e2c62212ab46f209efde177b1bd68d270c912fc248ca0b02c5b3115240cc5ceb15129465cccc1c805c79dc3c68b089099697b0034b467b89484033149d72ac9d7653f937ef1ce9acdfe4e997d8bf059f1691e24b7cae43160cfd4027cc46789214f9d4ccc125881e6c0fac68f85624ad3949729d7a454f14c278730a85976a960da35b5d21713c64e0c5cab28e4805ddd807006b7ec09f97a40788c54a496514851b0721cbb1a03f010412069e55fa181711954a00a01d4299fe7aeb48e86bc1927e58c38a4ebe950deb78531443a992cf4e649df4075da2354a482c4a807af2915d694df588944076529b623ec777168544e474625cb8517b6846eccd0b3f37fea10d662dd74223931695000dc5851bd5fcfeb101c339f75c9d0073e578742b1ea203bacbd8e9dfcbca235203d17a6a453d44128594b8704d99480ed57a905bcbbde20277005684006a3fcfe3c1b0d0c585839739001b3b81d69f486a89d5495777a0f38ea901cbbfa014d9800c3d61b9129357ea41fa1e9bc141f81aa9abd87937da3b26756a97adaff23f8d0d32d2f42407a391f18e2e4b6a4d2e083f110020b44da8e5a0d18fec7e30e5a527dd4b1dc397f5efb6915ce7425c75ed689173565c92ef573f182869862736eaf5850278e46fff006fde14048c54b48a66255d1272ff00716f934301a80dbc34af688ccc2efd189e9b7687b41a64e56905943b8b1fac7264dcdee8cbf1efafed02158725b99ea753e70c5cc3d7d47d6115fa0b4ac01505477a7c7fc4391394e08019f530225446dfe62444ceff00b8ff00220187859abb9a826a59c79b374b44c58dc7a8ef6a7780c2ea2a5f4bf957ce1fe29d9c5f6219bef0206dbecb596adce95ff1b5a264a88b3d3f3f3e91582728d2d5abf90f4efa41b82428b1397e57fad8f943ba128b6594951fcb44ea08520216106bab6624d6cf50c2cc77780e6a16842b229056472ba9c3f93b0fac2e1de284ff00372bff00a4bbef46001fbc1f75341b8da6127192d044bb1a00024fd036bf187c991956b999d5cd5297a0a0d3c9a264b7e6b0c5335cf94525eccd896b7d6225124d028bb0674fc1cf5d63aa34a57a98978783e221cb92a15e83486fa1c7b349271d2e92dd255405008243ee36eb155c7d29394a824a1949219c12cfeeb351bf68bf4300ff0086297daa47f26d4cc091a9d7e2408e14d2e45677495f1ba06e093f2be65252684beba302e18dbce2c78a61f3cb25b9921c74dfe119842504a553032520ba54fcce350017f383f198454f5cb9880af0d1432d65690bff005338deece623ea1a84d4cbfa68ae48e0dd15cb5eeff9ac02a98eb295258311ddfabd0f96b12e364cf44c2851ca8980b140cc525ecea7340fbf940882b450a94bd9ca7a90771b37c047471f26714fc1872f1c78db57b5f82550962c357a1f8b7e5a2292251532d6a4a6e484b907ccd602998d25dc11d59c9a96bf6ac4d225aa615042496ad435af5b38ef1a980e9cb0f4512e6e5c12d524fac242412e55940a160fe63b5ea6d012d6fd3d7614fda9f38894ba8bf77bd7d452015d32dc61d531ccbe600805ed5b1a9d5a20c54a5a0e5989506b93b7cbd7ed01059b94fea7147f43e95893c640146722b46a915b75856ec75ec90ad0c5b6a6a6bf9686aca4b5fc8c0ea9ba337c7f3e758ea31094a5c8a176a54815237d61f42a72e89d22eea0186e07ce1f875b1b02d7a03f307e510e18a5480b42b295382ed4ab6e48ee59f3535872f0e8a6724815749abebdcfce17614d0462312162832d4bb040049a170122bf2d204cad416fcfca41588c300a74e721a8660624b68428f5da059a737717fbb7e5a08a4ba1c9b7d9d4b7e34286d3bfa428aa15a033ad5e1aa859adf9f18e2b7fdc4310d52f57ac3017a4380045fede71d2004873cdda8cdf37e9e71233b2ebf5dba37a44c95b3558313f7fcf9c4014d773fe6a62596a7bdaf6a0dea5bf0c03094ae8f77eb47d3e348273a8b3d5bd01d2fa7e6903210087512328e86bd83b8fbc1929053a33804f5ea2bac3a1592e190544242492761f32371162990a4919814f450234fbb9ff00100489ad98d8b35287d41f563a45999e5679a62010000ea00b30a00039bc175b7d0d2cb4bb1d2cd3f1bf2b0420c552f89cbe412e626695162cacb94df5bf95b783e44cce1d99c5a9e9471e9149a644a2d7616161abf9e5bc316a737f52c3d6224e3972c109922628d1d4a609a5065d7bbc42bc4299d4539af4a07ed026ee81a557625f1096f932cd5aa809083913b97a156acdfd304707999a625913286eb484ea03f2a8e849d1b58156b76722c6b7208ff1161c1100cc7cc69b2c8d4d373da224a936d97195b49235a011fa400e598ddf7a52bde2bb8fa0aa4aa9e8a666a820b54b80d689b03834a56a299aa599aaa052ca827a07261625489892e33067ca0dfa479f39632bfd1df049aa314bc34c284a961401ca5e590038014e9214486346f7b94c69f834f0b495672b36d28c6c030df5ac65f0f3f33d81ab87f740d09d4b0a97378b1e01894a2629394d589538ebf616de3ab9a1971bb3978a58f22a2e78de084c96745279926cc47ece2326a90950a4c96c453f9b2e87b668dd0980960413193f6824a02f302902659542e41650bf46f38e4fa59b4dc0eafa8845a5276ccce270caaeba38636bb10f47d61d809fe1227063fcc979535629d096d4d46d044d39bdce675519ead7008ec47908131095172c6eec490da52b1e8d5ad9c12d3d04a65ff2ff00f556ec1d2b4802ed4751b9b30f4d005100821d40d08559f5b11a9b86b8878c4108c85092ca25ca6a374f6a0f581552c9a80f5a7a3f99bfe5222317bb2a7254a84e972599cbeb4af7b3c5962a7e1d52c044b5ca5a775660a73bd08f4de00449528004102a492f700b77dada8110a0efa5d887d3cbf0c538a64c64e24d2a4ad659092a55e952d6b5fe14874c42d25968296d0a58ef517b4468c228a8001892c0abdd156f78da2d3018697317917e299841398292a1caee49533061bc0d895bd20144c66e44901dea6ba8765089933ab503706a1bf1fe1e8ec5600a4b27c4218be6c85b5a6552ae2b77f286e170f38282a5cb98ec2c851a6ec0545368135e06d3f282b0fc5d72e885b8b3292155a59fa9e97887158f52c9529201e941b4771dc42728244d52f9746cbb5580028fb6b0f9537c2490a44b5a0db3a2a2faa4b8a8147d6dac42493dad96db6b4f40497d02bfb8c287f880d729affee3f16ac763432000c4b0a39b69e7f9a42ca075a57f0c2851424309034ad01fced1c04966f5e957850a0192302e9cb514bfdfe7de25989d09ea0d5ea48dbf1a1428902612d89d81e6df6bfafa6b05c9700daa76b35fe3f0850a1a130b4a4e8deeb1d296b3b6b1289295382849ad5c0e9f7850a2c447ff002d977c89af4d20d94a094f28603e1f823b0a1a131c1561d683cdaf07f0b981066ab32d0d2165d201526a8629a8a8bdc7710a142974344b2f8aa41f7d65592527c552559d79092a2a089a83cd9801ce7dc1981d27e0f8e4ac4c482accb52d6e121225e720e540cc484a9b983d28cf57e428ca7d334e3ed17b2e712b496a05a55958f2801981330a6afa253467a881c21909428ab97282cec0015a67626b450093bbc721479fc927b3ba115666d5c49295212a330094b485c80078534a6667337367b970594925d3768991c680580264c9abfe6a44c5a4254153123220739e5490492f75160d0a1477afb51c4fee65ca3185695039d442258351efa68a555572c79ae758a1c7fb3c572e60ccee4a824be4cd61ca0ddee7577850a3c7e7e492e4d1ebf045606770f86228c949ce430a397034a51c55a23c4d0b100904e62294bd1bf2d6ac76147b116ffb1e54d2b7fb04988b924b77f75ddbbd768e29233647651600b121c50d6e21428a320de1b8c992f3844c08218552e0915adeb5351a8817198d3315cea2a206a05c9e82cee77850a2525653e8b1e1dc517210c9018b90140109aba998be86ef58831bc60cc049480a74f30480454b8a5c51abdd842850ff008e360a4e8ae2b52d052a75252a7ca4d028dcb6f7a830760e7ad00152e604a0e93083b0b03f9b47614124a869b1d8ee24b5aaa55928c852d53123fb883ac172d78520054b65245729557c8d214284f8d576cce4f6132e560587f3660e8c7ff1850a14713cbdb343ffd9, 0, '2022-06-10 10:28:16', '2022-06-10 10:28:16');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `userPanDetails`
+--
+
+CREATE TABLE `userPanDetails` (
+  `userId` int(10) NOT NULL,
+  `panCardNumber` varchar(10) NOT NULL,
+  `panCardName` varchar(500) NOT NULL,
+  `DateOfBirth` date NOT NULL,
+  `panCardImage` longblob NOT NULL,
+  `isVerified` tinyint(1) NOT NULL DEFAULT 0,
+  `insertedTime` timestamp NOT NULL DEFAULT current_timestamp(),
+  `lastUpdatedTime` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `userPanDetails`
+--
+
+INSERT INTO `userPanDetails` (`userId`, `panCardNumber`, `panCardName`, `DateOfBirth`, `panCardImage`, `isVerified`, `insertedTime`, `lastUpdatedTime`) VALUES
+(1, '1111111111', 'DHRUV MARADIYA', '2022-06-09', 0xffd8ffe000104a46494600010100000100010000ffdb0084000a070815151417151514181817191a211c191a1a1a1d1c1d191d20201b1c1d1c201a21202c25222128201a1c253524282d2f3232321a25383d38313c2c31322f010b0b0b0f0e0f1d11111d31282329333131333131333c33333131312f313331313131333a33313131333131313131313131313131313131313131313131313131ffc000110800b7011303012200021101031101ffc4001b00000105010100000000000000000000000400020305060107ffc4004310000102040404030702050205030501000102110003213104124151052261711381910632a1b1c1d1f042e114235292f16282071553a2d23372c2254373b2f216ffc400190100030101010000000000000000000000000102030405ffc4002911000202020202010401050100000000000001021112210331415122043261711391a1d1e1f181ffda000c03010002110311003f00ce22799600615e652810a7a9248ee45b68e49c3aa6cbf1cfb856def3a80fd4425dcaaa0d1ade7158b5ee15901ad81372c586cdeb131250a0b420380328605ae5c83e7a33d3a4611845767ab39ca5d748b39f8708f7c9086b9621c2b4b13615037bbd25953d15c93014a6c2c68da1a54b38ec34786a3894c9b2ca1494902854c0a833b02545e80b0ad80f38a4cdcaaa140e42d422af6cc03871bb444aae9170726ad96071ea0d9660644c01c0ca4d08a31e51cac5c967bc73f885cc04142b3ac8484976e621245e9ccfd37b880118a75abc3a05172e0a88dcb9e6b5aa5d86a5e3986c54c24852d2599aa410c5c54db4d34e90afd861ebc9758be1535195416824b158218b015ca9372e59ba8aec34fc087e442828fbc4bb1551c8704695a338e910231d349ceae52fef020bbffee7a3d40f4678ee2b88cc5e44a94aca853857ba6ba16ff35f387f0bd684e13495ecb2e178599282552cb120e53cad94356f94103422ca16b45b9e2f312a65e5625c12a601b96d6ca4bd893ca3778ad4191312e0d5540145c50960750035e9f6370f29290166873a729be64904a3282e01b8a758e9e3f48f3f9fdc91a74cda7dff0068e89cd024b980d069f38e678de8e4c837c68e78b01e78e6683116416a5c31532201321cf05058ecef141c57da395254900a663e60acaaf75408604807fd54bd368bd4464bda39613314939652555965921254ceb52b4d59cd6ec0c2969687149bd83271eb9a722d33949cea504b32d2f98d54dca40208b5c8ea2971eac84958cd72ca7a38a3b31cc06ed57ed1262b033c273950253c80a15994a0e4e87330bbbd035a02405d42cb140765302096040d4b3b917166a16e69db3b78da881ff144829cd47f2ad2f7fade20c454b2453cc3f562614d20050b281d8d371fe60a4033324b6e634ecc6e03f53537687a5b077274c8f879ca4b3951a04b7bcedd2c1be30762a6a8321dc024ec4ebe674afd044986c04b44c2f3095572822a4b56bfee178e623872b98210733b5199b40eeceff31de3094e2e46ca128c7a2a15883a5122e455bc9f576f382829920007ba837a0689d7c2ca02921614a22aca4802f7abd7b5eed1593b0b325fbd6ddc10e45a354e32e99cf2ca2eda393b1072e44b30d45cddabb47301853316125c0635eba0700dfb4765ca0a398a800edcb95c9a3021c33eec60f54f4cb52908191d810684558eb7b6d478a94a9631ecc62b27727a2d30fc3652125207f3082f98bb101816dcedd44516270ea96a293715a023cada8aebde3b81c62cac92a2686b721fbf52f589f1929492854c2a51525d7ca392b4466735bd3af908e38ca126a4eecbfa89c27058c6a8124629403b12cabfd0c473d6146b46d5afd2fa43d32c04a8a5455a94e5232b38fcfda0355ef1bc526f472a4aad09696a4246c4b75af95b7b4253b0ad3487a9019d398b2466a58967ae836f28b191d7f0428765ebf48ec161668e4f0d2a42132c9331d9490d40e002f7b924b8b026ced36130ea09330a52b4a4a4172e9caee085034a857f6de170ac7ad6a58f0c2d6a04b840a166a9201a80def0a9ec4498f5ad3cc04c026a40515104100bb06596bbfd03b47338eacf5a336da8a19c4512523914b24b90858a8cd525c129666f31d223463c95a54b53a18256c56deede828a246cdd1a015ad4ae56240248d59dacdafe347251ca4b28ee0efa354d0d5eb12d5ad9a258ba4ffc96731695252a968525a80101c8d5d4097f4a758810ceace5cb3d0b16b31203bb7a53ac0e853a0a54a506539a90cce092f41a7ac492d01598252ee18aaae1dec0162e1b4f9c678d68d54ed04ca9c0a4819804a493505cd34a76bef054ac51e5afbc016a849203331a5e9f95aaf0329016a5258821d9c0d88efe705cd438492ace950f2befd8eb1328a3587236189c6e55294c260720855281edca2c490fe8d06e1e799c2502ac991ca4273365b0258bb8ab57f51d22bb0f80f13f53252a0142d94170a53d8d5a8e056912cd94897444d39f33124900809357090492a0cc2a5c778d78fe3472f354ee96fd9b0c3aca50412c5f660fa917a0fa44b271695152754b021886a6e6f15dc392812f32d648cb9b311ca9b16b9600eb6a4660717982628021285124a68c9b9a1627f711d6f962a8f363f4d39b957837c16f0d4ac451cbe321530a12094a47bffa49a53e5fddd22c30d3c1517b3c6aa9ab473c938ba659225bda3aa4b18964900523aa4bc4d8511a94007516140fdcb0f898abe37c0a5cc266280609399dcf47ca05c25c022a0b5da1fed1a1464a923dc23f987f500e9aa6a2a03abfdbd699ac0717992a54c13b3cc94b703992e145aa9a02007a3728cb4d2264ca8f6506251926644f3a4281a820b94a5dc06ddbeb102890c0a9b4617ab6bf1f28b53c46514af249652b332d4a7604a8f4ab9177b768a65821ebab1dfa5ede558e66f677c12ae88b91f32ce604d4336ae7cefeb1a147852d9804a8b07719c51c06fb6e3a467569fd44336cf51f1f8f48370985502a52d556e404839890466a746afda239526bb35e16d49ebfd06af88ca20a4b877ab003422ad4f8fca2b71fc42aa29cc335df707e346a8862c9502a373626ccef681e6cc2b7e51fbefdda171f1c5333e7e69340e662d2e42887b807a6b05495a94a095e75a18860721aa4bb3d007353b41781c37887dd0a616529b29bd5db41610fc6e2d52d2e82e5e93328b3330a505c5cfbb1a39ef14959c4b6adbd13a10a504a02d2529009cb2dc2580b172e4972e3a9ef04c40525b2021458ac172741d9b6d9e2ae463e654052b537ecd6d035a24c4f120b0a0a969b00921c1046a48353de23f8a699a4b920d0f1304b6609048b867f5ad7ab47578a2ae459514134ad47fab47a8b13a4564d0394837b8d8fef05c994a50a04e617ad5b4e9a9da37c176ce5949fb3abc2ac15146720077b72f5f235102642a24bd010ea3d7a5f48b2958b52689210c58ebdea5ee055a91d5ad292ce549bb003524d1c6e76f487193232aec0a7c977c882323056bd8f734f8e96b0e17c366cc42884125f2d1ff4e50c4005c730771b17bc1067a932d25c849b0000396c1ba6b4eb589f84f1a4ca7191904a49006c5b33bfbce7a586d0e326fb45c649ca8cce213954a4a8d41637fb428d563f83ca9f315390bf092b2e10a4104685c75209f3851792f669833b804ca089b99d59d1900e6749a549b10e038bb8d4446a1312532b2027dc19854e772001b90c5c7d22cb86e1e678d9a5cb2e967014974e8a532bddbd7358be81e07f68263ba9295a145682c7292a29291993cce684d9df974a9c14735b3d19722e395c51160f0eb96a53a161494e74a7990490db1a5142fe7ab85c41130cc5afc35829292a0a3ee66b0ad6aa07d609ff009c4c1312660526625245125249e5670cdfa0386fd20690363f8ccc2a0a4ad5998a01353ae5b8d1cf5f9c2a49e3b0c9b8b9baff00c204cc4ccccb0e1b5cccdd1ba92cc041002658cac936248df727f3e1004a200402e4384b6e0172cfa51ffcc4e12e92e92c68c1d8eb42d5dfb5226492348c9b5b4ac330eb233e6c844c142c960545dd3622c682dd208c3d000c08209efa06dfd358ae5e1d99c04b31cca3a9d006ede87ca796572ca5616333d6eef4662ddab7b4672f97936e3f8f48b8c362390a6580a4ac8cc8a1346cb53a5c003b369117f10a4aec94d0a430e505cba407a0bfa44186502ca1d7302d57b9767d7f183b992b51cb47f786a34d77eaf1937e19d1c714f64b88c42cbb074b01cbfd26ee4d0d5b48ab9e9292e4005eceff009478b596a62941219e86b63a53a8f386cd9191414ae648cc5ade8db3c109ee8b9c715f140984c6aa512400acc2a0964eb56b83dbf68d3e066e6082404970c33667142486edada33588924559ecacd4019acc3573a7a45e7b278839bc39ac9491c855ca4d5d29a9620825a9a4767072786797f5df4e9ace2b66a30d308f7a08131cc357842d4bed0d12d4348ead33cada03f6832f82a0bcc12699839ca742402090ff00168f329c55972294410588dc69477fc11e87c6b894c9644b4cb3ce3956066a8ba72b5c86eb53b571d8bc3cb42e64cc8921342952c254091ef64e6b93a96ac6535b34834544f565f743546aeedbfde084a145014a2e439c8fad9ddba83ea346800f3a8d7f361126550052e7290ee353f2d0c60d1d7c7349b6d0e9d35468051370d63ddc930a44b4e6fe62dc0a3025c86b03b68750f0d9a84864853d1dc50d2a497b7ec3c855ce198292f415cd5ab54fef14a36b413e4a76f61d3ca544048605923607776ee752c6059f462080038a38eff310ec2cf3562c18387f78d80716b9af7893153980000277b817dfbc249c5d1972494a3900a8a9342e356fbc352b2414bdcdb7d042673b9d3589d1872957380e4512e2e6cff9b46da4728295472f134e9605ab77fda3b2f0aa50e54927b3c55aa2324405305e1d2b0c524837dec5aafd480dd6387085ca494020ff0050fbfc2f5116782c2a4a9394e721824ba51566a9e81ab5eb12e511e37a60082a6ce41ca9672454697a1a97fc06090d325a7283450170c97240ebf6f38b09bc3824a9095032f289a83a148290b4b917ccae9a768184a9899cb9400484a944e51d335e8d76140066688916b8d69d7fd1bc4e52a5a4ca523dd007f514bab3075684258302454f68b0f67882801d054bf1121d21c0ca9502e455c81a8aa6e0c0d89c29016a0ca094e658528073a6500b9353f08afc3ac90e8591949705ff0050ca48ab02c348232d5892790663a64b54c529897d489849a0b90c3d23b0078c534ce43695a4280d2dfa353809c262532a4812b95d65dcaf29ba9407290ea0e1a86fcad037135a84a51083e212820e6512520a4a770a767cc0f4378b0e2a94256908968096010145b3b8fe80404bb1a003de76a88a6e272959579949242464398a8b8b97777a91ad40eb096499d6f1946efb0ce3f8993365227212d9263288a3a5614e5fba81ff00314c2423c4965614d94acb06565f75219ee4babd20638bcc896289f0f212e5c28e60cab50e52e77bf77a19132604ea40045adb0eb0e6fc8b8a36927d59363b2954b484e54249203b96d7980a9760f4a352eeef1d2c94a8aa8e181bb0a0e87e1530197f10967cac3605eace37fa43d0b05659240486a87249625dad400537d23371b5b3aa1356d25dbafe81ac864b4a019d828921dc3d4b06603e30dc69999d04a52c5c0abb7fa73576a778970588972d6b4ac256953165248ab54bb3a6a10fa4331388191331810161c8a161ca08069a3ef5bc4a8ed31ce6a9c578f44ea28390a11e1aaf314a739c2b40872e19fd212a7a95460928365660a068e0b1d08fcd7a89d3140176d32d03077ad2ec6fdb6888cc6ccc37a1a8a1dd80be5eb58ce4f266bc69c5536188ce0e8a24d52df21faa8ad2059d3c864a25ac3b7bc094ecc01b51b6d1c43c2d4593a9a83fd5d7a163a6d0a762878802c1ca400aeac6aab54e9d691115be8de4fe1a74453254c0405390a6297ad2a330ca3562dbd22eb86ad2974ad0a5ad24784a13112d4963cb954a47357290936cb016271e54ec3330eec2a6829bd9a06c26202579d292542adb2ae92c694a7da2d49dfa3394138d376cf5fe078d4cf929980281aa4851054149394b90055c6c3b083f20da331ecc7b4426a4a573332f330190860e7de5b9492431b263531d49dab3c99c71934c1f1b273214ca085351640213d48378f15e393261094907c22a2412017362acc07ba59d83375a18f68c7f1295243cd989406fd46a7b0b98f29f6a78819ca3954b4ca528a920a72d000372c2c40eaf47a92950a3c79746511332b9a3d83f4e906ca5bcb09245fd7bd5eef11a70c1239833541739ab60ccd13e194a531ca962ec48d8f335da8633934d59bf1c1a74ff00a15b894d69aee2d1182ec29f4ef1638b9e84928602f57723b743106164a54a2a495b0d807ea2a58535f368a8cbe36ce7e48a73a4ec8f0f2a624948196a9beb7cbd4f94198ac1152da80b90f6008f2de8ccfeb0109cd33317a5803ad8f317d1ea35853a79528306e9f4b6ef038c9cac9724a18d793830e1248510f561bf5b798827842f2acaf384b170a3a1adbafca025a9599f67b7d2202635c6d559cdbbb2c97310ea484070f5a2ac6f6b56065cee51cc5c306d1852fe5102563e06dbc2425c87b6a7e7028d062828e34adbc419c27ab3bee469487c950ce024a9208a30cd5cb50dd4fde0329d8fc3f2d48225aa81920e5bb9eb7bbc149740f6cb9ce1d4a9a5ce553155c970e961a049703700bb342c4714438cb6219dca69d58f306a3107e915d2c2d482e4100d98926b72740e695be9580800f7eda7ccc64e2a4dd9a2934951753f8b4c528b384114d4b07fd4c3527d4ef15bc2b11e1ac15a3327324949d59409f838f3876192e5c1034048bda8dac168c28209cd968e97b937662c2df94814a31d054aed2b1dff00324ba8a854a946a2b55121f986863900cd564252565c5e90a36c88ce5e8d04ce2085932d494d0d084b66167d4ebee8019e9d12d683ca02cbbe6052a2e19c5480cd7f5d03c54619056c32a9414aa1a02ec59ab453bdcd60b2a988026151672338720a9d885d696ed5d2309277b3d1838f8fd2ff00253a5425a8268594ca06b6550fa65df58b19212899352963984b297db5edccd4ee229f8bad466a8921d81a060e3a76884cd524e6ceaf758548a6d7b3e91a76bf665f64bf4cb9c328d5440752b303a0009a91ae97da3b8149512a6f796a576150f150999952194a0c9fea37edb42913169486510e37223392d33a61c894937ebfb9a09f24a40995e5352354ea6d4a31ff006c0b895b4ae5a68763cd42da522b8e2165c788a63421fe62033314000e59f7dab685183f21cbcd1dd2ed1aa9b358672c1d24f43a0f577fbc572b88a988a04e6cc054ef4af7bb4542e7a8d493eb588d730ee5f52e6b0e1c697667c9f53293f8e8bc97c40e605567a7e7e5e2554c51981ce6cb40285ea2c7a803e3bc502145ef13226107de20ece60941781c39e4d54bd9a64ca0b6607355c8a7c76899529240505d4002beef624b01d3b46791895ffd457f710610c4ac9233af2ed98fde30c25eceb5cf1f469141594805934a39671ab6f78d7fb1dc495e24b9614b5850578814688342141cdae35358f3142d63ff00b8af53f78761316b44c0a75120d398bf9178be3b467cd28cd75b3d77db8c227209c50a265a5905297292540bda9a32ba1dc3f9962312b565cca0026d4ddaea17ee768bf9bc4a6996a69b3540a6a3c45ea2a284d6b1e7f3d6b26ead59c9ed1ac95b3938e548bb9e7350855ae06a6079f89283c8e3972d53a1beb437803c4253552bfb8fe3440a98773e64fe3c28c5743e5e4f28202c82e49aea2f05a38832324b9757a12028fa017a9f58a65acee4f9c7028ee7d635714fb39632947a35384c285cb19ca7352b9c272862c1b5552c368892a972d272e76531cce85161fe9a1bbdfa6d19bf1156cc7d4c3c1245cbdee633c3db3472c9245c2f112d9aa5c92f40c2ac18021cef0222412e5292db11a1b7ca0143b8afc6084e3943dd52bc898beba3150fc93f82def299857773a344c898948a9a1b802a6d473a38f8456cdc42945d44926e4d4fac46564ea61f6b64b8ec3973055998e8d5158e210fcc4d35d22bf31dcfac1699ab40a28d459cb3186dd7418e8b52b98064c85af51e869ad0f981b43311870567297b04a6a5468ccc4d2b46368ac46317fd47f29f284bc512acd994fbbb13e910a2d32949d51672e6250ce15d0a5419c6afa1be947b188312149582aa8201be86054973df789b2e6352c3a9768a50a76373b544ff00c423fad47ba95f685017866143c57b2297a357c2912d0a403990a4af954a4be64922c82e08012ae603bde34cb932d495a42824175a28e824e4ce85248715622ac0aed4ae0978f98b0904b64f759dc5aaefd2fd4e91733f8dada5928974b10145e8502eaeba35835a89b3a229f832bc4d396603604333bb0234d5b6ec2209aa74a1edbf6a7ad209e2a8e6363415b1b457e6395bafde1476827a93d04cf5dc070ea6f898d0fb03c125e3718244d2b0832d4a74100ba59aa52695da32e576ef1bbff8387ffaa27ffc333ff8c142cd8e9f85e0282b489b8d2a492962124660e3fa3711854249c832a8bbb002e761bc6e38bfb5381578d2d3c2252567c44899e2d429d490b6f0ea41e667f38b99ded04dc1704e1cb9012262cad216a485142732cab283472c2bb0801b3cbd328939520a955a00eaa5e803c42054ee2e36e863d87053d1238661f108c7270733153173274f187338cd9854b265b8042024b86ff416fd4e2f11181c7710e1a0cd4ce98b046255e0ae489e129cf2d652a480cb2950a3b853580802ed9e5c8429b38072db331cbb5d99e91d5ab9c3f6f9c7b5af8ec9462e6ca9fc490b900ae5af05fc0ad908008ca141249090012a6292013404378cf1112c4e98252b34a0b3e1aaae5014ac86b5f758d6b0bc94a5a37380f67f0323052719c40cd578e5a5cb92c185482554ab07b8bb318a7e2d82c24cc522560264c2899901f1011956a20302c0b070e5b76260de03edaccc3615187c5e11389c192af0fc44b595cc12a50295e524b0b8347019aef8ce193c3788e0e6e08aa5271894a5529401284aa64acc965b94b8229705258b504b894a75b662f8ff000c56127af0eb20aa5e57521f29cc94ac31203d143d200964819995941f798b03b6666bc7a37b5fc49589e348e1b3d60e1533e5108ca91532925b30198e62b526a7f5f4105e27dacc6238a8c12654b18713132861fc31cd2c903c41476ca4aa9ca05c50c18a452e46cc662716512d0a4a89043737e5768afe1585cf8cc3cb98839264f969505382a42e6252a1bb104871bc7a4e03072e462f8acc932d331784968561a5b384a96852d4c917629090d501c6b192c0fb618bc6627052f1052b4271b29495896905fc49632e6019921560c7983bd21b5666a5569157ed9f0e97271f8895291965a14908402a2dfcb42b573724f9c67142b50dd23dc7da5030c8e218cc1244cc5e7089eb3ef61a5e44394218b8ca12a7eae5c2328f0d9d35c925ca897528924926a49275261a443decf4097ecdf0b9581c2e2b16bc5255884da51410142a6850e037530a7fb1386462387cd933153f058b9894b2f9563562521370f60082931718de2b87c3f06e1a7118346282924252a5e4092012fee977b452e0fdad5e378870e9624a24489339025ca965c07a392c1d8060c035778a24cc7b61c3d3231b89972a594ca97372a7de29486142a2fbea758a84a8bd05e8d727a523dbb86fb4b3a6f1a9f805841c290b4f85912c484852944b3a8a8953825ab68cd7b2e3f83e1dc43198696956265620c942d49ce65ca065f33765a893ab0770968068f3528293954920ec4107d0c5bf11f66e6c9c2c8c528a4a310f9529cd9d395df3029616d0c6e17c4a6e3783cec5e2b2aa7616621587c47869492acc874b0194d4e5a06a870e9827dabf6b7189e11829a268cf890b4ce564432c10a0cd95934d9a011e55864296484851203b24134b587788a65091b47a8715e2d3785f0de1c302132862258993a6e44a8ae614a159495023f52ae1d9200663047b413e4266f08e258ac381327027112d08aac84a724cc9a94a9492c5c90522ac200a3c9d52ca58ad0a00d4382337624561cb9c498f54f6c7113b1b82c4cec3711462b0a99895ae52a4a65cc929049094a8a412050d402420b1350af26862685080784f0f49a758620d44b0d5a30a5ab48330d21459d048259c8601efcecce3ef0ee1dc3d736c424060544b6961a92c23452a5ca95ca9582e1aab70e0390ced520963414348c3979d47e2b6cd78b8652f974bf266f152322d49331c83564923c8b428b59920b965cf21e8525c1ecedf210a33fe6669fc5f829672d19f95c248a137fcd3ca2e30b8644e51cd3482940344a955721980d00edcfd22aa74c7401e1a43327331770d4db4f8bc5c7b3d3c00b20cb4ac8e5cc3a65090417fff00b68eaa56619333bc5119662924bb501a8b0ea018ae316b8c94b98b52b296087357605ae7b98adc8694869036df623ee8ef165ecff1d9b829c27c8cbe20494f327306533d1c6d15fe19b36b1df015fd2610c536695a94a375124b52a4927e71618de3d3a6e1a4e11651e14824cb64b2aaeeea7adce9022309308242091f7ff10bfe5d33fa0fcfe50ad0f193e916fecffb638ac1a0cb9650b94a2e65cd405a01fea02841ec5ba443c67da4c4e2e72274d9873a034bc832096c5c6402c5d8bbbb815a080cf069c2e86ee40fac4c3834d61cbaee3d1de25ca3eca5092f05fa7fe25f102829cd2c2c8ca6689491348ef6ff00b631e7dedff0c5ba3d9c9d7f0d406e5923d544433fe504280b9d1883f105be30648307e4b9e0bff11f1d869499293296840647888cc50058029526834778a3e33c7311899dfc44e9a553014e5218640924a4200a000d7b9ab9305a380cc3eec951ee523e2e60d95c026ffd203cc1f8bc52df484d576c878ffb678bc6a1089c11c8b0b0b42324c2a4852412a074cc4d00ac5ee07fe23711f0c214a495b65130ca1e201d55eebebeefc60793c027692ffee4fcb34163814e1532cff723ff002878b26d14184c7e330d3ce224ad62639ccb242bc4cc4121693ef026b5abd686b07715f6c71d883254bf08093353350944b4806620ba545c956f4043bc5a2382cf3988965800f54d89efd207c4fb3f3d258ca23fdc8ffca27cd0eb565361bdaec6cac54dc5a54913268698928fe5a80000743dc350bea77319dc4a8ad4a5654a5c9395032a52e5d923415a0d2362be0337fe99fee4fde075fb3f32a3c3a8d9497f9c30a453710e3d3e6e1e4616614f8721fc364b2aa1aaa7ad203e1d8e5c89b2e74b6cf29616970e1c59c45eaf804c1796b07674fde223ececd3607cca3ef00a8870bed462518d5639393c7515124a39398653cafb758e704f69f15849ab9b2561266126620a73256e49aa0ec49620821ef0f3ececfb84381b948ffe50c57b3d8815f054a1ba4850f504c30d137b47ed8e2f1a94a2729225a4b8972d3910ff00d443924d752c3489386fb6f8b93853844f86a94ca09f11199480b7cd954e355135767da9150ac02d24ba143d212304aa9293b0a03f10610171ecf7b738cc1cbf065ad0b962a944c4e70837394b822b56767d2f0262bdadc5ccc5a316b9af39079094a72a05795286602a7aeaef58006055dbbd3e30e4f099a6a329df9d21bc8910c28b8e35edd62f13295255e14b96b2f304a9611e21a1e72e49a81b3eb1978b54f049a47b87a553eb7af94355c1e6d790d36afc042ca218b7e0ac89b0ca48502a0e3682070c9962923f3a430e1543f490d7fa6b05a684d3468311c4908484225a4ba41a3a59c07a7df67da29df3100a8f997687959342901b4ebd7ad61a6497fcefe70a1051439ca7308ca7fea8fee23eb0a064ca56f1c878a27e41d2b0aa530651248a0617e913a785ac1a860d62a63dd9dfd62d1381580e507293ef14900eaeea0079c3a6e1503de9a84b59895f76c808f5311b7d33a7e11f000be14861d9dca4a83ea029f6d5b788656125b15177eac01bbd0f46d7f626662242794ae74c0096ca1281f12a3f010d471a09494cbc3a58ff005152bd41e5f840a32aec338a7692224489655ca527a5332af50343f58b1fe0e6366f0f20d0ad92dd94a6a747302489f8b98724a5e51729434b1e8961eb00ce9242c8510a2f5295383fee06b038a6e814df745c2e64b039e64a0406394667eec9ca48afead623fe2a57ba133567a108146bfbdb6f01c9c33b323cebf58b093c395faedf9f68171a07ccdf938316b1ee225a68ceaccb201a6f97e1124af1954f1263359202074f740f9c5848c02125d9cf5307213a02df58d571a30972365661f83aa85730f9873ea493f18b191c3658d0a8ee49f94152e5eff282125880c6bb5a9b9b08749137262448006800f268270c8142eef5d3e910e5750398b0fd3a1ef47f289fc30a4e5a807549623b34592d050416f79bb37d5e193f106ce2b6a472420a125e61539775353d008131a82a20f88ad084a480edbee3a421969c348522693d05b673e711cefe64acc0732287cbeacd13f06e6925c10e4d084b9a0714a6f026044c13081300047ba52e97a1dddc07142d5b473c9edb5e0de3158a4fc8015b317f31f0f2ef11ac960c5f576ab7988763e578534b964901831033137d5a8c2f095f1d83796b1a2926ad19b4d3a205177e5aec5c7ca079b8714a11b100b528cf1319c1d4c416bb17e67662c5dc51e3816faa496e673573debe6d0c4c0ca14c4e7346150e6be5686001e806eefb75d2269eba80c962eeacd51b3268f7de94a1d3ab0f55327a9a1b59bd34856d698e955822d09986ae4d8924bf67f281a7f0f4a882948093a163deac47568331080e5882cd649005016724b9ebd63b2e51297f1001a072f6bb3bf4f584e5e4315d1533b86a5c6501b5b83ea1c79340cbe1a9d09fed25bce2dd739a84a8805c55afeb0d33d245455fafda2d12ca15e1c268260ffb87ed1d4aa60a059a7fa89f818ba4096a2028801ee52ff204c37f87492c00ee3a9a5c3c0229d3899835f51132388af54a09ecc7e1164b9093d7cb4ef03af080fe9f4afd616286a525d32038a06f2d34b6527ea4c3c4e947312829240b65229d1beb587a30634591ddc5e271c1662bdd5255d969858a294e5ec1f34ad95fd9fbc289bfff003d88fe8579149f942858a1e720144c592ea566efafac7312cae90c408794155caa96724863b08ba2320232c3e9e9584b92cb01945342f6a7c479d60e12520d476ff105658311a90148e1e49a14e5a7bd7dd8da9168a929cd9920206c2a3d76fcd621528086a16731dac037d5e0aa0c9f41465f324e62181a518dabde90524ec20043b3fccc1520a98b01d1de973a11a0f9c3ba1256168104a1f680652c82494829670c6aa3b1b01a005e0bc329c39190b0bd7e4f6862084ccb0d7417a6ff002823c46a1710161e5842b31fe61a8048e66fe90a0451d8b1f58226cd4206751ca901cb9b5ae7a7d215d8da4ba274cd07563da269135473721001604915dcb69114bcaa095000d1c2abaecf0a6e2b2d0bf92547ff00d53487f927f04d39449039aa0d40b36e48681d680e41aef5f8b08e7f1de2241212855f2005c77727e2c62212ab46f209efde177b1bd68d270c912fc248ca0b02c5b3115240cc5ceb15129465cccc1c805c79dc3c68b089099697b0034b467b89484033149d72ac9d7653f937ef1ce9acdfe4e997d8bf059f1691e24b7cae43160cfd4027cc46789214f9d4ccc125881e6c0fac68f85624ad3949729d7a454f14c278730a85976a960da35b5d21713c64e0c5cab28e4805ddd807006b7ec09f97a40788c54a496514851b0721cbb1a03f010412069e55fa181711954a00a01d4299fe7aeb48e86bc1927e58c38a4ebe950deb78531443a992cf4e649df4075da2354a482c4a807af2915d694df588944076529b623ec777168544e474625cb8517b6846eccd0b3f37fea10d662dd74223931695000dc5851bd5fcfeb101c339f75c9d0073e578742b1ea203bacbd8e9dfcbca235203d17a6a453d44128594b8704d99480ed57a905bcbbde20277005684006a3fcfe3c1b0d0c585839739001b3b81d69f486a89d5495777a0f38ea901cbbfa014d9800c3d61b9129357ea41fa1e9bc141f81aa9abd87937da3b26756a97adaff23f8d0d32d2f42407a391f18e2e4b6a4d2e083f110020b44da8e5a0d18fec7e30e5a527dd4b1dc397f5efb6915ce7425c75ed689173565c92ef573f182869862736eaf5850278e46fff006fde14048c54b48a66255d1272ff00716f934301a80dbc34af688ccc2efd189e9b7687b41a64e56905943b8b1fac7264dcdee8cbf1efafed02158725b99ea753e70c5cc3d7d47d6115fa0b4ac01505477a7c7fc4391394e08019f530225446dfe62444ceff00b8ff00220187859abb9a826a59c79b374b44c58dc7a8ef6a7780c2ea2a5f4bf957ce1fe29d9c5f6219bef0206dbecb596adce95ff1b5a264a88b3d3f3f3e91582728d2d5abf90f4efa41b82428b1397e57fad8f943ba128b6594951fcb44ea08520216106bab6624d6cf50c2cc77780e6a16842b229056472ba9c3f93b0fac2e1de284ff00372bff00a4bbef46001fbc1f75341b8da6127192d044bb1a00024fd036bf187c991956b999d5cd5297a0a0d3c9a264b7e6b0c5335cf94525eccd896b7d6225124d028bb0674fc1cf5d63aa34a57a98978783e221cb92a15e83486fa1c7b349271d2e92dd255405008243ee36eb155c7d29394a824a1949219c12cfeeb351bf68bf4300ff0086297daa47f26d4cc091a9d7e2408e14d2e45677495f1ba06e093f2be65252684beba302e18dbce2c78a61f3cb25b9921c74dfe119842504a553032520ba54fcce350017f383f198454f5cb9880af0d1432d65690bff005338deece623ea1a84d4cbfa68ae48e0dd15cb5eeff9ac02a98eb295258311ddfabd0f96b12e364cf44c2851ca8980b140cc525ecea7340fbf940882b450a94bd9ca7a90771b37c047471f26714fc1872f1c78db57b5f82550962c357a1f8b7e5a2292251532d6a4a6e484b907ccd602998d25dc11d59c9a96bf6ac4d225aa615042496ad435af5b38ef1a980e9cb0f4512e6e5c12d524fac242412e55940a160fe63b5ea6d012d6fd3d7614fda9f38894ba8bf77bd7d452015d32dc61d531ccbe600805ed5b1a9d5a20c54a5a0e5989506b93b7cbd7ed01059b94fea7147f43e95893c640146722b46a915b75856ec75ec90ad0c5b6a6a6bf9686aca4b5fc8c0ea9ba337c7f3e758ea31094a5c8a176a54815237d61f42a72e89d22eea0186e07ce1f875b1b02d7a03f307e510e18a5480b42b295382ed4ab6e48ee59f3535872f0e8a6724815749abebdcfce17614d0462312162832d4bb040049a170122bf2d204cad416fcfca41588c300a74e721a8660624b68428f5da059a737717fbb7e5a08a4ba1c9b7d9d4b7e34286d3bfa428aa15a033ad5e1aa859adf9f18e2b7fdc4310d52f57ac3017a4380045fede71d2004873cdda8cdf37e9e71233b2ebf5dba37a44c95b3558313f7fcf9c4014d773fe6a62596a7bdaf6a0dea5bf0c03094ae8f77eb47d3e348273a8b3d5bd01d2fa7e6903210087512328e86bd83b8fbc1929053a33804f5ea2bac3a1592e190544242492761f32371162990a4919814f450234fbb9ff00100489ad98d8b35287d41f563a45999e5679a62010000ea00b30a00039bc175b7d0d2cb4bb1d2cd3f1bf2b0420c552f89cbe412e626695162cacb94df5bf95b783e44cce1d99c5a9e9471e9149a644a2d7616161abf9e5bc316a737f52c3d6224e3972c109922628d1d4a609a5065d7bbc42bc4299d4539af4a07ed026ee81a557625f1096f932cd5aa809083913b97a156acdfd304707999a625913286eb484ea03f2a8e849d1b58156b76722c6b7208ff1161c1100cc7cc69b2c8d4d373da224a936d97195b49235a011fa400e598ddf7a52bde2bb8fa0aa4aa9e8a666a820b54b80d689b03834a56a299aa599aaa052ca827a07261625489892e33067ca0dfa479f39632bfd1df049aa314bc34c284a961401ca5e590038014e9214486346f7b94c69f834f0b495672b36d28c6c030df5ac65f0f3f33d81ab87f740d09d4b0a97378b1e01894a2629394d589538ebf616de3ab9a1971bb3978a58f22a2e78de084c96745279926cc47ece2326a90950a4c96c453f9b2e87b668dd0980960413193f6824a02f302902659542e41650bf46f38e4fa59b4dc0eafa8845a5276ccce270caaeba38636bb10f47d61d809fe1227063fcc979535629d096d4d46d044d39bdce675519ead7008ec47908131095172c6eec490da52b1e8d5ad9c12d3d04a65ff2ff00f556ec1d2b4802ed4751b9b30f4d005100821d40d08559f5b11a9b86b8878c4108c85092ca25ca6a374f6a0f581552c9a80f5a7a3f99bfe5222317bb2a7254a84e972599cbeb4af7b3c5962a7e1d52c044b5ca5a775660a73bd08f4de00449528004102a492f700b77dada8110a0efa5d887d3cbf0c538a64c64e24d2a4ad659092a55e952d6b5fe14874c42d25968296d0a58ef517b4468c228a8001892c0abdd156f78da2d3018697317917e299841398292a1caee49533061bc0d895bd20144c66e44901dea6ba8765089933ab503706a1bf1fe1e8ec5600a4b27c4218be6c85b5a6552ae2b77f286e170f38282a5cb98ec2c851a6ec0545368135e06d3f282b0fc5d72e885b8b3292155a59fa9e97887158f52c9529201e941b4771dc42728244d52f9746cbb5580028fb6b0f9537c2490a44b5a0db3a2a2faa4b8a8147d6dac42493dad96db6b4f40497d02bfb8c287f880d729affee3f16ac763432000c4b0a39b69e7f9a42ca075a57f0c2851424309034ad01fced1c04966f5e957850a0192302e9cb514bfdfe7de25989d09ea0d5ea48dbf1a1428902612d89d81e6df6bfafa6b05c9700daa76b35fe3f0850a1a130b4a4e8deeb1d296b3b6b1289295382849ad5c0e9f7850a2c447ff002d977c89af4d20d94a094f28603e1f823b0a1a131c1561d683cdaf07f0b981066ab32d0d2165d201526a8629a8a8bdc7710a142974344b2f8aa41f7d65592527c552559d79092a2a089a83cd9801ce7dc1981d27e0f8e4ac4c482accb52d6e121225e720e540cc484a9b983d28cf57e428ca7d334e3ed17b2e712b496a05a55958f2801981330a6afa253467a881c21909428ab97282cec0015a67626b450093bbc721479fc927b3ba115666d5c49295212a330094b485c80078534a6667337367b970594925d3768991c680580264c9abfe6a44c5a4254153123220739e5490492f75160d0a1477afb51c4fee65ca3185695039d442258351efa68a555572c79ae758a1c7fb3c572e60ccee4a824be4cd61ca0ddee7577850a3c7e7e492e4d1ebf045606770f86228c949ce430a397034a51c55a23c4d0b100904e62294bd1bf2d6ac76147b116ffb1e54d2b7fb04988b924b77f75ddbbd768e29233647651600b121c50d6e21428a320de1b8c992f3844c08218552e0915adeb5351a8817198d3315cea2a206a05c9e82cee77850a2525653e8b1e1dc517210c9018b90140109aba998be86ef58831bc60cc049480a74f30480454b8a5c51abdd842850ff008e360a4e8ae2b52d052a75252a7ca4d028dcb6f7a830760e7ad00152e604a0e93083b0b03f9b47614124a869b1d8ee24b5aaa55928c852d53123fb883ac172d78520054b65245729557c8d214284f8d576cce4f6132e560587f3660e8c7ff1850a14713cbdb343ffd9, 0, '2022-06-10 10:28:20', '2022-06-10 10:28:20');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `userId` int(11) NOT NULL,
+  `userType` int(11) NOT NULL DEFAULT 1,
+  `phoneNumber` varchar(10) NOT NULL,
+  `email` varchar(500) NOT NULL DEFAULT '',
+  `coins` int(11) NOT NULL DEFAULT 0,
+  `balance` int(11) NOT NULL DEFAULT 0,
+  `dateOfBirth` varchar(50) NOT NULL DEFAULT '',
+  `gender` varchar(20) NOT NULL DEFAULT '',
+  `displayPicture` varchar(1000) DEFAULT '',
+  `firstName` varchar(30) NOT NULL DEFAULT '',
+  `lastName` varchar(30) NOT NULL DEFAULT '',
+  `address` varchar(1000) DEFAULT '',
+  `city` varchar(50) NOT NULL DEFAULT '',
+  `pinCode` varchar(10) DEFAULT NULL,
+  `state` varchar(50) NOT NULL DEFAULT '',
+  `country` varchar(50) NOT NULL DEFAULT '',
+  `imageStamp` varchar(100) DEFAULT NULL,
+  `isVerified` tinyint(1) NOT NULL DEFAULT 0,
+  `isPhoneVerified` tinyint(1) NOT NULL DEFAULT 1,
+  `isEmailVerified` tinyint(1) NOT NULL DEFAULT 0,
+  `registerTime` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`userId`, `userType`, `phoneNumber`, `email`, `coins`, `dateOfBirth`, `gender`, `displayPicture`, `firstName`, `lastName`, `address`, `city`, `pinCode`, `state`, `country`, `imageStamp`, `isVerified`, `isPhoneVerified`, `isEmailVerified`, `registerTime`) VALUES
-(1, 1, '9712491369', 'dhruvmaradiya0@gmail.com', 380, '2004/10/18', 'male', NULL, 'Dhruv', 'Maradiya', NULL, '', NULL, '', '', NULL, 0, 1, 0, '2022-05-03 04:59:14'),
-(2, 1, '9662066991', '', 490, '', '', '', '', '', '', '', NULL, '', '', NULL, 0, 1, 0, '2022-05-03 07:26:06');
+INSERT INTO `users` (`userId`, `userType`, `phoneNumber`, `email`, `coins`, `balance`, `dateOfBirth`, `gender`, `displayPicture`, `firstName`, `lastName`, `address`, `city`, `pinCode`, `state`, `country`, `imageStamp`, `isVerified`, `isPhoneVerified`, `isEmailVerified`, `registerTime`) VALUES
+(1, 1, '9712491369', 'dhruv.maradiya@gmail.com', 140, 210, '2004/10/18', 'male', NULL, 'Dhruv', 'Maradiya', 'p-1/304, opera prince', 'suart', '394190', 'gujarat', 'India', 'eyJ1c2VySWQiOjEsInRpbWUiOjE2NTQ4NTMyNzg1OTN9', 0, 1, 0, '2022-05-03 04:59:14');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_team_data_new`
+--
+
+CREATE TABLE `user_team_data_new` (
+  `userTeamId` int(11) NOT NULL,
+  `playerId` int(11) NOT NULL,
+  `isCaptain` int(11) NOT NULL DEFAULT 0,
+  `isViceCaptain` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `user_team_data_new`
+--
+
+INSERT INTO `user_team_data_new` (`userTeamId`, `playerId`, `isCaptain`, `isViceCaptain`) VALUES
+(26, 125, 0, 0),
+(26, 626, 1, 0),
+(26, 638, 0, 1),
+(26, 641, 0, 0),
+(26, 679, 0, 0),
+(26, 684, 0, 0),
+(26, 687, 0, 0),
+(26, 689, 0, 0),
+(26, 691, 0, 0),
+(26, 694, 0, 0),
+(26, 697, 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_team_likes`
+--
+
+CREATE TABLE `user_team_likes` (
+  `userTeamId` int(11) NOT NULL,
+  `userId` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_team_new`
+--
+
+CREATE TABLE `user_team_new` (
+  `userTeamId` int(11) NOT NULL,
+  `matchId` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `userTeamType` int(11) NOT NULL,
+  `userTeamPoints` float DEFAULT NULL,
+  `userTeamViews` int(11) NOT NULL DEFAULT 0,
+  `userTeamLikes` int(11) NOT NULL DEFAULT 0,
+  `creationTime` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `user_team_new`
+--
+
+INSERT INTO `user_team_new` (`userTeamId`, `matchId`, `userId`, `userTeamType`, `userTeamPoints`, `userTeamViews`, `userTeamLikes`, `creationTime`) VALUES
+(26, 131, 1, 1, 544, 0, 0, '2022-06-09 14:58:53');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_team_views`
+--
+
+CREATE TABLE `user_team_views` (
+  `userTeamId` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `viewCount` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_type`
+--
+
+CREATE TABLE `user_type` (
+  `userType` int(11) NOT NULL,
+  `userTypeString` varchar(30) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `user_type`
@@ -19747,6 +21502,26 @@ INSERT INTO `users` (`userId`, `userType`, `phoneNumber`, `email`, `coins`, `dat
 INSERT INTO `user_type` (`userType`, `userTypeString`) VALUES
 (2, 'EXPERT'),
 (1, 'GENERAL');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `venues`
+--
+
+CREATE TABLE `venues` (
+  `venueId` int(11) NOT NULL,
+  `venueName` varchar(500) DEFAULT NULL,
+  `venueCapacity` int(11) DEFAULT NULL,
+  `venueCity` tinytext DEFAULT NULL,
+  `venueRadarId` int(11) NOT NULL,
+  `venueCountry` varchar(50) DEFAULT NULL,
+  `venueCountryCode` varchar(20) DEFAULT NULL,
+  `venueMapCardinalities` varchar(100) DEFAULT NULL,
+  `venueEnd1` varchar(100) DEFAULT NULL,
+  `venueEnd2` varchar(100) DEFAULT NULL,
+  `logTime` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `venues`
@@ -19780,9 +21555,655 @@ INSERT INTO `venues` (`venueId`, `venueName`, `venueCapacity`, `venueCity`, `ven
 (29, 'Queen\'s Park', 7000, 'London', 19847, 'England', 'ENG', '51.533800,-0.202600', 'Lake End', 'Pavilion End', '2022-06-06 15:01:11'),
 (30, 'Stanley Park', 8000, 'Blackpool', 19841, 'England', 'ENG', '53.814678,-3.029211', NULL, NULL, '2022-06-06 15:01:12'),
 (31, 'Southend Club Cricket Stadium', NULL, 'Karachi', 36777, 'Pakistan', 'PAK', NULL, 'End 1', 'End 2', '2022-06-06 15:01:36'),
-(32, 'Vra Cricket Ground', 4500, 'Amstelveen', 30165, 'Netherlands', 'NLD', '52.319444,4.849058', 'City End', 'Mulder\'s End', '2022-06-06 15:02:20');
-COMMIT;
+(32, 'Vra Cricket Ground', 4500, 'Amstelveen', 30165, 'Netherlands', 'NLD', '52.319444,4.849058', 'City End', 'Mulder\'s End', '2022-06-06 15:02:20'),
+(33, 'Feroz Shah Kotla', 48000, 'Delhi', 19681, 'India', 'IND', '28.637778,77.243056', 'Stadium End', 'Pavilion End', '2022-06-09 13:33:03'),
+(34, 'Barabati Stadium', 45000, 'Cuttack', 25146, 'India', 'IND', '20.481111,85.868611', 'Mahanadi River End', 'Pavilion End', '2022-06-09 13:33:03'),
+(35, 'Dr. Y. S. Rajasekhara Reddy Stadium', 38000, 'Visakhapatnam', 24996, 'India', 'IND', '17.797483, 83.352061', 'Vizzy End', 'DV Subba Rao End', '2022-06-09 13:33:03'),
+(36, 'Saurashtra Cricket Association Stadium', 28000, 'Rajkot', 19679, 'India', 'IND', '22.363000,70.710000', 'Media End', 'Pavilion End', '2022-06-09 13:33:04'),
+(37, 'M.chinnaswamy Stadium', 40000, 'Bangalore', 19691, 'India', 'IND', '12.978806,77.599556', 'Pavilion End', 'BEML End', '2022-06-09 13:33:04');
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `balanceHistory`
+--
+ALTER TABLE `balanceHistory`
+  ADD PRIMARY KEY (`transactionId`),
+  ADD KEY `userId` (`userId`),
+  ADD KEY `transitionSource` (`transitionSource`);
+
+--
+-- Indexes for table `balanceSource`
+--
+ALTER TABLE `balanceSource`
+  ADD PRIMARY KEY (`sourceId`);
+
+--
+-- Indexes for table `coinHistory`
+--
+ALTER TABLE `coinHistory`
+  ADD PRIMARY KEY (`transactionId`),
+  ADD KEY `userId` (`userId`),
+  ADD KEY `transferToWhere` (`spendSource`);
+
+--
+-- Indexes for table `coinsRewardsMapping`
+--
+ALTER TABLE `coinsRewardsMapping`
+  ADD UNIQUE KEY `coins` (`coins`,`reward`);
+
+--
+-- Indexes for table `coinTransitSource`
+--
+ALTER TABLE `coinTransitSource`
+  ADD PRIMARY KEY (`sourceId`),
+  ADD UNIQUE KEY `sourceName` (`sourceName`);
+
+--
+-- Indexes for table `competitors`
+--
+ALTER TABLE `competitors`
+  ADD PRIMARY KEY (`competitorId`),
+  ADD UNIQUE KEY `competitorRadarId` (`competitorRadarId`);
+
+--
+-- Indexes for table `discussion`
+--
+ALTER TABLE `discussion`
+  ADD PRIMARY KEY (`discussionId`),
+  ADD KEY `match` (`matchId`),
+  ADD KEY `messenger` (`messengerId`),
+  ADD KEY `teamCreater` (`userId`);
+
+--
+-- Indexes for table `inning_batsmans`
+--
+ALTER TABLE `inning_batsmans`
+  ADD UNIQUE KEY `scorcardInningId` (`scorcardInningId`,`playerId`),
+  ADD KEY `relation_scorcardInning_player` (`playerId`);
+
+--
+-- Indexes for table `inning_batting`
+--
+ALTER TABLE `inning_batting`
+  ADD PRIMARY KEY (`scorcardInningId`);
+
+--
+-- Indexes for table `inning_bowlers`
+--
+ALTER TABLE `inning_bowlers`
+  ADD UNIQUE KEY `scorcardInningId_2` (`scorcardInningId`,`playerId`),
+  ADD KEY `scorcardInningId` (`scorcardInningId`);
+
+--
+-- Indexes for table `inning_bowling`
+--
+ALTER TABLE `inning_bowling`
+  ADD PRIMARY KEY (`scorcardInningId`);
+
+--
+-- Indexes for table `match_lineup`
+--
+ALTER TABLE `match_lineup`
+  ADD UNIQUE KEY `matchId` (`matchId`,`competitorId`,`playerId`),
+  ADD KEY `match_lineup_competitor` (`competitorId`),
+  ADD KEY `match_lineup_playerId` (`playerId`);
+
+--
+-- Indexes for table `match_players`
+--
+ALTER TABLE `match_players`
+  ADD UNIQUE KEY `matchId` (`matchId`,`competitorId`,`playerId`),
+  ADD KEY `competitorId` (`competitorId`),
+  ADD KEY `playerId` (`playerId`);
+
+--
+-- Indexes for table `match_status`
+--
+ALTER TABLE `match_status`
+  ADD PRIMARY KEY (`statusId`);
+
+--
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`notificationId`),
+  ADD KEY `userNotification` (`userId`),
+  ADD KEY `notificationType` (`notificationType`);
+
+--
+-- Indexes for table `notification_type`
+--
+ALTER TABLE `notification_type`
+  ADD PRIMARY KEY (`notificationType`);
+
+--
+-- Indexes for table `playerImages`
+--
+ALTER TABLE `playerImages`
+  ADD PRIMARY KEY (`ucPlayerId`);
+
+--
+-- Indexes for table `players`
+--
+ALTER TABLE `players`
+  ADD PRIMARY KEY (`playerId`),
+  ADD UNIQUE KEY `playerRadarId` (`playerRadarId`),
+  ADD KEY `relation_player_role` (`playerRole`),
+  ADD KEY `relation_batting_style` (`playerBattingStyleId`),
+  ADD KEY `relation_bowling_style` (`playerBowlingStyleId`);
+
+--
+-- Indexes for table `player_batting_style`
+--
+ALTER TABLE `player_batting_style`
+  ADD PRIMARY KEY (`playerBattingStyleId`),
+  ADD UNIQUE KEY `battingStyleString` (`battingStyleString`);
+
+--
+-- Indexes for table `player_bowling_style`
+--
+ALTER TABLE `player_bowling_style`
+  ADD PRIMARY KEY (`playerBowlingStyleId`),
+  ADD UNIQUE KEY `playerBowlingStyleString` (`playerBowlingStyleString`);
+
+--
+-- Indexes for table `player_roles`
+--
+ALTER TABLE `player_roles`
+  ADD PRIMARY KEY (`roleId`);
+
+--
+-- Indexes for table `player_statistics_batting`
+--
+ALTER TABLE `player_statistics_batting`
+  ADD UNIQUE KEY `playerId` (`playerId`,`type`);
+
+--
+-- Indexes for table `player_statistics_bowling`
+--
+ALTER TABLE `player_statistics_bowling`
+  ADD UNIQUE KEY `playerId` (`playerId`,`type`);
+
+--
+-- Indexes for table `scorcard_details`
+--
+ALTER TABLE `scorcard_details`
+  ADD PRIMARY KEY (`scorcardId`),
+  ADD UNIQUE KEY `matchId` (`matchId`),
+  ADD KEY `manOfMatch` (`manOfMatch`),
+  ADD KEY `tossWonBy` (`tossWonBy`);
+
+--
+-- Indexes for table `scorcard_innings`
+--
+ALTER TABLE `scorcard_innings`
+  ADD PRIMARY KEY (`scorcardInningId`),
+  ADD UNIQUE KEY `scorcardId` (`scorcardId`,`inningNumber`);
+
+--
+-- Indexes for table `team_type`
+--
+ALTER TABLE `team_type`
+  ADD PRIMARY KEY (`teamType`);
+
+--
+-- Indexes for table `tournament_category`
+--
+ALTER TABLE `tournament_category`
+  ADD PRIMARY KEY (`categoryId`),
+  ADD UNIQUE KEY `categoryRadarId` (`categoryRadarId`),
+  ADD UNIQUE KEY `categoryString` (`categoryString`);
+
+--
+-- Indexes for table `tournament_competitor`
+--
+ALTER TABLE `tournament_competitor`
+  ADD PRIMARY KEY (`tournamentCompetitorId`),
+  ADD UNIQUE KEY `UNIQUE_TOURNAMENT_COMPETITOR` (`competitorId`,`tournamentId`),
+  ADD KEY `relation_tournament` (`tournamentId`);
+
+--
+-- Indexes for table `tournament_competitor_player`
+--
+ALTER TABLE `tournament_competitor_player`
+  ADD PRIMARY KEY (`tournamentCompetitorPlayerId`),
+  ADD UNIQUE KEY `UNIQUE_COMPETITOR_PLAYER` (`tournamentCompetitorId`,`playerId`),
+  ADD KEY `relation_player_playersTable` (`playerId`);
+
+--
+-- Indexes for table `tournament_information`
+--
+ALTER TABLE `tournament_information`
+  ADD PRIMARY KEY (`tournamentId`),
+  ADD UNIQUE KEY `tournamentRadarId` (`tournamentRadarId`),
+  ADD UNIQUE KEY `currentSeasonRadarId` (`currentSeasonRadarId`),
+  ADD UNIQUE KEY `UNIQUE_TOURNAMENT_SEASON` (`currentSeasonRadarId`,`tournamentRadarId`),
+  ADD KEY `relation_tournament_category` (`tournamentCategory`),
+  ADD KEY `relation_tournament_type` (`tournamentMatchType`);
+
+--
+-- Indexes for table `tournament_matches`
+--
+ALTER TABLE `tournament_matches`
+  ADD PRIMARY KEY (`matchId`),
+  ADD UNIQUE KEY `matchRadarId` (`matchRadarId`),
+  ADD KEY `relation_match_status` (`matchStatus`),
+  ADD KEY `relation_match_competitor1` (`competitor1`),
+  ADD KEY `relation_match_competitor2` (`competitor2`),
+  ADD KEY `relation_match_venue` (`venueId`),
+  ADD KEY `relation_match_tournament` (`matchTournamentId`),
+  ADD KEY `tossWonBy` (`tossWonBy`);
+
+--
+-- Indexes for table `tournament_type`
+--
+ALTER TABLE `tournament_type`
+  ADD PRIMARY KEY (`tournamentTypeId`),
+  ADD UNIQUE KEY `tournamnetTypeString` (`tournamnetTypeString`);
+
+--
+-- Indexes for table `userBankDetails`
+--
+ALTER TABLE `userBankDetails`
+  ADD PRIMARY KEY (`userId`),
+  ADD UNIQUE KEY `AccountNumber` (`AccountNumber`),
+  ADD UNIQUE KEY `UPIId` (`UPIId`);
+
+--
+-- Indexes for table `userPanDetails`
+--
+ALTER TABLE `userPanDetails`
+  ADD PRIMARY KEY (`userId`),
+  ADD UNIQUE KEY `panCardName` (`panCardName`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`userId`,`phoneNumber`),
+  ADD UNIQUE KEY `phone_number` (`phoneNumber`),
+  ADD KEY `user_type` (`userType`);
+
+--
+-- Indexes for table `user_team_data_new`
+--
+ALTER TABLE `user_team_data_new`
+  ADD UNIQUE KEY `userTeamId` (`userTeamId`,`playerId`),
+  ADD KEY `user_team_data_new_ibfk_1` (`playerId`);
+
+--
+-- Indexes for table `user_team_likes`
+--
+ALTER TABLE `user_team_likes`
+  ADD UNIQUE KEY `userTeamId` (`userTeamId`,`userId`),
+  ADD KEY `relation_userTeamLikes_usersTable` (`userId`);
+
+--
+-- Indexes for table `user_team_new`
+--
+ALTER TABLE `user_team_new`
+  ADD PRIMARY KEY (`userTeamId`),
+  ADD UNIQUE KEY `matchId` (`matchId`,`userId`,`userTeamType`),
+  ADD KEY `userId` (`userId`),
+  ADD KEY `userTeamType` (`userTeamType`);
+
+--
+-- Indexes for table `user_team_views`
+--
+ALTER TABLE `user_team_views`
+  ADD UNIQUE KEY `userTeamId` (`userTeamId`,`userId`),
+  ADD KEY `relation_userId_usersTbale` (`userId`);
+
+--
+-- Indexes for table `user_type`
+--
+ALTER TABLE `user_type`
+  ADD PRIMARY KEY (`userType`),
+  ADD UNIQUE KEY `userTypeString` (`userTypeString`),
+  ADD UNIQUE KEY `userTypeString_2` (`userTypeString`);
+
+--
+-- Indexes for table `venues`
+--
+ALTER TABLE `venues`
+  ADD PRIMARY KEY (`venueId`),
+  ADD UNIQUE KEY `venueRadarId` (`venueRadarId`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `balanceHistory`
+--
+ALTER TABLE `balanceHistory`
+  MODIFY `transactionId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `balanceSource`
+--
+ALTER TABLE `balanceSource`
+  MODIFY `sourceId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `coinHistory`
+--
+ALTER TABLE `coinHistory`
+  MODIFY `transactionId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+
+--
+-- AUTO_INCREMENT for table `coinTransitSource`
+--
+ALTER TABLE `coinTransitSource`
+  MODIFY `sourceId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `competitors`
+--
+ALTER TABLE `competitors`
+  MODIFY `competitorId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+
+--
+-- AUTO_INCREMENT for table `discussion`
+--
+ALTER TABLE `discussion`
+  MODIFY `discussionId` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `match_status`
+--
+ALTER TABLE `match_status`
+  MODIFY `statusId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `players`
+--
+ALTER TABLE `players`
+  MODIFY `playerId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=797;
+
+--
+-- AUTO_INCREMENT for table `player_batting_style`
+--
+ALTER TABLE `player_batting_style`
+  MODIFY `playerBattingStyleId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `player_bowling_style`
+--
+ALTER TABLE `player_bowling_style`
+  MODIFY `playerBowlingStyleId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+
+--
+-- AUTO_INCREMENT for table `player_roles`
+--
+ALTER TABLE `player_roles`
+  MODIFY `roleId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `scorcard_details`
+--
+ALTER TABLE `scorcard_details`
+  MODIFY `scorcardId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=141;
+
+--
+-- AUTO_INCREMENT for table `scorcard_innings`
+--
+ALTER TABLE `scorcard_innings`
+  MODIFY `scorcardInningId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=281;
+
+--
+-- AUTO_INCREMENT for table `team_type`
+--
+ALTER TABLE `team_type`
+  MODIFY `teamType` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `tournament_category`
+--
+ALTER TABLE `tournament_category`
+  MODIFY `categoryId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `tournament_competitor`
+--
+ALTER TABLE `tournament_competitor`
+  MODIFY `tournamentCompetitorId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+
+--
+-- AUTO_INCREMENT for table `tournament_competitor_player`
+--
+ALTER TABLE `tournament_competitor_player`
+  MODIFY `tournamentCompetitorPlayerId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=919;
+
+--
+-- AUTO_INCREMENT for table `tournament_information`
+--
+ALTER TABLE `tournament_information`
+  MODIFY `tournamentId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `tournament_matches`
+--
+ALTER TABLE `tournament_matches`
+  MODIFY `matchId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=216;
+
+--
+-- AUTO_INCREMENT for table `tournament_type`
+--
+ALTER TABLE `tournament_type`
+  MODIFY `tournamentTypeId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `userId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `user_team_new`
+--
+ALTER TABLE `user_team_new`
+  MODIFY `userTeamId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+
+--
+-- AUTO_INCREMENT for table `user_type`
+--
+ALTER TABLE `user_type`
+  MODIFY `userType` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `venues`
+--
+ALTER TABLE `venues`
+  MODIFY `venueId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `balanceHistory`
+--
+ALTER TABLE `balanceHistory`
+  ADD CONSTRAINT `balanceHistory_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`),
+  ADD CONSTRAINT `balanceHistory_ibfk_2` FOREIGN KEY (`transitionSource`) REFERENCES `balanceSource` (`sourceId`);
+
+--
+-- Constraints for table `coinHistory`
+--
+ALTER TABLE `coinHistory`
+  ADD CONSTRAINT `coinHistory_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `coinHistory_ibfk_2` FOREIGN KEY (`spendSource`) REFERENCES `coinTransitSource` (`sourceId`);
+
+--
+-- Constraints for table `discussion`
+--
+ALTER TABLE `discussion`
+  ADD CONSTRAINT `match` FOREIGN KEY (`matchId`) REFERENCES `tournament_matches` (`matchId`),
+  ADD CONSTRAINT `messenger` FOREIGN KEY (`messengerId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `teamCreater` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `inning_batsmans`
+--
+ALTER TABLE `inning_batsmans`
+  ADD CONSTRAINT `relation_scorcardInning` FOREIGN KEY (`scorcardInningId`) REFERENCES `scorcard_innings` (`scorcardInningId`) ON DELETE CASCADE,
+  ADD CONSTRAINT `relation_scorcardInning_player` FOREIGN KEY (`playerId`) REFERENCES `players` (`playerId`);
+
+--
+-- Constraints for table `inning_batting`
+--
+ALTER TABLE `inning_batting`
+  ADD CONSTRAINT `inning_batting_ibfk_1` FOREIGN KEY (`scorcardInningId`) REFERENCES `scorcard_innings` (`scorcardInningId`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `inning_bowlers`
+--
+ALTER TABLE `inning_bowlers`
+  ADD CONSTRAINT `inning_bowlers_ibfk_1` FOREIGN KEY (`scorcardInningId`) REFERENCES `scorcard_innings` (`scorcardInningId`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `inning_bowling`
+--
+ALTER TABLE `inning_bowling`
+  ADD CONSTRAINT `inning_bowling_ibfk_1` FOREIGN KEY (`scorcardInningId`) REFERENCES `scorcard_innings` (`scorcardInningId`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `match_lineup`
+--
+ALTER TABLE `match_lineup`
+  ADD CONSTRAINT `match_lineup_competitor` FOREIGN KEY (`competitorId`) REFERENCES `competitors` (`competitorId`),
+  ADD CONSTRAINT `match_lineup_matchId` FOREIGN KEY (`matchId`) REFERENCES `tournament_matches` (`matchId`),
+  ADD CONSTRAINT `match_lineup_playerId` FOREIGN KEY (`playerId`) REFERENCES `players` (`playerId`);
+
+--
+-- Constraints for table `match_players`
+--
+ALTER TABLE `match_players`
+  ADD CONSTRAINT `match_players_ibfk_1` FOREIGN KEY (`matchId`) REFERENCES `tournament_matches` (`matchId`),
+  ADD CONSTRAINT `match_players_ibfk_2` FOREIGN KEY (`competitorId`) REFERENCES `competitors` (`competitorId`),
+  ADD CONSTRAINT `match_players_ibfk_3` FOREIGN KEY (`playerId`) REFERENCES `players` (`playerId`);
+
+--
+-- Constraints for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD CONSTRAINT `notificationType` FOREIGN KEY (`notificationType`) REFERENCES `notification_type` (`notificationType`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `userNotification` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `players`
+--
+ALTER TABLE `players`
+  ADD CONSTRAINT `relation_batting_style` FOREIGN KEY (`playerBattingStyleId`) REFERENCES `player_batting_style` (`playerBattingStyleId`),
+  ADD CONSTRAINT `relation_bowling_style` FOREIGN KEY (`playerBowlingStyleId`) REFERENCES `player_bowling_style` (`playerBowlingStyleId`),
+  ADD CONSTRAINT `relation_player_role` FOREIGN KEY (`playerRole`) REFERENCES `player_roles` (`roleId`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `player_statistics_batting`
+--
+ALTER TABLE `player_statistics_batting`
+  ADD CONSTRAINT `player_statistics_batting` FOREIGN KEY (`playerId`) REFERENCES `players` (`playerId`);
+
+--
+-- Constraints for table `player_statistics_bowling`
+--
+ALTER TABLE `player_statistics_bowling`
+  ADD CONSTRAINT `player_statistics_bowling_ibfk_1` FOREIGN KEY (`playerId`) REFERENCES `players` (`playerId`);
+
+--
+-- Constraints for table `scorcard_details`
+--
+ALTER TABLE `scorcard_details`
+  ADD CONSTRAINT `relation_scorcardMatch_match` FOREIGN KEY (`matchId`) REFERENCES `tournament_matches` (`matchId`),
+  ADD CONSTRAINT `scorcard_details_ibfk_1` FOREIGN KEY (`manOfMatch`) REFERENCES `players` (`playerId`),
+  ADD CONSTRAINT `scorcard_details_ibfk_2` FOREIGN KEY (`tossWonBy`) REFERENCES `competitors` (`competitorId`);
+
+--
+-- Constraints for table `scorcard_innings`
+--
+ALTER TABLE `scorcard_innings`
+  ADD CONSTRAINT `relation_scordcard_scorcardTable` FOREIGN KEY (`scorcardId`) REFERENCES `scorcard_details` (`scorcardId`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `tournament_competitor`
+--
+ALTER TABLE `tournament_competitor`
+  ADD CONSTRAINT `relation_tournament` FOREIGN KEY (`tournamentId`) REFERENCES `tournament_information` (`tournamentId`),
+  ADD CONSTRAINT `relation_tournament_competitor` FOREIGN KEY (`competitorId`) REFERENCES `competitors` (`competitorId`);
+
+--
+-- Constraints for table `tournament_competitor_player`
+--
+ALTER TABLE `tournament_competitor_player`
+  ADD CONSTRAINT `relation_player_playersTable` FOREIGN KEY (`playerId`) REFERENCES `players` (`playerId`),
+  ADD CONSTRAINT `relation_tournamentCompetitor` FOREIGN KEY (`tournamentCompetitorId`) REFERENCES `tournament_competitor` (`tournamentCompetitorId`);
+
+--
+-- Constraints for table `tournament_information`
+--
+ALTER TABLE `tournament_information`
+  ADD CONSTRAINT `relation_tournament_category` FOREIGN KEY (`tournamentCategory`) REFERENCES `tournament_category` (`categoryId`),
+  ADD CONSTRAINT `relation_tournament_type` FOREIGN KEY (`tournamentMatchType`) REFERENCES `tournament_type` (`tournamentTypeId`);
+
+--
+-- Constraints for table `tournament_matches`
+--
+ALTER TABLE `tournament_matches`
+  ADD CONSTRAINT `relation_match_competitor1` FOREIGN KEY (`competitor1`) REFERENCES `competitors` (`competitorId`),
+  ADD CONSTRAINT `relation_match_competitor2` FOREIGN KEY (`competitor2`) REFERENCES `competitors` (`competitorId`),
+  ADD CONSTRAINT `relation_match_status` FOREIGN KEY (`matchStatus`) REFERENCES `match_status` (`statusId`),
+  ADD CONSTRAINT `relation_match_tournament` FOREIGN KEY (`matchTournamentId`) REFERENCES `tournament_information` (`tournamentId`),
+  ADD CONSTRAINT `relation_match_venue` FOREIGN KEY (`venueId`) REFERENCES `venues` (`venueId`),
+  ADD CONSTRAINT `tournament_matches_ibfk_1` FOREIGN KEY (`tossWonBy`) REFERENCES `competitors` (`competitorId`);
+
+--
+-- Constraints for table `userBankDetails`
+--
+ALTER TABLE `userBankDetails`
+  ADD CONSTRAINT `userBankDetails_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`);
+
+--
+-- Constraints for table `userPanDetails`
+--
+ALTER TABLE `userPanDetails`
+  ADD CONSTRAINT `userPanDetails_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`);
+
+--
+-- Constraints for table `users`
+--
+ALTER TABLE `users`
+  ADD CONSTRAINT `user_type` FOREIGN KEY (`userType`) REFERENCES `user_type` (`userType`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `user_team_data_new`
+--
+ALTER TABLE `user_team_data_new`
+  ADD CONSTRAINT `user_team_data_new_ibfk_1` FOREIGN KEY (`playerId`) REFERENCES `players` (`playerId`),
+  ADD CONSTRAINT `user_team_data_new_ibfk_2` FOREIGN KEY (`userTeamId`) REFERENCES `user_team_new` (`userTeamId`);
+
+--
+-- Constraints for table `user_team_likes`
+--
+ALTER TABLE `user_team_likes`
+  ADD CONSTRAINT `relation_userTeamLikes_userTeamTable` FOREIGN KEY (`userTeamId`) REFERENCES `user_team_new` (`userTeamId`),
+  ADD CONSTRAINT `relation_userTeamLikes_usersTable` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`);
+
+--
+-- Constraints for table `user_team_new`
+--
+ALTER TABLE `user_team_new`
+  ADD CONSTRAINT `user_team_new_ibfk_1` FOREIGN KEY (`matchId`) REFERENCES `tournament_matches` (`matchId`),
+  ADD CONSTRAINT `user_team_new_ibfk_2` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`),
+  ADD CONSTRAINT `user_team_new_ibfk_3` FOREIGN KEY (`userTeamType`) REFERENCES `team_type` (`teamType`);
+
+--
+-- Constraints for table `user_team_views`
+--
+ALTER TABLE `user_team_views`
+  ADD CONSTRAINT `relation_userId_usersTbale` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`),
+  ADD CONSTRAINT `relation_userTeamViews_userTeamTable` FOREIGN KEY (`userTeamId`) REFERENCES `user_team_new` (`userTeamId`);
+COMMIT;

@@ -283,23 +283,6 @@ class MatchStatistics {
           return bowler;
         });
 
-        // this.pitchReport.topPlayersAtVenue.batsman =
-        //   this.pitchReport.topPlayersAtVenue.batsman.map((batsman) => {
-        //     const player = this.players.find((player) => {
-        //       return player.playerId === batsman.playerId;
-        //     });
-        //     batsman = { ...batsman, ...player };
-        //     return batsman;
-        //   });
-        // this.pitchReport.topPlayersAtVenue.bowler =
-        //   this.pitchReport.topPlayersAtVenue.bowler.map((bowler) => {
-        //     const player = this.players.find((player) => {
-        //       return player.playerId === bowler.playerId;
-        //     });
-        //     bowler = { ...bowler, ...player };
-        //     return bowler;
-        //   });
-
         resolve();
       } catch (error) {
         console.log(error.message);

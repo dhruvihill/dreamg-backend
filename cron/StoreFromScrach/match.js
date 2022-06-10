@@ -1612,27 +1612,21 @@ class MatchDaily extends Status {
         const handleStore = () => {
           return new Promise(async (resolveInside, rejectInside) => {
             try {
-              if (this.#isLineUpStored) {
-                await this.handleMatchStatus();
-
-                if (this.status === "ended" || this.status === "closed") {
-                  await this.storeScoreCard();
-                  await this.storePoints();
-                  resolveInside(true);
-                } else {
-                  resolveInside(false);
-                }
-              } else {
-                await this.handleMatchStatus();
-
-                if (this.status === "ended" || this.status === "closed") {
+              await this.handleMatchStatus();
+              if (this.status === "ended" || this.status === "closed") {
+                if (this.#isLineUpStored) {
                   await this.handleLineUpStore();
-                  await this.storeScoreCard();
-                  await this.storePoints();
-                  resolveInside(true);
-                } else {
-                  resolveInside(false);
                 }
+                await this.storeScoreCard();
+                await this.storePoints();
+                resolveInside(true);
+              } else if (
+                this.status === "abandoned" ||
+                this.status === "cancelled"
+              ) {
+                resolveInside(true);
+              } else {
+                resolveInside(false);
               }
             } catch (error) {
               console.log(error);

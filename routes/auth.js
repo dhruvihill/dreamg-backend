@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const { fetchData } = require("../database/db_connection");
+const User = require("../module/User/User");
 // const errors = require("../errorCode");
 
 // Creating user
@@ -13,20 +14,15 @@ router.post("/register", async (req, res) => {
       (phoneNumber.length === 10 || phoneNumber.length === 11) &&
       !/[^0-9]/g.test(phoneNumber)
     ) {
-      // registering user
-      const result = await fetchData("CALL registerUser(?);", [phoneNumber]);
-
-      // creating auth token
-      const jwtData = { user: { userId: result[0][0].userId } };
-      const token = await jwt.sign(jwtData, process.env.JWT_SECRET_KEY);
+      const user = new User();
+      const data = await user.RegisterUser(phoneNumber);
 
       // sending response
       res.status(200).json({
         status: true,
         message: "success",
         data: {
-          authToken: token,
-          userId: result[0][0].userId,
+          ...data,
         },
       });
     } else {
@@ -36,23 +32,6 @@ router.post("/register", async (req, res) => {
       });
     }
   } catch (error) {
-    // sending response
-    // if (error.sqlMessage) {
-    //   if (error.code === "ER_DUP_ENTRY") {
-    //     res.status(error.databaseErrors.handledError.ER_DUP_ENTRY.code).json({
-    //       status: false,
-    //       message: error.databaseErrors.handledError.ER_DUP_ENTRY.message,
-    //       data: {},
-    //     });
-    //     return;
-    //   } else {
-    //     res.status(error.databaseErrors.unhandledError.code).json({
-    //       status: false,
-    //       message: error.databaseErrors.unhandledError.message,
-    //       data: {},
-    //     });
-    //   }
-    // }
     res.status(400).json({
       status: false,
       message: error.sqlMessage ? error.sqlMessage : error.message,
@@ -72,27 +51,14 @@ router.post("/login", async (req, res) => {
     if (regx.test(phoneNumber) || phoneNumber.length !== 10) {
       throw { message: "invalid input" };
     } else {
-      // fetching user details
-      const userDetails = await fetchData(
-        "SELECT userId, phoneNumber, firstName, lastName FROM userdetails WHERE phoneNumber = ?;",
-        [phoneNumber]
-      );
-      if (userDetails.length > 0) {
-        // creating auth token
-        const jwtData = {
-          user: {
-            userId: userDetails[0].userId,
-          },
-        };
-        const token = await jwt.sign(jwtData, process.env.JWT_SECRET_KEY);
+      const newUser = new User();
+      const data = await newUser.LoginUser(phoneNumber);
 
-        userDetails[0].authToken = token;
-
-        // sending response
+      if (data) {
         res.status(200).json({
           status: true,
           message: "success",
-          data: userDetails[0],
+          data,
         });
       } else {
         throw { message: "user does not exists" };
@@ -116,18 +82,18 @@ router.post("/checkUser", async (req, res) => {
   // return true if any other character rather than 0-9
 
   try {
-    const responseQuery =
-      "SELECT userId FROM userdetails WHERE phoneNumber = ?";
     if (regx.test(phoneNumber) || phoneNumber.length !== 10) {
       throw { message: "invalid input" };
     } else {
-      const responseData = await fetchData(responseQuery, [phoneNumber]);
-      if (responseData.length === 1) {
+      const newUser = new User();
+      await newUser.CheckUser(phoneNumber);
+
+      if (newUser.id) {
         // sending response
         res.status(200).json({
           status: true,
           message: "success",
-          data: { userId: responseData[0].userId },
+          data: { userId: newUser.id },
         });
       } else {
         throw { message: "user does not exists" };

@@ -1,6 +1,8 @@
-MOST IMPORTANT
-
-{status: false, message: connect ECONNREFUSED 185.42.117.115:3306, data: {matches: [], predictors: [], news: [], isNotification: 0}}
+Dashboard trending news
+Reedem 
+calculate next match credit when match is cancelled/abandoned --> done but not tested
+filtering matches All/T20/ODI/TEST/T20/ByTeam
+adding enums
 
 avg points of last 5 matches
 points > 100 --> 10.5

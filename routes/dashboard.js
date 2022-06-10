@@ -4,6 +4,7 @@ const verifyUser = require("../middleware/verifyUser");
 const axios = require("axios");
 const { fetchData, imageUrl } = require("../database/db_connection");
 const { convertTimeZone } = require("../middleware/convertTimeZone");
+const MatchStatistics = require("../module/MatchStatistics");
 
 // getting dashboard data upcominng matches, predictors, news and isNotification
 router.get("/", verifyUser, async (req, res) => {
@@ -31,6 +32,14 @@ router.get("/", verifyUser, async (req, res) => {
     const { data } = await axios({
       url: `${serverAddress}/api/v1/userTeams/getTrendingPredictors`,
     });
+
+    // let newMatchStatistics;
+    // if (upcomingMatches.length > 0) {
+    //   newMatchStatistics = new MatchStatistics(upcomingMatches[0].matchId);
+    //   await newMatchStatistics.getMatchDetails();
+    //   await newMatchStatistics.getPitchReport();
+    //   await newMatchStatistics.getFantacyPoints();
+    // }
 
     // changing url to original server
     upcomingMatches.forEach((match) => {
@@ -63,31 +72,6 @@ router.get("/", verifyUser, async (req, res) => {
         `${process.env.TEAM_IMAGE_URL}${match.team2Id}.jpg`,
         serverAddress
       );
-      // match.matchStartDateTime = new Date(
-      //   parseInt(match.matchStartTimeMilliSeconds)
-      // );
-      // match.matchStartDateTime =
-      //   (match.matchStartDateTime.getDate() > 9
-      //     ? match.matchStartDateTime.getDate()
-      //     : "0" + match.matchStartDateTime.getDate()) +
-      //   "/" +
-      //   (match.matchStartDateTime.getMonth() > 8
-      //     ? match.matchStartDateTime.getMonth() + 1
-      //     : "0" + (match.matchStartDateTime.getMonth() + 1)) +
-      //   "/" +
-      //   match.matchStartDateTime.getFullYear() +
-      //   ", " +
-      //   (match.matchStartDateTime.getHours() > 9
-      //     ? match.matchStartDateTime.getHours()
-      //     : "0" + match.matchStartDateTime.getHours()) +
-      //   ":" +
-      //   (match.matchStartDateTime.getMinutes() > 9
-      //     ? match.matchStartDateTime.getMinutes()
-      //     : "0" + match.matchStartDateTime.getMinutes()) +
-      //   ":" +
-      //   (match.matchStartDateTime.getSeconds() > 9
-      //     ? match.matchStartDateTime.getSeconds()
-      //     : "0" + match.matchStartDateTime.getSeconds());
     });
 
     if (data.status) {
