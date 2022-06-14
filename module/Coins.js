@@ -75,7 +75,7 @@ class Coins extends User {
     return new Promise(async (resolve, reject) => {
       try {
         const withdrawalHistory = await fetchData(
-          "SELECT transactionId, transitedBalance, userId, transitionSource, message, balanceSource.sourceName, logTime FROM balanceHistory JOIN balanceSource ON balanceSource.sourceId = balanceHistory.transitionSource WHERE userId = ? AND operation IN (?) ORDER BY logTime;",
+          "SELECT transactionId, transitedBalance, userId, transitionSource, REPLACE(message, '{{money}}', transitedBalance) AS message, balanceSource.sourceName, logTime FROM balanceHistory JOIN balanceSource ON balanceSource.sourceId = balanceHistory.transitionSource WHERE userId = ? AND operation IN (?) ORDER BY logTime;",
           [
             this.id,
             filterBy
@@ -107,7 +107,7 @@ class Coins extends User {
     return new Promise(async (resolve, reject) => {
       try {
         const transationHistory = await fetchData(
-          "SELECT transactionId, spendedCoins, userId, coinHistory.spendSource, REPLACE(message, '{{coins}}', coinHistory.spendSource), coinTransitSource.sourceName, timeZone AS logTime FROM `coinHistory` JOIN coinTransitSource ON coinTransitSource.sourceId = coinHistory.spendSource WHERE userId = ? AND operation IN (?) ORDER BY logTime DESC;",
+          "SELECT transactionId, spendedCoins, userId, coinHistory.spendSource, REPLACE(message, '{{coins}}', coinHistory.spendSource) AS message, coinTransitSource.sourceName, timeZone AS logTime FROM `coinHistory` JOIN coinTransitSource ON coinTransitSource.sourceId = coinHistory.spendSource WHERE userId = ? AND operation IN (?) ORDER BY logTime DESC;",
           [
             this.id,
             filterBy
