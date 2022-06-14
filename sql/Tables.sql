@@ -16780,6 +16780,8 @@ INSERT INTO `match_players` (`matchId`, `competitorId`, `playerId`, `isSelected`
 (215, 37, 231, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04'),
 (215, 37, 233, 0, 0, 0, NULL, '7.5', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, '2022-06-09 13:33:04');
 
+
+-- partition
 -- --------------------------------------------------------
 
 --
@@ -21714,29 +21716,6 @@ INSERT INTO `tournament_matches` (`matchId`, `matchRadarId`, `matchTournamentId`
 --
 -- Triggers `tournament_matches`
 --
-DELIMITER $$
-CREATE TRIGGER `storeCreditsForPlayers` AFTER INSERT ON `tournament_matches` FOR EACH ROW BEGIN
-CALL calculateCreditsForPlayers(NEW.matchId, 1);
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `storePointsForTeamsAndCreditsForPlayers` AFTER UPDATE ON `tournament_matches` FOR EACH ROW BEGIN
-DECLARE isMatchCancelledOrAbandoned BOOL DEFAULT 0;
-IF OLD.isPointsCalculated = 1 AND NEW.isPointsCalculated = 1 THEN
-	CALL storePointsForUserTeams(OLD.matchId);
-	CALL calculateCreditsForPlayers(OLD.matchId, 0);
-    CALL bonusToContestWinners(NEW.matchId);
-ELSE
-        SELECT match_status.statusString IN ('cancelled', 'abandoned') INTO isMatchCancelledOrAbandoned FROM match_status WHERE match_status.statusId = NEW.matchStatus;
-
-        IF isMatchCancelledOrAbandoned = 1 THEN
-            CALL calculateCreditsForPlayers(OLD.matchId, 0);
-        END IF;
-END IF;
-END
-$$
-DELIMITER ;
 
 -- --------------------------------------------------------
 

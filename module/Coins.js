@@ -107,7 +107,7 @@ class Coins extends User {
     return new Promise(async (resolve, reject) => {
       try {
         const transationHistory = await fetchData(
-          "SELECT transactionId, spendedCoins, userId, coinHistory.spendSource, message, coinTransitSource.sourceName, timeZone AS logTime FROM `coinHistory` JOIN coinTransitSource ON coinTransitSource.sourceId = coinHistory.spendSource WHERE userId = ? AND operation IN (?) ORDER BY logTime DESC;",
+          "SELECT transactionId, spendedCoins, userId, coinHistory.spendSource, REPLACE(message, '{{coins}}', coinHistory.spendSource), coinTransitSource.sourceName, timeZone AS logTime FROM `coinHistory` JOIN coinTransitSource ON coinTransitSource.sourceId = coinHistory.spendSource WHERE userId = ? AND operation IN (?) ORDER BY logTime DESC;",
           [
             this.id,
             filterBy
