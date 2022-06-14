@@ -2,12 +2,8 @@ const express = require("express");
 const router = express.Router();
 const verifyUser = require("../middleware/verifyUser");
 const verifyProfile = require("../middleware/verifyProfile");
-const { fetchData, imageUrl } = require("../database/db_connection");
 const upload = require("express-fileupload");
-const {
-  convertTimeZone,
-  convertToYYYYMMDD,
-} = require("../middleware/convertTimeZone");
+const { convertToYYYYMMDD } = require("../middleware/convertTimeZone");
 const User = require("../module/User/User");
 const UserBank = require("../module/User/UserBank");
 const UserPan = require("../module/User/UserPan");

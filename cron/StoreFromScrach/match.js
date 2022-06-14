@@ -1468,7 +1468,12 @@ class MatchDaily extends Status {
             };
 
             (function () {
-              storePlayer(allLineUpPlayers[currentPlayer]);
+              if (allLineUpPlayers.length > 0) {
+                storePlayer(allLineUpPlayers[currentPlayer]);
+              } else {
+                connection.release();
+                throw new Error("No players found");
+              }
             })();
           } else {
             throw new Error("can not store lineup");

@@ -468,7 +468,7 @@ class Tournament {
   }
 }
 
-const a = async (tId) => {
+const storeTournamentByRadarId = async (tId) => {
   return new Promise(async (resolve, reject) => {
     try {
       const tournament = await new Tournament(tId).fetchTournamentDetails();
@@ -483,13 +483,13 @@ const a = async (tId) => {
   });
 };
 const b = async () => {
-  await a("29968");
-  // await a("34354");
-  // await a("15574");
-  // await a("36621");
-  // await a("36503");
-  // await a("36683");
-  // await a("34336");
+  await storeTournamentByRadarId("29968");
+  //   // await storeTournamentByRadarId("34354");
+  //   // await storeTournamentByRadarId("15574");
+  //   // await storeTournamentByRadarId("36621");
+  //   // await storeTournamentByRadarId("36503");
+  //   // await storeTournamentByRadarId("36683");
+  //   // await storeTournamentByRadarId("34336");
 };
 b();
 

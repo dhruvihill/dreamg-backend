@@ -13,7 +13,7 @@ class User {
     lastName: "",
     phoneNumber: "",
     email: "",
-    dateOfBirth: "",
+    dateOfBirth: 0, // milliseconds
     gender: "",
     address: "",
     city: "",
@@ -113,11 +113,22 @@ class User {
   async fetchUserDetails(serverAddress) {
     return new Promise(async (resolve, reject) => {
       try {
-        const userDetailsQuery = `SELECT userdetails.firstName, userdetails.imageStamp, userdetails.lastName, userdetails.phoneNumber, userdetails.email, userdetails.dateOfBirth, userdetails.gender, userdetails.address, userdetails.city, userdetails.pinCode, userdetails.state, userdetails.country, userdetails.coins FROM userdetails WHERE userdetails.userId = ?;`;
+        const userDetailsQuery = `SELECT userdetails.firstName, userdetails.balance, userdetails.imageStamp, userdetails.lastName, userdetails.phoneNumber, userdetails.email, userdetails.dateOfBirth, userdetails.gender, userdetails.address, userdetails.city, userdetails.pinCode, userdetails.state, userdetails.country, userdetails.coins FROM userdetails WHERE userdetails.userId = ?;`;
 
         const [userDetails] = await fetchData(userDetailsQuery, [this.id]);
 
         if (userDetails) {
+          // userDetails.dateOfBirth
+          const dateArray = userDetails.dateOfBirth.split("/");
+          if (dateArray.length === 3) {
+            userDetails.dateOfBirth = new Date(
+              dateArray[0],
+              dateArray[1],
+              dateArray[2]
+            ).getTime();
+          } else {
+            userDetails.dateOfBirth = 0;
+          }
           this.userDetails = userDetails;
           this.userDetails.displayPicture = imageUrl(
             __dirname,
@@ -136,7 +147,6 @@ class User {
     });
   }
 
-  // not tested
   async uploadProfileImage(image) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -216,7 +226,6 @@ class User {
     });
   }
 
-  // not tested
   async updateUserDetails(userDetails) {
     return new Promise(async (resolve, reject) => {
       try {

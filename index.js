@@ -32,6 +32,7 @@ app.use("/api/v1/userTeams", require("./routes/matchDetails"));
 app.use("/api/v1/userTeams", require("./routes/userTeamDetails"));
 app.use("/api/v1/notification", require("./routes/notification"));
 app.use("/api/v1/matches", require("./routes/matches"));
+app.use("/api/v1/coins", require("./routes/coins"));
 app.get("*", (req, res) => {
   res.status(404).json({
     message: "page not found",

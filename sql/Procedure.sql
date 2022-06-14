@@ -1,4 +1,74 @@
 DELIMITER $$
+CREATE PROCEDURE `bonusToContestWinners`(IN `matchId` INT)
+BEGIN
+DECLARE finished BOOLEAN DEFAULT 0;
+DECLARE sourceId INTEGER(5) DEFAULT 0;
+DECLARE defaulteCoins INTEGER(5) DEFAULT 0;
+DECLARE minimumTeamRequired INTEGER(5) DEFAULT 0;
+DECLARE sourceName TEXT(100);
+DECLARE totalCreatedTeams INTEGER(11) DEFAULT 0;
+
+DEClARE contest CURSOR FOR SELECT coinTransitSource.sourceId, coinTransitSource.defaulteCoins, coinTransitSource.minimumTeamRequired, coinTransitSource.sourceName FROM coinTransitSourceType JOIN coinTransitSource ON coinTransitSource.sourceType = coinTransitSourceType.typeId WHERE coinTransitSourceType.typeName = "BONUS_FOR_WINNING_CONTEST";
+
+DECLARE CONTINUE HANDLER FOR NOT FOUND
+BEGIN
+SET finished = 1;
+END;
+
+START TRANSACTION;
+
+SELECT COUNT(userTeamDetails.userTeamId) INTO totalCreatedTeams FROM userTeamDetails WHERE userTeamDetails.matchId = matchId;
+
+OPEN contest;
+
+nextContest: LOOP FETCH contest INTO sourceId, defaulteCoins, minimumTeamRequired, sourceName;
+IF finished = 1 THEN 
+	LEAVE nextContest;
+END IF;
+
+IF totalCreatedTeams >= minimumTeamRequired THEN
+    BEGIN
+        DECLARE finishedInside BOOLEAN DEFAULT 0;
+        DECLARE currentTeam INTEGER(11) DEFAULT 0;
+        DECLARE currentUserId INTEGER(11) DEFAULT 0;
+
+        DEClARE teams CURSOR(targetColumn TEXT(100)) FOR SELECT userTeamDetails.userTeamId, userTeamDetails.userId FROM `userTeamDetails` WHERE userTeamDetails.matchId = matchId ORDER BY IF(targetColumn = 'views', userTeamViews, IF(targetColumn = "likes", userTeamLikes, IF(targetColumn = "points", userTeamPoints, userTeamPoints))) DESC LIMIT 10;
+
+        DECLARE CONTINUE HANDLER FOR NOT FOUND
+        BEGIN
+        SET finishedInside = 1;
+        END;
+        IF sourceName = "BONUS_FOR_WINNING_CONTEST_MOST_POPULAR" THEN
+            OPEN teams('points');
+        ELSEIF sourceName = "BONUS_FOR_WINNING_CONTEST_MOST_LIKED" THEN
+            OPEN teams('likes');
+        ELSEIF sourceName = "BONUS_FOR_WINNING_CONTEST_MOST_VIEWED" THEN
+            OPEN teams('views');
+        END IF;
+
+        nextTeam: LOOP FETCH teams INTO currentTeam, currentUserId;
+            IF finishedInside = 1 THEN 
+                LEAVE nextTeam;
+            END IF;
+
+            IF sourceName = "BONUS_FOR_WINNING_CONTEST_MOST_POPULAR" THEN
+                CALL transitCoins(currentUserId, 0, "BONUS_FOR_WINNING_CONTEST_MOST_POPULAR", currentTeam);
+            ELSEIF sourceName = "BONUS_FOR_WINNING_CONTEST_MOST_LIKED" THEN
+                CALL transitCoins(currentUserId, 0, "BONUS_FOR_WINNING_CONTEST_MOST_LIKED", currentTeam);
+            ELSEIF sourceName = "BONUS_FOR_WINNING_CONTEST_MOST_VIEWED" THEN
+                CALL transitCoins(currentUserId, 0, "BONUS_FOR_WINNING_CONTEST_MOST_VIEWED", currentTeam);
+            END IF;
+       END LOOP;
+       CLOSE teams;
+    END;
+END IF;
+END LOOP nextContest;
+CLOSE contest;
+COMMIT;
+END$$
+DELIMITER ;
+
+DELIMITER $$
 CREATE PROCEDURE `calculateCreditsForPlayers`(IN `matchId` INT, IN `creditForThisMatch` BOOLEAN)
 BEGIN
 DECLARE playerCredit DECIMAL(20, 1) DEFAULT 7.5;
@@ -504,7 +574,7 @@ END;
 
 DECLARE EXIT HANDLER FOR SQLEXCEPTION
 BEGIN
-ROLLBACK TO SAVEPOINT beforeInsertOrUpdate;
+/* ROLLBACK TO SAVEPOINT beforeInsertOrUpdate; */ /* throwing error of SAVEPOINT beforeInsertOrUpdate is not defined */
 RESIGNAL;
 END;
 
@@ -591,6 +661,9 @@ INSERT INTO user_team_data_new (user_team_data_new.userTeamId, user_team_data_ne
 INSERT INTO user_team_data_new (user_team_data_new.userTeamId, user_team_data_new.playerId) VALUES (lastInsertId, player10);
                         
 INSERT INTO user_team_data_new (user_team_data_new.userTeamId, user_team_data_new.playerId) VALUES (lastInsertId, player11);
+
+CALL transitCoins(userId, 0, 'CREATE_TEAM', lastInsertId);
+
 SELECT "success" AS message;
 COMMIT;
 /* end insert */
@@ -713,11 +786,14 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE `transitCoins`(IN `userId` INT, IN `coinsToBeTransit` INT ZEROFILL, IN `coinTransitSource` TINYTEXT)
+CREATE PROCEDURE `transitCoins`(IN `userId` INT, IN `mappingId` INT ZEROFILL, IN `coinTransitSource` TINYTEXT, IN `teamId` INT)
 BEGIN
 DECLARE coinTransitSourceId INT DEFAULT 0;
 DECLARE defaulteCoinsOfSource INT DEFAULT NUll;
 DECLARE operation TINYTEXT DEFAULT "";
+DECLARE isTeamRequired BOOL DEFAULT 0;
+DECLARE isIncrementRequired BOOL DEFAULT 0;
+DECLARE message TEXT(500);
 
 DECLARE EXIT HANDLER FOR SQLEXCEPTION
 BEGIN
@@ -730,40 +806,76 @@ SAVEPOINT beforeUpdate;
 
 IF EXISTS(SELECT * FROM userdetails WHERE userdetails.userId = userId) THEN
 
-SELECT coinTransitSource.sourceId, coinTransitSource.defaulteCoins, coinTransitSource.operation INTO coinTransitSourceId, defaulteCoinsOfSource, operation FROM coinTransitSource WHERE coinTransitSource.sourceName = coinTransitSource;
+SELECT coinTransitSource.sourceId, coinTransitSource.defaulteCoins, coinTransitSource.operation, coinTransitSource.requiredTeam, coinTransitSource.isIncrementRequired, coinTransitSource.incrementBy, coinTransitSource.message INTO coinTransitSourceId, defaulteCoinsOfSource, operation, isTeamRequired, isIncrementRequired, @incrementBy, message FROM coinTransitSource WHERE coinTransitSource.sourceName = coinTransitSource;
 
 IF coinTransitSourceId != 0 THEN
 
-IF ISNULL(defaulteCoinsOfSource) != 1 THEN
-	SET coinsToBeTransit = defaulteCoinsOfSource;
+IF isTeamRequired = 1 THEN
+	IF isNull(teamId) = 1 OR teamId = 0 THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'invalid input';
+    END IF;
+ELSE 
+	SET teamId = NULL;
 END IF;
+
+/*IF ISNULL(defaulteCoinsOfSource) != 1 THEN
+	SET coinsToBeTransit = defaulteCoinsOfSource;
+END IF;*/
 
 IF operation != "" THEN
 	IF operation = "+" THEN
-    	UPDATE users SET users.coins = users.coins + coinsToBeTransit WHERE users.userId = userId;
-        INSERT INTO coinHistory(`spendedCoints`, `userId`, `spendSource`) VALUES (coinsToBeTransit, userId, coinTransitSourceId);
-        COMMIT;
+    	IF coinTransitSource = "DAILY_APP_OPEN" THEN
+        	IF EXISTS(SELECT * FROM coinHistory WHERE coinHistory.userId = userId AND coinHistory.spendSource = coinTransitSourceId AND DATEDIFF(coinHistory.timeZone, NOW()) = 0) = 1 THEN
+            	SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Today\'s streak already received';
+            ELSE 
+            	SET @DayNumber = 0;
+                SET @DayDifference = 0;
+                SELECT DATEDIFF(NOW(), coinHistory.timeZone) AS difference, coinHistory.dayNumber INTO @DayDifference, @DayNumber FROM coinHistory WHERE coinHistory.userId = userId AND coinHistory.spendSource = coinTransitSourceId ORDER BY coinHistory.timeZone DESC LIMIT 1;
+                
+                IF @DayDifference = 1 THEN
+                	IF @DayNumber = 7 THEN
+                    	SET @DayNumber = 0;
+                    ELSE 
+                		SET defaulteCoinsOfSource = defaulteCoinsOfSource + (@DayNumber * @incrementBy);
+                    END IF;
+                ELSE 
+                	SET @DayNumber = 0;
+                END IF;
+                UPDATE users SET users.coins = users.coins + defaulteCoinsOfSource WHERE users.userId = userId;
+        		INSERT INTO coinHistory(`spendedCoins`, `userId`, `spendSource`, `teamId`, `dayNumber`) VALUES (defaulteCoinsOfSource, userId, coinTransitSourceId, teamId, @DayNumber + 1);
+                INSERT INTO `notifications`(`userId`, `notificationType`, `notificationMessage`) VALUES (userId, 1, REPLACE(message, '{{coins}}', defaulteCoinsOfSource));
+        		COMMIT;
+            END IF;
+        ELSE 
+        	UPDATE users SET users.coins = users.coins + defaulteCoinsOfSource WHERE users.userId = userId;
+        	INSERT INTO coinHistory(`spendedCoins`, `userId`, `spendSource`, `teamId`) VALUES (defaulteCoinsOfSource, userId, coinTransitSourceId, teamId);
+            INSERT INTO `notifications`(`userId`, `notificationType`, `notificationMessage`) VALUES (userId, 1, REPLACE(message, '{{coins}}', defaulteCoinsOfSource));
+        	COMMIT;
+        END IF;
     ELSEIF operation = "-" THEN        
-    	SELECT SUM(coinHistory.spendedCoints) INTO @usersSupposedCoins FROM coinHistory WHERE coinHistory.userId = userId;
+    	SELECT SUM(coinHistory.spendedCoins) INTO @usersSupposedCoins FROM coinHistory WHERE coinHistory.userId = userId;
         SELECT users.coins INTO @usersActualCoins FROM users WHERE users.userId = userId;
         
-        IF @usersSupposedCoins = @usersActualCoins AND @usersActualCoins > coinsToBeTransit THEN
+        IF @usersSupposedCoins = @usersActualCoins /*AND @usersActualCoins > coinsToBeTransit*/ THEN
         	IF coinTransitSource = "REEDEM" THEN
-            	SET @coinsToRewardMap = 0;
-            	SELECT coinsRewardsMapping.reward INTO @coinsToRewardMap FROM coinsRewardsMapping WHERE coinsRewardsMapping.coins = coinsToBeTransit;
-                IF @coinsToRewardMap != 0 THEN
+            	SET @coinsToRewardMapBalance = 0;
+                SET @coinsToRewardMapCoins = 0;
+            	SELECT coinsRewardsMapping.reward, coinsRewardsMapping.coins INTO @coinsToRewardMapBalance, @coinsToRewardMapCoins FROM coinsRewardsMapping WHERE coinsRewardsMapping.mappingId = mappingId;
+                IF @coinsToRewardMapBalance != 0 AND @coinsToRewardMapCoins != 0 AND @usersActualCoins > @coinsToRewardMapCoins THEN
                 	SET @balanceSource = (SELECT balanceSource.sourceId FROM balanceSource WHERE balanceSource.sourceName = "REEDEM");
-                	UPDATE users SET users.coins = users.coins - coinsToBeTransit, users.balance = users.balance + @coinsToRewardMap WHERE users.userId = userId;
-        			INSERT INTO coinHistory(`spendedCoints`, `userId`, `spendSource`) VALUES (-coinsToBeTransit, userId, coinTransitSourceId);
-                    INSERT INTO balanceHistory(`transitedBalance`, `userId`, `transitionSource`) VALUES (@coinsToRewardMap, userId, @balanceSource);
+                	UPDATE users SET users.coins = users.coins - @coinsToRewardMapCoins, users.balance = users.balance + @coinsToRewardMapBalance WHERE users.userId = userId;
+        			INSERT INTO coinHistory(`spendedCoins`, `userId`, `spendSource`, `teamId`) VALUES (-@coinsToRewardMapCoins, userId, coinTransitSourceId, teamId);
+                    INSERT INTO balanceHistory(`transitedBalance`, `userId`, `transitionSource`) VALUES (@coinsToRewardMapBalance, userId, @balanceSource);
+                    INSERT INTO `notifications`(`userId`, `notificationType`, `notificationMessage`) VALUES (userId, 1, REPLACE(message, '{{coins}}', defaulteCoinsOfSource));
                     COMMIT;
                  ELSE 
                  	ROLLBACK TO beforeUpdate;
                     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'something went wrong';
                  END IF;
             ELSE
-            	UPDATE users SET users.coins = users.coins - coinsToBeTransit WHERE users.userId = userId;
-        		INSERT INTO coinHistory(`spendedCoints`, `userId`, `spendSource`) VALUES (-coinsToBeTransit, userId, coinTransitSourceId);
+            /* we do not have other source of coins to reduce coins */
+            	/*UPDATE users SET users.coins = users.coins - coinsToBeTransit WHERE users.userId = userId;
+        		INSERT INTO coinHistory(`spendedCoins`, `userId`, `spendSource`) VALUES (-coinsToBeTransit, userId, coinTransitSourceId);*/
                 COMMIT;
             END IF;
         ELSE

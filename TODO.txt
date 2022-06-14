@@ -1,7 +1,7 @@
 Dashboard trending news
 Reedem 
 calculate next match credit when match is cancelled/abandoned --> done but not tested
-filtering matches All/T20/ODI/TEST/T20/ByTeam
+filtering matches All/T20/ODI/TEST/T20/ByTeam/International
 adding enums
 
 avg points of last 5 matches

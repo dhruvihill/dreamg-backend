@@ -1,7 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const jwt = require("jsonwebtoken");
-const { fetchData } = require("../database/db_connection");
 const User = require("../module/User/User");
 // const errors = require("../errorCode");
 

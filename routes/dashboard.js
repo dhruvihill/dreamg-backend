@@ -5,6 +5,7 @@ const axios = require("axios");
 const { fetchData, imageUrl } = require("../database/db_connection");
 const { convertTimeZone } = require("../middleware/convertTimeZone");
 const MatchStatistics = require("../module/MatchStatistics");
+const Coins = require("../module/Coins");
 
 // getting dashboard data upcominng matches, predictors, news and isNotification
 router.get("/", verifyUser, async (req, res) => {
@@ -16,13 +17,16 @@ router.get("/", verifyUser, async (req, res) => {
       "SELECT EXISTS(SELECT notificationId FROM `fullnotification` WHERE fullnotification.userId = ? AND haveReaded = 0) AS isNotification;";
     const upcomingMatchesQuery =
       "SELECT * FROM (SELECT EXISTS(SELECT * FROM fullmatchdetails AS innerFullMatch WHERE (innerFullMatch.team1Id IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id) OR innerFullMatch.team2Id IN (fullmatchdetails.team1Id, fullmatchdetails.team2Id)) AND innerFullMatch.matchStartDateTime < fullmatchdetails.matchStartDateTime AND innerFullMatch.matchTournamentId IN (fullmatchdetails.matchTournamentId) AND innerFullMatch.matchStatusString IN ('live', 'not_started')) AS isDisabled, (SELECT COUNT(DISTINCT userId) FROM userTeamDetails WHERE userTeamDetails.matchId = fullmatchdetails.matchId) AS totalPredictors, seriesName, seriesDname, matchId, matchTypeId, UPPER(matchTyprString) AS matchTyprString, matchStartDateTime, matchStatus, matchStatusString, venue, displayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName, EXISTS(SELECT userTeamDetails.userTeamId FROM userTeamDetails WHERE userTeamDetails.userId = ? AND userTeamDetails.matchId = fullmatchdetails.matchId AND userTeamDetails.teamTypeString = 'HEAD_TO_HEAD') AS isHeadToHeadCreated, EXISTS(SELECT userTeamDetails.userTeamId FROM userTeamDetails WHERE userTeamDetails.userId = ? AND userTeamDetails.matchId = fullmatchdetails.matchId AND userTeamDetails.teamTypeString = 'MEGA_CONTEST') AS isMegaContestCreated FROM fullmatchdetails WHERE matchStatusString = 'not_started' AND fullmatchdetails.matchStartDateTime > (UNIX_TIMESTAMP(now()) * 1000) ORDER BY matchStartDateTime) AS upcomingMatches WHERE upcomingMatches.isDisabled = 0 LIMIT 5;";
+    const coinDetailsQuery =
+      "SELECT coins, IF(DATEDIFF(coinHistory.timeZone, NOW()) = 0, 1, 0) AS isTodayCollected FROM `userdetails` LEFT JOIN coinHistory ON coinHistory.userId = userdetails.userId WHERE userdetails.userId = ? ORDER BY coinHistory.timeZone DESC LIMIT 1;";
     let isNotification = 0;
     let upcomingMatches = [];
+    let coinDetails = {};
 
     if (userId) {
-      [upcomingMatches, [{ isNotification }]] = await fetchData(
-        `${upcomingMatchesQuery}${isNotificationQuery}`,
-        [userId, userId, userId]
+      [upcomingMatches, [{ isNotification }], coinDetails] = await fetchData(
+        `${upcomingMatchesQuery}${isNotificationQuery}${coinDetailsQuery}`,
+        [userId, userId, userId, userId]
       );
     } else {
       upcomingMatches = await fetchData(upcomingMatchesQuery, [userId, userId]);
@@ -83,6 +87,7 @@ router.get("/", verifyUser, async (req, res) => {
           predictors: [...data.data.trendingPredictors],
           news: [],
           isNotification: isNotification,
+          coinDetails,
         },
       });
     } else {
@@ -94,6 +99,7 @@ router.get("/", verifyUser, async (req, res) => {
           predictors: [],
           news: [],
           isNotification: isNotification,
+          coinDetails,
         },
       });
     }
