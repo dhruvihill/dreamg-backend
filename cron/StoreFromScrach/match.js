@@ -1395,7 +1395,14 @@ class MatchDaily extends Status {
                                 );
                               }
                             } else {
-                              storePlayer(allLineUpPlayers[currentPlayer]);
+                              if (
+                                allLineUpPlayers.length > 0 &&
+                                allLineUpPlayers.length >= currentPlayer
+                              ) {
+                                storePlayer(allLineUpPlayers[currentPlayer]);
+                              } else {
+                                resolve();
+                              }
                             }
                           } else {
                             connection.release();
@@ -1451,15 +1458,36 @@ class MatchDaily extends Status {
                         resolve();
                       }
                     } else {
-                      storePlayer(allLineUpPlayers[currentPlayer]);
+                      if (
+                        allLineUpPlayers.length > 0 &&
+                        allLineUpPlayers.length >= currentPlayer
+                      ) {
+                        storePlayer(allLineUpPlayers[currentPlayer]);
+                      } else {
+                        resolve();
+                      }
                     }
                   } else {
                     await storePlayerAndMatchPlayer({ isPlayerExists: 1 });
-                    storePlayer(allLineUpPlayers[currentPlayer]);
+                    if (
+                      allLineUpPlayers.length > 0 &&
+                      allLineUpPlayers.length >= currentPlayer
+                    ) {
+                      storePlayer(allLineUpPlayers[currentPlayer]);
+                    } else {
+                      resolve();
+                    }
                   }
                 } else {
                   await storePlayerAndMatchPlayer({ isPlayerExists: 1 });
-                  storePlayer(allLineUpPlayers[currentPlayer]);
+                  if (
+                    allLineUpPlayers.length > 0 &&
+                    allLineUpPlayers.length >= currentPlayer
+                  ) {
+                    storePlayer(allLineUpPlayers[currentPlayer]);
+                  } else {
+                    resolve();
+                  }
                 }
               } catch (error) {
                 console.log(error, "storeMatchLineup1");
@@ -1533,8 +1561,8 @@ class MatchDaily extends Status {
           );
           if (calculatePointsRes) {
             const [storeIsPointsCalculatedFlag] = await database(
-              "UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?; CALL storePointsForUserTeams(?); CALL calculateCreditsForPlayers(?, ?);",
-              [this.id, this.id, this.id, 0],
+              "UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?;",
+              [this.id],
               connection
             );
             if (storeIsPointsCalculatedFlag) {
