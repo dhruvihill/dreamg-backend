@@ -5,12 +5,12 @@ filtering matches All/T20/ODI/TEST/T20/ByTeam/International
 adding enums
 
 avg points of last 5 matches
-points > 100 --> 10.5
-points <= 100 AND points > 80 --> 10
-points <= 80 AND points > 70 --> 9.5
-points <= 70 AND points > 60 --> 9
-points <= 60 AND points > 50 --> 8.5
-points <= 50 AND points > 30 --> 8
-points <= 30 --> 7.5
+points > 80 --> 10.5
+points <= 80 AND points > 65 --> 10
+points <= 65 AND points > 55 --> 9.5
+points <= 55 AND points > 45 --> 9
+points <= 45 AND points > 30 --> 8.5
+points <= 30 AND points > 20 --> 8
+points <= 20 --> 7.5
 ELSE --> 7
 

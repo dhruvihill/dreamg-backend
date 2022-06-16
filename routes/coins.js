@@ -49,7 +49,7 @@ router.post("/WithdrawlHistory", verifyUser, async (req, res) => {
   }
 });
 
-router.post("/getReedemTokens", verifyUser, async (req, res) => {
+router.post("/getRedeemTokens", verifyUser, async (req, res) => {
   try {
     const newCoins = new Coins(req.body.userId);
     await newCoins.getCoinsToBalanceMapping();
