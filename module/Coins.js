@@ -107,7 +107,7 @@ class Coins extends User {
     return new Promise(async (resolve, reject) => {
       try {
         const transationHistory = await fetchData(
-          "SELECT transactionId, spendedCoins, userId, coinHistory.spendSource, REPLACE(message, '{{coins}}', coinHistory.spendSource) AS message, coinTransitSource.sourceName, timeZone AS logTime FROM `coinHistory` JOIN coinTransitSource ON coinTransitSource.sourceId = coinHistory.spendSource WHERE userId = ? AND operation IN (?) ORDER BY logTime DESC;",
+          "SELECT transactionId, spendedCoins, userId, coinHistory.spendSource, REPLACE(message, '{{coins}}', ABS(coinHistory.spendedCoins)) AS message, coinTransitSource.sourceName, timeZone AS logTime FROM `coinHistory` JOIN coinTransitSource ON coinTransitSource.sourceId = coinHistory.spendSource WHERE userId = ? AND operation IN (?) ORDER BY logTime DESC;",
           [
             this.id,
             filterBy
@@ -123,7 +123,9 @@ class Coins extends User {
           transaction.credit =
             transaction.spendedCoins > 0 ? transaction.spendedCoins : 0;
           transaction.debit =
-            transaction.spendedCoins < 0 ? transaction.spendedCoins : 0;
+            transaction.spendedCoins < 0
+              ? Math.abs(transaction.spendedCoins)
+              : 0;
           transaction.spendedCoins = transaction.spendedCoins.toString();
           [transaction.logTime, transaction.logTimeMilliSeconds] =
             convertTimeZone(transaction.logTime);
