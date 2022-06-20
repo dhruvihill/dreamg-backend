@@ -309,6 +309,21 @@ class User {
 
         if (recentMatches && currentMatch) {
           recentMatches.forEach(async (match) => {
+            if (match.matchStatusString === "not_started") {
+              match.matchStatusString = "UPCOMING";
+            } else if (match.matchStatusString === "live") {
+              match.matchStatusString = "LIVE";
+            } else if (
+              match.matchStatusString === "ended" ||
+              match.matchStatusString === "closed"
+            ) {
+              match.matchStatusString = "RECENT";
+            } else if (match.matchStatusString === "cancelled") {
+              match.matchStatusString = "CANCELED";
+            }
+            match.remainingMatchStartTime = (
+              parseInt(match.matchStartTimeMilliSeconds) - Date.now()
+            ).toString();
             // converting time zone
             [match.matchStartDateTime, match.matchStartTimeMilliSeconds] =
               convertTimeZone(match.matchStartDateTime, timeZone);
@@ -327,6 +342,21 @@ class User {
             );
           });
           currentMatch.forEach((match) => {
+            if (match.matchStatusString === "not_started") {
+              match.matchStatusString = "UPCOMING";
+            } else if (match.matchStatusString === "live") {
+              match.matchStatusString = "LIVE";
+            } else if (
+              match.matchStatusString === "ended" ||
+              match.matchStatusString === "closed"
+            ) {
+              match.matchStatusString = "RECENT";
+            } else if (match.matchStatusString === "cancelled") {
+              match.matchStatusString = "CANCELED";
+            }
+            match.remainingMatchStartTime = (
+              parseInt(match.matchStartTimeMilliSeconds) - Date.now()
+            ).toString();
             // converting time zone
             [match.matchStartDateTime, match.matchStartTimeMilliSeconds] =
               convertTimeZone(match.matchStartDateTime, timeZone);

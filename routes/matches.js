@@ -58,11 +58,9 @@ router.post("/getMatches", verifyUser, async (req, res) => {
         [match.matchStartDateTime, match.matchStartTimeMilliSeconds] =
           convertTimeZone(match.matchStartDateTime, timeZone);
 
-        if (match.matchStatusString === "UPCOMING") {
-          match.remainingMatchStartTime = (
-            parseInt(match.matchStartTimeMilliSeconds) - Date.now()
-          ).toString();
-        }
+        match.remainingMatchStartTime = (
+          parseInt(match.matchStartTimeMilliSeconds) - Date.now()
+        ).toString();
 
         match.team1FlagURL = imageUrl(
           __dirname,
@@ -139,7 +137,9 @@ router.post("/recentPlayed", async (req, res) => {
         } else if (match.matchStatusString === "cancelled") {
           match.matchStatusString = "CANCELED";
         }
-
+        match.remainingMatchStartTime = (
+          parseInt(match.matchStartTimeMilliSeconds) - Date.now()
+        ).toString();
         // converting time zone
         [match.matchStartDateTime, match.matchStartTimeMilliSeconds] =
           convertTimeZone(match.matchStartDateTime, timeZone);
@@ -219,6 +219,9 @@ router.post("/currentPlayed", async (req, res) => {
         } else if (match.matchStatusString === "cancelled") {
           match.matchStatusString = "CANCELED";
         }
+        match.remainingMatchStartTime = (
+          parseInt(match.matchStartTimeMilliSeconds) - Date.now()
+        ).toString();
         // converting time zone
         [match.matchStartDateTime, match.matchStartTimeMilliSeconds] =
           convertTimeZone(match.matchStartDateTime, timeZone);

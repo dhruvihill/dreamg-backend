@@ -60,6 +60,10 @@ router.get("/", verifyUser, async (req, res) => {
         match.matchStatusString = "CANCELED";
       }
 
+      match.remainingMatchStartTime = (
+        parseInt(match.matchStartTimeMilliSeconds) - Date.now()
+      ).toString();
+
       // converting time zone
       [match.matchStartDateTime, match.matchStartTimeMilliSeconds] =
         convertTimeZone(match.matchStartDateTime, timeZone);

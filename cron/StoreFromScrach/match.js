@@ -1560,12 +1560,15 @@ class MatchDaily extends Status {
             match[0]
           );
           if (calculatePointsRes) {
-            const [storeIsPointsCalculatedFlag] = await database(
+            const storeIsPointsCalculatedFlag = await database(
               "UPDATE tournament_matches SET isPointsCalculated = 1 WHERE matchId = ?;",
               [this.id],
               connection
             );
-            if (storeIsPointsCalculatedFlag) {
+            if (
+              storeIsPointsCalculatedFlag &&
+              storeIsPointsCalculatedFlag?.affectedRows > 0
+            ) {
               connection.release();
               resolve(true);
             } else {
