@@ -37,13 +37,14 @@ router.post("/setReadNotification", verifyUser, async (req, res) => {
       isNotification = 0;
     if (notificationId) {
       [notificationsReads, [{ isNotification }]] = await fetchData(
-        `CALL set_isreaded(?, ?);${isNotificationQuery}`,
+        `CALL setIsReadedNotification(?, ?);${isNotificationQuery}`,
         [userId, notificationId, userId]
       );
     } else {
-      notificationsReads = await fetchData("CALL set_mark_as_read_all(?);", [
-        userId,
-      ]);
+      notificationsReads = await fetchData(
+        "CALL setIsReadedNotification(?, ?);",
+        [userId, null]
+      );
     }
     res.status(200).json({
       status: true,
