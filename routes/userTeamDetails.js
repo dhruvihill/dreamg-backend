@@ -59,7 +59,9 @@ router.post("/setTeam", verifyUser, async (req, res) => {
         res.status(200).json({
           status: true,
           message: "success",
-          data: {},
+          data: {
+            addedCoins: message[1][0]?.addedCoins,
+          },
         });
       } else {
         throw new Error("something went wrong");

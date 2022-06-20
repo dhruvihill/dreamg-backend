@@ -1,6 +1,12 @@
 const tokens = {
   apiTokens: [
     {
+      token: "yybpjhrgx9aw6pdv6uzq6ke3",
+      isUsed: false,
+      totalCallMade: 0,
+      isDeveloperInactive: false,
+    },
+    {
       token: "hvasue8t2dya4z5amxqhe3gw",
       isUsed: false,
       totalCallMade: 0,
