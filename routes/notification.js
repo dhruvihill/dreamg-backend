@@ -31,12 +31,15 @@ router.post("/setReadNotification", verifyUser, async (req, res) => {
   const { userId, notificationId } = req.body;
 
   try {
-    let notificationsReads;
+    const isNotificationQuery =
+      "SELECT EXISTS(SELECT notificationId FROM `fullnotification` WHERE fullnotification.userId = ? AND haveReaded = 0) AS isNotification;";
+    let notificationsReads,
+      isNotification = 0;
     if (notificationId) {
-      notificationsReads = await fetchData("CALL set_isreaded(?, ?);", [
-        userId,
-        notificationId,
-      ]);
+      [notificationsReads, [{ isNotification }]] = await fetchData(
+        `CALL set_isreaded(?, ?);${isNotificationQuery}`,
+        [userId, notificationId, userId]
+      );
     } else {
       notificationsReads = await fetchData("CALL set_mark_as_read_all(?);", [
         userId,
@@ -45,7 +48,9 @@ router.post("/setReadNotification", verifyUser, async (req, res) => {
     res.status(200).json({
       status: true,
       message: "success",
-      data: {},
+      data: {
+        isNotification,
+      },
     });
   } catch (error) {
     res.status(400).json({
