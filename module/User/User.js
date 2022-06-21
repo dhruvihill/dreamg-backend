@@ -22,6 +22,8 @@ class User {
     country: "",
     displayPicture: "",
   };
+  userApplications = {};
+  applicationStatus = [];
   userPointsDetails = {
     totalMatches: 0,
     totalTeams: 0,
@@ -281,6 +283,47 @@ class User {
     });
   }
 
+  async fetchUserApplications() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const userApplicationsQuery =
+          'SELECT * FROM userApplicationStatus; SELECT COALESCE(userPanDetails.status, 0) AS panStatus, COALESCE(userPanDetails.panCardNumber, "") AS userPanCardNumber, COALESCE(userPanDetails.message, "") AS panErrorMessage, COALESCE(userBankDetails.status, 0) AS bankStatus, COALESCE(userBankDetails.AccountNumber, "") AS userBankAccountNumber, COALESCE(userBankDetails.message, "") AS bankErrorMessage, COALESCE(userEmailDetails.status, 0) AS emailStatus, COALESCE(userdetails.email, "") AS userEmail, COALESCE(userEmailDetails.message, "") AS emailErrorMessage FROM `userdetails` LEFT JOIN userPanDetails ON userPanDetails.userId = userdetails.userId LEFT JOIN userBankDetails ON userBankDetails.userId = userdetails.userId LEFT JOIN userEmailDetails ON userEmailDetails.userId = userdetails.userId WHERE userdetails.userId = ?;';
+        const [userApplicationStatus, [userApplications]] = await fetchData(
+          userApplicationsQuery,
+          [this.id]
+        );
+        if (userApplications && userApplicationStatus) {
+          userApplications.panStatus =
+            userApplications.panStatus == 0
+              ? "NOT_APPLIED"
+              : userApplicationStatus.find(
+                  (uap) => uap.id == userApplications.panStatus
+                ).string;
+          userApplications.bankStatus =
+            userApplications.bankStatus == 0
+              ? "NOT_APPLIED"
+              : userApplicationStatus.find(
+                  (uap) => uap.id == userApplications.bankStatus
+                ).string;
+          userApplications.emailStatus =
+            userApplications.emailStatus == 0
+              ? "NOT_APPLIED"
+              : userApplicationStatus.find(
+                  (uap) => uap.id == userApplications.emailStatus
+                ).string;
+          this.userApplications = userApplications;
+          this.applicationStatus = userApplicationStatus;
+          resolve();
+        } else {
+          throw { message: "user does not exists" };
+        }
+      } catch (error) {
+        console.log(error.message);
+        reject(error);
+      }
+    });
+  }
+
   async fetchUserMatchesDetails(
     serverAddress,
     timeZone,
@@ -385,5 +428,10 @@ class User {
     });
   }
 }
+
+// (async () => {
+//   const user = new User(1);
+//   await user.fetchUserApplications();
+// })();
 
 module.exports = User;

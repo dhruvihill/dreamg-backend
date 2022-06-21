@@ -8,6 +8,8 @@ class UserBank extends User {
   #userFullName = "";
   #userUPI = ""; //optionak
   #userBankProofImage = "";
+  defaulteStatus = "PENDING";
+  applicationNumber = null;
 
   constructor(id) {
     super(id);
@@ -41,9 +43,10 @@ class UserBank extends User {
         }
 
         const insertUserBankDetailsQuery =
-          "INSERT INTO `userBankDetails`(`userId`, `bankName`, `AccountNumber`, `IFSCCode`, `UPIId`, `bankProof`) VALUES (?, ?, ?, ?, ?, ?);";
+          "SELECT userApplicationStatus.id INTO @statusId FROM userApplicationStatus WHERE userApplicationStatus.string = ?; INSERT INTO `userBankDetails`(`userId`, `bankName`, `AccountNumber`, `IFSCCode`, `UPIId`, `bankProof`, `status`) VALUES (?, ?, ?, ?, ?, ?, @statusId);";
 
-        await fetchData(insertUserBankDetailsQuery, [
+        const res = await fetchData(insertUserBankDetailsQuery, [
+          this.defaulteStatus,
           this.id,
           this.#userBankName,
           this.#userBankAccountNumber,
@@ -51,6 +54,7 @@ class UserBank extends User {
           this.#userUPI,
           this.#userBankProofImage,
         ]);
+        this.applicationNumber = res.insertId;
         resolve();
       } catch (error) {
         console.log(error.message);
@@ -63,7 +67,7 @@ class UserBank extends User {
     return new Promise(async (resolve, reject) => {
       try {
         const userBankDetailsQuery =
-          "SELECT bankName, AccountNumber, IFSCCode, UPIId, bankProof FROM userBankDetails WHERE userId = ?;";
+          "SELECT bankName, AccountNumber, IFSCCode, UPIId, bankProof, status FROM userBankDetails WHERE userId = ?;";
 
         const [userBankDetails] = await fetchData(userBankDetailsQuery, [
           this.id,

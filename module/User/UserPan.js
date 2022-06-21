@@ -6,6 +6,8 @@ class UserPan extends User {
   #userPanNumber = "";
   #userDateOfBirth = ""; // YYYY-MM-DD format
   #userPanImage = "";
+  defaulteStatus = "PENDING";
+  applicationNumber = null;
 
   constructor(id) {
     super(id);
@@ -34,16 +36,17 @@ class UserPan extends User {
         }
 
         const insertUserPanDetailsQuery =
-          "INSERT INTO `userPanDetails`(`userId`, `panCardNumber`, `panCardName`, `DateOfBirth`, `panCardImage`) VALUES (?, ?, ?, ?, ?);";
+          "SELECT userApplicationStatus.id INTO @statusId FROM userApplicationStatus WHERE userApplicationStatus.string = ?; INSERT INTO `userPanDetails`(`userId`, `panCardNumber`, `panCardName`, `DateOfBirth`, `panCardImage`, `status`) VALUES (?, ?, ?, ?, ?, @statusId);";
 
-        await fetchData(insertUserPanDetailsQuery, [
+        const res = await fetchData(insertUserPanDetailsQuery, [
+          this.defaulteStatus,
           this.id,
           this.#userPanNumber,
           this.#userPanFullName,
           this.#userDateOfBirth,
           this.#userPanImage,
         ]);
-
+        this.applicationNumber = res.insertId;
         resolve();
       } catch (error) {
         console.log(error.message);

@@ -20,6 +20,7 @@ router.post("/userProfile", verifyUser, async (req, res) => {
       await newUser.fetchUserDetails(serverAddress);
       await newUser.fetchUserPointDetails();
       await newUser.fetchUserMatchesDetails(serverAddress, timeZone);
+      await newUser.fetchUserApplications();
 
       delete newUser.userDetails.imageStamp;
       res.status(200).json({
@@ -30,6 +31,10 @@ router.post("/userProfile", verifyUser, async (req, res) => {
             userId: newUser.id,
             ...newUser.userDetails,
             ...newUser.userPointsDetails,
+          },
+          applications: {
+            userApplication: newUser.userApplications,
+            applicationStatus: newUser.applicationStatus,
           },
           recentPlayed: newUser.userMatchDetails.recentMatches,
           currentPlayed: newUser.userMatchDetails.currentMatch,
@@ -122,7 +127,7 @@ router.post("/uploadPanDetails", upload(), verifyUser, async (req, res) => {
       status: true,
       message: "success",
       data: {
-        status: "success",
+        status: panUser.defaulteStatus,
       },
     });
   } catch (error) {
@@ -166,7 +171,7 @@ router.post("/uploadBankDetails", upload(), verifyUser, async (req, res) => {
       status: true,
       message: "success",
       data: {
-        status: "success",
+        status: bankUser.defaulteStatus,
       },
     });
   } catch (error) {
