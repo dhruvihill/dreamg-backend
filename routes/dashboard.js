@@ -60,13 +60,13 @@ router.get("/", verifyUser, async (req, res) => {
         match.matchStatusString = "CANCELED";
       }
 
-      match.remainingMatchStartTime = (
-        parseInt(match.matchStartTimeMilliSeconds) - Date.now()
-      ).toString();
-
       // converting time zone
       [match.matchStartDateTime, match.matchStartTimeMilliSeconds] =
         convertTimeZone(match.matchStartDateTime, timeZone);
+
+      match.remainingMatchStartTime = (
+        parseInt(match.matchStartTimeMilliSeconds) - Date.now()
+      ).toString();
 
       match.team1FlagURL = imageUrl(
         __dirname,
