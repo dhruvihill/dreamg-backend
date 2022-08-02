@@ -4,6 +4,8 @@ const { existsSync, mkdirSync } = require("fs");
 const { convertTimeZone } = require("../../middleware/convertTimeZone");
 const path = require("path");
 const jwt = require("jsonwebtoken");
+const { NotFoundError } = require("../Exception/index");
+const { prisma } = require("../../utils/index");
 
 class User {
   id = null;
@@ -43,27 +45,35 @@ class User {
   async LoginUser(phoneNumber) {
     return new Promise(async (resolve, reject) => {
       try {
-        const [userDetails] = await fetchData(
-          "SELECT userId, phoneNumber, firstName, lastName FROM userdetails WHERE phoneNumber = ?;",
-          [phoneNumber]
-        );
-        if (userDetails) {
-          this.id = userDetails.userId;
-          // creating auth token
-          const jwtData = {
-            user: {
-              userId: this.id,
-            },
-          };
-          const token = await jwt.sign(jwtData, process.env.JWT_SECRET_KEY);
-          this.userDetails = { ...this.userDetails, ...userDetails };
-          userDetails.authToken = token;
-          resolve(userDetails);
-        } else {
-          throw new Error("user does not exists");
+        const user = await prisma.users.findUnique({
+          where: {
+            phoneNumber,
+          },
+          select: {
+            userId: true,
+            phoneNumber: true,
+            firstName: true,
+            lastName: true,
+          },
+        });
+
+        if (!user) {
+          throw new NotFoundError("User not found");
         }
+
+        this.id = user.id;
+        // creating auth token
+        const jwtData = {
+          user: {
+            userId: this.id,
+          },
+        };
+        const token = await jwt.sign(jwtData, process.env.JWT_SECRET_KEY);
+        this.userDetails = { ...this.userDetails, ...user };
+
+        user.authToken = token;
+        resolve(user);
       } catch (error) {
-        console.log(error.message);
         reject(error);
       }
     });
@@ -72,21 +82,22 @@ class User {
   async RegisterUser(phoneNumber) {
     return new Promise(async (resolve, reject) => {
       try {
-        const [[result]] = await fetchData("CALL registerUser(?);", [
-          phoneNumber,
-        ]);
+        const user = await prisma.users.create({
+          data: {
+            phoneNumber,
+          },
+        });
 
         // creating auth token
-        const jwtData = { user: { userId: result.userId } };
+        const jwtData = { user: { userId: user.userId } };
         const token = await jwt.sign(jwtData, process.env.JWT_SECRET_KEY);
 
-        this.id = result.userId;
+        this.id = user.userId;
         resolve({
-          userId: result.userId,
+          userId: user.userId,
           token,
         });
       } catch (error) {
-        console.log(error.message);
         reject(error);
       }
     });
@@ -95,17 +106,22 @@ class User {
   async CheckUser(phoneNumber) {
     return new Promise(async (resolve, reject) => {
       try {
-        const responseQuery =
-          "SELECT userId FROM userdetails WHERE phoneNumber = ?";
-        const [responseData] = await fetchData(responseQuery, [phoneNumber]);
-        if (responseData) {
-          this.id = responseData.userId;
-          resolve();
-        } else {
-          throw { message: "user does not exists" };
+        const user = await prisma.users.findUnique({
+          where: {
+            phoneNumber,
+          },
+          select: {
+            userId: true,
+          },
+        });
+
+        if (!user) {
+          throw new NotFoundError("User not found");
         }
+
+        this.id = user.userId;
+        resolve();
       } catch (error) {
-        console.log(error.message);
         reject(error);
       }
     });

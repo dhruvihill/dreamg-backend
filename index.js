@@ -2,6 +2,8 @@ require("dotenv/config");
 const express = require("express");
 const bodyParser = require("body-parser");
 const { fetchData: periode } = require("./cron/UpdateMatchStatus/periode");
+const exception = require("./middleware/exceptionHandling");
+const { logger } = require("./utils/index");
 
 // calling periode to store periode details in db
 const setIntervalImmediate = () => {
@@ -20,12 +22,15 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+// logging requests
+logger(app);
+
 // applying middleware for serving static filess
 app.use("/public", express.static("public"));
 
 // Routes
 app.use("/api/v1/system", require("./routes/masterAPI"));
-app.use("/api/v1/auth", require("./routes/auth"));
+app.use("/api/v1/auth", require("./routes/Auth/index"));
 app.use("/api/v1/user", require("./routes/user"));
 app.use("/api/v1/getDashboardData", require("./routes/dashboard"));
 app.use("/api/v1/userTeams", require("./routes/matchDetails"));
@@ -43,6 +48,8 @@ app.post("*", (req, res) => {
     message: "page not found",
   });
 });
+
+app.use(exception);
 
 // Listening App
 try {

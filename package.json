@@ -17,10 +17,14 @@
     "jsonwebtoken": "^8.5.1",
     "log-to-file": "^3.0.0",
     "moment-timezone": "^0.5.34",
+    "morgan": "^1.10.0",
+    "morgan-body": "^2.6.6",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.3",
     "pm2": "^5.2.0",
-    "validator": "^13.7.0"
+    "rotating-file-stream": "^3.0.4",
+    "validator": "^13.7.0",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "nodemon": "^2.0.15",
