@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const Coins = require("../module/Coins");
-const verifyUser = require("../middleware/verifyUser");
+const Coins = require("../../module/Coins");
+const verifyUser = require("../../middleware/verifyUser");
 
 router.post("/transactionHistory", verifyUser, async (req, res) => {
   try {

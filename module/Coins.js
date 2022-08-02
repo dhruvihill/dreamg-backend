@@ -1,6 +1,7 @@
 const User = require("./User/User");
 const { fetchData } = require("../database/db_connection");
 const { convertTimeZone } = require("../middleware/convertTimeZone");
+const { prisma } = require("../utils");
 
 class Coins extends User {
   coinSources = [];
@@ -119,6 +120,26 @@ class Coins extends User {
               : ["+", "-"],
           ]
         );
+
+        const th = await prisma.coinHistory.findMany({
+          where: {
+            userId: this.id,
+            operation: filterBy
+              ? filterBy === "CREDIT"
+                ? "+"
+                : "-"
+              : ["+", "-"],
+          },
+          include: {
+            coinTransitSource: true,
+          },
+          orderBy: {
+            logTime: "desc",
+          },
+        });
+
+        console.log(transationHistory, th);
+
         transationHistory.forEach((transaction) => {
           transaction.credit =
             transaction.spendedCoins > 0 ? transaction.spendedCoins : 0;
@@ -164,7 +185,7 @@ class Coins extends User {
   async dashBoardCoinData() {
     return new Promise(async (resolve, reject) => {
       try {
-        if (isNaN(this.userDetails.coins)) {
+        if (isNaN(this?.userDetails?.coins)) {
           await this.getCoins();
         }
         const [dailyRewardDetails] = await fetchData(
