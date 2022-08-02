@@ -104,41 +104,29 @@ class Coins extends User {
     });
   }
 
-  async getTransitHistory(filterBy, orderBy, orderType) {
+  async getTransitHistory(filterBy) {
     return new Promise(async (resolve, reject) => {
       try {
-        const transationHistory = await fetchData(
-          "SELECT transactionId, spendedCoins, userId, coinHistory.spendSource, REPLACE(message, '{{coins}}', ABS(coinHistory.spendedCoins)) AS message, coinTransitSource.sourceName, timeZone AS logTime FROM `coinHistory` JOIN coinTransitSource ON coinTransitSource.sourceId = coinHistory.spendSource WHERE userId = ? AND operation IN (?) ORDER BY logTime DESC;",
-          [
-            this.id,
-            filterBy
-              ? filterBy === "CREDIT"
-                ? "+"
-                : filterBy === "DEBIT"
-                ? "-"
-                : ["+", "-"]
-              : ["+", "-"],
-          ]
-        );
-
-        const th = await prisma.coinHistory.findMany({
+        const transationHistory = await prisma.coinHistory.findMany({
           where: {
             userId: this.id,
-            operation: filterBy
-              ? filterBy === "CREDIT"
-                ? "+"
-                : "-"
-              : ["+", "-"],
+            coinTransitSource: {
+              operation: {
+                in: filterBy
+                  ? filterBy === "CREDIT"
+                    ? ["+"]
+                    : ["-"]
+                  : ["+", "-"],
+              },
+            },
           },
           include: {
             coinTransitSource: true,
           },
           orderBy: {
-            logTime: "desc",
+            timeZone: "desc",
           },
         });
-
-        console.log(transationHistory, th);
 
         transationHistory.forEach((transaction) => {
           transaction.credit =
@@ -148,8 +136,13 @@ class Coins extends User {
               ? Math.abs(transaction.spendedCoins)
               : 0;
           transaction.spendedCoins = transaction.spendedCoins.toString();
-          [transaction.logTime, transaction.logTimeMilliSeconds] =
-            convertTimeZone(transaction.logTime);
+          transaction.coinTransitSource.message =
+            transaction?.coinTransitSource?.message?.replace(
+              "{{coins}}",
+              Math.abs(transaction?.spendedCoins)
+            );
+          [transaction.timeZone, transaction.timeZoneMilliSeconds] =
+            convertTimeZone(transaction.timeZone);
         });
         this.transationHistory = transationHistory;
         resolve();
