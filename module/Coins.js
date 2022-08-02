@@ -1,6 +1,7 @@
 const User = require("./User/User");
 const { fetchData } = require("../database/db_connection");
 const { convertTimeZone } = require("../middleware/convertTimeZone");
+const { prisma } = require("../utils");
 
 class Coins extends User {
   coinSources = [];
@@ -103,22 +104,30 @@ class Coins extends User {
     });
   }
 
-  async getTransitHistory(filterBy, orderBy, orderType) {
+  async getTransitHistory(filterBy) {
     return new Promise(async (resolve, reject) => {
       try {
-        const transationHistory = await fetchData(
-          "SELECT transactionId, spendedCoins, userId, coinHistory.spendSource, REPLACE(message, '{{coins}}', ABS(coinHistory.spendedCoins)) AS message, coinTransitSource.sourceName, timeZone AS logTime FROM `coinHistory` JOIN coinTransitSource ON coinTransitSource.sourceId = coinHistory.spendSource WHERE userId = ? AND operation IN (?) ORDER BY logTime DESC;",
-          [
-            this.id,
-            filterBy
-              ? filterBy === "CREDIT"
-                ? "+"
-                : filterBy === "DEBIT"
-                ? "-"
-                : ["+", "-"]
-              : ["+", "-"],
-          ]
-        );
+        const transationHistory = await prisma.coinHistory.findMany({
+          where: {
+            userId: this.id,
+            coinTransitSource: {
+              operation: {
+                in: filterBy
+                  ? filterBy === "CREDIT"
+                    ? ["+"]
+                    : ["-"]
+                  : ["+", "-"],
+              },
+            },
+          },
+          include: {
+            coinTransitSource: true,
+          },
+          orderBy: {
+            timeZone: "desc",
+          },
+        });
+
         transationHistory.forEach((transaction) => {
           transaction.credit =
             transaction.spendedCoins > 0 ? transaction.spendedCoins : 0;
@@ -127,8 +136,13 @@ class Coins extends User {
               ? Math.abs(transaction.spendedCoins)
               : 0;
           transaction.spendedCoins = transaction.spendedCoins.toString();
-          [transaction.logTime, transaction.logTimeMilliSeconds] =
-            convertTimeZone(transaction.logTime);
+          transaction.coinTransitSource.message =
+            transaction?.coinTransitSource?.message?.replace(
+              "{{coins}}",
+              Math.abs(transaction?.spendedCoins)
+            );
+          [transaction.timeZone, transaction.timeZoneMilliSeconds] =
+            convertTimeZone(transaction.timeZone);
         });
         this.transationHistory = transationHistory;
         resolve();
@@ -164,7 +178,7 @@ class Coins extends User {
   async dashBoardCoinData() {
     return new Promise(async (resolve, reject) => {
       try {
-        if (isNaN(this.userDetails.coins)) {
+        if (isNaN(this?.userDetails?.coins)) {
           await this.getCoins();
         }
         const [dailyRewardDetails] = await fetchData(

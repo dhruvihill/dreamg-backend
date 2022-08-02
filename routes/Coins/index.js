@@ -1,16 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const Coins = require("../module/Coins");
-const verifyUser = require("../middleware/verifyUser");
+const Coins = require("../../module/Coins");
+const verifyUser = require("../../middleware/verifyUser");
 
 router.post("/transactionHistory", verifyUser, async (req, res) => {
   try {
     const newCoins = new Coins(req.body.userId);
-    await newCoins.getTransitHistory(
-      req.body.filterBy,
-      req.body.orderBy,
-      req.body.orderType
-    );
+    await newCoins.getTransitHistory(req?.params?.filterBy);
 
     res.status(200).json({
       status: true,

@@ -61,7 +61,7 @@ class User {
           throw new NotFoundError("User not found");
         }
 
-        this.id = user.id;
+        this.id = user.userId;
         // creating auth token
         const jwtData = {
           user: {
