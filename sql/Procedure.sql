@@ -15,7 +15,7 @@ BEGIN
 SET finished = 1;
 END;
 
-START TRANSACTION;
+/*START TRANSACTION;*/
 
 SELECT COUNT(userTeamDetails.userTeamId) INTO totalCreatedTeams FROM userTeamDetails WHERE userTeamDetails.matchId = matchId;
 
@@ -31,19 +31,23 @@ IF totalCreatedTeams >= minimumTeamRequired THEN
         DECLARE finishedInside BOOLEAN DEFAULT 0;
         DECLARE currentTeam INTEGER(11) DEFAULT 0;
         DECLARE currentUserId INTEGER(11) DEFAULT 0;
+        DECLARE targetColumn TEXT(100);
 
-        DEClARE teams CURSOR(targetColumn TEXT(100)) FOR SELECT userTeamDetails.userTeamId, userTeamDetails.userId FROM `userTeamDetails` WHERE userTeamDetails.matchId = matchId ORDER BY IF(targetColumn = 'views', userTeamViews, IF(targetColumn = "likes", userTeamLikes, IF(targetColumn = "points", userTeamPoints, userTeamPoints))) DESC LIMIT 10;
+        DEClARE teams CURSOR FOR SELECT userTeamDetails.userTeamId, userTeamDetails.userId FROM `userTeamDetails` WHERE userTeamDetails.matchId = matchId ORDER BY IF(targetColumn = 'views', userTeamViews, IF(targetColumn = "likes", userTeamLikes, IF(targetColumn = "points", userTeamPoints, userTeamPoints))) DESC LIMIT 10;
 
         DECLARE CONTINUE HANDLER FOR NOT FOUND
         BEGIN
         SET finishedInside = 1;
         END;
         IF sourceName = "BONUS_FOR_WINNING_CONTEST_MOST_POPULAR" THEN
-            OPEN teams('points');
+        	SET targetColumn = "points";
+            OPEN teams;
         ELSEIF sourceName = "BONUS_FOR_WINNING_CONTEST_MOST_LIKED" THEN
-            OPEN teams('likes');
+        	SET targetColumn = "likes";
+            OPEN teams;
         ELSEIF sourceName = "BONUS_FOR_WINNING_CONTEST_MOST_VIEWED" THEN
-            OPEN teams('views');
+        	SET targetColumn = "views";
+            OPEN teams;
         END IF;
 
         nextTeam: LOOP FETCH teams INTO currentTeam, currentUserId;
@@ -64,7 +68,7 @@ IF totalCreatedTeams >= minimumTeamRequired THEN
 END IF;
 END LOOP nextContest;
 CLOSE contest;
-COMMIT;
+/*COMMIT;*/
 END$$
 DELIMITER ;
 

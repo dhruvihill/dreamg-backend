@@ -1,0 +1,702 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model balanceHistory {
+  transactionId    Int           @id @default(autoincrement())
+  transitedBalance Int
+  userId           Int
+  transitionSource Int
+  logTime          DateTime      @default(now()) @db.Timestamp(0)
+  users            users         @relation(fields: [userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "balanceHistory_ibfk_1")
+  balanceSource    balanceSource @relation(fields: [transitionSource], references: [sourceId], onDelete: NoAction, onUpdate: NoAction, map: "balanceHistory_ibfk_2")
+
+  @@index([transitionSource], map: "transitionSource")
+  @@index([userId], map: "userId")
+}
+
+model balanceSource {
+  sourceId       Int              @id @default(autoincrement())
+  sourceName     String           @db.TinyText
+  message        String           @db.TinyText
+  operation      String           @db.TinyText
+  balanceHistory balanceHistory[]
+}
+
+model coinHistory {
+  transactionId     Int               @id @default(autoincrement())
+  spendedCoins      Int
+  userId            Int
+  spendSource       Int
+  dayNumber         Boolean?
+  teamId            Int?
+  timeZone          DateTime          @default(now()) @db.Timestamp(0)
+  users             users             @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "coinHistory_ibfk_1")
+  coinTransitSource coinTransitSource @relation(fields: [spendSource], references: [sourceId], onDelete: NoAction, onUpdate: NoAction, map: "coinHistory_ibfk_2")
+  user_team_new     user_team_new?    @relation(fields: [teamId], references: [userTeamId], onDelete: NoAction, onUpdate: NoAction, map: "coinHistory_ibfk_3")
+
+  @@unique([spendSource, teamId], map: "spendSource")
+  @@index([teamId], map: "teamId")
+  @@index([spendSource], map: "transferToWhere")
+  @@index([userId], map: "userId")
+}
+
+model coinTransitSource {
+  sourceId              Int                   @id @default(autoincrement())
+  sourceType            Int
+  sourceName            String                @unique(map: "sourceName") @db.VarChar(100)
+  message               String                @db.Text
+  defaulteCoins         Int?
+  operation             String                @db.TinyText
+  requiredTeam          Boolean
+  minimumTeamRequired   Int?
+  isIncrementRequired   Boolean               @default(false)
+  incrementBy           Int?
+  coinTransitSourceType coinTransitSourceType @relation(fields: [sourceType], references: [typeId], onDelete: NoAction, onUpdate: NoAction, map: "coinTransitSource_ibfk_1")
+  coinHistory           coinHistory[]
+
+  @@index([sourceType], map: "sourceType")
+}
+
+model coinTransitSourceType {
+  typeId            Int                 @id @default(autoincrement())
+  typeName          String              @db.TinyText
+  coinTransitSource coinTransitSource[]
+}
+
+model coinsRewardsMapping {
+  mappingId Int @id @default(autoincrement())
+  coins     Int
+  reward    Int
+
+  @@unique([coins, reward], map: "coins")
+}
+
+model competitors {
+  competitorId                                                   Int                     @id @default(autoincrement())
+  competitorRadarId                                              Int                     @unique(map: "competitorRadarId")
+  competitorName                                                 String                  @db.VarChar(50)
+  competitorCountry                                              String?                 @db.VarChar(30)
+  competitorCountryCode                                          String?                 @db.VarChar(20)
+  competitorDisplayName                                          String?                 @db.TinyText
+  logTime                                                        DateTime                @default(now()) @db.Timestamp(0)
+  match_lineup                                                   match_lineup[]
+  match_players                                                  match_players[]
+  scorcard_details                                               scorcard_details[]
+  tournament_competitor                                          tournament_competitor[]
+  tournament_matches_competitorsTotournament_matches_competitor1 tournament_matches[]    @relation("competitorsTotournament_matches_competitor1")
+  tournament_matches_competitorsTotournament_matches_competitor2 tournament_matches[]    @relation("competitorsTotournament_matches_competitor2")
+  tournament_matches_competitorsTotournament_matches_tossWonBy   tournament_matches[]    @relation("competitorsTotournament_matches_tossWonBy")
+}
+
+model discussion {
+  discussionId                        Int                @id @default(autoincrement())
+  matchId                             Int
+  userId                              Int
+  messengerId                         Int
+  message                             String             @db.VarChar(5000)
+  messageTime                         DateTime           @default(now()) @db.Timestamp(0)
+  tournament_matches                  tournament_matches @relation(fields: [matchId], references: [matchId], onDelete: NoAction, onUpdate: NoAction, map: "match")
+  users_discussion_messengerIdTousers users              @relation("discussion_messengerIdTousers", fields: [messengerId], references: [userId], onDelete: Cascade, map: "messenger")
+  users_discussion_userIdTousers      users              @relation("discussion_userIdTousers", fields: [userId], references: [userId], onDelete: Cascade, map: "teamCreater")
+
+  @@index([matchId], map: "match")
+  @@index([messengerId], map: "messenger")
+  @@index([userId], map: "teamCreater")
+}
+
+model inning_batsmans {
+  scorcardInningId        Int
+  playerId                Int
+  battingOrder            Int?
+  runs                    Int              @default(0)
+  strikeRate              Float?           @default(0) @db.Float
+  isNotOut                Boolean          @default(false)
+  isDuck                  Boolean          @default(false)
+  isRetiredHurt           Boolean          @default(false)
+  ballFaced               Int              @default(0)
+  fours                   Int              @default(0)
+  sixes                   Int              @default(0)
+  attackIngShot           Int              @default(0)
+  semiAttackingShot       Int              @default(0)
+  defendingShot           Int              @default(0)
+  leaves                  Int              @default(0)
+  onSideShot              Int              @default(0)
+  offSideShot             Int              @default(0)
+  squreLegShot            Int              @default(0)
+  fineLegShot             Int              @default(0)
+  thirdManShot            Int              @default(0)
+  coverShot               Int              @default(0)
+  pointsShot              Int              @default(0)
+  midOnShot               Int              @default(0)
+  midOffShot              Int              @default(0)
+  midWicketShot           Int              @default(0)
+  dismissalOverBallNumber Boolean?
+  dismissalOverNumber     Int?             @db.SmallInt
+  dismissalBallerId       Int?
+  dismissalDiliveryType   String?          @db.TinyText
+  dismissalFieldeManId    Int?
+  dismissalIsOnStrike     Boolean?
+  dismissalShotType       String?          @db.TinyText
+  dismissalType           String?          @db.TinyText
+  scorcard_innings        scorcard_innings @relation(fields: [scorcardInningId], references: [scorcardInningId], onDelete: Cascade, onUpdate: NoAction, map: "relation_scorcardInning")
+  players                 players          @relation(fields: [playerId], references: [playerId], onDelete: NoAction, onUpdate: NoAction, map: "relation_scorcardInning_player")
+
+  @@unique([scorcardInningId, playerId], map: "scorcardInningId")
+  @@index([playerId], map: "relation_scorcardInning_player")
+}
+
+model inning_batting {
+  scorcardInningId Int              @id
+  runs             Int
+  fours            Int
+  sixes            Int
+  runRate          Float            @db.Float
+  ballFaced        Int
+  scorcard_innings scorcard_innings @relation(fields: [scorcardInningId], references: [scorcardInningId], onDelete: Cascade, onUpdate: NoAction, map: "inning_batting_ibfk_1")
+}
+
+model inning_bowlers {
+  scorcardInningId     Int
+  playerId             Int
+  runsConceded         Int              @default(0)
+  wickets              Int              @default(0)
+  overBowled           Int              @default(0)
+  maidensOvers         Int              @default(0)
+  dotBalls             Int              @default(0)
+  fourConceded         Int              @default(0)
+  sixConceded          Int              @default(0)
+  noBalls              Int              @default(0)
+  wides                Int              @default(0)
+  slowerDeliveries     Int              @default(0)
+  yorkers              Int              @default(0)
+  economyRate          Float            @default(0) @db.Float
+  fastestBall          Int              @default(0)
+  slowestBall          Int              @default(0)
+  averageSpeed         Int
+  overTheWicketBalls   Int              @default(0)
+  aroundTheWicketBalls Int              @default(0)
+  bouncers             Int              @default(0)
+  beatBats             Int              @default(0)
+  edge                 Int              @default(0)
+  scorcard_innings     scorcard_innings @relation(fields: [scorcardInningId], references: [scorcardInningId], onDelete: Cascade, onUpdate: NoAction, map: "inning_bowlers_ibfk_1")
+
+  @@unique([scorcardInningId, playerId], map: "scorcardInningId_2")
+  @@index([scorcardInningId], map: "scorcardInningId")
+}
+
+model inning_bowling {
+  scorcardInningId Int              @id
+  overs            Float            @db.Float
+  wickets          Int
+  maidens          Int
+  extras           Int
+  noBalls          Int
+  byes             Int
+  legByes          Int
+  dotBalls         Int
+  scorcard_innings scorcard_innings @relation(fields: [scorcardInningId], references: [scorcardInningId], onDelete: Cascade, onUpdate: NoAction, map: "inning_bowling_ibfk_1")
+}
+
+model match_lineup {
+  matchId            Int
+  competitorId       Int
+  playerId           Int
+  isCaptain          Boolean            @default(false)
+  isWicketKeeper     Boolean            @default(false)
+  order              Int                @db.TinyInt
+  points             Int?               @default(0)
+  runsPoints         Int                @default(0)
+  foursPoints        Int                @default(0)
+  sixesPoints        Int                @default(0)
+  numberRunsPoints   Int                @default(0)
+  numberWicketPoints Int                @default(0)
+  wicketPoints       Int                @default(0)
+  maidenOverPoints   Int                @default(0)
+  lbwOrBowledPoints  Int                @default(0)
+  catchesPoints      Int                @default(0)
+  runOutPoints       Int                @default(0)
+  economyPoints      Int?
+  strikeRatePoints   Int
+  logTime            DateTime           @default(now()) @db.Timestamp(0)
+  competitors        competitors        @relation(fields: [competitorId], references: [competitorId], onDelete: NoAction, onUpdate: NoAction, map: "match_lineup_competitor")
+  tournament_matches tournament_matches @relation(fields: [matchId], references: [matchId], onDelete: NoAction, onUpdate: NoAction, map: "match_lineup_matchId")
+  players            players            @relation(fields: [playerId], references: [playerId], onDelete: NoAction, onUpdate: NoAction, map: "match_lineup_playerId")
+
+  @@unique([matchId, competitorId, playerId], map: "matchId")
+  @@index([competitorId], map: "match_lineup_competitor")
+  @@index([playerId], map: "match_lineup_playerId")
+}
+
+model match_players {
+  matchId            Int
+  competitorId       Int
+  playerId           Int
+  isSelected         Boolean            @default(false)
+  isCaptain          Boolean            @default(false)
+  isWicketKeeper     Boolean            @default(false)
+  order              Int?
+  credit             Decimal            @default(7.5) @db.Decimal(20, 1)
+  points             Int?
+  runsPoints         Int                @default(0)
+  foursPoints        Int                @default(0)
+  sixesPoints        Int                @default(0)
+  numberRunsPoints   Int                @default(0)
+  numberWicketPoints Int                @default(0)
+  wicketPoints       Int                @default(0)
+  maidenOverPoints   Int                @default(0)
+  lbwOrBowledPoints  Int                @default(0)
+  catchesPoints      Int                @default(0)
+  runOutPoints       Int                @default(0)
+  economyPoints      Int?
+  strikeRatePoints   Int?
+  logTime            DateTime           @default(now()) @db.Timestamp(0)
+  tournament_matches tournament_matches @relation(fields: [matchId], references: [matchId], onDelete: NoAction, onUpdate: NoAction, map: "match_players_ibfk_1")
+  competitors        competitors        @relation(fields: [competitorId], references: [competitorId], onDelete: NoAction, onUpdate: NoAction, map: "match_players_ibfk_2")
+  players            players            @relation(fields: [playerId], references: [playerId], onDelete: NoAction, onUpdate: NoAction, map: "match_players_ibfk_3")
+
+  @@unique([matchId, competitorId, playerId], map: "matchId")
+  @@index([competitorId], map: "competitorId")
+  @@index([playerId], map: "playerId")
+}
+
+model match_status {
+  statusId           Int                  @id @default(autoincrement())
+  statusString       String               @db.TinyText
+  tournament_matches tournament_matches[]
+}
+
+model notification_type {
+  notificationType       Int             @id @default(autoincrement())
+  notificationTypeString String          @db.VarChar(30)
+  notifications          notifications[]
+}
+
+model notifications {
+  notificationId      Int               @id @default(autoincrement())
+  userId              Int
+  isReaded            Boolean           @default(false)
+  notificationType    Int
+  notificationMessage String            @db.VarChar(2000)
+  creationTime        DateTime          @default(now()) @db.Timestamp(0)
+  notification_type   notification_type @relation(fields: [notificationType], references: [notificationType], onDelete: Cascade, map: "notificationType")
+  users               users             @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "userNotification")
+
+  @@index([notificationType], map: "notificationType")
+  @@index([userId], map: "userNotification")
+}
+
+model playerImages {
+  ucPlayerId  Int    @id
+  name        String @db.TinyText
+  dateOfBirth String @db.VarChar(15)
+  imageId     Int
+}
+
+model player_batting_style {
+  playerBattingStyleId Int       @id @default(autoincrement())
+  battingStyleString   String    @unique(map: "battingStyleString") @db.VarChar(50)
+  players              players[]
+}
+
+model player_bowling_style {
+  playerBowlingStyleId     Int       @id @default(autoincrement())
+  playerBowlingStyleString String    @unique(map: "playerBowlingStyleString") @db.VarChar(50)
+  players                  players[]
+}
+
+model player_roles {
+  roleId     Int       @id @default(autoincrement())
+  roleString String    @db.TinyText
+  players    players[]
+}
+
+model player_statistics_batting {
+  playerId     Int
+  type         String  @db.VarChar(30)
+  matches      Int?
+  innings      Int?
+  ballFaced    Int?
+  notOuts      Int?
+  runs         Int?
+  average      Float?  @db.Float
+  strikeRate   Float?  @db.Float
+  highestScore Int?
+  hundreds     Int?
+  fifties      Int?
+  fours        Int?
+  sixes        Int?
+  players      players @relation(fields: [playerId], references: [playerId], onDelete: NoAction, onUpdate: NoAction, map: "player_statistics_batting")
+
+  @@unique([playerId, type], map: "playerId")
+}
+
+model player_statistics_bowling {
+  playerId         Int
+  type             String  @db.VarChar(30)
+  matches          Int?
+  innings          Int?
+  overs            Float?  @db.Float
+  ballsBalled      Int?
+  maidens          Int?
+  runs             Int?
+  wickets          Int?
+  average          Float?  @db.Float
+  strikeRate       Float?  @db.Float
+  economy          Float?  @db.Float
+  bestBowling      Int?
+  fourWicketHauls  Int?
+  fiverWicketHauls Int?
+  tenWicketHauls   Int?
+  catches          Int?
+  stumping         Int?
+  runOuts          Int?
+  players          players @relation(fields: [playerId], references: [playerId], onDelete: NoAction, onUpdate: NoAction, map: "player_statistics_bowling_ibfk_1")
+
+  @@unique([playerId, type], map: "playerId")
+}
+
+model players {
+  playerId                     Int                            @id @default(autoincrement())
+  playerRadarId                Int                            @unique(map: "playerRadarId")
+  playerFirstName              String                         @db.VarChar(200)
+  playerLastName               String                         @db.VarChar(200)
+  playerCountryCode            String?                        @db.VarChar(30)
+  playerRole                   Int                            @default(0)
+  playerDOB                    DateTime?                      @db.Date
+  playerBattingStyleId         Int?
+  playerBowlingStyleId         Int?
+  playerCountry                String?                        @db.VarChar(50)
+  player_batting_style         player_batting_style?          @relation(fields: [playerBattingStyleId], references: [playerBattingStyleId], onDelete: NoAction, onUpdate: NoAction, map: "relation_batting_style")
+  player_bowling_style         player_bowling_style?          @relation(fields: [playerBowlingStyleId], references: [playerBowlingStyleId], onDelete: NoAction, onUpdate: NoAction, map: "relation_bowling_style")
+  player_roles                 player_roles                   @relation(fields: [playerRole], references: [roleId], onDelete: NoAction, map: "relation_player_role")
+  inning_batsmans              inning_batsmans[]
+  match_lineup                 match_lineup[]
+  match_players                match_players[]
+  player_statistics_batting    player_statistics_batting[]
+  player_statistics_bowling    player_statistics_bowling[]
+  scorcard_details             scorcard_details[]
+  tournament_competitor_player tournament_competitor_player[]
+  user_team_data_new           user_team_data_new[]
+
+  @@index([playerBattingStyleId], map: "relation_batting_style")
+  @@index([playerBowlingStyleId], map: "relation_bowling_style")
+  @@index([playerRole], map: "relation_player_role")
+}
+
+model scorcard_details {
+  scorcardId         Int                @id @default(autoincrement())
+  matchId            Int                @unique(map: "matchId")
+  tossWonBy          Int?
+  tossDecision       String?            @db.VarChar(20)
+  winnerId           Int?
+  isTie              Boolean            @default(false)
+  isDraw             Boolean            @default(false)
+  manOfMatch         Int?
+  isPointsCalculated Boolean            @default(false)
+  matchResultString  String?            @db.VarChar(1000)
+  logTime            DateTime           @default(now()) @db.Timestamp(0)
+  tournament_matches tournament_matches @relation(fields: [matchId], references: [matchId], onDelete: NoAction, onUpdate: NoAction, map: "relation_scorcardMatch_match")
+  players            players?           @relation(fields: [manOfMatch], references: [playerId], onDelete: NoAction, onUpdate: NoAction, map: "scorcard_details_ibfk_1")
+  competitors        competitors?       @relation(fields: [tossWonBy], references: [competitorId], onDelete: NoAction, onUpdate: NoAction, map: "scorcard_details_ibfk_2")
+  scorcard_innings   scorcard_innings[]
+
+  @@index([manOfMatch], map: "manOfMatch")
+  @@index([tossWonBy], map: "tossWonBy")
+}
+
+model scorcard_innings {
+  scorcardInningId Int               @id @default(autoincrement())
+  scorcardId       Int
+  inningNumber     Int
+  battingTeam      Int
+  bowlingTeam      Int
+  runs             Int
+  wickets          Int
+  oversPlayed      Decimal           @db.Decimal(10, 0)
+  scorcard_details scorcard_details  @relation(fields: [scorcardId], references: [scorcardId], onDelete: Cascade, onUpdate: NoAction, map: "relation_scordcard_scorcardTable")
+  inning_batsmans  inning_batsmans[]
+  inning_batting   inning_batting?
+  inning_bowlers   inning_bowlers[]
+  inning_bowling   inning_bowling?
+
+  @@unique([scorcardId, inningNumber], map: "scorcardId")
+}
+
+model team_type {
+  teamType       Int             @id @default(autoincrement())
+  teamTypeString String          @db.TinyText
+  user_team_new  user_team_new[]
+}
+
+model tournament_category {
+  categoryId             Int                      @id @default(autoincrement())
+  categoryRadarId        Int                      @unique(map: "categoryRadarId")
+  categoryString         String                   @unique(map: "categoryString") @db.VarChar(50)
+  logTime                DateTime                 @default(now()) @db.Timestamp(0)
+  tournament_information tournament_information[]
+}
+
+model tournament_competitor {
+  tournamentCompetitorId       Int                            @id @default(autoincrement())
+  tournamentId                 Int
+  competitorId                 Int
+  isPlayerArrived              Boolean                        @default(false)
+  tournament_information       tournament_information         @relation(fields: [tournamentId], references: [tournamentId], onDelete: NoAction, onUpdate: NoAction, map: "relation_tournament")
+  competitors                  competitors                    @relation(fields: [competitorId], references: [competitorId], onDelete: NoAction, onUpdate: NoAction, map: "relation_tournament_competitor")
+  tournament_competitor_player tournament_competitor_player[]
+
+  @@unique([competitorId, tournamentId], map: "UNIQUE_TOURNAMENT_COMPETITOR")
+  @@index([tournamentId], map: "relation_tournament")
+}
+
+model tournament_competitor_player {
+  tournamentCompetitorPlayerId Int                   @id @default(autoincrement())
+  tournamentCompetitorId       Int
+  playerId                     Int
+  credit                       Decimal               @default(0.0) @db.Decimal(40, 1)
+  players                      players               @relation(fields: [playerId], references: [playerId], onDelete: NoAction, onUpdate: NoAction, map: "relation_player_playersTable")
+  tournament_competitor        tournament_competitor @relation(fields: [tournamentCompetitorId], references: [tournamentCompetitorId], onDelete: NoAction, onUpdate: NoAction, map: "relation_tournamentCompetitor")
+
+  @@unique([tournamentCompetitorId, playerId], map: "UNIQUE_COMPETITOR_PLAYER")
+  @@index([playerId], map: "relation_player_playersTable")
+}
+
+model tournament_information {
+  tournamentId            Int                     @id @default(autoincrement())
+  tournamentRadarId       Int                     @unique(map: "tournamentRadarId")
+  currentSeasonRadarId    Int                     @unique(map: "currentSeasonRadarId")
+  tournamentName          String                  @db.VarChar(500)
+  currentSeasonName       String                  @db.VarChar(500)
+  seasonStartDate         DateTime                @db.Date
+  seasonEndDate           DateTime                @db.Date
+  tournamentMatchType     Int
+  tournamentCategory      Int
+  tournamentPlayersGender String?                 @db.TinyText
+  tournamentCountry       String?                 @db.VarChar(30)
+  tournamentCountryCode   String?                 @db.VarChar(20)
+  isCompetitorsArrived    Boolean                 @default(false)
+  isMatchesArrived        Boolean                 @default(false)
+  logTime                 DateTime                @default(now()) @db.Timestamp(0)
+  tournament_category     tournament_category     @relation(fields: [tournamentCategory], references: [categoryId], onDelete: NoAction, onUpdate: NoAction, map: "relation_tournament_category")
+  tournament_type         tournament_type         @relation(fields: [tournamentMatchType], references: [tournamentTypeId], onDelete: NoAction, onUpdate: NoAction, map: "relation_tournament_type")
+  tournament_competitor   tournament_competitor[]
+  tournament_matches      tournament_matches[]
+
+  @@unique([currentSeasonRadarId, tournamentRadarId], map: "UNIQUE_TOURNAMENT_SEASON")
+  @@index([tournamentCategory], map: "relation_tournament_category")
+  @@index([tournamentMatchType], map: "relation_tournament_type")
+}
+
+model tournament_matches {
+  matchId                                                 Int                    @id @default(autoincrement())
+  matchRadarId                                            Int                    @unique(map: "matchRadarId")
+  matchTournamentId                                       Int
+  matchStartTime                                          String                 @db.VarChar(15)
+  isPointsCalculated                                      Boolean                @default(false)
+  competitor1                                             Int
+  competitor2                                             Int
+  tossWonBy                                               Int?
+  tossDecision                                            String?                @db.TinyText
+  venueId                                                 Int?
+  matchStatus                                             Int
+  isLineUpOut                                             Boolean                @default(false)
+  logTime                                                 DateTime               @default(now()) @db.Timestamp(0)
+  competitors_competitorsTotournament_matches_competitor1 competitors            @relation("competitorsTotournament_matches_competitor1", fields: [competitor1], references: [competitorId], onDelete: NoAction, onUpdate: NoAction, map: "relation_match_competitor1")
+  competitors_competitorsTotournament_matches_competitor2 competitors            @relation("competitorsTotournament_matches_competitor2", fields: [competitor2], references: [competitorId], onDelete: NoAction, onUpdate: NoAction, map: "relation_match_competitor2")
+  match_status                                            match_status           @relation(fields: [matchStatus], references: [statusId], onDelete: NoAction, onUpdate: NoAction, map: "relation_match_status")
+  tournament_information                                  tournament_information @relation(fields: [matchTournamentId], references: [tournamentId], onDelete: NoAction, onUpdate: NoAction, map: "relation_match_tournament")
+  venues                                                  venues?                @relation(fields: [venueId], references: [venueId], onDelete: NoAction, onUpdate: NoAction, map: "relation_match_venue")
+  competitors_competitorsTotournament_matches_tossWonBy   competitors?           @relation("competitorsTotournament_matches_tossWonBy", fields: [tossWonBy], references: [competitorId], onDelete: NoAction, onUpdate: NoAction, map: "tournament_matches_ibfk_1")
+  discussion                                              discussion[]
+  match_lineup                                            match_lineup[]
+  match_players                                           match_players[]
+  scorcard_details                                        scorcard_details?
+  user_team_new                                           user_team_new[]
+
+  @@index([competitor1], map: "relation_match_competitor1")
+  @@index([competitor2], map: "relation_match_competitor2")
+  @@index([matchStatus], map: "relation_match_status")
+  @@index([matchTournamentId], map: "relation_match_tournament")
+  @@index([venueId], map: "relation_match_venue")
+  @@index([tossWonBy], map: "tossWonBy")
+}
+
+model tournament_type {
+  tournamentTypeId       Int                      @id @default(autoincrement())
+  tournamnetTypeString   String                   @unique(map: "tournamnetTypeString") @db.VarChar(50)
+  logTime                DateTime                 @default(now()) @db.Timestamp(0)
+  tournament_information tournament_information[]
+}
+
+model userApplicationStatus {
+  id               Int                @id @default(autoincrement())
+  string           String             @unique(map: "string") @db.VarChar(100)
+  userBankDetails  userBankDetails[]
+  userEmailDetails userEmailDetails[]
+  userPanDetails   userPanDetails[]
+}
+
+model userBankDetails {
+  applicationNo         Int                   @id @default(autoincrement())
+  userId                Int                   @unique(map: "userId")
+  bankName              String                @db.VarChar(300)
+  AccountNumber         String                @unique(map: "AccountNumber") @db.VarChar(20)
+  IFSCCode              String                @db.VarChar(20)
+  UPIId                 String?               @unique(map: "UPIId") @db.VarChar(300)
+  bankProof             Bytes
+  status                Int
+  message               String                @default("") @db.VarChar(1000)
+  insertedTime          DateTime              @default(now()) @db.Timestamp(0)
+  lastUpdatedAt         DateTime              @default(now()) @db.Timestamp(0)
+  users                 users                 @relation(fields: [userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "userBankDetails_ibfk_1")
+  userApplicationStatus userApplicationStatus @relation(fields: [status], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "userBankDetails_ibfk_2")
+
+  @@index([status], map: "status")
+}
+
+model userEmailDetails {
+  applicationNo         Int                   @id @default(autoincrement())
+  userId                Int                   @unique(map: "userId")
+  status                Int
+  message               String                @default("") @db.VarChar(1000)
+  lastUpdated           DateTime              @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
+  insertedAt            DateTime              @default(now()) @db.Timestamp(0)
+  userApplicationStatus userApplicationStatus @relation(fields: [status], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "userEmailDetails_ibfk_1")
+
+  @@index([status], map: "status")
+}
+
+model userPanDetails {
+  applicationNo         Int                   @id @default(autoincrement())
+  userId                Int                   @unique(map: "userId")
+  panCardNumber         String                @db.VarChar(10)
+  panCardName           String                @unique(map: "panCardName") @db.VarChar(500)
+  DateOfBirth           DateTime              @db.Date
+  panCardImage          Bytes
+  status                Int
+  message               String                @default("") @db.VarChar(1000)
+  insertedTime          DateTime              @default(now()) @db.Timestamp(0)
+  lastUpdatedTime       DateTime              @default(now()) @db.Timestamp(0)
+  users                 users                 @relation(fields: [userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "userPanDetails_ibfk_1")
+  userApplicationStatus userApplicationStatus @relation(fields: [status], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "userPanDetails_ibfk_2")
+
+  @@index([status], map: "userPanDetails_ibfk_2")
+}
+
+model user_team_data_new {
+  userTeamId    Int
+  playerId      Int
+  isCaptain     Int           @default(0)
+  isViceCaptain Int           @default(0)
+  players       players       @relation(fields: [playerId], references: [playerId], onDelete: NoAction, onUpdate: NoAction, map: "user_team_data_new_ibfk_1")
+  user_team_new user_team_new @relation(fields: [userTeamId], references: [userTeamId], onDelete: NoAction, onUpdate: NoAction, map: "user_team_data_new_ibfk_2")
+
+  @@unique([userTeamId, playerId], map: "userTeamId")
+  @@index([playerId], map: "user_team_data_new_ibfk_1")
+}
+
+model user_team_likes {
+  userTeamId    Int
+  userId        Int
+  user_team_new user_team_new @relation(fields: [userTeamId], references: [userTeamId], onDelete: NoAction, onUpdate: NoAction, map: "relation_userTeamLikes_userTeamTable")
+  users         users         @relation(fields: [userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "relation_userTeamLikes_usersTable")
+
+  @@unique([userTeamId, userId], map: "userTeamId")
+  @@index([userId], map: "relation_userTeamLikes_usersTable")
+}
+
+model user_team_new {
+  userTeamId         Int                  @id @default(autoincrement())
+  matchId            Int
+  userId             Int
+  userTeamType       Int
+  userTeamPoints     Float?               @db.Float
+  userTeamViews      Int                  @default(0)
+  userTeamLikes      Int                  @default(0)
+  creationTime       DateTime             @default(now()) @db.Timestamp(0)
+  tournament_matches tournament_matches   @relation(fields: [matchId], references: [matchId], onDelete: NoAction, onUpdate: NoAction, map: "user_team_new_ibfk_1")
+  users              users                @relation(fields: [userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "user_team_new_ibfk_2")
+  team_type          team_type            @relation(fields: [userTeamType], references: [teamType], onDelete: NoAction, onUpdate: NoAction, map: "user_team_new_ibfk_3")
+  coinHistory        coinHistory[]
+  user_team_data_new user_team_data_new[]
+  user_team_likes    user_team_likes[]
+  user_team_views    user_team_views[]
+
+  @@unique([matchId, userId, userTeamType], map: "matchId")
+  @@index([userId], map: "userId")
+  @@index([userTeamType], map: "userTeamType")
+}
+
+model user_team_views {
+  userTeamId    Int
+  userId        Int
+  viewCount     Int           @default(1)
+  users         users         @relation(fields: [userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "relation_userId_usersTbale")
+  user_team_new user_team_new @relation(fields: [userTeamId], references: [userTeamId], onDelete: NoAction, onUpdate: NoAction, map: "relation_userTeamViews_userTeamTable")
+
+  @@unique([userTeamId, userId], map: "userTeamId")
+  @@index([userId], map: "relation_userId_usersTbale")
+}
+
+model user_type {
+  userType       Int     @id @default(autoincrement())
+  userTypeString String  @unique(map: "userTypeString") @db.VarChar(30)
+  users          users[]
+}
+
+model users {
+  userId                                   Int               @default(autoincrement())
+  userType                                 Int               @default(1)
+  phoneNumber                              String            @unique(map: "phone_number") @db.VarChar(10)
+  email                                    String            @default("") @db.VarChar(500)
+  coins                                    Int               @default(0)
+  balance                                  Int               @default(0)
+  dateOfBirth                              String            @default("") @db.VarChar(50)
+  gender                                   String            @default("") @db.VarChar(20)
+  displayPicture                           String?           @default("") @db.VarChar(1000)
+  firstName                                String            @default("") @db.VarChar(30)
+  lastName                                 String            @default("") @db.VarChar(30)
+  address                                  String?           @default("") @db.VarChar(1000)
+  city                                     String            @default("") @db.VarChar(50)
+  pinCode                                  String?           @db.VarChar(10)
+  state                                    String            @default("") @db.VarChar(50)
+  country                                  String            @default("") @db.VarChar(50)
+  imageStamp                               String?           @db.VarChar(100)
+  isVerified                               Boolean           @default(false)
+  registerTime                             DateTime          @default(now()) @db.Timestamp(0)
+  user_type                                user_type         @relation(fields: [userType], references: [userType], onDelete: NoAction, map: "user_type")
+  balanceHistory                           balanceHistory[]
+  coinHistory                              coinHistory[]
+  discussion_discussion_messengerIdTousers discussion[]      @relation("discussion_messengerIdTousers")
+  discussion_discussion_userIdTousers      discussion[]      @relation("discussion_userIdTousers")
+  notifications                            notifications[]
+  userBankDetails                          userBankDetails?
+  userPanDetails                           userPanDetails?
+  user_team_likes                          user_team_likes[]
+  user_team_new                            user_team_new[]
+  user_team_views                          user_team_views[]
+
+  @@id([userId, phoneNumber])
+  @@index([userType], map: "user_type")
+}
+
+model venues {
+  venueId               Int                  @id @default(autoincrement())
+  venueName             String?              @db.VarChar(500)
+  venueCapacity         Int?
+  venueCity             String?              @db.TinyText
+  venueRadarId          Int                  @unique(map: "venueRadarId")
+  venueCountry          String?              @db.VarChar(50)
+  venueCountryCode      String?              @db.VarChar(20)
+  venueMapCardinalities String?              @db.VarChar(100)
+  venueEnd1             String?              @db.VarChar(100)
+  venueEnd2             String?              @db.VarChar(100)
+  logTime               DateTime             @default(now()) @db.Timestamp(0)
+  tournament_matches    tournament_matches[]
+}

@@ -429,9 +429,4 @@ class User {
   }
 }
 
-// (async () => {
-//   const user = new User(1);
-//   await user.fetchUserApplications();
-// })();
-
 module.exports = User;

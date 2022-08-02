@@ -1717,7 +1717,7 @@ class MatchDaily extends Status {
             `/matches/sr:match:${this.#radarId}/timeline.json`
           );
           if (matchTimeLine && matchTimeLine.sport_event_status) {
-            const matchStatus = matchTimeLine.sport_event_status.status;
+            const matchStatus = matchTimeLine?.sport_event_status?.status;
 
             if (matchStatus !== "not_started") {
               if (matchStatus === "closed" || matchStatus === "ended") {
@@ -1727,7 +1727,7 @@ class MatchDaily extends Status {
                 await this.#updateStatus("ended");
                 log("resolving from handleMatchStatus status changed");
                 resolve();
-              } else {
+              } else if (matchStatus) {
                 log(
                   "IN ./cron/oop/match.js going to store match status which is " +
                     matchStatus
@@ -1735,6 +1735,15 @@ class MatchDaily extends Status {
                 await this.#updateStatus(matchStatus);
                 log("resolving from handleMatchStatus status changed");
                 resolve();
+              } else {
+                setTimeout(async () => {
+                  log(
+                    "Match status is not_started in api for matchId " + this.id
+                  );
+                  s;
+                  await this.handleMatchStatus();
+                  resolve();
+                }, 3 * 60 * 1000);
               }
             } else {
               setTimeout(async () => {

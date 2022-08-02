@@ -27,7 +27,7 @@ CREATE TABLE `balanceHistory` (
   `userId` int(11) NOT NULL,
   `transitionSource` int(11) NOT NULL,
   `logTime` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ;
 
 -- --------------------------------------------------------
 

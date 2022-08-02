@@ -483,7 +483,11 @@ const storeTournamentByRadarId = async (tId) => {
   });
 };
 const b = async () => {
-  await storeTournamentByRadarId("29968");
+  await storeTournamentByRadarId("34656");
+  await storeTournamentByRadarId("34382");
+  await storeTournamentByRadarId("37479");
+  // await storeTournamentByRadarId("37225");
+  //   // await storeTournamentByRadarId("29968");
   //   // await storeTournamentByRadarId("34354");
   //   // await storeTournamentByRadarId("15574");
   //   // await storeTournamentByRadarId("36621");
