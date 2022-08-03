@@ -35,6 +35,13 @@ const exception = (err, req, res, next) => {
       status: "error",
       message: "Internal server error",
     });
+  } else if (err.code === "ER_SIGNAL_EXCEPTION") {
+    const error = new ApplicationError(err.sqlMessage);
+    return res.status(error.status).json({
+      status: "error",
+      name: error.name,
+      message: error.message,
+    });
   } else {
     return res.status(500).json({
       status: "error",

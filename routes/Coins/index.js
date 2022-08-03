@@ -3,7 +3,7 @@ const router = express.Router();
 const Coins = require("../../module/Coins");
 const verifyUser = require("../../middleware/verifyUser");
 
-router.post("/transactionHistory", verifyUser, async (req, res) => {
+router.post("/transactionHistory", verifyUser, async (req, res, next) => {
   try {
     const newCoins = new Coins(req.body.userId);
     await newCoins.getTransitHistory(req?.params?.filterBy);
@@ -16,15 +16,11 @@ router.post("/transactionHistory", verifyUser, async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(200).json({
-      status: false,
-      message: error.message,
-      data: {},
-    });
+    next(error);
   }
 });
 
-router.post("/WithdrawlHistory", verifyUser, async (req, res) => {
+router.post("/WithdrawlHistory", verifyUser, async (req, res, next) => {
   try {
     const newCoins = new Coins(req.body.userId);
     await newCoins.getWithdrawalHistory(req.body.filterBy);
@@ -37,15 +33,11 @@ router.post("/WithdrawlHistory", verifyUser, async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(200).json({
-      status: false,
-      message: error.message,
-      data: {},
-    });
+    next(error);
   }
 });
 
-router.post("/getRedeemTokens", verifyUser, async (req, res) => {
+router.post("/getRedeemTokens", verifyUser, async (req, res, next) => {
   try {
     const newCoins = new Coins(req.body.userId);
     await newCoins.getCoinsToBalanceMapping();
@@ -59,15 +51,11 @@ router.post("/getRedeemTokens", verifyUser, async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(200).json({
-      status: false,
-      message: error.message,
-      data: {},
-    });
+    next(error);
   }
 });
 
-router.post("/transitCoins", verifyUser, async (req, res) => {
+router.post("/transitCoins", verifyUser, async (req, res, next) => {
   try {
     const { coinTransitsource, mappingId, userId } = req.body;
 
@@ -82,15 +70,11 @@ router.post("/transitCoins", verifyUser, async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(200).json({
-      status: false,
-      message: error.message,
-      data: {},
-    });
+    next(error);
   }
 });
 
-router.post("/dailyUserCoins", verifyUser, async (req, res) => {
+router.post("/dailyUserCoins", verifyUser, async (req, res, next) => {
   try {
     const newCoins = new Coins(req.body.userId);
     const dailyRewardSticker = await newCoins.dashBoardCoinData();
@@ -104,11 +88,7 @@ router.post("/dailyUserCoins", verifyUser, async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(200).json({
-      status: false,
-      message: error.message,
-      data: {},
-    });
+    next(error);
   }
 });
 

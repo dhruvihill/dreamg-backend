@@ -3,14 +3,17 @@ const jwt = require("jsonwebtoken");
 const verifyUser = async (req, res, next) => {
   let { authorization: authtoken } = req.headers;
 
+  if (!authtoken) {
+    authtoken = req.headers.authtoken;
+  } else {
+    authtoken = authtoken.split(" ")[1];
+  }
+
   try {
     if (authtoken) {
       // verifying auth token
 
-      authtoken = authtoken.split(" ")[1];
-
       const result = await jwt.verify(authtoken, process.env.JWT_SECRET_KEY);
-      console.log(result);
 
       // setting user id to req object
       req.body.userId = result.user.userId;

@@ -1,76 +1,66 @@
 const express = require("express");
 const router = express.Router({ mergeParams: true });
-const MatchStatistics = require("../module/MatchStatistics");
-const { fetchData, imageUrl } = require("../database/db_connection");
-const { convertTimeZone } = require("../middleware/convertTimeZone");
+const MatchStatistics = require("../../module/MatchStatistics");
+const { fetchData, imageUrl } = require("../../database/db_connection");
+const { convertTimeZone } = require("../../middleware/convertTimeZone");
+const {
+  getPredictionsReqBodySchema,
+  getExpertPredictorBodySchema,
+  compareTeamsBodySchema,
+  getPlayersBodySchema,
+} = require("./Schemas/Validation/index");
+const { validateSchema } = require("../../utils/index");
+const { NotFoundError } = require("../../module/Exception");
 
 // get players by match id
-router.post("/getPlayers", async (req, res) => {
-  const { matchId, userTeamId } = req.body;
-
+router.post("/getPlayers", async (req, res, next) => {
   try {
-    if (!/[^0-9]/g.test(matchId)) {
-      let data;
-      if (userTeamId && !/[^0-9]/g.test(userTeamId) && userTeamId > 0) {
-        [data, matchDetails] = await fetchData("CALL getPlayers(?, ?);", [
-          matchId,
-          userTeamId,
-        ]);
-      } else {
-        [data, matchDetails] = await fetchData("CALL getPlayers(?, ?);", [
-          matchId,
-          0,
-        ]);
-      }
-      const serverAddress = `${req.protocol}://${req.headers.host}`;
+    await validateSchema(getPlayersBodySchema, req.body);
 
-      data?.forEach((player) => {
-        player.roleName = player.roleName.toUpperCase();
-        player.captainBy = parseFloat(player.captainBy.toFixed(2));
-        player.viceCaptainBy = parseFloat(player.viceCaptainBy.toFixed(2));
-        player.selectedBy = parseFloat(player.selectedBy.toFixed(2));
-        // changing url address
-        player.URL = imageUrl(
-          __dirname,
-          "../",
-          `${process.env.PLAYER_IMAGE_URL}${player.playerId}.jpg`,
-          serverAddress
-        );
-      });
-      res.status(200).json({
-        status: true,
-        message: "success",
-        data: {
-          players: data,
-          matchDetails: matchDetails[0],
-        },
-      });
-    } else {
-      throw { message: "invalid input" };
-    }
-  } catch (error) {
-    res.status(400).json({
-      status: false,
-      message: error.sqlMessage ? error.sqlMessage : error.message,
-      data: {},
+    const { matchId, userTeamId } = req.body;
+
+    const [data, matchDetails] = await fetchData("CALL getPlayers(?, ?);", [
+      matchId,
+      userTeamId || 0,
+    ]);
+    const serverAddress = `${req.protocol}://${req.headers.host}`;
+
+    data?.forEach((player) => {
+      player.roleName = player.roleName.toUpperCase();
+      player.captainBy = parseFloat(player.captainBy).toFixed(2);
+      player.viceCaptainBy = parseFloat(player.viceCaptainBy).toFixed(2);
+      player.selectedBy = parseFloat(player.selectedBy).toFixed(2);
+      // changing url address
+      player.URL = imageUrl(
+        __dirname,
+        "../",
+        `${process.env.PLAYER_IMAGE_URL}${player.playerId}.jpg`,
+        serverAddress
+      );
     });
+    res.status(200).json({
+      status: true,
+      message: "success",
+      data: {
+        players: data,
+        matchDetails: matchDetails[0],
+      },
+    });
+  } catch (error) {
+    next(error);
   }
 });
 
 // get predictors by match id or with no match id and match status
-router.post("/getPredictions", async (req, res) => {
+router.post("/getPredictions", async (req, res, next) => {
   try {
     const { matchId, filter, pageNumber } = req.body;
 
-    let validMatchId = true;
+    await validateSchema(getPredictionsReqBodySchema, req.body);
+
     let totalPredictorsQuery = "";
     let query;
     if (matchId) {
-      validMatchId = true;
-      if (!/[^0-9]/g.test(matchId)) validMatchId = true;
-      else {
-        throw { message: "invalid input" };
-      }
       totalPredictorsQuery =
         "SELECT COUNT(*) AS totalPredictors FROM userTeamDetails WHERE matchId = ?;";
       query =
@@ -89,56 +79,45 @@ router.post("/getPredictions", async (req, res) => {
           ? "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, SUM(userTeamDetails.userTeamLikes) AS totalLikes, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId GROUP BY userdetails.userId ORDER BY totalLikes DESC LIMIT ?, 20;"
           : "SELECT userdetails.userId, userdetails.imageStamp AS imageStamp, COALESCE(AVG(userTeamDetails.userTeamPoints), 0) AS totalPoints, phoneNumber, firstName, lastName, city, registerTime FROM userdetails JOIN userTeamDetails ON userTeamDetails.userId = userdetails.userId JOIN fullmatchdetails ON fullmatchdetails.matchId = userTeamDetails.matchId WHERE fullmatchdetails.matchStatusString IN ('ended', 'closed') GROUP BY userdetails.userId ORDER BY totalPoints DESC LIMIT ?, 20;";
     }
-    if (
-      validMatchId &&
-      pageNumber &&
-      pageNumber > 0 &&
-      !/[^0-9]/g.test(pageNumber)
-    ) {
-      const serverAddress = `${req.protocol}://${req.headers.host}`;
-      let result, totalPredictors;
-      if (matchId) {
-        [result, [{ totalPredictors }]] = await fetchData(
-          `${query}${totalPredictorsQuery}`,
-          [matchId, (pageNumber - 1) * 20, matchId]
-        );
-      } else {
-        [result, [{ totalPredictors }]] = await fetchData(
-          `${query}${totalPredictorsQuery}`,
-          [(pageNumber - 1) * 20, matchId]
-        );
-      }
 
-      result.forEach((element) => {
-        element.displayPicture = imageUrl(
-          __dirname,
-          "../",
-          `${process.env.USER_IMAGE_URL}${element.imageStamp}.jpg`,
-          serverAddress
-        );
-        delete element.imageStamp;
-      });
-
-      const totalPages = Math.ceil(totalPredictors / 20);
-      res.status(200).json({
-        status: true,
-        message: "success",
-        data: { users: result, totalPages, currentPage: pageNumber },
-      });
+    const serverAddress = `${req.protocol}://${req.headers.host}`;
+    let result, totalPredictors;
+    if (matchId) {
+      [result, [{ totalPredictors }]] = await fetchData(
+        `${query}${totalPredictorsQuery}`,
+        [matchId, (pageNumber - 1) * 20, matchId]
+      );
     } else {
-      throw { message: "invalid input" };
+      [result, [{ totalPredictors }]] = await fetchData(
+        `${query}${totalPredictorsQuery}`,
+        [(pageNumber - 1) * 20, matchId]
+      );
     }
-  } catch (error) {
-    res.status(400).json({
-      status: false,
-      message: error.sqlMessage || error.message,
-      data: {},
+
+    result.forEach((element) => {
+      element.displayPicture = imageUrl(
+        __dirname,
+        "../",
+        `${process.env.USER_IMAGE_URL}${element.imageStamp}.jpg`,
+        serverAddress
+      );
+      delete element.imageStamp;
     });
+
+    const totalPages = Math.ceil(totalPredictors / 20);
+    res.status(200).json({
+      status: true,
+      message: "success",
+      data: { users: result, totalPages, currentPage: pageNumber },
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
   }
 });
 
 // get best picks by match id
-router.post("/getBestPicks", async (req, res) => {
+router.post("/getBestPicks", async (req, res, next) => {
   try {
     const { matchId } = req.body;
     const match = await new MatchStatistics(matchId).getMatchDetails();
@@ -225,32 +204,21 @@ router.post("/getBestPicks", async (req, res) => {
         },
       });
     } else {
-      res.status(200).send({
-        status: true,
-        message: "no best picks found",
-        data: {},
-      });
+      throw new NotFoundError("Best Picks not found");
     }
   } catch (error) {
-    res.status(400).json({
-      status: false,
-      message: error.sqlMessage || error.message,
-      data: {},
-    });
+    next(error);
   }
 });
 
 // depreicated for now
-router.post("/getExpertPredictor", async (req, res) => {
-  const { matchId } = req.body;
-
+router.post("/getExpertPredictor", async (req, res, next) => {
   try {
-    const serverAddress = `${req.protocol}://${req.headers.host}`;
-    const regx = /[^0-9]/g;
+    const { matchId } = req.body;
 
-    if (!matchId || regx.test(matchId)) {
-      throw { message: "invalid input" };
-    }
+    await validateSchema(getExpertPredictorBodySchema, req.body);
+
+    const serverAddress = `${req.protocol}://${req.headers.host}`;
 
     const fetchUserTeamDetails = () => {
       return new Promise(async (resolve, reject) => {
@@ -412,16 +380,12 @@ router.post("/getExpertPredictor", async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(400).json({
-      status: false,
-      message: error.sqlMessage || error.message,
-      data: {},
-    });
+    next(error);
   }
 });
 
 // getting trending predictors by points
-router.get("/getTrendingPredictors", async (req, res) => {
+router.get("/getTrendingPredictors", async (req, res, next) => {
   const recentMatchesQuery =
     "SELECT DISTINCT fullmatchdetails.matchId FROM fullmatchdetails JOIN userTeamDetails ON userTeamDetails.matchId = fullmatchdetails.matchId WHERE fullmatchdetails.matchStartDateTime < unix_timestamp(now()) * 1000 AND fullmatchdetails.matchStatus != 'live' ORDER BY matchStartDateTime DESC LIMIT 5;";
   const topPredictorsQuery =
@@ -452,80 +416,71 @@ router.get("/getTrendingPredictors", async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(200).json({
-      status: false,
-      message: error.sqlMessage || error.message,
-      data: {},
-    });
+    next(error);
   }
 });
 
 // match statistics
-router.use("/statistics", require("./statistics"));
+router.use("/statistics", require("../statistics"));
 
 // comapring teams by match id
-router.post("/compareTeams", async (req, res) => {
+router.post("/compareTeams", async (req, res, next) => {
   try {
     const timeZone = req.headers.timezone;
     const { matchId } = req.body;
+
+    await validateSchema(compareTeamsBodySchema, req.body);
 
     const allPlayersForMatch =
       "SELECT matchId, playerId, fullplayerdetails.name AS playerName, fullplayerdetails.displayName AS playerDisplayName, roleId, roleName, fullplayerdetails.teamId, allteams.name AS teamName, allteams.displayName AS teamDisplayName FROM fullplayerdetails JOIN allteams ON allteams.teamId = fullplayerdetails.teamId WHERE matchId = ?;";
     const matchDetails =
       "SELECT matchId, matchStartDateTime, venue, seriesDname AS seriesDisplayName, team1Id, team1Name, team1DisplayName, team2Id, team2Name, team2DisplayName FROM fullmatchdetails WHERE matchId = ?;";
-    if (!/[^0-9]/g.test(matchId)) {
-      const serverAddress = `${req.protocol}://${req.headers.host}`;
-      const response = await fetchData(allPlayersForMatch, [matchId]);
-      const responseData = await fetchData(matchDetails, [matchId]);
 
-      response.forEach((element) => {
-        element.URL = imageUrl(
-          __dirname,
-          "../",
-          `${process.env.PLAYER_IMAGE_URL}${element.playerId}.jpg`,
-          serverAddress
-        );
-        element.flagURL = imageUrl(
-          __dirname,
-          "../",
-          `${process.env.TEAM_IMAGE_URL}${element.teamId}.jpg`,
-          serverAddress
-        );
-      });
-      if (responseData.length > 0) {
-        responseData[0].team1FlagURL = imageUrl(
-          __dirname,
-          "../",
-          `${process.env.TEAM_IMAGE_URL}${responseData[0].team1Id}.jpg`,
-          serverAddress
-        );
-        responseData[0].team2FlagURL = imageUrl(
-          __dirname,
-          "../",
-          `${process.env.TEAM_IMAGE_URL}${responseData[0].team2Id}.jpg`,
-          serverAddress
-        );
-        // converting time zone
-        [responseData[0].matchStartDateTime, responseData[0].matchStartTime] =
-          convertTimeZone(responseData[0].matchStartDateTime, timeZone);
-      }
-      res.status(200).json({
-        status: true,
-        message: "success",
-        data: {
-          players: response,
-          matchDetails: responseData[0] || [],
-        },
-      });
-    } else {
-      throw { message: "invalid input" };
-    }
-  } catch (error) {
-    res.status(400).json({
-      status: false,
-      message: error.sqlMessage || error.message,
-      data: {},
+    const serverAddress = `${req.protocol}://${req.headers.host}`;
+    const response = await fetchData(allPlayersForMatch, [matchId]);
+    const responseData = await fetchData(matchDetails, [matchId]);
+
+    response.forEach((element) => {
+      element.URL = imageUrl(
+        __dirname,
+        "../",
+        `${process.env.PLAYER_IMAGE_URL}${element.playerId}.jpg`,
+        serverAddress
+      );
+      element.flagURL = imageUrl(
+        __dirname,
+        "../",
+        `${process.env.TEAM_IMAGE_URL}${element.teamId}.jpg`,
+        serverAddress
+      );
     });
+    if (responseData.length > 0) {
+      responseData[0].team1FlagURL = imageUrl(
+        __dirname,
+        "../",
+        `${process.env.TEAM_IMAGE_URL}${responseData[0].team1Id}.jpg`,
+        serverAddress
+      );
+      responseData[0].team2FlagURL = imageUrl(
+        __dirname,
+        "../",
+        `${process.env.TEAM_IMAGE_URL}${responseData[0].team2Id}.jpg`,
+        serverAddress
+      );
+      // converting time zone
+      [responseData[0].matchStartDateTime, responseData[0].matchStartTime] =
+        convertTimeZone(responseData[0].matchStartDateTime, timeZone);
+    }
+    res.status(200).json({
+      status: true,
+      message: "success",
+      data: {
+        players: response,
+        matchDetails: responseData[0] || [],
+      },
+    });
+  } catch (error) {
+    next(error);
   }
 });
 

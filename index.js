@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const { fetchData: periode } = require("./cron/UpdateMatchStatus/periode");
 const exception = require("./middleware/exceptionHandling");
 const { logger } = require("./utils/index");
+const { NotFoundError } = require("./module/Exception");
 
 // calling periode to store periode details in db
 const setIntervalImmediate = () => {
@@ -30,23 +31,18 @@ app.use("/public", express.static("public"));
 
 // Routes
 app.use("/api/v1/system", require("./routes/masterAPI"));
-app.use("/api/v1/auth", require("./routes/Auth/index"));
+app.use("/api/v1/auth", require("./routes/Auth"));
 app.use("/api/v1/user", require("./routes/user"));
-app.use("/api/v1/getDashboardData", require("./routes/dashboard"));
-app.use("/api/v1/userTeams", require("./routes/matchDetails"));
+app.use("/api/v1/getDashboardData", require("./routes/Dashboard"));
+app.use("/api/v1/userTeams", require("./routes/MatchDetails"));
 app.use("/api/v1/userTeams", require("./routes/userTeamDetails"));
-app.use("/api/v1/notification", require("./routes/notification"));
-app.use("/api/v1/matches", require("./routes/matches"));
+app.use("/api/v1/notification", require("./routes/Notification"));
+app.use("/api/v1/matches", require("./routes/Matches/index"));
 app.use("/api/v1/coins", require("./routes/Coins/index"));
-app.get("*", (req, res) => {
-  res.status(404).json({
-    message: "page not found",
-  });
-});
-app.post("*", (req, res) => {
-  res.status(404).json({
-    message: "page not found",
-  });
+
+app.all("*", (req, res, next) => {
+  const error = new NotFoundError("Page not found");
+  next(error);
 });
 
 app.use(exception);

@@ -537,36 +537,27 @@ model tournament_type {
 model userApplicationStatus {
   id               Int                @id @default(autoincrement())
   string           String             @unique(map: "string") @db.VarChar(100)
+  userBankDetails  userBankDetails[]
   userEmailDetails userEmailDetails[]
+  userPanDetails   userPanDetails[]
 }
 
 model userBankDetails {
-  userId        Int      @unique(map: "userId_UNIQUE")
-  bankName      String   @db.VarChar(300)
-  AccountNumber String   @unique(map: "AccountNumber") @db.VarChar(20)
-  IFSCCode      String   @db.VarChar(20)
-  UPIId         String?  @unique(map: "UPIId") @db.VarChar(300)
-  bankProof     Bytes
-  insertedTime  DateTime @default(now()) @db.Timestamp(0)
-  lastUpdatedAt DateTime @default(now()) @db.Timestamp(0)
-  applicationNo Int      @id @default(autoincrement())
-  message       String   @default("") @db.VarChar(1000)
-  status        Int
-  users         users    @relation(fields: [userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "userBankDetails_ibfk_1")
-}
+  applicationNo         Int                   @id @default(autoincrement())
+  userId                Int                   @unique(map: "userId")
+  bankName              String                @db.VarChar(300)
+  AccountNumber         String                @unique(map: "AccountNumber") @db.VarChar(20)
+  IFSCCode              String                @db.VarChar(20)
+  UPIId                 String?               @unique(map: "UPIId") @db.VarChar(300)
+  bankProof             Bytes
+  status                Int
+  message               String                @default("") @db.VarChar(1000)
+  insertedTime          DateTime              @default(now()) @db.Timestamp(0)
+  lastUpdatedAt         DateTime              @default(now()) @db.Timestamp(0)
+  users                 users                 @relation(fields: [userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "userBankDetails_ibfk_1")
+  userApplicationStatus userApplicationStatus @relation(fields: [status], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "userBankDetails_ibfk_2")
 
-model userPanDetails {
-  userId          Int      @unique(map: "userId_UNIQUE")
-  panCardNumber   String   @db.VarChar(10)
-  panCardName     String   @unique(map: "panCardName") @db.VarChar(500)
-  DateOfBirth     DateTime @db.Date
-  panCardImage    Bytes
-  insertedTime    DateTime @default(now()) @db.Timestamp(0)
-  lastUpdatedTime DateTime @default(now()) @db.Timestamp(0)
-  applicationNo   Int      @id @default(autoincrement())
-  message         String   @default("") @db.VarChar(1000)
-  status          Int
-  users           users    @relation(fields: [userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "userPanDetails_ibfk_1")
+  @@index([status], map: "status")
 }
 
 model userEmailDetails {
@@ -574,11 +565,28 @@ model userEmailDetails {
   userId                Int                   @unique(map: "userId")
   status                Int
   message               String                @default("") @db.VarChar(1000)
-  lastUpdated           DateTime              @default(now()) @db.Timestamp(0)
+  lastUpdated           DateTime              @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
   insertedAt            DateTime              @default(now()) @db.Timestamp(0)
   userApplicationStatus userApplicationStatus @relation(fields: [status], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "userEmailDetails_ibfk_1")
 
   @@index([status], map: "status")
+}
+
+model userPanDetails {
+  applicationNo         Int                   @id @default(autoincrement())
+  userId                Int                   @unique(map: "userId")
+  panCardNumber         String                @db.VarChar(10)
+  panCardName           String                @unique(map: "panCardName") @db.VarChar(500)
+  DateOfBirth           DateTime              @db.Date
+  panCardImage          Bytes
+  status                Int
+  message               String                @default("") @db.VarChar(1000)
+  insertedTime          DateTime              @default(now()) @db.Timestamp(0)
+  lastUpdatedTime       DateTime              @default(now()) @db.Timestamp(0)
+  users                 users                 @relation(fields: [userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "userPanDetails_ibfk_1")
+  userApplicationStatus userApplicationStatus @relation(fields: [status], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "userPanDetails_ibfk_2")
+
+  @@index([status], map: "userPanDetails_ibfk_2")
 }
 
 model user_team_data_new {
@@ -661,8 +669,6 @@ model users {
   country                                  String            @default("") @db.VarChar(50)
   imageStamp                               String?           @db.VarChar(100)
   isVerified                               Boolean           @default(false)
-  isPhoneVerified                          Boolean           @default(true)
-  isEmailVerified                          Boolean           @default(false)
   registerTime                             DateTime          @default(now()) @db.Timestamp(0)
   user_type                                user_type         @relation(fields: [userType], references: [userType], onDelete: NoAction, map: "user_type")
   balanceHistory                           balanceHistory[]

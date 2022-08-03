@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const verifyUser = require("../middleware/verifyUser");
+const verifyUser = require("../../middleware/verifyUser");
 
-router.post("/", verifyUser, (req, res) => {
+router.post("/", verifyUser, (req, res, next) => {
   try {
     const { userId } = req.body;
 
@@ -23,7 +23,7 @@ router.post("/", verifyUser, (req, res) => {
       },
     });
   } catch (error) {
-    res.status(400).json({ status: false, message: error.message, data: {} });
+    next(error);
   }
 });
 

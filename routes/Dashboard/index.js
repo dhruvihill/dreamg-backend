@@ -1,14 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const verifyUser = require("../middleware/verifyUser");
+const verifyUser = require("../../middleware/verifyUser");
 const axios = require("axios");
-const { fetchData, imageUrl } = require("../database/db_connection");
-const { convertTimeZone } = require("../middleware/convertTimeZone");
-const MatchStatistics = require("../module/MatchStatistics");
-const Coins = require("../module/Coins");
+const { fetchData, imageUrl } = require("../../database/db_connection");
+const { convertTimeZone } = require("../../middleware/convertTimeZone");
+const MatchStatistics = require("../../module/MatchStatistics");
+const Coins = require("../../module/Coins");
 
 // getting dashboard data upcominng matches, predictors, news and isNotification
-router.get("/", verifyUser, async (req, res) => {
+router.get("/", verifyUser, async (req, res, next) => {
   try {
     const { userId } = req.body;
     const timeZone = req.headers.timezone;
@@ -108,17 +108,7 @@ router.get("/", verifyUser, async (req, res) => {
       });
     }
   } catch (error) {
-    res.status(400).json({
-      status: false,
-      message: error.message,
-      data: {
-        matches: [],
-        predictors: [],
-        news: [],
-        isNotification: 0,
-        coinDetails: {},
-      },
-    });
+    next(error);
   }
 });
 

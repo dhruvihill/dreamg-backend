@@ -66,7 +66,6 @@ class Coins extends User {
         await this.getCoins();
         resolve();
       } catch (error) {
-        console.log(error.message);
         reject(error);
       }
     });
@@ -98,7 +97,6 @@ class Coins extends User {
         this.withdrawalHistory = withdrawalHistory;
         resolve();
       } catch (error) {
-        console.log(error.message);
         reject(error);
       }
     });
@@ -169,7 +167,6 @@ class Coins extends User {
         this.coinsToBalanceMapping = coinsToBalanceMapping;
         resolve();
       } catch (error) {
-        console.log(error.message);
         reject(error);
       }
     });
@@ -225,7 +222,6 @@ class Coins extends User {
         }
         resolve(dailyRewardSticker);
       } catch (error) {
-        console.log(error.message);
         reject(error);
       }
     });
